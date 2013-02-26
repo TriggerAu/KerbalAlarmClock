@@ -36,6 +36,16 @@ namespace KerbalAlarmClock
             return arrBytes;
         }
 
+        public static string getLatestVersion()
+        {
+            WWW www = new WWW("http://kerbalalarmclock.codeplex.com/wikipage?title=LatestVersion");
+            while (!www.isDone) { }
+
+            string strFile = www.text;
+            KSP.IO.File.WriteAllText<KerbalAlarmClock>(strFile, "VersionFile");
+            return "";
+        }
+
     }
 
     public static class KACResources
@@ -218,12 +228,16 @@ namespace KerbalAlarmClock
             //Common starting points
             GUIStyle styleDefLabel = new GUIStyle(GUI.skin.label);
             styleDefLabel.fontSize = intFontSizeDefault;
+            styleDefLabel.fontStyle = FontStyle.Normal;
             GUIStyle styleDefTextField = new GUIStyle(GUI.skin.textField);
             styleDefTextField.fontSize = intFontSizeDefault;
+            styleDefTextField.fontStyle = FontStyle.Normal;
             GUIStyle styleDefTextArea = new GUIStyle(GUI.skin.textArea);
             styleDefTextArea.fontSize = intFontSizeDefault;
+            styleDefTextArea.fontStyle = FontStyle.Normal;
             GUIStyle styleDefToggle = new GUIStyle(GUI.skin.toggle);
             styleDefToggle.fontSize = intFontSizeDefault;
+            styleDefToggle.fontStyle = FontStyle.Normal;
 
 
             //Set up the used styles
@@ -243,6 +257,14 @@ namespace KerbalAlarmClock
 
             styleSmallButton = new GUIStyle(GUI.skin.button);
             styleSmallButton.alignment = TextAnchor.MiddleCenter;
+            styleSmallButton.fixedWidth = 30;
+            styleSmallButton.fixedHeight = 20;
+            styleSmallButton.fontSize = intFontSizeDefault;
+            styleSmallButton.fontStyle = FontStyle.Normal;
+            styleSmallButton.padding.top = 0;
+            styleSmallButton.padding.bottom = 0;
+            styleSmallButton.padding.left = 0;
+            styleSmallButton.padding.right = 0;
 
             styleAlarmText = new GUIStyle(styleDefLabel);
             styleAlarmText.normal.textColor = Color.white;
@@ -260,9 +282,9 @@ namespace KerbalAlarmClock
             styleLabelWarpGrayed.normal.textColor = Color.gray;
 
             styleCheckbox = new GUIStyle(styleDefToggle);
-            styleCheckbox.normal.textColor = Color.white;
-            styleCheckbox.fixedWidth = 24;
-            styleCheckbox.fixedHeight = 24;
+            styleCheckbox.normal.textColor = colLabelText;
+            //styleCheckbox.fixedWidth = 24;
+            //styleCheckbox.fixedHeight = 24;
 
             styleAddSectionHeading = new GUIStyle(styleDefLabel);
             styleAddSectionHeading.normal.textColor = Color.white;
@@ -297,6 +319,7 @@ namespace KerbalAlarmClock
             styleAddAlarmArea.margin.right = 0;
 
             styleAlarmMessage = new GUIStyle(styleDefLabel);
+            styleAlarmMessage.normal.textColor = colLabelText;
             styleAlarmMessageTime = new GUIStyle(styleDefLabel);
             styleAlarmMessageTime.normal.textColor = Color.yellow;
 
@@ -317,6 +340,9 @@ namespace KerbalAlarmClock
         public Rect WindowPos;
 
         public KACAlarmList Alarms = new KACAlarmList();
+
+        public Boolean CheckForUpdatesOnStart = false;
+        public Boolean AlarmOnSOIChange = false;
 
         public KACSettings()
         {

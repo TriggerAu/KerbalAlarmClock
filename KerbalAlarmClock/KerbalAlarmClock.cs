@@ -79,17 +79,31 @@ namespace KerbalAlarmClock
             //Only Do any of this work if we are in FlightMode
             if (IsFlightMode)
             {
+
                 WorkerObjectInstance.UpdateDetails();
             }
         }
-                
+
+
         //OnGUI is where any drawing must happen - you cant do this in the update functions
         private static Boolean blnInPostQueue = false;
+        private static Double GameUT = 0;
         public void OnGUI()
         {
             //Do the GUI Stuff
             if (IsFlightMode)
             {
+                //If time goes backwards assume a reload/restart and readd to rendering queue
+                if ((GameUT != 0) && (GameUT > Planetarium.GetUniversalTime()))
+                {
+                    KACWorker.DebugLogFormatted("Time Went Backwards - Load or restart");
+                    KACWorker.DebugLogFormatted("Readding DrawGUI to PostRender Queue");
+                    RenderingManager.AddToPostDrawQueue(5, DrawGUI);
+                    blnInPostQueue = true;
+                }
+                GameUT = Planetarium.GetUniversalTime();
+                
+                //if the variable is false assume starting flight mode and add to rendering queue
                 if (!blnInPostQueue)
                 {
                     KACWorker.DebugLogFormatted("Adding DrawGUI to PostRender Queue");
@@ -99,6 +113,7 @@ namespace KerbalAlarmClock
             }
             else
             {
+                //if the variable is true assume leaving flight mode and remove from rendering queue
                 if (blnInPostQueue)
                 {
                     KACWorker.DebugLogFormatted("Removinging DrawGUI to PostRender Queue");
@@ -109,8 +124,19 @@ namespace KerbalAlarmClock
         }
 
         //This is what we do every frame when the object is being drawn
+        Boolean UpdateChecked = false;
         public void DrawGUI()
         {
+            if (!UpdateChecked)
+            {
+                UpdateChecked = true;
+                if (Settings.CheckForUpdatesOnStart)
+                {
+                    KACWorker.DebugLogFormatted("Checking for update");
+                    KACUtils.getLatestVersion();
+                }
+            }
+
             WorkerObjectInstance.SetupDrawStuff();
 
             //If in flight mode then look for passed alarms to display stuff
@@ -209,7 +235,6 @@ namespace KerbalAlarmClock
         //Updates the variables that are used in the drawing - this is not on the OnGUI thread
         public void UpdateDetails()
         {
-            //year is 0 here - need to look at how to use time - maybe have a setdate and a set duration or something - date give year 1, etc, duration would be year 0 - ie without all the +1s in the math
             CurrentTime.UT = Planetarium.GetUniversalTime();
 
             if (dteWarpInfluence == null)
@@ -277,11 +302,11 @@ namespace KerbalAlarmClock
         #region "OnGUI Stuff"
         public void SetupDrawStuff()
         {
+            GUI.skin = HighLogic.Skin;
             if (KACResources.styleWindow == null)
             {
                 KACResources.SetStyles();
             }
-            GUI.skin = HighLogic.Skin;
         }
 
         //On OnGUI - draw alarms if needed
@@ -376,34 +401,60 @@ namespace KerbalAlarmClock
 
 
         //Basic setup of draw stuff
-        int intLeftWindowWidth = 290;
-        int intLeftWindowMinHeight = 139;
+        int intLeftWindowWidth = 295;
+        int intLeftWindowMinHeight = 129;
+        int intLeftWindowBaseHeight = 129;
         int intRightWindowWidth = 388;
 
 
         //is the add pane visible
         private Boolean _ShowAddPane = false;
         static Rect _WindowPosAdd;
+        //Settings Window
+        private Boolean _ShowSettings = false;
+        private static Rect _WindowPosSettings;
+        private static int _WindowSettingsID=0;
+
         public void DrawWindow()
         {
-            Rect MainWindowPos = new Rect(Settings.WindowPos);
-            if (Settings.WindowMinimized) MainWindowPos.height=intLeftWindowMinHeight;
-            Settings.WindowPos = GUILayout.Window(123546, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + Settings.Version, GUILayout.MinWidth(intLeftWindowWidth), GUILayout.MaxWidth(intLeftWindowWidth));
+            //if (_ShowSettings)
+            //{
+            //    if (_WindowSettingsID == 0) _WindowSettingsID = rnd.Next(1,2000000);
+            //    _WindowPosSettings.x = Settings.WindowPos.x;
+            //    _WindowPosSettings.y = Settings.WindowPos.y;
+            //    _WindowPosSettings = GUILayout.Window(_WindowSettingsID, _WindowPosSettings, FillSettingsWindow, "Settings for Kerbal Alarm Clock - " + Settings.Version);
+            //}
+            //else
+            //{
+                Rect MainWindowPos = new Rect(Settings.WindowPos);
+                if (Settings.WindowMinimized)
+                {
+                    MainWindowPos.height = intLeftWindowMinHeight;
+                }
+                else
+                {
+                    MainWindowPos.height = intLeftWindowBaseHeight;
+                    if (Settings.Alarms.Count > 1)
+                    {
+                        MainWindowPos.height = intLeftWindowBaseHeight + ((Settings.Alarms.Count - 1) * 27);
+                    }
+                }
+                Settings.WindowPos = GUILayout.Window(123546, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + Settings.Version, GUILayout.MinWidth(intLeftWindowWidth), GUILayout.MaxWidth(intLeftWindowWidth));
 
-            if (_ShowAddPane)
-            {
-                long AddWindowHeight;
-                switch (intAddType)
-            	{
-                    case 0: AddWindowHeight = 397; break;
-                    case 1: AddWindowHeight = 370; break;
-                    default: AddWindowHeight = 397; break;
-            	}
-                _WindowPosAdd = GUILayout.Window(1235467, new Rect(Settings.WindowPos.x + Settings.WindowPos.width, Settings.WindowPos.y, intRightWindowWidth, AddWindowHeight), FillAddWindow, "Add New Alarm", GUILayout.MinWidth(intRightWindowWidth), GUILayout.MaxWidth(intRightWindowWidth), GUILayout.ExpandWidth(false));
-            }
-
+                if (_ShowAddPane)
+                {
+                    long AddWindowHeight;
+                    switch (intAddType)
+                    {
+                        case 0: AddWindowHeight = 397; break;
+                        case 1: AddWindowHeight = 370; break;
+                        default: AddWindowHeight = 397; break;
+                    }
+                    _WindowPosAdd = GUILayout.Window(1235467, new Rect(Settings.WindowPos.x + Settings.WindowPos.width, Settings.WindowPos.y, intRightWindowWidth, AddWindowHeight), FillAddWindow, "Add New Alarm", GUILayout.MinWidth(intRightWindowWidth), GUILayout.MaxWidth(intRightWindowWidth), GUILayout.ExpandWidth(false));
+                }
+            //}
         }
-        
+
         //Now the layout
         public void FillWindow(int intWindowID)
         {
@@ -413,14 +464,9 @@ namespace KerbalAlarmClock
 
             //Heading Part
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Alarm List", KACResources.styleHeading);
-            
-            // Buttons to minimize and add alarms
-            KACResources.styleSmallButton = new GUIStyle(GUI.skin.button);
-            KACResources.styleSmallButton.fixedWidth = 40;
-            KACResources.styleSmallButton.fixedHeight = 25;
-            KACResources.styleSmallButton.alignment = TextAnchor.MiddleCenter;
+            GUILayout.Label("Alarm List", KACResources.styleHeading, GUILayout.ExpandWidth(true));
 
+            //If the settings pane is visible then dont show the rest
             string strMinimizedText = "_";
             if (Settings.WindowMinimized) strMinimizedText = "+";
 
@@ -429,7 +475,7 @@ namespace KerbalAlarmClock
                 Settings.WindowMinimized = !Settings.WindowMinimized;
                 Settings.Save();
             }
-
+            
             if (DrawToggle(ref _ShowAddPane, "Add", KACResources.styleSmallButton))
             {
                 //reset the add stuff
@@ -920,6 +966,19 @@ namespace KerbalAlarmClock
             return false;
         }
 
+
+        public Boolean DrawToggle(ref Boolean blnVar, Texture image , GUIStyle style, params GUILayoutOption[] options)
+        {
+            Boolean blnReturn = GUILayout.Toggle(blnVar, image, style, options);
+            if (blnReturn != blnVar)
+            {
+                blnVar = blnReturn;
+                DebugLogFormatted("Toggle Changed:" + blnVar.ToString());
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Draws a toggle button like a checkbox
         /// </summary>
@@ -927,7 +986,7 @@ namespace KerbalAlarmClock
         /// <returns>True when check state has changed</returns>
         public Boolean DrawCheckbox(ref Boolean blnVar, string strText, params GUILayoutOption[] options)
         {
-            return DrawToggle(ref blnVar, strText, GUI.skin.toggle,options);
+            return DrawToggle(ref blnVar, strText, KACResources.styleCheckbox, options);
         }
 
 

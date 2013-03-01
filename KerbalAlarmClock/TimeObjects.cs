@@ -138,6 +138,14 @@ namespace KerbalAlarmClock
             strReturn += string.Format("{0} Years, {1} Days, {2:00}:{3:00}:{4:00}", Math.Abs(YearEarth), Math.Abs(DayEarth), Math.Abs(HourEarth), Math.Abs(Minute), Math.Abs(Second));
             return strReturn;
         }
+
+        public string UTString()
+        {
+            string strReturn = "";
+            if (UT < 0) strReturn += "+ ";
+            strReturn += String.Format("{0:N0}", Math.Abs(UT));
+            return strReturn;
+        }
         #endregion
 
         public override string ToString()
@@ -156,6 +164,7 @@ namespace KerbalAlarmClock
         public Boolean Enabled = true;                                  //Whether it is enabled - not in use currently
         public KerbalTime AlarmTime = new KerbalTime();                 //UT of the alarm
         public Boolean HaltWarp = true;                                 //Whether the time warp will be halted at this event
+        public Boolean PauseGame = false;                                //Whether the Game will be paused at this event
         public string Message = "";                                     //Some descriptive text
 
         //Dynamic props down here
@@ -170,6 +179,9 @@ namespace KerbalAlarmClock
         public int AlarmWindowID=0;
         public Boolean AlarmWindowClosed = false;
 
+        //Details of the alarm message
+        public Boolean EditWindowOpen=false;                                        
+        
         #region "Constructors"
         public KACAlarm()
         {
@@ -182,7 +194,7 @@ namespace KerbalAlarmClock
                 SaveName = HighLogic.CurrentGame.Title;
             AlarmTime.UT = UT;
         }
-        public KACAlarm(double UT,string NewName,string NewMessage,Boolean NewHaltWarp)
+        public KACAlarm(double UT,string NewName,string NewMessage,Boolean NewHaltWarp,Boolean NewPause)
         {
             if (KACBehaviour.IsFlightMode)
                 SaveName = HighLogic.CurrentGame.Title;
@@ -190,6 +202,7 @@ namespace KerbalAlarmClock
             Name = NewName;
             Message = NewMessage;
             HaltWarp = NewHaltWarp;
+            PauseGame = NewPause;
         }
         #endregion
 
@@ -199,7 +212,7 @@ namespace KerbalAlarmClock
         /// <returns>CSV string of persistant properties</returns>
         public string SerializeString()
         {
-            return KACUtils.PipeSepVariables(SaveName, Name, Enabled, AlarmTime.UT, HaltWarp, Message);
+            return KACUtils.PipeSepVariables(SaveName, Name, Enabled, AlarmTime.UT, HaltWarp, PauseGame, Message);
         }
 
         /// <summary>
@@ -215,9 +228,19 @@ namespace KerbalAlarmClock
             Enabled = Convert.ToBoolean(vars[2]);
             AlarmTime.UT = Convert.ToDouble(vars[3]);
             HaltWarp = Convert.ToBoolean(vars[4]);
-            Message = vars[5];
+            if (vars.Length == 6)
+                Message = vars[5];
+            else
+            {
+                PauseGame = Convert.ToBoolean(vars[5]);
+                Message = vars[6];
+            }
         }
 
+        public static int SortByUT(KACAlarm c1, KACAlarm c2)
+        {
+            return c1.Remaining.UT.CompareTo(c2.Remaining.UT);
+        }
     }
 
     /// <summary>
@@ -253,7 +276,7 @@ namespace KerbalAlarmClock
             Boolean blnReturn = false;
             foreach (KACAlarm tmpAlarm in this)
             {
-                if (tmpAlarm.AlarmTime.UT > Planetarium.GetUniversalTime() && tmpAlarm.Enabled && !tmpAlarm.Actioned)
+                if (tmpAlarm.AlarmTime.UT > Planetarium.GetUniversalTime() && tmpAlarm.Enabled && !tmpAlarm.Actioned && (tmpAlarm.SaveName.ToLower() == SaveName.ToLower()))
                 {
                     blnReturn = true;
                 }
@@ -293,6 +316,34 @@ namespace KerbalAlarmClock
                     alarmReturn=tmpAlarm;
             }
             return alarmReturn;
+        }
+
+        public Boolean PauseAlarmOnScreen(string SaveName)
+        {
+            Boolean blnReturn = false;
+            foreach (KACAlarm tmpAlarm in this)
+            {
+                if ((tmpAlarm.SaveName.ToLower() == SaveName.ToLower()) && tmpAlarm.AlarmWindowID!=0 && !tmpAlarm.AlarmWindowClosed )
+                {
+                    blnReturn = true;
+                    break;
+                }
+            }
+            return blnReturn;
+        }
+    }
+    public class KACVesselSOI
+    {
+        public string Name;
+        public string SOIName;
+        //public String SOINew;
+        //public Boolean SOIChanged { get { return (SOILast != SOINew); } }
+
+        //public KACVesselSOI() { }
+        public KACVesselSOI(String VesselName, String SOIBody)
+        {
+            Name = VesselName;
+            SOIName = SOIBody;
         }
     }
 }

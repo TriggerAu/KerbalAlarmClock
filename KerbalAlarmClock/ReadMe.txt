@@ -17,6 +17,9 @@ The plugin records troubleshooting data in the "KSP_Data\outut_log.txt".
 If there are errors in loading the config you can delete the "\PluginData\kerbalalarmclock\config.xml" and restart the game
 
 VERSION HISTORY
+Version 1.2.0.1		-	KSP Version: 0.18.4
+- Resolved a few more GUI Issues
+
 Version 1.2.0.0		-	KSP Version: 0.18.4
 - Resolved a few more GUI Issues
 - Added Web update check

@@ -471,10 +471,10 @@ namespace KerbalAlarmClock
                 else
                 {
                     MainWindowPos.height = intLeftWindowBaseHeight;
-                    if (Settings.Alarms.Count > 1)
+                    if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count > 1)
                     {
-                        if (Settings.Alarms.Count <Settings.AlarmListMaxAlarmsInt)
-                            MainWindowPos.height = intLeftWindowBaseHeight + ((Settings.Alarms.Count - 1) * 26);
+                        if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count < Settings.AlarmListMaxAlarmsInt)
+                            MainWindowPos.height = intLeftWindowBaseHeight + ((Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count - 1) * 26);
                         else
                             MainWindowPos.height = intLeftWindowBaseHeight + ((Settings.AlarmListMaxAlarmsInt - 1) * 26);
                         if (Settings.AlarmOnSOIChange)

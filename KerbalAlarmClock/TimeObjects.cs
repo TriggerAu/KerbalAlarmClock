@@ -143,7 +143,7 @@ namespace KerbalAlarmClock
         {
             string strReturn = "";
             if (UT < 0) strReturn += "+ ";
-            strReturn += String.Format("{0:N0}", Math.Abs(UT));
+            strReturn += String.Format("{0:N0}s", Math.Abs(UT));
             return strReturn;
         }
         #endregion
@@ -199,6 +199,7 @@ namespace KerbalAlarmClock
             if (KACBehaviour.IsFlightMode)
                 SaveName = HighLogic.CurrentGame.Title;
             AlarmTime.UT = UT;
+            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
             Name = NewName;
             Message = NewMessage;
             HaltWarp = NewHaltWarp;

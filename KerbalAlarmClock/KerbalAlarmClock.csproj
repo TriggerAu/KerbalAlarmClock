@@ -50,9 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="KerbalAlarmClock.cs" />
-    <Compile Include="KerbalAlarmClock_AddWindow.cs" />
-    <Compile Include="KerbalAlarmClock_AlarmWindow.cs" />
-    <Compile Include="KerbalAlarmClock_SettingsWindow.cs" />
+    <Compile Include="KerbalAlarmClock_Debug.cs" />
+    <Compile Include="KerbalAlarmClock_Window.cs" />
+    <Compile Include="KerbalAlarmClock_WindowAdd.cs" />
+    <Compile Include="KerbalAlarmClock_WindowAlarm.cs" />
+    <Compile Include="KerbalAlarmClock_WindowSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsAndUtils.cs" />
     <Compile Include="TimeObjects.cs" />

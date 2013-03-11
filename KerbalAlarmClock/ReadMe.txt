@@ -17,6 +17,12 @@ The plugin records troubleshooting data in the "KSP_Data\outut_log.txt".
 If there are errors in loading the config you can delete the "\PluginData\kerbalalarmclock\config.xml" and restart the game
 
 VERSION HISTORY
+Version 1.3.0.0		-	KSP Version: 0.18.4
+- Added storing and retreiving the maneuver node tied to an alarm
+- Added ability to jump to the ship that the alarm was created on
+- Add flight path SOI detection and alarm creation - when enabled will automatically create alarms for SOI changes and then adjust and maintain them for you
+- Separated alarm storage from main config file - now a file per save game
+
 Version 1.2.0.1		-	KSP Version: 0.18.4
 - Resolved a few more GUI Issues
 

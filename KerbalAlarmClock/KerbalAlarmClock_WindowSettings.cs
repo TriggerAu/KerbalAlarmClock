@@ -87,19 +87,31 @@ namespace KerbalAlarmClock
             //Preferences
             GUILayout.Label("Global Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawCheckbox2(ref Settings.AlarmOnSOIChange, "Throw alarm on SOI Change (Any vessel)"))
+            if (DrawCheckbox2(ref Settings.AlarmAddSOIAuto, "Detect and Add Alarms for SOI Changes"))
                 Settings.Save();
-            //if (DrawCheckbox2(ref Settings.AlarmOnSOIChange_HaltWarp, "HaltWarp"))
-            //    Settings.Save();
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(20);
-            GUILayout.Label("On Alarm:", KACResources.styleAddHeading, GUILayout.Width(70));
-            if (DrawRadioList(ref Settings.AlarmOnSOIChange_Action, "Message Only", "Kill Time Warp", "Pause Game"))
+            if (!Settings.AlarmAddSOIAuto)
+                Settings.AlarmCatchSOIChange = false;
+            if (Settings.AlarmAddSOIAuto)
             {
-                Settings.Save();
-            }
-            GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(20);
+                if (DrawCheckbox2(ref Settings.AlarmCatchSOIChange, "Throw alarm on background SOI Change"))
+                    Settings.Save();
+                GUILayout.EndHorizontal();
 
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(30);
+                GUILayout.Label("On Alarm:", KACResources.styleAddHeading, GUILayout.Width(70));
+                if (DrawRadioList(ref Settings.AlarmOnSOIChange_Action, "Message Only", "Kill Time Warp", "Pause Game"))
+                {
+                    Settings.Save();
+                }
+                GUILayout.EndHorizontal();
+            }
+            else
+            {
+                GUILayout.Space(68);
+            }
 
             GUILayout.EndVertical();
 

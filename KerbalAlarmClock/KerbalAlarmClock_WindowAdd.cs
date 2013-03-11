@@ -16,6 +16,8 @@ namespace KerbalAlarmClock
         private string strAlarmMessage = "";
         private string strAlarmNameNode = "";
         private string strAlarmMessageNode = "";
+        private string strAlarmNameSOI = "";
+        private string strAlarmMessageSOI = "";
         //private string strAlarmNameXFER = "";
         //private string strAlarmMessageXFER = "";
         //private Boolean blnHaltWarp = true;
@@ -32,18 +34,24 @@ namespace KerbalAlarmClock
             strMinutes = "10";
             strRawUT = "";
 
-            strAlarmName = FlightGlobals.ActiveVessel.vesselName + "-Alarm";
-            strAlarmNameNode = FlightGlobals.ActiveVessel.vesselName + "-Maneuver";
+            strAlarmName = FlightGlobals.ActiveVessel.vesselName + "";
+            strAlarmNameNode = FlightGlobals.ActiveVessel.vesselName + "";
+            strAlarmNameSOI = FlightGlobals.ActiveVessel.vesselName + "";
             strAlarmMessage = "Time to pay attention to " + FlightGlobals.ActiveVessel.vesselName + "\r\nManual Alarm";
             strAlarmMessageNode = "Time to pay attention to " + FlightGlobals.ActiveVessel.vesselName + "\r\nNearing Maneuvering Node";
+            strAlarmMessageSOI = "Time to pay attention to " + FlightGlobals.ActiveVessel.vesselName + "\r\nNearing SOI Change";
             intActionSelected = 1;
             //blnHaltWarp = true;
 
             strNodeMargin = "1";
 
-            if (KACBehaviour.ManeuverNodeExists)
+            if (KACWorkerGameState.ManeuverNodeExists)
             {
                 intAddType = 1;//AddAlarmType.Node;
+            }
+            else if (KACWorkerGameState.SOIPointExists)
+            {
+                intAddType = 2;//AddAlarmType.Node;
             }
             else
             {
@@ -63,8 +71,8 @@ namespace KerbalAlarmClock
             //GUILayout.EndVertical();
 
             GUILayout.BeginVertical();
-            //string[] strAddTypes = new string[] { "Raw", "Maneuver Node", "Transfer Window" };
-            string[] strAddTypes = new string[] { "Raw", "Maneuver Node" };
+            //string[] strAddTypes = new string[] { "Raw", "Maneuver Node", "SOI", "Transfer Window" };
+            string[] strAddTypes = new string[] { "Raw", "Maneuver","SOI" };
             intAddType = GUILayout.Toolbar((int)intAddType, strAddTypes,KACResources.styleButton);
 
             WindowLayout_AddPane_Common();
@@ -75,9 +83,12 @@ namespace KerbalAlarmClock
                     WindowLayout_AddPane_Raw();
                     break;
                 case 1:
-                    WindowLayout_AddPane_Node();
+                    WindowLayout_AddPane_Maneuver();
                     break;
                 case 2:
+                    WindowLayout_AddPane_SOI();
+                    break;
+                case 3:
                     WindowLayout_AddPane_Transfer();
                     break;
                 default:
@@ -109,14 +120,18 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical(GUILayout.Width(260), GUILayout.MaxWidth(260));
             switch (intAddType)
             {
+                case 2:
+                    strAlarmNameSOI = GUILayout.TextField(strAlarmNameSOI, KACResources.styleAddField).Replace("|", "");
+                    strAlarmMessageSOI = GUILayout.TextArea(strAlarmMessageSOI, KACResources.styleAddField).Replace("|", "");
+                    break;
                 case 1:
-                    strAlarmNameNode = GUILayout.TextField(strAlarmNameNode, KACResources.styleAddField);
-                    strAlarmMessageNode = GUILayout.TextArea(strAlarmMessageNode, KACResources.styleAddField);
+                    strAlarmNameNode = GUILayout.TextField(strAlarmNameNode, KACResources.styleAddField).Replace("|", "");
+                    strAlarmMessageNode = GUILayout.TextArea(strAlarmMessageNode, KACResources.styleAddField).Replace("|", "");
                     break;
                 case 0:
                 default:
-                    strAlarmName = GUILayout.TextField(strAlarmName, KACResources.styleAddField);
-                    strAlarmMessage = GUILayout.TextArea(strAlarmMessage, KACResources.styleAddField);
+                    strAlarmName = GUILayout.TextField(strAlarmName, KACResources.styleAddField).Replace("|", "");
+                    strAlarmMessage = GUILayout.TextArea(strAlarmMessage, KACResources.styleAddField).Replace("|", "");
                     break;
             }
             GUILayout.EndVertical();
@@ -150,8 +165,8 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical(GUILayout.Width(260), GUILayout.MaxWidth(260));
-            strName = GUILayout.TextField(strName, KACResources.styleAddField);
-            strMessage = GUILayout.TextArea(strMessage, KACResources.styleAddField);
+            strName = GUILayout.TextField(strName, KACResources.styleAddField).Replace("|", "");
+            strMessage = GUILayout.TextArea(strMessage, KACResources.styleAddField).Replace("|", "");
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
@@ -244,9 +259,9 @@ namespace KerbalAlarmClock
                 //If its an interval add the interval to the current time
                 if (blnRawInterval)
                 {
-                    rawTime = new KerbalTime(CurrentTime.UT + rawTime.UT);
+                    rawTime = new KerbalTime(KACWorkerGameState.CurrentTime.UT + rawTime.UT);
                 }
-                rawTimeToAlarm = new KerbalTime(rawTime.UT - CurrentTime.UT);
+                rawTimeToAlarm = new KerbalTime(rawTime.UT - KACWorkerGameState.CurrentTime.UT);
 
                 //turn off padding here
                 GUILayout.BeginHorizontal(KACResources.styleAddAlarmArea);
@@ -270,7 +285,9 @@ namespace KerbalAlarmClock
                 GUILayout.Space(15);
                 if (GUILayout.Button("Add Alarm",KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(40)))
                 {
-                    Settings.Alarms.Add(new KACAlarm(rawTime.UT, strAlarmName, strAlarmMessage, (intActionSelected>0),(intActionSelected>1)));
+                    //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
+                    Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmMessage, rawTime.UT,0,KACAlarm.AlarmType.Raw, 
+                        (intActionSelected > 0), (intActionSelected > 1)));
                     Settings.Save();
                     _ShowAddPane = false;
                 }
@@ -289,7 +306,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Screen Layout for adding Alarm from Maneuver Node
         /// </summary>
-        private void WindowLayout_AddPane_Node()
+        private void WindowLayout_AddPane_Maneuver()
         {
             GUILayout.BeginVertical();
             GUILayout.Label("Node Details...", KACResources.styleAddSectionHeading);
@@ -316,7 +333,7 @@ namespace KerbalAlarmClock
             }
             else
             {
-                if (!KACBehaviour.ManeuverNodeExists)
+                if (!KACWorkerGameState.ManeuverNodeExists)
                 {
                     GUILayout.Label("No Maneuver Nodes Found", GUILayout.ExpandWidth(true));
                 }
@@ -327,9 +344,9 @@ namespace KerbalAlarmClock
                     for (int intNode = 0; (intNode < myVessel.patchedConicSolver.maneuverNodes.Count) && !blnFoundNode; intNode++)
                     {
                         KerbalTime nodeTime = new KerbalTime(myVessel.patchedConicSolver.maneuverNodes[intNode].UT);
-                        KerbalTime nodeInterval = new KerbalTime(nodeTime.UT - CurrentTime.UT);
+                        KerbalTime nodeInterval = new KerbalTime(nodeTime.UT - KACWorkerGameState.CurrentTime.UT);
 
-                        long lngMarginMinutes;
+                        long lngMarginMinutes=0;
                         KerbalTime nodeAlarm;
                         KerbalTime nodeAlarmInterval;
 
@@ -337,7 +354,7 @@ namespace KerbalAlarmClock
                         {
                             lngMarginMinutes = Convert.ToInt64(strNodeMargin);
                             nodeAlarm = new KerbalTime(nodeTime.UT - (lngMarginMinutes * 60));
-                            nodeAlarmInterval = new KerbalTime(nodeTime.UT - CurrentTime.UT - (lngMarginMinutes * 60));
+                            nodeAlarmInterval = new KerbalTime(nodeTime.UT - KACWorkerGameState.CurrentTime.UT - (lngMarginMinutes * 60));
                         }
                         catch (Exception)
                         {
@@ -346,7 +363,7 @@ namespace KerbalAlarmClock
                             strMarginConversion = "Unable to Add the Margin Minutes";
                         }
 
-                        if ((nodeTime.UT > CurrentTime.UT) && strMarginConversion == "")
+                        if ((nodeTime.UT > KACWorkerGameState.CurrentTime.UT) && strMarginConversion == "")
                         {
                             GUILayout.BeginHorizontal();
                             GUILayout.BeginVertical(GUILayout.Width(100), GUILayout.MaxWidth(100));
@@ -373,7 +390,8 @@ namespace KerbalAlarmClock
 
                             if (GUILayout.Button("Add Alarm",KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(70)))
                             {
-                                Settings.Alarms.Add(new KACAlarm(nodeAlarm.UT, strAlarmNameNode, strAlarmMessageNode, (intActionSelected>0),(intActionSelected>1)));
+                                Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmNameNode, strAlarmMessageNode, nodeAlarm.UT, (lngMarginMinutes * 60), KACAlarm.AlarmType.Maneuver,
+                                    (intActionSelected > 0), (intActionSelected > 1), myVessel.patchedConicSolver.maneuverNodes[intNode]));
                                 Settings.Save();
                                 _ShowAddPane = false;
                             }
@@ -395,6 +413,108 @@ namespace KerbalAlarmClock
 
             GUILayout.EndVertical();
         }
+
+
+        private void WindowLayout_AddPane_SOI()
+        {
+            GUILayout.BeginVertical();
+            GUILayout.Label("SOI Details...", KACResources.styleAddSectionHeading);
+
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+            GUILayout.BeginHorizontal();
+
+            GUILayout.BeginVertical(GUILayout.Width(140));
+            GUILayout.Label("Margin Minutes:", KACResources.styleAddHeading);
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical(GUILayout.Width(210), GUILayout.MaxWidth(210));
+            strNodeMargin = GUILayout.TextField(strNodeMargin, KACResources.styleAddField);
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+
+            Vessel myVessel = FlightGlobals.ActiveVessel;
+            if (myVessel == null)
+            {
+                GUILayout.Label("No Active Vessel");
+            }
+            else
+            {
+                if (!KACWorkerGameState.SOIPointExists)
+                {
+                    GUILayout.Label("No SOI Point Found", GUILayout.ExpandWidth(true));
+                }
+                else
+                {
+                    string strMarginConversion = "";
+                    KerbalTime soiTime = new KerbalTime(KACWorkerGameState.CurrentVessel.orbit.UTsoi);
+                    KerbalTime soiInterval = new KerbalTime(soiTime.UT - KACWorkerGameState.CurrentTime.UT);
+
+                    long lngMarginMinutes=0;
+                    KerbalTime soiAlarm;
+                    KerbalTime soiAlarmInterval;
+
+                    try
+                    {
+                        lngMarginMinutes = Convert.ToInt64(strNodeMargin);
+                        soiAlarm = new KerbalTime(soiTime.UT - (lngMarginMinutes * 60));
+                        soiAlarmInterval = new KerbalTime(soiTime.UT - KACWorkerGameState.CurrentTime.UT - (lngMarginMinutes * 60));
+                    }
+                    catch (Exception)
+                    {
+                        soiAlarm = null;
+                        soiAlarmInterval = null;
+                        strMarginConversion = "Unable to Add the Margin Minutes";
+                    }
+
+                    if ((soiTime.UT > KACWorkerGameState.CurrentTime.UT) && strMarginConversion == "")
+                    {
+                        GUILayout.BeginHorizontal();
+                        GUILayout.BeginVertical(GUILayout.Width(100), GUILayout.MaxWidth(100));
+                        GUILayout.Label("Node Date:", KACResources.styleAddHeading);
+                        GUILayout.Label("Time to Node:", KACResources.styleAddHeading);
+                        GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading);
+                        GUILayout.EndVertical();
+                        GUILayout.BeginVertical(GUILayout.Width(150), GUILayout.MaxWidth(150));
+
+                        if (Settings.TimeAsUT)
+                        {
+                            GUILayout.Label(soiTime.UTString(), KACResources.styleContent);
+                            GUILayout.Label(soiInterval.UTString(), KACResources.styleContent);
+                            GUILayout.Label(soiAlarmInterval.UTString(), KACResources.styleContent);
+                        }
+                        else
+                        {
+                            GUILayout.Label(soiTime.DateString(), KACResources.styleContent);
+                            GUILayout.Label(soiInterval.IntervalString(), KACResources.styleContent);
+                            GUILayout.Label(soiAlarmInterval.IntervalString(), KACResources.styleContent);
+                        }
+                        GUILayout.EndVertical();
+                        GUILayout.Space(15);
+
+                        if (GUILayout.Button("Add Alarm", KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(70)))
+                        {
+                            Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmNameSOI, strAlarmMessageSOI, soiAlarm.UT, lngMarginMinutes*60, KACAlarm.AlarmType.SOIChange,
+                                (intActionSelected > 0), (intActionSelected > 1)));
+                            Settings.Save();
+                            _ShowAddPane = false;
+                        }
+                        GUILayout.EndHorizontal();
+
+                    }
+
+                    if (strMarginConversion != "")
+                    {
+                        GUILayout.Label(strMarginConversion, GUILayout.ExpandWidth(true));
+                    }
+                }
+            }
+
+            GUILayout.EndVertical();
+        }
+
 
         private void WindowLayout_AddPane_Transfer()
         {

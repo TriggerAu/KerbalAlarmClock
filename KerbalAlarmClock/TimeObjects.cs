@@ -154,18 +154,34 @@ namespace KerbalAlarmClock
         }
     }
 
+
     /// <summary>
     /// Class to hold an Alarm event
     /// </summary>
     public class KACAlarm
     {
+        //Some Structure
+        public enum AlarmType
+        {
+            Raw,
+            Maneuver,
+            SOIChange,
+            Transfer
+        }
+
         public string SaveName = "";                                    //Which Save File
+        public string VesselID = "";                                    //uniqueID of Vessel
         public string Name = "";                                        //Name of Alarm
-        public Boolean Enabled = true;                                  //Whether it is enabled - not in use currently
-        public KerbalTime AlarmTime = new KerbalTime();                 //UT of the alarm
-        public Boolean HaltWarp = true;                                 //Whether the time warp will be halted at this event
-        public Boolean PauseGame = false;                                //Whether the Game will be paused at this event
         public string Message = "";                                     //Some descriptive text
+        public AlarmType TypeOfAlarm=AlarmType.Raw;                     //What Type of Alarm
+
+        public KerbalTime AlarmTime = new KerbalTime();                 //UT of the alarm
+        public Double AlarmMarginSecs = 0;                               //What the margin from the event was
+        public Boolean Enabled = true;                                  //Whether it is enabled - not in use currently
+        public Boolean HaltWarp = true;                                 //Whether the time warp will be halted at this event
+        public Boolean PauseGame = false;                               //Whether the Game will be paused at this event
+
+        public ManeuverNode ManNode;                                    //Stored ManeuverNode attached to alarm
 
         //Dynamic props down here
         public KerbalTime Remaining = new KerbalTime();                 //UT value of how long till the alarm fires
@@ -185,26 +201,46 @@ namespace KerbalAlarmClock
         #region "Constructors"
         public KACAlarm()
         {
-            if (KACBehaviour.IsFlightMode)
+            if (KACWorkerGameState.IsFlightMode)
                 SaveName = HighLogic.CurrentGame.Title;
         }
         public KACAlarm(double UT)
         {
-            if (KACBehaviour.IsFlightMode)
+            if (KACWorkerGameState.IsFlightMode)
                 SaveName = HighLogic.CurrentGame.Title;
             AlarmTime.UT = UT;
         }
-        public KACAlarm(double UT,string NewName,string NewMessage,Boolean NewHaltWarp,Boolean NewPause)
+        public KACAlarm(string vID, string NewName, string NewMessage, double UT,Double Margin,AlarmType atype, Boolean NewHaltWarp, Boolean NewPause)
         {
-            if (KACBehaviour.IsFlightMode)
+            if (KACWorkerGameState.IsFlightMode)
                 SaveName = HighLogic.CurrentGame.Title;
-            AlarmTime.UT = UT;
-            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
+            VesselID = vID;
             Name = NewName;
             Message = NewMessage;
+            AlarmTime.UT = UT;
+            AlarmMarginSecs = Margin;
+            TypeOfAlarm = atype;
+            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
             HaltWarp = NewHaltWarp;
             PauseGame = NewPause;
         }
+
+        public KACAlarm(string vID, string NewName, string NewMessage, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, ManeuverNode NewManeuver)
+        {
+            if (KACWorkerGameState.IsFlightMode)
+                SaveName = HighLogic.CurrentGame.Title;
+            VesselID = vID;
+            Name = NewName;
+            Message = NewMessage;
+            AlarmTime.UT = UT;
+            AlarmMarginSecs = Margin;
+            TypeOfAlarm = atype;
+            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
+            HaltWarp = NewHaltWarp;
+            PauseGame = NewPause;
+            ManNode = NewManeuver;
+        }
+
         #endregion
 
         /// <summary>
@@ -216,6 +252,22 @@ namespace KerbalAlarmClock
             return KACUtils.PipeSepVariables(SaveName, Name, Enabled, AlarmTime.UT, HaltWarp, PauseGame, Message);
         }
 
+        public string SerializeString2()
+        {
+            //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
+            string strReturn = "";
+            strReturn += VesselID + "|";
+            strReturn += KACUtils.PipeSepVariables(Name, Message, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame);
+            strReturn += "|";
+            if (ManNode != null)
+            {
+                strReturn += ManNode.UT;
+                strReturn += "," + KACUtils.CommaSepVariables(ManNode.DeltaV.x, ManNode.DeltaV.y, ManNode.DeltaV.z);
+                strReturn += "," + KACUtils.CommaSepVariables(ManNode.nodeRotation.x, ManNode.nodeRotation.y, ManNode.nodeRotation.z, ManNode.nodeRotation.w);
+            }
+            return strReturn;
+        }
+
         /// <summary>
         /// Basically deserializing the alarm
         /// </summary>
@@ -223,7 +275,7 @@ namespace KerbalAlarmClock
         public void LoadFromString(string AlarmDetails)
         {
             string[] vars = AlarmDetails.Split("|".ToCharArray());
-
+            VesselID = "";
             SaveName = vars[0];
             Name = vars[1];
             Enabled = Convert.ToBoolean(vars[2]);
@@ -238,6 +290,37 @@ namespace KerbalAlarmClock
             }
         }
 
+        public void LoadFromString2(string AlarmDetails)
+        {
+            string[] vars = AlarmDetails.Split("|".ToCharArray());
+            SaveName = HighLogic.CurrentGame.Title;
+            VesselID=vars[0];
+            Name = vars[1];
+            Message = vars[2];
+            AlarmTime.UT = Convert.ToDouble(vars[3]);
+            AlarmMarginSecs = Convert.ToDouble(vars[4]);
+            TypeOfAlarm = (KACAlarm.AlarmType)Enum.Parse(typeof(KACAlarm.AlarmType), vars[5]);
+            Enabled = Convert.ToBoolean(vars[6]);
+            HaltWarp = Convert.ToBoolean(vars[7]);
+            PauseGame = Convert.ToBoolean(vars[8]);
+
+            string strManeuver = vars[9];
+            if (strManeuver != "")
+            {
+                ManNode = new ManeuverNode();
+                string[] manparts = ((string)vars[9]).Split(",".ToCharArray());
+                ManNode.UT = Convert.ToDouble(manparts[0]);
+                ManNode.DeltaV = new Vector3d(Convert.ToDouble(manparts[1]),
+                                            Convert.ToDouble(manparts[2]),
+                                            Convert.ToDouble(manparts[3])
+                        );
+                ManNode.nodeRotation = new Quaternion(Convert.ToSingle(manparts[4]),
+                                                    Convert.ToSingle(manparts[5]),
+                                                    Convert.ToSingle(manparts[6]),           
+                                                    Convert.ToSingle(manparts[7])
+                        );
+            }
+        }
         public static int SortByUT(KACAlarm c1, KACAlarm c2)
         {
             return c1.Remaining.UT.CompareTo(c2.Remaining.UT);

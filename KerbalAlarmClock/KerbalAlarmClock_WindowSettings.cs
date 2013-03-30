@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Linq;
 
 using UnityEngine;
 using KSP;
@@ -12,6 +13,9 @@ namespace KerbalAlarmClock
     {
         public void FillSettingsWindow(int WindowID)
         {
+            strAlarmDescSOI = String.Format(strAlarmDescSOI, Settings.AlarmAddSOIAutoThreshold.ToString());
+            strAlarmDescXfer = String.Format(strAlarmDescXfer, Settings.AlarmXferRecalcThreshold.ToString());
+
             GUILayout.BeginVertical();
 
             //Update Check Area
@@ -23,7 +27,7 @@ namespace KerbalAlarmClock
                     Settings.Save();
 
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Check Version Now", KACResources.styleButton))
+            if (GUILayout.Button( "Check Version Now", KACResources.styleButton))
             {
                 Settings.VersionCheck(true);
                 //Hide the flag as we already have the window open;
@@ -79,6 +83,9 @@ namespace KerbalAlarmClock
             if (DrawCheckbox2(ref Settings.HideOnPause, "Hide AlarmClock when game is paused"))
                 Settings.Save();
 
+            if (DrawCheckbox2(ref Settings.ShowTooltips, "Show Tooltips on Mouse Hover"))
+                Settings.Save();
+
             if (DrawCheckbox2(ref Settings.TimeAsUT, "Display Times as UT (instead of Date/Time)"))
                 Settings.Save();
 
@@ -87,7 +94,17 @@ namespace KerbalAlarmClock
             //Preferences
             GUILayout.Label("Global Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawCheckbox2(ref Settings.AlarmAddSOIAuto, "Detect and Add Alarms for SOI Changes"))
+            if (DrawCheckbox2(ref Settings.AlarmXferRecalc, new GUIContent("Auto Recalc of Xfer points", strAlarmDescXfer)))
+            {
+                Settings.Save();
+                //if it was turned on then force a recalc regardless of the gap
+                if (Settings.AlarmXferRecalc)
+                {
+                    RecalcTransferAlarmTimes(true);
+                }
+            }
+
+            if (DrawCheckbox2(ref Settings.AlarmAddSOIAuto, new GUIContent("Detect and Add Alarms for SOI Changes",strAlarmDescSOI)))
                 Settings.Save();
             if (!Settings.AlarmAddSOIAuto)
                 Settings.AlarmCatchSOIChange = false;
@@ -95,7 +112,7 @@ namespace KerbalAlarmClock
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(20);
-                if (DrawCheckbox2(ref Settings.AlarmCatchSOIChange, "Throw alarm on background SOI Change"))
+                if (DrawCheckbox2(ref Settings.AlarmCatchSOIChange, new GUIContent("Throw alarm on background SOI Change","This will throw an alarm whenever the name of the body a ship is orbiting changes.\r\n\r\nIt wont slow time as this approaches, just a big hammer in case we never looked at the flight plan before it happened")))
                     Settings.Save();
                 GUILayout.EndHorizontal();
 
@@ -116,6 +133,8 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
 
             GUILayout.EndVertical();
+
+            SetTooltipText();
         }
     }
 }

@@ -1,0 +1,2 @@
+version=%VERSIONSTRING%
+title=KerbalAlarmClock

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Linq;
 
 using UnityEngine;
 using KSP;
@@ -22,30 +23,17 @@ namespace KerbalAlarmClock
                 KACBehaviour.GameObjectInstance = GameObject.Find("KACBehaviour") ?? new GameObject("KACBehaviour", typeof(KACBehaviour));
 
         }
-
-        //public override void OnLoad(ConfigNode node)
-        //{
-        //    //Load the Settings File
-        //    //Settings.Load();
-        //}
-        //public override void OnSave(ConfigNode node)
-        //{
-        //    //Save the Settings File
-        //    //Settings.Save();
-
-        //}
-
     }
 
 
     public static class KACWorkerGameState
     {
-        public static string LastSaveGameName = "";
+        public static String LastSaveGameName = "";
         public static GameScenes LastGUIScene=GameScenes.SPLASHSCREEN;
         public static Vessel LastVessel=null;
         public static CelestialBody LastSOIBody=null;
 
-        public static string CurrentSaveGameName = "";
+        public static String CurrentSaveGameName = "";
         public static GameScenes CurrentGUIScene=GameScenes.SPLASHSCREEN;
         public static Vessel CurrentVessel=null;
         public static CelestialBody CurrentSOIBody=null;
@@ -55,22 +43,20 @@ namespace KerbalAlarmClock
         public static Boolean ChangedVessel { get { if(LastVessel==null) return true; else return (LastVessel != CurrentVessel); } }
         public static Boolean ChangedSOIBody { get { if (LastSOIBody == null) return true; else return (LastSOIBody != CurrentSOIBody); } }
 
-
         //The current UT time - for alarm comparison
         public static KerbalTime CurrentTime = new KerbalTime();
         public static KerbalTime LastTime = new KerbalTime();
 
         public static Boolean CurrentlyUnderWarpInfluence = false;
         public static DateTime CurrentWarpInfluenceStartTime;
-
-
+        
         //Are we flying any ship?
-        public static bool IsFlightMode
+        public static Boolean IsFlightMode
         {
             get { return FlightGlobals.fetch != null && FlightGlobals.ActiveVessel != null; }
         }
 
-        public static bool PauseMenuOpen
+        public static Boolean PauseMenuOpen
         {
             get
             {
@@ -211,7 +197,7 @@ namespace KerbalAlarmClock
             KACWorker.DebugLogFormatted("Invoking Worker Function KerbalAlarmClock");
             CancelInvoke();
             InvokeRepeating("BehaviourUpdate", UpdateInterval, UpdateInterval);
-            InvokeRepeating("DebugWriter", 2F, 2F);
+            //InvokeRepeating("DebugWriter", 2F, 2F);
         }
 
         #region "Update Code"
@@ -250,18 +236,18 @@ namespace KerbalAlarmClock
                 Settings.Save();
             }
 
-            //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F10))
+            //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
             //{
             //    WorkerObjectInstance.DebugActionTriggered(HighLogic.LoadedScene);
             //}
 
-            //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F10))
+            //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
             //    Settings.Save();
 
             //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F9)) 
             //    Settings.Load();
 
-            //If we have paused the game and the menu is not visible, then unpause so the menu will display
+            //If we have paused the game via an alarm and the menu is not visible, then unpause so the menu will display
             if (Input.GetKey(KeyCode.Escape) && !PauseMenu.isOpen && FlightDriver.Pause)
             {
                 FlightDriver.SetPause(false);
@@ -324,7 +310,7 @@ namespace KerbalAlarmClock
 
         public void BehaviourUpdate()
         {
-            //Only Do any of this work if we are in FlightMode
+            //Only Do any of this work if we are in FlightMode - THIS IS NOW HANDLED INSIDE THE UPDATEDETAILS LOOK SO WE CAN DRAW ON OTHER SCREENS
             //if (Settings.BehaviourScenes.Contains(HighLogic.LoadedScene))
             //{
                 WorkerObjectInstance.UpdateDetails();
@@ -389,10 +375,12 @@ namespace KerbalAlarmClock
 
         private void InitWorkerVariables()
         {
+            _WindowDebugID = rnd.Next(1000, 2000000);
             _WindowAddID = rnd.Next(1000, 2000000);
             _WindowMainID = rnd.Next(1000, 2000000);
             _WindowSettingsID = rnd.Next(1000, 2000000);
             _WindowEditID = rnd.Next(1000, 2000000);
+
         }
         #endregion
 
@@ -415,7 +403,7 @@ namespace KerbalAlarmClock
                 //if vessel has changed
                 if (KACWorkerGameState.ChangedVessel)
                 {
-                    string strVesselName = "No Vessel";
+                    String strVesselName = "No Vessel";
                         if (KACWorkerGameState.LastVessel!=null) strVesselName=KACWorkerGameState.LastVessel.vesselName;
                     DebugLogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
                 }
@@ -471,7 +459,6 @@ namespace KerbalAlarmClock
                                         "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
                                         "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
                     }
-                                
 
                     //is there an SOI alarm for this ship already that has not been triggered
                     KACAlarm tmpSOIAlarm =
@@ -481,6 +468,7 @@ namespace KerbalAlarmClock
                                                 && (a.TypeOfAlarm==KACAlarm.AlarmType.SOIChange)
                                                 && (a.Triggered==false);
                     });
+                    
                     //Is there an SOI point
                     if (timeSOIChange != 0)
                     {
@@ -511,8 +499,14 @@ namespace KerbalAlarmClock
                     //Are we doing the base catchall
                     if (Settings.AlarmCatchSOIChange)
                     {
-                        GlobalSOICatchAll();
+                        GlobalSOICatchAll(KACBehaviour.UpdateInterval * TimeWarp.CurrentRate);
                     }
+                }
+
+                if (Settings.AlarmXferRecalc)
+                {
+                    //Adjust any transfer window alarms until they hit the threshold
+                    RecalcTransferAlarmTimes(false);
                 }
 
                 //Work out how many game seconds will pass till this runs again
@@ -527,22 +521,39 @@ namespace KerbalAlarmClock
             KACWorkerGameState.SetLastFlightStatesToCurrent();
         }
 
-        
+        private void RecalcTransferAlarmTimes(Boolean OverrideDriftThreshold)
+        {
+            foreach (KACAlarm tmpAlarm in Settings.Alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmType.Transfer))
+            {
+                if (tmpAlarm.Remaining.UT > Settings.AlarmXferRecalcThreshold)
+                {
+                    KACXFerTarget tmpTarget = new KACXFerTarget();
+                    tmpTarget.Origin = FlightGlobals.Bodies.Single(b => b.bodyName == tmpAlarm.XferOriginBodyName);
+                    tmpTarget.Target = FlightGlobals.Bodies.Single(b => b.bodyName == tmpAlarm.XferTargetBodyName);
 
-        private void GlobalSOICatchAll()
+                    //DebugLogFormatted("{0}+{1}-{2}", KACWorkerGameState.CurrentTime.UT.ToString(), tmpTarget.AlignmentTime.UT.ToString(), tmpAlarm.AlarmMarginSecs.ToString());
+                    //recalc the transfer spot, but dont move it if the difference is more than the threshold value
+                    if (Math.Abs(KACWorkerGameState.CurrentTime.UT - tmpTarget.AlignmentTime.UT) < Settings.AlarmXferRecalcThreshold || OverrideDriftThreshold)
+                        tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT + tmpTarget.AlignmentTime.UT - tmpAlarm.AlarmMarginSecs;
+                }
+            }
+        }
+
+        private void GlobalSOICatchAll(double SecondsTillNextUpdate)
         {
             foreach (Vessel tmpVessel in FlightGlobals.Vessels)
             {
                 //only track vessels, not debris, EVA, etc
                 //and not the current vessel
                 //and no SOI alarm for it within the threshold - THIS BIT NEEDS TUNING
-                if (Settings.VesselTypesForSOI.Contains(tmpVessel.vesselType) && (tmpVessel!=KACWorkerGameState.CurrentVessel) && 
-                    !(Settings.Alarms.Exists(delegate(KACAlarm a) {return
-                                                (a.VesselID == tmpVessel.id.ToString())
-                                                && (a.TypeOfAlarm==KACAlarm.AlarmType.SOIChange)
-                                                && (Math.Abs(a.Remaining.UT)<=Settings.AlarmAddSOIAutoThreshold)
-                                                ;})
-                                            ))
+                if (Settings.VesselTypesForSOI.Contains(tmpVessel.vesselType) && (tmpVessel!=KACWorkerGameState.CurrentVessel) &&
+                    (Settings.Alarms.FirstOrDefault(a => 
+                        (a.VesselID == tmpVessel.id.ToString() && 
+                        (a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange) &&
+                        (Math.Abs(a.Remaining.UT) < SecondsTillNextUpdate + Settings.AlarmAddSOIAutoThreshold)
+                        )) == null)
+                    )
+
                 {
                     if (lstVessels.ContainsKey(tmpVessel.id.ToString()) == false)
                     {
@@ -569,17 +580,17 @@ namespace KerbalAlarmClock
                             newAlarm.Actioned = true;
                             if (Settings.AlarmOnSOIChange_Action > 1)
                             {
-                                DebugLogFormatted(string.Format("{0}-Pausing Game", newAlarm.Name));
+                                DebugLogFormatted(String.Format("{0}-Pausing Game", newAlarm.Name));
                                 TimeWarp.SetRate(0, true);
                                 FlightDriver.SetPause(true);
                             }
                             else if (Settings.AlarmOnSOIChange_Action > 0)
                             {
-                                DebugLogFormatted(string.Format("{0}-Halt Warp", newAlarm.Name));
+                                DebugLogFormatted(String.Format("{0}-Halt Warp", newAlarm.Name));
                                 TimeWarp.SetRate(0, true);
                             }
 
-                            //reset the name string for next check
+                            //reset the name String for next check
                             lstVessels[tmpVessel.id.ToString()].SOIName = tmpVessel.mainBody.bodyName;
                         }
                     }
@@ -611,14 +622,21 @@ namespace KerbalAlarmClock
                     //If we are simply past the time make sure we halt the warp
                     if (tmpAlarm.PauseGame)
                     {
-                        DebugLogFormatted(string.Format("{0}-Pausing Game", tmpAlarm.Name));
+                        DebugLogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
                         TimeWarp.SetRate(0, true);
                         FlightDriver.SetPause(true);
                     }
                     else if (tmpAlarm.HaltWarp)
                     {
-                        DebugLogFormatted(string.Format("{0}-Halt Warp", tmpAlarm.Name));
-                        TimeWarp.SetRate(0, true);
+                        if (!FlightDriver.Pause)
+                        {
+                            DebugLogFormatted(String.Format("{0}-Halt Warp", tmpAlarm.Name));
+                            TimeWarp.SetRate(0, true);
+                        }
+                        else
+                        {
+                            DebugLogFormatted(String.Format("{0}-Game paused, skipping Halt Warp", tmpAlarm.Name));
+                        }
                     }
                 }
 
@@ -658,10 +676,10 @@ namespace KerbalAlarmClock
         /// Some Structured logging to the debug file
         /// </summary>
         /// <param name="Message"></param>
-        public static void DebugLogFormatted(string Message, params string[] strParams )
+        public static void DebugLogFormatted(String Message, params String[] strParams )
         {
-            Message = string.Format(Message, strParams);
-            string strMessageLine = string.Format("{0},KerbalAlarmClock,{1}", DateTime.Now, Message);
+            Message = String.Format(Message, strParams);
+            String strMessageLine = String.Format("{0},KerbalAlarmClock,{1}", DateTime.Now, Message);
             Debug.Log(strMessageLine);
         }
     }

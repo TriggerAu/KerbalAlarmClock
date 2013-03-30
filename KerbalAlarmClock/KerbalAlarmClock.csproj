@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KerbalAlarmClock</RootNamespace>
     <AssemblyName>KerbalAlarmClock</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SccProjectName>SAK</SccProjectName>
@@ -38,13 +38,15 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
+    <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\~Games\KSP_Win_PlugInTest\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine">
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\~Games\KSP_Win_PlugInTest\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -59,10 +61,69 @@
     <Compile Include="SettingsAndUtils.cs" />
     <Compile Include="TimeObjects.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="PluginBuilder\BuildKACFiles.ps1" />
+    <None Include="PlugInFiles\Parts\KerbalAlarmClock\model.mu" />
+    <None Include="PlugInFiles\Parts\KerbalAlarmClock\part.cfg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PlugInFiles\info.txt" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\config.xml" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-Alarm.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-AlarmShow.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-ButtonAdd.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-ButtonMax.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-ButtonMin.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-ButtonRedCross.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-ButtonSettings.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-ButtonSettingsAttention.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-MNode.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-None.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-Norm.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-NormShow.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseEffect_000.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseEffect_020.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseEffect_040.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseEffect_060.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseEffect_080.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseEffect_100.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseList_000.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseList_020.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseList_040.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseList_060.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseList_080.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-PauseList_100.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-SOI.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-SOISmall.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpEffect1.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpEffect2_000.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpEffect2_020.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpEffect2_040.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpEffect2_060.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpEffect2_080.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpEffect2_100.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpList_000.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpList_020.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpList_040.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpList_060.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpList_080.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-WarpList_100.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-Xfer.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Textures\TooltipBackground.png" />
+    <Content Include="PlugInFiles\ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PlugInFiles\Plugins\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\Plugins\"
-rem "D:\~Games\KSP_Win_PlugInTest\KSP.exe"</PostBuildEvent>
+    <PostBuildEvent>rem Build deployment versions
+rem Need to copy all bits to plugin test game
+copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\Plugins\"
+
+rem and then run the game
+rem  "D:\~Games\KSP_Win_PlugInTest\KSP.exe"
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

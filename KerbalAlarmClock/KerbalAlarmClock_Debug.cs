@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 using UnityEngine;
 using KSP;
@@ -72,6 +73,52 @@ namespace KerbalAlarmClock
         {
             DebugLogFormatted("Manual Debug Action Initiated");
 
+            String strLine;
+            foreach (CelestialBody cbTemp in FlightGlobals.Bodies)
+            {
+                strLine=String.Format("{0}({1}),", cbTemp.bodyName, Enum.GetName(typeof(CelestialBodyType), cbTemp.bodyType));
+                try
+                {
+                    strLine += String.Format("parent-{0},", cbTemp.referenceBody.bodyName);
+                }
+                catch (Exception) { }
+                try
+                {
+                    strLine += String.Format("radius-{0},", cbTemp.orbit.radius.ToString());
+                }
+                catch (Exception) { }
+                try
+                {
+                    strLine += String.Format("sma-{0},", cbTemp.orbit.semiMajorAxis.ToString());
+                }
+                catch (Exception) { }
+                try
+                {
+                    strLine += String.Format("period-{0},", cbTemp.orbit.period.ToString());
+                }
+                catch (Exception) { }
+
+                try
+                {
+                    strLine += String.Format("tA-{0},", cbTemp.orbit.trueAnomaly);
+                }
+                catch (Exception) { }
+                try
+                {
+                    strLine += String.Format("aOP-{0},", cbTemp.orbit.argumentOfPeriapsis);
+                }
+                catch (Exception) { }
+                try
+                {
+                    strLine += String.Format("LAN-{0},", cbTemp.orbit.LAN);
+                }
+                catch (Exception) { }
+
+                DebugLogFormatted(strLine);
+            }
+
+
+            //DebugLogFormatted("window textcolor r:{0}", KACResources.styleWindow.normal.textColor.r.ToString());
             //byte[] b = KSP.IO.IOUtils.SerializeToBinary(FlightGlobals.ActiveVessel.orbit);
             //bw.Write(b);
             //bw.Close();
@@ -95,6 +142,86 @@ namespace KerbalAlarmClock
             //    WriteOrbitFile(o.nextPatch, "Debug\\OrbitNext.txt");
 
             //WriteManeuverFile(FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes,"Debug\\Nodes.txt");
+        }
+
+        public void FillDebugWindow(int WindowID)
+        {
+            GUILayout.BeginHorizontal();
+
+            GUILayout.BeginVertical();
+            GUILayout.Label("Window Padding:", GUILayout.ExpandWidth(true));
+            GUILayout.Label("MainWindowWidth:", GUILayout.ExpandWidth(true));
+            GUILayout.Label("MainWindowMinHeight:", GUILayout.ExpandWidth(true));
+            GUILayout.Label("MainWindowBaseHeight:", GUILayout.ExpandWidth(true));
+            GUILayout.Label("MainWindowSOIAutoHeight:", GUILayout.ExpandWidth(true));
+            GUILayout.Label("MainWindowAlarmListItem:", GUILayout.ExpandWidth(true));
+            GUILayout.Label("MainWindowAlarmListScrollPad:", GUILayout.ExpandWidth(true));
+            GUILayout.Label("PaneWidth:", GUILayout.ExpandWidth(true));
+
+
+            GUILayout.Label("Moho", GUILayout.ExpandWidth(true));
+            GUILayout.Label("Eve", GUILayout.ExpandWidth(true));
+            GUILayout.Label("Duna", GUILayout.ExpandWidth(true));
+            GUILayout.Label("Dres", GUILayout.ExpandWidth(true));
+            GUILayout.Label("Jool", GUILayout.ExpandWidth(true));
+            GUILayout.Label("Eeloo", GUILayout.ExpandWidth(true));
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginVertical();
+            String strPadding = KACResources.styleWindow.padding.left.ToString();
+            int intPadding = Convert.ToInt32(GUILayout.TextField(strPadding));
+            KACResources.styleWindow.padding = KACUtils.SetWindowRectOffset(KACResources.styleWindow.padding, intPadding);
+                //.left = intPadding;// = new RectOffset(intPadding, intPadding, intPadding, intPadding);
+            intMainWindowWidth = Convert.ToInt32(GUILayout.TextField(intMainWindowWidth.ToString()));
+            intMainWindowMinHeight = Convert.ToInt32(GUILayout.TextField(intMainWindowMinHeight.ToString()));
+            intMainWindowBaseHeight = Convert.ToInt32(GUILayout.TextField(intMainWindowBaseHeight.ToString()));
+            intMainWindowSOIAutoHeight = Convert.ToInt32(GUILayout.TextField(intMainWindowSOIAutoHeight.ToString()));
+            intMainWindowAlarmListItemHeight = Convert.ToInt32(GUILayout.TextField(intMainWindowAlarmListItemHeight.ToString()));
+            intMainWindowAlarmListScrollPad = Convert.ToInt32(GUILayout.TextField(intMainWindowAlarmListScrollPad.ToString()));
+
+            intPaneWindowWidth = Convert.ToInt32(GUILayout.TextField(intPaneWindowWidth.ToString()));
+
+            //CurrentPhase (Desired Phase: diff)
+            GUILabelPhaseApproach(FlightGlobals.Bodies[1].orbit, FlightGlobals.Bodies[4].orbit);
+            GUILabelPhaseApproach(FlightGlobals.Bodies[1].orbit, FlightGlobals.Bodies[5].orbit);
+            GUILabelPhaseApproach(FlightGlobals.Bodies[1].orbit, FlightGlobals.Bodies[6].orbit);
+            GUILabelPhaseApproach(FlightGlobals.Bodies[1].orbit, FlightGlobals.Bodies[15].orbit);
+            GUILabelPhaseApproach(FlightGlobals.Bodies[1].orbit, FlightGlobals.Bodies[8].orbit);
+            GUILabelPhaseApproach(FlightGlobals.Bodies[1].orbit, FlightGlobals.Bodies[16].orbit);
+
+
+            GUILayout.EndHorizontal();
+
+
+            GUILayout.EndHorizontal();
+        }
+
+        private void GUILabelPhaseApproach(Orbit orbitOrig,Orbit orbitTarget)
+        {
+            double angleTarget = KACUtils.clampDegrees360(180 * (1 - Math.Pow((orbitOrig.semiMajorAxis + orbitTarget.semiMajorAxis) / (2 * orbitTarget.semiMajorAxis), 1.5)));
+            double angleCurrent = KACUtils.clampDegrees360(orbitTarget.trueAnomaly + orbitTarget.argumentOfPeriapsis + orbitTarget.LAN - (orbitOrig.trueAnomaly + orbitOrig.argumentOfPeriapsis + orbitOrig.LAN));
+            
+            double angleChangepersec = (360 / orbitTarget.period) - (360 / orbitOrig.period);
+
+            double angleToMakeUp =angleCurrent-angleTarget;
+            if (angleToMakeUp > 0 && angleChangepersec > 0)
+                angleToMakeUp -= 360;
+            if (angleToMakeUp < 0 && angleChangepersec < 0)
+                angleToMakeUp += 360;
+
+            double UTToTarget = Math.Floor(Math.Abs(angleToMakeUp / angleChangepersec));
+
+            double UTTimeForAlarm = Math.Floor(KACWorkerGameState.CurrentTime.UT + Math.Abs(angleToMakeUp / angleChangepersec));
+            KACAlarm alarmTarget = new KACAlarm(UTTimeForAlarm);
+
+            GUILayout.Label(String.Format("{0:0.00} ({1:0.00})-{2:0}-{3:0}-{4}",
+                angleTarget,
+                angleToMakeUp,
+                UTToTarget,
+                UTTimeForAlarm,
+                alarmTarget.Remaining.IntervalString(2)
+                ));
         }
 
         public void WriteManeuverFile(List<ManeuverNode> m, String FileName)

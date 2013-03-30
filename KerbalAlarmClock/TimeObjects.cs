@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Linq;
+using System.Linq;
 using System.Text;
-//using System.Threading.Tasks;
 
 using UnityEngine;
 using KSP;
@@ -78,13 +77,13 @@ namespace KerbalAlarmClock
         #endregion
 
         #region "String Formatting"
-        public string IntervalString()
+        public String IntervalString()
         {
             return IntervalString(6);
         }
-        public string IntervalString(int segments)
+        public String IntervalString(int segments)
         {
-            string strReturn = "";
+            String strReturn = "";
 
             if (UT < 0) strReturn += "+ ";
 
@@ -92,33 +91,33 @@ namespace KerbalAlarmClock
 
             if (intUsed < segments && YearEarth != 0)
             {
-                strReturn += string.Format("{0}y", Math.Abs(YearEarth));
+                strReturn += String.Format("{0}y", Math.Abs(YearEarth));
                 intUsed++;
             }
 
             if (intUsed < segments && (DayEarth != 0 || intUsed > 0))
             {
                 if (intUsed > 0) strReturn += ", ";
-                strReturn += string.Format("{0}d", Math.Abs(DayEarth));
+                strReturn += String.Format("{0}d", Math.Abs(DayEarth));
                 intUsed++;
             }
 
             if (intUsed < segments && (HourEarth != 0 || intUsed > 0))
             {
                 if (intUsed > 0) strReturn += ", ";
-                strReturn += string.Format("{0}h", Math.Abs(HourEarth));
+                strReturn += String.Format("{0}h", Math.Abs(HourEarth));
                 intUsed++;
             }
             if (intUsed < segments && (Minute != 0 || intUsed > 0))
             {
                 if (intUsed > 0) strReturn += ", ";
-                strReturn += string.Format("{0}m", Math.Abs(Minute));
+                strReturn += String.Format("{0}m", Math.Abs(Minute));
                 intUsed++;
             }
             if (intUsed < segments)// && (Second != 0 || intUsed > 0))
             {
                 if (intUsed > 0) strReturn += ", ";
-                strReturn += string.Format("{0}s", Math.Abs(Second));
+                strReturn += String.Format("{0}s", Math.Abs(Second));
                 intUsed++;
             }
 
@@ -126,29 +125,29 @@ namespace KerbalAlarmClock
             return strReturn;
         }
 
-        public string DateString()
+        public String DateString()
         {
-            return string.Format("Year {0},Day {1}, {2:00}:{3:00}:{4:00}", YearEarth + 1, DayEarth + 1, HourEarth, Minute, Second);
+            return String.Format("Year {0},Day {1}, {2:00}:{3:00}:{4:00}", YearEarth + 1, DayEarth + 1, HourEarth, Minute, Second);
         }
 
-        public string IntervalStringLong()
+        public String IntervalStringLong()
         {
-            string strReturn = "";
+            String strReturn = "";
             if (UT < 0) strReturn += "+ ";
-            strReturn += string.Format("{0} Years, {1} Days, {2:00}:{3:00}:{4:00}", Math.Abs(YearEarth), Math.Abs(DayEarth), Math.Abs(HourEarth), Math.Abs(Minute), Math.Abs(Second));
+            strReturn += String.Format("{0} Years, {1} Days, {2:00}:{3:00}:{4:00}", Math.Abs(YearEarth), Math.Abs(DayEarth), Math.Abs(HourEarth), Math.Abs(Minute), Math.Abs(Second));
             return strReturn;
         }
 
-        public string UTString()
+        public String UTString()
         {
-            string strReturn = "";
+            String strReturn = "";
             if (UT < 0) strReturn += "+ ";
             strReturn += String.Format("{0:N0}s", Math.Abs(UT));
             return strReturn;
         }
         #endregion
 
-        public override string ToString()
+        public override String ToString()
         {
             return IntervalStringLong();
         }
@@ -169,10 +168,10 @@ namespace KerbalAlarmClock
             Transfer
         }
 
-        public string SaveName = "";                                    //Which Save File
-        public string VesselID = "";                                    //uniqueID of Vessel
-        public string Name = "";                                        //Name of Alarm
-        public string Message = "";                                     //Some descriptive text
+        public String SaveName = "";                                    //Which Save File
+        public String VesselID = "";                                    //uniqueID of Vessel
+        public String Name = "";                                        //Name of Alarm
+        public String Message = "";                                     //Some descriptive text
         public AlarmType TypeOfAlarm=AlarmType.Raw;                     //What Type of Alarm
 
         public KerbalTime AlarmTime = new KerbalTime();                 //UT of the alarm
@@ -182,6 +181,9 @@ namespace KerbalAlarmClock
         public Boolean PauseGame = false;                               //Whether the Game will be paused at this event
 
         public ManeuverNode ManNode;                                    //Stored ManeuverNode attached to alarm
+
+        public String XferOriginBodyName = "";                          //Stored orbital transfer details
+        public String XferTargetBodyName = "";
 
         //Dynamic props down here
         public KerbalTime Remaining = new KerbalTime();                 //UT value of how long till the alarm fires
@@ -210,7 +212,7 @@ namespace KerbalAlarmClock
                 SaveName = HighLogic.CurrentGame.Title;
             AlarmTime.UT = UT;
         }
-        public KACAlarm(string vID, string NewName, string NewMessage, double UT,Double Margin,AlarmType atype, Boolean NewHaltWarp, Boolean NewPause)
+        public KACAlarm(String vID, String NewName, String NewMessage, double UT,Double Margin,AlarmType atype, Boolean NewHaltWarp, Boolean NewPause)
         {
             if (KACWorkerGameState.IsFlightMode)
                 SaveName = HighLogic.CurrentGame.Title;
@@ -225,7 +227,7 @@ namespace KerbalAlarmClock
             PauseGame = NewPause;
         }
 
-        public KACAlarm(string vID, string NewName, string NewMessage, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, ManeuverNode NewManeuver)
+        public KACAlarm(String vID, String NewName, String NewMessage, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, ManeuverNode NewManeuver)
         {
             if (KACWorkerGameState.IsFlightMode)
                 SaveName = HighLogic.CurrentGame.Title;
@@ -241,21 +243,37 @@ namespace KerbalAlarmClock
             ManNode = NewManeuver;
         }
 
+        public KACAlarm(String vID, String NewName, String NewMessage, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, KACXFerTarget NewTarget)
+        {
+            if (KACWorkerGameState.IsFlightMode)
+                SaveName = HighLogic.CurrentGame.Title;
+            VesselID = vID;
+            Name = NewName;
+            Message = NewMessage;
+            AlarmTime.UT = UT;
+            AlarmMarginSecs = Margin;
+            TypeOfAlarm = atype;
+            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
+            HaltWarp = NewHaltWarp;
+            PauseGame = NewPause;
+            XferOriginBodyName = NewTarget.Origin.bodyName;
+            XferTargetBodyName = NewTarget.Target.bodyName;
+        }
         #endregion
 
         /// <summary>
-        /// Convert properties for the save file to a single string for storage
+        /// Convert properties for the save file to a single String for storage
         /// </summary>
-        /// <returns>CSV string of persistant properties</returns>
-        public string SerializeString()
+        /// <returns>CSV String of persistant properties</returns>
+        public String SerializeString()
         {
             return KACUtils.PipeSepVariables(SaveName, Name, Enabled, AlarmTime.UT, HaltWarp, PauseGame, Message);
         }
 
-        public string SerializeString2()
+        public String SerializeString2()
         {
-            //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
-            string strReturn = "";
+            //"VesselID, Name, Message, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Manuever/Xfer"
+            String strReturn = "";
             strReturn += VesselID + "|";
             strReturn += KACUtils.PipeSepVariables(Name, Message, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame);
             strReturn += "|";
@@ -264,6 +282,11 @@ namespace KerbalAlarmClock
                 strReturn += ManNode.UT;
                 strReturn += "," + KACUtils.CommaSepVariables(ManNode.DeltaV.x, ManNode.DeltaV.y, ManNode.DeltaV.z);
                 strReturn += "," + KACUtils.CommaSepVariables(ManNode.nodeRotation.x, ManNode.nodeRotation.y, ManNode.nodeRotation.z, ManNode.nodeRotation.w);
+            } 
+            else if (XferTargetBodyName!=null)
+            {
+                strReturn += "" + XferOriginBodyName;
+                strReturn += "," + XferTargetBodyName;
             }
             return strReturn;
         }
@@ -272,9 +295,9 @@ namespace KerbalAlarmClock
         /// Basically deserializing the alarm
         /// </summary>
         /// <param name="AlarmDetails"></param>
-        public void LoadFromString(string AlarmDetails)
+        public void LoadFromString(String AlarmDetails)
         {
-            string[] vars = AlarmDetails.Split("|".ToCharArray());
+            String[] vars = AlarmDetails.Split("|".ToCharArray());
             VesselID = "";
             SaveName = vars[0];
             Name = vars[1];
@@ -290,9 +313,9 @@ namespace KerbalAlarmClock
             }
         }
 
-        public void LoadFromString2(string AlarmDetails)
+        public void LoadFromString2(String AlarmDetails)
         {
-            string[] vars = AlarmDetails.Split("|".ToCharArray());
+            String[] vars = AlarmDetails.Split("|".ToCharArray(),StringSplitOptions.None);
             SaveName = HighLogic.CurrentGame.Title;
             VesselID=vars[0];
             Name = vars[1];
@@ -304,23 +327,45 @@ namespace KerbalAlarmClock
             HaltWarp = Convert.ToBoolean(vars[7]);
             PauseGame = Convert.ToBoolean(vars[8]);
 
-            string strManeuver = vars[9];
-            if (strManeuver != "")
+            String strOptions = vars[9];
+            switch (TypeOfAlarm)
             {
-                ManNode = new ManeuverNode();
-                string[] manparts = ((string)vars[9]).Split(",".ToCharArray());
-                ManNode.UT = Convert.ToDouble(manparts[0]);
-                ManNode.DeltaV = new Vector3d(Convert.ToDouble(manparts[1]),
-                                            Convert.ToDouble(manparts[2]),
-                                            Convert.ToDouble(manparts[3])
-                        );
-                ManNode.nodeRotation = new Quaternion(Convert.ToSingle(manparts[4]),
-                                                    Convert.ToSingle(manparts[5]),
-                                                    Convert.ToSingle(manparts[6]),           
-                                                    Convert.ToSingle(manparts[7])
-                        );
+                case AlarmType.Raw:
+                    break;
+                case AlarmType.Maneuver:
+                    ManNode = new ManeuverNode();
+                    String[] manparts = strOptions.Split(",".ToCharArray());
+                    ManNode.UT = Convert.ToDouble(manparts[0]);
+                    ManNode.DeltaV = new Vector3d(Convert.ToDouble(manparts[1]),
+                                                Convert.ToDouble(manparts[2]),
+                                                Convert.ToDouble(manparts[3])
+                            );
+                    ManNode.nodeRotation = new Quaternion(Convert.ToSingle(manparts[4]),
+                                                        Convert.ToSingle(manparts[5]),
+                                                        Convert.ToSingle(manparts[6]),           
+                                                        Convert.ToSingle(manparts[7])
+                            );
+                    break;
+                case AlarmType.SOIChange:
+                    break;
+                case AlarmType.Transfer:
+                    try
+                    {
+                        String[] XferParts = strOptions.Split(",".ToCharArray());
+                        XferOriginBodyName = XferParts[0];
+                        XferTargetBodyName = XferParts[1];
+                    }
+                    catch (Exception ex)
+                    {
+                        KACWorker.DebugLogFormatted("Unable to load transfer details for {0}", Name);
+                        KACWorker.DebugLogFormatted(ex.Message);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
+
         public static int SortByUT(KACAlarm c1, KACAlarm c2)
         {
             return c1.Remaining.UT.CompareTo(c2.Remaining.UT);
@@ -337,7 +382,7 @@ namespace KerbalAlarmClock
         /// </summary>
         /// <param name="SaveName"></param>
         /// <returns></returns>
-        public Int64 CountInSave(string SaveName)
+        public Int64 CountInSave(String SaveName)
         {
             long lngReturn=0;
 
@@ -355,7 +400,7 @@ namespace KerbalAlarmClock
         /// </summary>
         /// <param name="SaveName"></param>
         /// <returns></returns>
-        public Boolean ActiveEnabledFutureAlarms(string SaveName)
+        public Boolean ActiveEnabledFutureAlarms(String SaveName)
         {
             Boolean blnReturn = false;
             foreach (KACAlarm tmpAlarm in this)
@@ -373,7 +418,7 @@ namespace KerbalAlarmClock
         /// </summary>
         /// <param name="SaveName"></param>
         /// <returns></returns>
-        public KACAlarmList BySaveName(string SaveName)
+        public KACAlarmList BySaveName(String SaveName)
         {
             KACAlarmList lstreturn = new KACAlarmList();
 
@@ -402,7 +447,7 @@ namespace KerbalAlarmClock
             return alarmReturn;
         }
 
-        public Boolean PauseAlarmOnScreen(string SaveName)
+        public Boolean PauseAlarmOnScreen(String SaveName)
         {
             Boolean blnReturn = false;
             foreach (KACAlarm tmpAlarm in this)
@@ -416,10 +461,11 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
     }
+
     public class KACVesselSOI
     {
-        public string Name;
-        public string SOIName;
+        public String Name;
+        public String SOIName;
         //public String SOINew;
         //public Boolean SOIChanged { get { return (SOILast != SOINew); } }
 
@@ -430,4 +476,94 @@ namespace KerbalAlarmClock
             SOIName = SOIBody;
         }
     }
+
+    public class KACXFerTarget
+        {
+            private CelestialBody _Origin;
+
+            public CelestialBody Origin
+            {
+                get { return _Origin; }
+                set { 
+                    _Origin = value;
+                    if (_Target != null)
+                    {
+                        CalcPhaseAngleTarget();
+                        CalcPhaseAngleCurrent();
+                    }
+                }
+            }
+            private CelestialBody _Target;
+
+            public CelestialBody Target
+            {
+                get { return _Target; }
+                set { 
+                    _Target = value;
+                    if (_Target != null)
+                    {
+                        CalcPhaseAngleTarget();
+                        CalcPhaseAngleCurrent();
+                    }
+                }
+            }
+            
+
+            private double _PhaseAngleTarget;
+            private double _PhaseAngleCurrent;
+            public double PhaseAngleTarget
+            {
+                get
+                {
+                    CalcPhaseAngleTarget();
+                    return KACUtils.clampDegrees(_PhaseAngleTarget); }
+                }
+
+            private void CalcPhaseAngleTarget()
+            {
+                _PhaseAngleTarget = KACUtils.clampDegrees360(180 * (1 - Math.Pow((Origin.orbit.semiMajorAxis + Target.orbit.semiMajorAxis) / (2 * Target.orbit.semiMajorAxis), 1.5)));
+            }
+            public double PhaseAngleCurrent
+            {
+                get
+                {
+                    CalcPhaseAngleCurrent();
+                    return KACUtils.clampDegrees(_PhaseAngleCurrent);
+                }
+            }
+
+            private void CalcPhaseAngleCurrent()
+            {
+                _PhaseAngleCurrent = KACUtils.clampDegrees360(Target.orbit.trueAnomaly + Target.orbit.argumentOfPeriapsis + Target.orbit.LAN
+                    - (Origin.orbit.trueAnomaly + Origin.orbit.argumentOfPeriapsis + Origin.orbit.LAN));
+            }
+
+            public double PhaseAngleTarget360 {get{return KACUtils.clampDegrees360(_PhaseAngleTarget); }}
+            public double PhaseAngleCurrent360 {get{return KACUtils.clampDegrees360(_PhaseAngleCurrent); }}
+
+            private KerbalTime _AlignmentTime= new KerbalTime();
+            public KerbalTime AlignmentTime
+            {
+                get
+                {
+                    double angleChangepersec = (360 / Target.orbit.period) - (360 / Origin.orbit.period);
+                    double angleToMakeUp =PhaseAngleCurrent360-PhaseAngleTarget360;
+                    if (angleToMakeUp > 0 && angleChangepersec > 0)
+                        angleToMakeUp -= 360;
+                    if (angleToMakeUp < 0 && angleChangepersec < 0)
+                        angleToMakeUp += 360;
+
+                    double UTToTarget = Math.Floor(Math.Abs(angleToMakeUp / angleChangepersec));
+                    KerbalTime tmeReturn = new KerbalTime(UTToTarget);
+                    return tmeReturn;
+                }
+            }
+
+            //public void SetPhaseAngleTarget()
+            //{
+            //    _PhaseAngleTarget = KACUtils.clampDegrees360(180 * (1 - Math.Pow((Origin.orbit.semiMajorAxis + Target.orbit.semiMajorAxis) / (2 * Target.orbit .semiMajorAxis), 1.5)));
+                
+            //}
+        }
+
 }

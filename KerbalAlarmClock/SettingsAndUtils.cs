@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 using UnityEngine;
 using KSP;
@@ -54,6 +55,56 @@ namespace KerbalAlarmClock
             img1.LoadImageIntoTexture(tex);
         }
 
+        public static void LoadImageIntoTexture(ref Texture2D tex, String FolderName, String FileName)
+        {
+            WWW img1 = new WWW(String.Format("file://{0}{1}/{2}", PlugInPath, FolderName,FileName));
+            img1.LoadImageIntoTexture(tex);
+        }
+
+        public static RectOffset SetWindowRectOffset(RectOffset tmpRectOffset, int intValue)
+        {
+            tmpRectOffset.left = intValue;
+            //tmpRectOffset.top = Top;
+            tmpRectOffset.right = intValue;
+            tmpRectOffset.bottom = intValue;
+            return tmpRectOffset;
+        }
+
+        public static RectOffset SetRectOffset(RectOffset tmpRectOffset, int intValue)
+        {
+            return SetRectOffset(tmpRectOffset, intValue, intValue, intValue, intValue);
+        }
+
+        public static RectOffset SetRectOffset(RectOffset tmpRectOffset, int Left,int Right,int Top, int Bottom)
+        {
+            tmpRectOffset.left = Left;
+            tmpRectOffset.top = Top;
+            tmpRectOffset.right = Right ;
+            tmpRectOffset.bottom = Bottom;
+            return tmpRectOffset;
+        }
+
+        public static double Clamp(double x, double min, double max)
+        {
+            return Math.Min(Math.Max(x, min), max);
+        }
+
+        //keeps angles in the range -180 to 180
+        public static double clampDegrees(double angle)
+        {
+            angle = angle + ((int)(2 + Math.Abs(angle) / 360)) * 360.0; //should be positive
+            angle = angle % 360.0;
+            if (angle > 180.0) return angle - 360.0;
+            else return angle;
+        }
+
+        //keeps angles in the range 0 to 360
+        public static double clampDegrees360(double angle)
+        {
+            angle = angle % 360.0;
+            if (angle < 0) return angle + 360.0;
+            else return angle;
+        }
     }
 
     public static class KACResources
@@ -91,6 +142,7 @@ namespace KerbalAlarmClock
         public static Texture2D iconPauseList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconPauseList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
+        public static Texture2D iconXFer = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconMNode = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconSOI = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconSOISmall = new Texture2D(14, 11, TextureFormat.ARGB32, false);
@@ -102,7 +154,9 @@ namespace KerbalAlarmClock
         public static Texture2D btnMin = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         public static Texture2D btnMax = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         public static Texture2D btnAdd = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        
+
+        public static Texture2D txtTooltipBackground = new Texture2D(9, 9);//, TextureFormat.ARGB32, false);
+
         public static void loadGUIAssets()
         {
             KACWorker.DebugLogFormatted("Loading Textures");
@@ -145,6 +199,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageIntoTexture(ref iconSOI, "KACIcon-SOI.png");
                 KACUtils.LoadImageIntoTexture(ref iconSOISmall, "KACIcon-SOISmall.png");
                 KACUtils.LoadImageIntoTexture(ref iconMNode, "KACIcon-MNode.png");
+                KACUtils.LoadImageIntoTexture(ref iconXFer, "KACIcon-Xfer.png");
                 KACUtils.LoadImageIntoTexture(ref iconNone, "KACIcon-None.png");
 
                 KACUtils.LoadImageIntoTexture(ref btnRedCross,"KACIcon-ButtonRedCross.png");
@@ -153,7 +208,9 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageIntoTexture(ref btnMin,"KACIcon-ButtonMin.png");
                 KACUtils.LoadImageIntoTexture(ref btnMax,"KACIcon-ButtonMax.png");
                 KACUtils.LoadImageIntoTexture(ref btnAdd,"KACIcon-ButtonAdd.png");
-                
+
+                KACUtils.LoadImageIntoTexture(ref txtTooltipBackground, "Textures","TooltipBackground.png");
+
                 KACWorker.DebugLogFormatted("Loaded Textures");
             }
             catch (Exception)
@@ -338,8 +395,11 @@ namespace KerbalAlarmClock
 
         #region "Styles"
         //Styles for windows - Cant initialize the objects here as the GUIStyle Constructor cannot be called outside of OnGUI
-        public static GUIStyle styleIconStyle;
+        
         public static GUIStyle styleWindow;
+        public static GUIStyle styleTooltipStyle;
+
+        public static GUIStyle styleIconStyle; 
         public static GUIStyle styleHeading;
         public static GUIStyle styleContent;
         public static GUIStyle styleButton;
@@ -348,6 +408,9 @@ namespace KerbalAlarmClock
         public static GUIStyle styleCheckboxLabel;
 
         public static GUIStyle styleSmallButton;
+
+        public static GUIStyle styleFlagIcon;
+
 
         //List Styles
         public static GUIStyle styleAlarmListArea;
@@ -365,7 +428,10 @@ namespace KerbalAlarmClock
         public static GUIStyle styleAddField;
         public static GUIStyle styleAddFieldAreas;
         public static GUIStyle styleAddAlarmArea;
-
+        public static GUIStyle styleAddXferName;
+        public static GUIStyle styleAddXferButton;
+        public static GUIStyle styleAddXferOriginButton;
+        
         //AlarmMessage Styles
         public static GUIStyle styleAlarmMessage;
         public static GUIStyle styleAlarmMessageTime;
@@ -406,10 +472,21 @@ namespace KerbalAlarmClock
             //Set up the used styles
             styleIconStyle = new GUIStyle();
 
-            styleWindow = new GUIStyle(GUI.skin.window);
-            //styleWindow.fixedWidth = 250;
+            styleWindow = new GUIStyle(GUI.skin.window) ;
+            styleWindow.padding = KACUtils.SetWindowRectOffset(styleWindow.padding, 4);
             //styleWindow.normal.textColor = new Color32(183, 254, 0, 255);
-            styleWindow.normal.textColor = Color.red;
+            //styleWindow.normal.textColor = Color.red;
+
+            styleTooltipStyle = new GUIStyle(styleDefLabel);
+            styleTooltipStyle.fontSize = 12;
+            styleTooltipStyle.normal.textColor = new Color32(207,207,207,255);
+            styleTooltipStyle.stretchHeight = true;
+            styleTooltipStyle.wordWrap = true;
+            styleTooltipStyle.normal.background = txtTooltipBackground;
+            //Extra border to prevent bleed of color - actual border is only 1 pixel wide
+            styleTooltipStyle.border = new RectOffset(3, 3, 3, 3);
+            styleTooltipStyle.padding = new RectOffset(4, 4, 6, 4);
+            styleTooltipStyle.alignment = TextAnchor.MiddleCenter;
 
             styleHeading = new GUIStyle(styleDefLabel);
             styleHeading.normal.textColor = Color.white;
@@ -427,8 +504,8 @@ namespace KerbalAlarmClock
             styleCheckbox = new GUIStyle(styleDefToggle);
 			//CHANGED
             styleCheckboxLabel = new GUIStyle(styleDefLabel);
-            styleCheckboxLabel.hover.textColor = Color.red;
-            styleCheckboxLabel.onHover.textColor = Color.red;
+            //styleCheckboxLabel.hover.textColor = Color.red;
+            //styleCheckboxLabel.onHover.textColor = Color.red;
 
             styleSmallButton = new GUIStyle(GUI.skin.button);
             styleSmallButton.alignment = TextAnchor.MiddleCenter;
@@ -436,20 +513,23 @@ namespace KerbalAlarmClock
             styleSmallButton.fixedHeight = 20;
             styleSmallButton.fontSize = intFontSizeDefault;
             styleSmallButton.fontStyle = FontStyle.Normal;
-            styleSmallButton.padding.top = 0;
-            styleSmallButton.padding.bottom = 0;
-            styleSmallButton.padding.left = 0;
-            styleSmallButton.padding.right = 0;
+            styleSmallButton.padding = KACUtils.SetRectOffset(styleSmallButton.padding, 0);
 
+            styleFlagIcon = new GUIStyle(styleDefLabel);
+            styleFlagIcon.padding = KACUtils.SetRectOffset(styleFlagIcon.padding, 0);
+            styleFlagIcon.alignment = TextAnchor.MiddleLeft;
+            styleFlagIcon.fixedWidth = 20;
 
             styleAlarmListArea = new GUIStyle(styleDefTextArea);
-            styleAlarmListArea.padding = new RectOffset(0, 0, 0, 0);
-            styleAlarmListArea.margin = new RectOffset(0, 0, 0, 0);
+            styleAlarmListArea.padding =  KACUtils.SetRectOffset(styleAlarmListArea.padding, 0);
+            styleAlarmListArea.margin = KACUtils.SetRectOffset(styleAlarmListArea.margin, 0);
 
             styleAlarmText = new GUIStyle(styleDefLabel);
             styleAlarmText.normal.textColor = Color.white;
             styleAlarmText.alignment = TextAnchor.MiddleLeft;
             styleAlarmText.stretchWidth = true;
+            //styleAlarmText.onHover.textColor = Color.red;
+            //styleAlarmText.hover.textColor = Color.red;
 
             styleAlarmTextGrayed = new GUIStyle(styleDefLabel);
             styleAlarmTextGrayed.normal.textColor = Color.gray;
@@ -464,11 +544,13 @@ namespace KerbalAlarmClock
             styleLabelWarpGrayed = new GUIStyle(styleLabelWarp);
             styleLabelWarpGrayed.normal.textColor = Color.gray;
 
+
+
             styleSOIIndicator = new GUIStyle(styleDefLabel);
-            styleSOIIndicator.alignment = TextAnchor.MiddleRight;
+            styleSOIIndicator.alignment = TextAnchor.MiddleLeft;
             //styleSOIIndicator.fontSize = 11;
             styleSOIIndicator.normal.textColor = new Color32(0, 112, 227, 255);
-            styleSOIIndicator.padding = new RectOffset(0, 0, 0, 0);
+            styleSOIIndicator.padding = KACUtils.SetRectOffset(styleSOIIndicator.padding, 0);
 
             styleSOIIcon = new GUIStyle(styleSOIIndicator); 
             
@@ -490,20 +572,30 @@ namespace KerbalAlarmClock
             styleAddField.normal.textColor = Color.yellow;
 
             styleAddFieldAreas = new GUIStyle(styleDefTextArea);
-            styleAddFieldAreas.padding.top = 4;
-            styleAddFieldAreas.padding.bottom = 4;
-            styleAddFieldAreas.padding.left = 4;
-            styleAddFieldAreas.padding.right = 4;
+            styleAddFieldAreas.padding = KACUtils.SetRectOffset(styleAddFieldAreas.padding, 4);
             styleAddFieldAreas.margin.left = 0;
             styleAddFieldAreas.margin.right = 0;
 
             styleAddAlarmArea = new GUIStyle();
-            styleAddAlarmArea.padding.top = 4;
-            styleAddAlarmArea.padding.bottom = 4;
-            styleAddAlarmArea.padding.left = 4;
-            styleAddAlarmArea.padding.right = 4;
+            styleAddAlarmArea.padding= KACUtils.SetRectOffset(styleAddAlarmArea.padding, 4);
             styleAddAlarmArea.margin.left = 0;
             styleAddAlarmArea.margin.right = 0;
+
+            styleAddXferName = new GUIStyle(styleDefLabel);
+            styleAddXferName.normal.textColor = Color.yellow;
+
+            styleAddXferButton = new GUIStyle(styleDefButton);
+            styleAddXferButton.fixedWidth = 40;
+            styleAddXferButton.fixedHeight = 22;
+            styleAddXferButton.fontSize = 11;
+            styleAddXferButton.alignment = TextAnchor.MiddleCenter;
+
+            styleAddXferOriginButton = new GUIStyle(styleDefButton);
+            styleAddXferOriginButton.fixedWidth = 60;
+            styleAddXferOriginButton.fixedHeight = 22;
+            styleAddXferOriginButton.fontSize=11;
+            styleAddXferOriginButton.alignment = TextAnchor.MiddleCenter;
+
 
             styleAlarmMessage = new GUIStyle(styleDefLabel);
             //styleAlarmMessage.normal.textColor = colLabelText;
@@ -569,7 +661,7 @@ namespace KerbalAlarmClock
 
         public KACAlarmList Alarms = new KACAlarmList();
 
-        public string AlarmListMaxAlarms="10";
+        public String AlarmListMaxAlarms="10";
         public int AlarmListMaxAlarmsInt
         {
             get
@@ -588,9 +680,13 @@ namespace KerbalAlarmClock
         public int AlarmPosition = 1;
         public Boolean HideOnPause = true;
         public Boolean TimeAsUT = false;
+        public Boolean ShowTooltips = true;
+
+        public Boolean AlarmXferRecalc = true;
+        public double AlarmXferRecalcThreshold = 180;
 
         public Boolean AlarmAddSOIAuto = false;
-        public double AlarmAddSOIAutoThreshold = 300;
+        public double AlarmAddSOIAutoThreshold = 180;
         //public double AlarmAddSOIMargin = 120;
         public Boolean AlarmCatchSOIChange = false;
         public int AlarmOnSOIChange_Action = 1;
@@ -633,18 +729,22 @@ namespace KerbalAlarmClock
 
                 this.AlarmListMaxAlarms = configfile.GetValue("AlarmListMaxAlarms", "10");
                 this.AlarmPosition = configfile.GetValue("AlarmPosition", 1);
+                this.ShowTooltips = configfile.GetValue("ShowTooltips", true);
                 this.HideOnPause = configfile.GetValue("HideOnPause", true);
                 this.TimeAsUT = configfile.GetValue("TimeAsUT", false);
 
+                this.AlarmXferRecalc = configfile.GetValue("AlarmXferRecalc", true);
+                this.AlarmXferRecalcThreshold = configfile.GetValue("AlarmXferRecalcThreshold", 180);
+
                 this.AlarmAddSOIAuto = configfile.GetValue("AlarmAddSOIAuto", false);
-                this.AlarmAddSOIAutoThreshold = configfile.GetValue("AlarmAddSOIAutoThreshold", 120);
+                this.AlarmAddSOIAutoThreshold = configfile.GetValue("AlarmAddSOIAutoThreshold", 180);
                 //this.AlarmAddSOIMargin = configfile.GetValue("AlarmAddSOIMargin", 120);
                 this.AlarmCatchSOIChange = configfile.GetValue("AlarmOnSOIChange", false);
                 this.AlarmOnSOIChange_Action = configfile.GetValue("AlarmOnSOIChange_Action", 1);
 
                 
                 //HIGHLOIGIC IS NOT YET SET HERE!!!
-                if (KSP.IO.File.Exists<KerbalAlarmClock>(string.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title)))
+                if (KSP.IO.File.Exists<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title)))
                 {
                     KACWorker.DebugLogFormatted("Trying New Alarms file..."); 
                     LoadAlarms();
@@ -682,13 +782,13 @@ namespace KerbalAlarmClock
         private void LoadAlarms()
         {
             Alarms = new KACAlarmList();
-            KSP.IO.TextReader tr = KSP.IO.TextReader.CreateForType<KerbalAlarmClock>(string.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title));
-            string strFile = tr.ReadToEnd();
+            KSP.IO.TextReader tr = KSP.IO.TextReader.CreateForType<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title));
+            String strFile = tr.ReadToEnd();
             tr.Close();
 
             while (strFile.Contains("|<ENDLINE>"))
 	        {
-                string strAlarm = strFile.Substring(0,strFile.IndexOf("|<ENDLINE>"));
+                String strAlarm = strFile.Substring(0,strFile.IndexOf("|<ENDLINE>"));
                 strFile = strFile.Substring(strAlarm.Length + "|<ENDLINE>".Length).TrimStart("\r\n".ToCharArray());
 
                 if(!strAlarm.StartsWith("VesselID|"))
@@ -718,8 +818,12 @@ namespace KerbalAlarmClock
 
             configfile.SetValue("AlarmListMaxAlarms", this.AlarmListMaxAlarms);
             configfile.SetValue("AlarmPosition", this.AlarmPosition);
+            configfile.SetValue("ShowTooltips", this.ShowTooltips);
             configfile.SetValue("HideOnPause", this.HideOnPause);
             configfile.SetValue("TimeAsUT", this.TimeAsUT);
+
+            configfile.SetValue("AlarmXferRecalc", this.AlarmXferRecalc);
+            configfile.SetValue("AlarmXferRecalcThreshold", this.AlarmXferRecalcThreshold);
 
             configfile.SetValue("AlarmAddSOIAuto", this.AlarmAddSOIAuto);
             configfile.SetValue("AlarmAddSOIAutoThreshold", this.AlarmAddSOIAutoThreshold);
@@ -727,10 +831,10 @@ namespace KerbalAlarmClock
             configfile.SetValue("AlarmOnSOIChange", this.AlarmCatchSOIChange);
             configfile.SetValue("AlarmOnSOIChange_Action", this.AlarmOnSOIChange_Action);
 
-            for (int intAlarm = 0; intAlarm < Alarms.Count; intAlarm++)
-            {
-                configfile.SetValue("Alarm_" + intAlarm.ToString(), Alarms[intAlarm].SerializeString());
-            }
+            //for (int intAlarm = 0; intAlarm < Alarms.Count; intAlarm++)
+            //{
+            //    configfile.SetValue("Alarm_" + intAlarm.ToString(), Alarms[intAlarm].SerializeString());
+            //}
 
             configfile.save();
             KACWorker.DebugLogFormatted("Saved Config");
@@ -742,9 +846,9 @@ namespace KerbalAlarmClock
 
         private void SaveAlarms()
         {
-            KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(string.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title));
+            KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title));
             //Write the header
-            tw.WriteLine("VesselID|Name|Message|AlarmTime.UT|Type|Enabled|HaltWarp|PauseGame|Manuever|<ENDLINE>");
+            tw.WriteLine("VesselID|Name|Message|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|Options-Manuever/Xfer|<ENDLINE>");
             foreach (KACAlarm tmpAlarm in Alarms.BySaveName(HighLogic.CurrentGame.Title))
             {
                 //Now Write Each alarm
@@ -768,7 +872,7 @@ namespace KerbalAlarmClock
                 WWW www = new WWW("http://kerbalalarmclock.codeplex.com/wikipage?title=LatestVersion");
                 while (!www.isDone) { }
 
-                //Parse it for the version string
+                //Parse it for the version String
                 String strFile = www.text;
                 KACWorker.DebugLogFormatted("Response Length:" + strFile.Length);
 
@@ -857,5 +961,5 @@ namespace KerbalAlarmClock
         }
     }
 
-
 }
+

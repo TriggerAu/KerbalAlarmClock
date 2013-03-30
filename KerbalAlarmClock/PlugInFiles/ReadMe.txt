@@ -17,6 +17,15 @@ The plugin records troubleshooting data in the "KSP_Data\outut_log.txt".
 If there are errors in loading the config you can delete the "\PluginData\kerbalalarmclock\config.xml" and restart the game
 
 VERSION HISTORY
+Version 1.3.3.0		-	KSP Version: 0.19.1
+- Tweaked Orbital Transfer lists
+
+Version 1.3.2.0		-	KSP Version: 0.18.4
+- Added Transfer Alarms - Alarms that can be set based on Hohmann transfers and formulas by Kosmo-Not used in Olex's calculator - http://kerbalspaceprogram.com/forum/showthread.php/16511-Interplanetary-How-To-Guide
+- Added tooltips for more contextual info
+- Tweaked GUI to move interface flags and sizes
+- A number of general bugfixes
+
 Version 1.3.0.0		-	KSP Version: 0.18.4
 - Added storing and retreiving the maneuver node tied to an alarm
 - Added ability to jump to the ship that the alarm was created on

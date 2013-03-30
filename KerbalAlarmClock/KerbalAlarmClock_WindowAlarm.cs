@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Linq;
 
 using UnityEngine;
 using KSP;
@@ -52,7 +53,7 @@ namespace KerbalAlarmClock
                                 default:
                                     strAlarmText+= " - Manual";break;
                             }
-                            tmpAlarm.AlarmWindow = GUILayout.Window(tmpAlarm.AlarmWindowID, tmpAlarm.AlarmWindow, FillAlarmWindow, strAlarmText, GUILayout.MinWidth(320));
+                            tmpAlarm.AlarmWindow = GUILayout.Window(tmpAlarm.AlarmWindowID, tmpAlarm.AlarmWindow, FillAlarmWindow, strAlarmText, KACResources.styleWindow,GUILayout.MinWidth(320));
                         }
                     }
                 }
@@ -112,8 +113,9 @@ namespace KerbalAlarmClock
           
 
             GUILayout.EndVertical();
-            GUI.DragWindow();
 
+            SetTooltipText();
+            GUI.DragWindow();
         }
 
         private KACAlarm alarmEdit;
@@ -163,6 +165,7 @@ namespace KerbalAlarmClock
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
                     _ShowEditPane = false;
             }
+            SetTooltipText();
         }
 
 

@@ -17,6 +17,16 @@ The plugin records troubleshooting data in the "KSP_Data\outut_log.txt".
 If there are errors in loading the config you can delete the "\PluginData\kerbalalarmclock\config.xml" and restart the game
 
 VERSION HISTORY
+Version 1.3.5.0		-	KSP Version: 0.19.1
+- Added functionality to alarm windows to Delete on Close
+- Added Default Settings for Alarm Action, Margin Period and Delete on Close
+- Updated margin entry/timeentry control to be more robust and granular (now includes seconds)
+- Added Margin to Auto SOI Alarms
+- Ability to Edit Margins on existing alarms
+- Indicator for alarm being edited
+- A few other bugs
+- Fixed up lots of annoying GUI design stuff - finalised main,settings, edit and alarm windows - new Add window is next
+
 Version 1.3.3.0		-	KSP Version: 0.19.1
 - Tweaked Orbital Transfer lists
 

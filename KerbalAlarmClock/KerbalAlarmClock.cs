@@ -190,6 +190,10 @@ namespace KerbalAlarmClock
             //Load Image resources
             KACResources.loadGUIAssets();
             
+            //Load Hohmann modelling data
+            if (Settings.XferModelLoadData)
+                Settings.XferModelDataLoaded = KACResources.LoadModelPoints();
+
             //Set initial GameState
             KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
 
@@ -261,6 +265,16 @@ namespace KerbalAlarmClock
                 KACWorker.DebugLogFormatted("Time Went Backwards - Load or restart - resetting inqueue flag");
                 ShouldBeInPostDrawQueue = false;
 //                IsInPostDrawQueue = false;
+
+                //Also, untrigger any alarms that we have now gone back past
+                foreach (KACAlarm tmpAlarm in Settings.Alarms.Where(a=>a.Triggered && (a.AlarmTime.UT>Planetarium.GetUniversalTime())))
+                {
+                    KACWorker.DebugLogFormatted("Resetting Alarm Trigger for {0}({1})", tmpAlarm.Name, tmpAlarm.AlarmTime.UTString());
+                    tmpAlarm.Triggered = false;
+                    tmpAlarm.AlarmWindowID = 0;
+                    tmpAlarm.AlarmWindowClosed = false;
+                    tmpAlarm.Actioned = false;
+                }
             }
             else if (LastGameVessel == null)
             {
@@ -449,6 +463,7 @@ namespace KerbalAlarmClock
                     //orbit.nextpatch gives you the next orbit and you can read the new SOI!!!
 
                     double timeSOIChange = 0;
+                    double timeSOIAlarm = 0;
                     //double timeSOIAlarm = 0;
                     if (Settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
                     {
@@ -472,17 +487,18 @@ namespace KerbalAlarmClock
                     //Is there an SOI point
                     if (timeSOIChange != 0)
                     {
+                        timeSOIAlarm = timeSOIChange - Settings.AlarmAutoSOIMargin;
                         //and an existing alarm
                         if (tmpSOIAlarm != null)
                         {
                             //update the time (if more than threshold secs)
                             if (tmpSOIAlarm.Remaining.UT>Settings.AlarmAddSOIAutoThreshold)
-                                tmpSOIAlarm.AlarmTime.UT = timeSOIChange;
+                                tmpSOIAlarm.AlarmTime.UT = timeSOIAlarm;
                         }
                             //Otherwise if its in the future add a new alarm
-                        else if (timeSOIChange > KACWorkerGameState.CurrentTime.UT)
+                        else if (timeSOIAlarm > KACWorkerGameState.CurrentTime.UT)
                         {
-                            Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmNameSOI, strAlarmMessageSOI, timeSOIChange, 0,
+                            Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmNameSOI, strAlarmMessageSOI, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
                                 KACAlarm.AlarmType.SOIChange, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
                         }
                     }

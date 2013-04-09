@@ -69,6 +69,8 @@
   <ItemGroup>
     <Content Include="PlugInFiles\info.txt" />
     <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\config.xml" />
+    <None Include="PlugInFiles\PluginData\KerbalAlarmClock\Data\TransferModelData.csv" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Data\TransferModelData.txt" />
     <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-Alarm.png" />
     <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-AlarmShow.png" />
     <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-ButtonAdd.png" />
@@ -77,6 +79,7 @@
     <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-ButtonRedCross.png" />
     <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-ButtonSettings.png" />
     <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-ButtonSettingsAttention.png" />
+    <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-Edit.png" />
     <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-MNode.png" />
     <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-None.png" />
     <Content Include="PlugInFiles\PluginData\KerbalAlarmClock\Icons\KACIcon-Norm.png" />
@@ -119,10 +122,10 @@
   <PropertyGroup>
     <PostBuildEvent>rem Build deployment versions
 rem Need to copy all bits to plugin test game
-copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\Plugins\"
+rem copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\Plugins\"
 
 rem and then run the game
-rem  "D:\~Games\KSP_Win_PlugInTest\KSP.exe"
+rem "D:\~Games\KSP_Win_PlugInTest\KSP.exe"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

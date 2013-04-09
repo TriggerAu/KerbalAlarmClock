@@ -14,9 +14,8 @@ namespace KerbalAlarmClock
     public class KerbalTime
     {
         //really there are 31,446,925.9936 seconds in a year, use 365*24 so the reciprocal math 
-        //  to go to years and get back to full days isnt confusing
+        //  to go to years and get back to full days isnt confusing - have to sort this out some day though.
         const double HoursPerYearEarth = 365 * 24;
-
 
         #region "Constructors"
         public KerbalTime()
@@ -37,11 +36,12 @@ namespace KerbalAlarmClock
         /// <param name="Seconds"></param>
         public void BuildUT(double Years, double Days, double Hours, double Minutes, double Seconds)
         {
-            UT = Seconds +
-                Minutes * 60 +
-                Hours * 60 * 60 +
-                Days * 24 * 60 * 60 +
-                Years * HoursPerYearEarth * 60 * 60;
+            UT = KerbalTime.BuildUTFromRaw(Years, Days, Hours, Minutes, Seconds);
+        }
+
+        public void BuildUT(String Years, String Days, String Hours, String Minutes, String Seconds)
+        {
+            BuildUT(Convert.ToDouble(Years), Convert.ToDouble(Days), Convert.ToDouble(Hours), Convert.ToDouble(Minutes), Convert.ToDouble(Seconds));
         }
 
         #region "Properties"
@@ -151,9 +151,121 @@ namespace KerbalAlarmClock
         {
             return IntervalStringLong();
         }
+
+#region "Static Functions"
+        public static Double BuildUTFromRaw(String Years, String Days, String Hours, String Minutes, String Seconds)
+        {
+            return BuildUTFromRaw(Convert.ToDouble(Years), Convert.ToDouble(Days), Convert.ToDouble(Hours), Convert.ToDouble(Minutes), Convert.ToDouble(Seconds));
+        }
+        public static Double BuildUTFromRaw(double Years, double Days, double Hours, double Minutes, double Seconds)
+        {
+         return Seconds +
+            Minutes * 60 +
+            Hours * 60 * 60 +
+            Days * 24 * 60 * 60 +
+            Years * HoursPerYearEarth * 60 * 60;
+        }
+
+        public static String PrintInterval(KerbalTime timeTemp,  Boolean TimeAsUT)
+        {
+            return PrintInterval(timeTemp, 3, TimeAsUT);
+        }
+        public static String PrintInterval(KerbalTime timeTemp,int Segments,Boolean TimeAsUT)
+        {
+            if (TimeAsUT)
+                return timeTemp.UTString();
+            else
+                return timeTemp.IntervalString(Segments);
+        }
+
+        public static String PrintDate(KerbalTime timeTemp, Boolean TimeAsUT)
+        {
+            if (TimeAsUT)
+                return timeTemp.UTString();
+            else
+                return timeTemp.DateString();
+        }
+#endregion
     }
 
+    public class KerbalTimeStringArray
+    {
+        private String _Years="",_Days="",_Hours="",_Minutes="",_Seconds="";
 
+        public String Years { get { return _Years; } set { _Years = value; SetValid(); } }
+        public String Days { get { return _Days; } set { _Days = value; SetValid(); } }
+        public String Hours { get { return _Hours; } set { _Hours = value; SetValid(); } }
+        public String Minutes { get { return _Minutes; } set { _Minutes = value; SetValid(); } }
+        public String Seconds { get { return _Seconds; } set { _Seconds = value; SetValid(); } }
+
+        public Boolean Valid { get { return _Valid; } }
+        Boolean _Valid=true;
+
+        public KerbalTimeStringArray() {}
+        public KerbalTimeStringArray(Double NewUT)
+        {
+            BuildFromUT(NewUT);
+        }
+
+        private void SetValid()
+        {
+            Double dblTest;
+            if (Double.TryParse(_Years, out dblTest) && 
+                Double.TryParse(_Days, out dblTest) && 
+                Double.TryParse(_Hours, out dblTest) && 
+                Double.TryParse(_Minutes, out dblTest) && 
+                Double.TryParse(_Seconds, out dblTest)
+                )
+            {
+                _Valid = true;
+            }
+            else
+            {
+                _Valid = false;
+            }
+        }
+
+        public void BuildFromUT(Double UT)
+        {
+            KerbalTime timeTemp = new KerbalTime(UT);
+            Years = timeTemp.YearEarth.ToString();
+            Days = timeTemp.DayEarth.ToString();
+            Hours = timeTemp.HourEarth.ToString();
+            Minutes = timeTemp.Minute.ToString();
+            Seconds = timeTemp.Second.ToString();
+        }
+
+        public double UT
+        {
+            get 
+            {
+                return KerbalTime.BuildUTFromRaw(
+                    ZeroString(Years), 
+                    ZeroString(Days), 
+                    ZeroString(Hours), 
+                    ZeroString(Minutes), 
+                    ZeroString(Seconds)
+                    );
+            }
+        }
+        private String ZeroString(String strInput)
+        {
+            Double dblTemp;
+            if (!Double.TryParse(strInput,out dblTemp))
+                return "0";
+            else
+                return strInput;
+        }
+    }
+
+    public enum TimeEntryPrecision
+    {
+        Seconds = 0,
+        Minutes = 1,
+        Hours = 2,
+        Days = 3,
+        Years = 4
+    }
     /// <summary>
     /// Class to hold an Alarm event
     /// </summary>
@@ -165,7 +277,8 @@ namespace KerbalAlarmClock
             Raw,
             Maneuver,
             SOIChange,
-            Transfer
+            Transfer,
+            TransferModelled
         }
 
         public String SaveName = "";                                    //Which Save File
@@ -179,6 +292,8 @@ namespace KerbalAlarmClock
         public Boolean Enabled = true;                                  //Whether it is enabled - not in use currently
         public Boolean HaltWarp = true;                                 //Whether the time warp will be halted at this event
         public Boolean PauseGame = false;                               //Whether the Game will be paused at this event
+
+        public Boolean DeleteOnClose;                                   //Whether the checkbox is on or off for this
 
         public ManeuverNode ManNode;                                    //Stored ManeuverNode attached to alarm
 
@@ -195,6 +310,7 @@ namespace KerbalAlarmClock
         //Details of the alarm message
         public Rect AlarmWindow;                                        
         public int AlarmWindowID=0;
+        public int AlarmWindowHeight = 148;
         public Boolean AlarmWindowClosed = false;
 
         //Details of the alarm message
@@ -360,6 +476,8 @@ namespace KerbalAlarmClock
                         KACWorker.DebugLogFormatted("Unable to load transfer details for {0}", Name);
                         KACWorker.DebugLogFormatted(ex.Message);
                     }
+                    break;
+                case AlarmType.TransferModelled:
                     break;
                 default:
                     break;
@@ -559,11 +677,22 @@ namespace KerbalAlarmClock
                 }
             }
 
-            //public void SetPhaseAngleTarget()
-            //{
-            //    _PhaseAngleTarget = KACUtils.clampDegrees360(180 * (1 - Math.Pow((Origin.orbit.semiMajorAxis + Target.orbit.semiMajorAxis) / (2 * Target.orbit .semiMajorAxis), 1.5)));
-                
-            //}
         }
+
+    public class KACXFerModelPoint
+    {
+        public Double UT;
+        public Int32 Origin;
+        public Int32 Target;
+        public Double PhaseAngle;
+
+        public KACXFerModelPoint(Double NewUT, Int32 NewOrigin, Int32 NewTarget, Double NewPhase)
+        {
+            UT = NewUT;
+            PhaseAngle = NewPhase;
+            Origin = NewOrigin;
+            Target = NewTarget;
+        } 
+    }
 
 }

@@ -23,10 +23,12 @@ namespace KerbalAlarmClock
         private String strAlarmMessageXFER = "";
         //private Boolean blnHaltWarp = true;
 
-        private String strAlarmDescSOI = "This will monitor the current active flight plan for the next detected SOI change.\r\n\r\nIf the SOI Point changes the alarm will adjust until it is within {0} seconds of the SOI point, at which point it just maintains the last captured time of the change.";
-        private String strAlarmDescXfer = "This will check and recalculate the active transfer alarms for the correct phase angle - the math for these is based around circular orbits so the for any elliptical orbit these need to be recalculated over time.\r\n\r\nThe alarm will adjust until it is within {0} seconds of the target phase angle, at which point it just maintains the last captured time of the angle.\r\nI DO NOT RECOMMEND TURNING THIS OFF UNLESS TTHERE IS A MASSIVE PERFORMANCE GAIN";
+        private String strAlarmDescSOI = "This will monitor the current active flight path for the next detected SOI change.\r\n\r\nIf the SOI Point changes the alarm will adjust until it is within {0} seconds of the Alarm time, at which point it just maintains the last captured time of the change.";
+        private String strAlarmDescXfer = "This will check and recalculate the active transfer alarms for the correct phase angle - the math for these is based around circular orbits so the for any elliptical orbit these need to be recalculated over time.\r\n\r\nThe alarm will adjust until it is within {0} seconds of the target phase angle, at which point it just maintains the last captured time of the angle.\r\nI DO NOT RECOMMEND TURNING THIS OFF UNLESS THERE IS A MASSIVE PERFORMANCE GAIN";
 
         int intActionSelected = 0;
+
+        KerbalTimeStringArray timeMargin = new KerbalTimeStringArray();
 
         /// <summary>
         /// Code to reset the settings etc when athe new button is hit
@@ -47,10 +49,10 @@ namespace KerbalAlarmClock
             strAlarmMessageNode = "Time to pay attention to " + FlightGlobals.ActiveVessel.vesselName + "\r\nNearing Maneuvering Node";
             strAlarmMessageSOI = "Time to pay attention to " + FlightGlobals.ActiveVessel.vesselName + "\r\nNearing SOI Change";
             strAlarmMessageXFER  = "Time to pay attention to " + FlightGlobals.ActiveVessel.vesselName + "\r\nNearing Transfer Window";
-            intActionSelected = 1;
+            intActionSelected = Settings.AlarmDefaultAction;
             //blnHaltWarp = true;
 
-            strNodeMargin = "1";
+            timeMargin.BuildFromUT(Settings.AlarmDefaultMargin);
 
             if (KACWorkerGameState.ManeuverNodeExists)
             {
@@ -88,13 +90,7 @@ namespace KerbalAlarmClock
         /// <param name="WindowID"></param>
         public void FillAddWindow(int WindowID)
         {
-            //GUILayout.BeginHorizontal();
-
-            //GUILayout.BeginVertical(GUILayout.Width(5));
-            //GUILayout.EndVertical();
-
             GUILayout.BeginVertical();
-            //String[] strAddTypes = new String[] { "Raw", "Maneuver Node", "SOI", "Transfer Window" };
             String[] strAddTypes = new String[] { "Raw", "Maneuver","SOI","Transfer" };
             intAddType = GUILayout.Toolbar((int)intAddType, strAddTypes,KACResources.styleButton);
 
@@ -119,94 +115,35 @@ namespace KerbalAlarmClock
                     break;
             }
             GUILayout.EndVertical();
-
-
-            //GUILayout.EndHorizontal();
             SetTooltipText();
         }
 
+        int intHeight_AddWindowCommon;
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
         private void WindowLayout_AddPane_Common()
         {
-            //Two Columns
-            GUILayout.Label("Common Alarm Properties", KACResources.styleAddSectionHeading);
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-
-            GUILayout.BeginHorizontal();
-
-            GUILayout.BeginVertical(GUILayout.Width(90));
-            GUILayout.Label("Alarm Name:", KACResources.styleAddHeading);
-            GUILayout.Label("Message:", KACResources.styleAddHeading);
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.Width(260), GUILayout.MaxWidth(260));
             switch (intAddType)
             {
                 case 3:
-                    strAlarmNameXFER = GUILayout.TextField(strAlarmNameXFER, KACResources.styleAddField).Replace("|", "");
-                    strAlarmMessageXFER = GUILayout.TextArea(strAlarmMessageXFER, KACResources.styleAddField).Replace("|", "");
+                    intHeight_AddWindowCommon = 116 + strAlarmMessageXFER.Split("\r".ToCharArray()).Length * 16;
+                    WindowLayout_CommonFields(ref strAlarmNameXFER, ref strAlarmMessageXFER, ref intActionSelected, ref timeMargin, KACAlarm.AlarmType.Transfer, intHeight_AddWindowCommon);
                     break;
                 case 2:
-                    strAlarmNameSOI = GUILayout.TextField(strAlarmNameSOI, KACResources.styleAddField).Replace("|", "");
-                    strAlarmMessageSOI = GUILayout.TextArea(strAlarmMessageSOI, KACResources.styleAddField).Replace("|", "");
+                    intHeight_AddWindowCommon = 116 + strAlarmMessageSOI.Split("\r".ToCharArray()).Length * 16;
+                    WindowLayout_CommonFields(ref strAlarmNameSOI, ref strAlarmMessageSOI, ref intActionSelected, ref timeMargin, KACAlarm.AlarmType.SOIChange, intHeight_AddWindowCommon);
                     break;
                 case 1:
-                    strAlarmNameNode = GUILayout.TextField(strAlarmNameNode, KACResources.styleAddField).Replace("|", "");
-                    strAlarmMessageNode = GUILayout.TextArea(strAlarmMessageNode, KACResources.styleAddField).Replace("|", "");
+                    intHeight_AddWindowCommon = 116 + strAlarmMessageNode.Split("\r".ToCharArray()).Length * 16;
+                    WindowLayout_CommonFields(ref strAlarmNameNode, ref strAlarmMessageNode, ref intActionSelected, ref timeMargin, KACAlarm.AlarmType.Maneuver, intHeight_AddWindowCommon);
                     break;
                 case 0:
                 default:
-                    strAlarmName = GUILayout.TextField(strAlarmName, KACResources.styleAddField).Replace("|", "");
-                    strAlarmMessage = GUILayout.TextArea(strAlarmMessage, KACResources.styleAddField).Replace("|", "");
+                    intHeight_AddWindowCommon = 88 + strAlarmMessage.Split("\r".ToCharArray()).Length * 16;
+                    WindowLayout_CommonFields(ref strAlarmName, ref strAlarmMessage, ref intActionSelected, ref timeMargin, KACAlarm.AlarmType.Raw, intHeight_AddWindowCommon);
                     break;
-            }
-            GUILayout.EndVertical();
-
-            GUILayout.EndHorizontal();
-
-            //Full width one under the two columns for the kill time warp
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("On Alarm:", KACResources.styleAddHeading, GUILayout.Width(90));
-            DrawRadioList(ref intActionSelected, "Message Only", "Kill Time Warp", "Pause Game");
-            GUILayout.EndHorizontal();
-
-            GUILayout.EndVertical();
-
-        }
-
-        /// <summary>
-        /// Layout of Common Parts of every alarm
-        /// </summary>
-        private void WindowLayout_AddPane_Common2(ref String strName,ref String strMessage,ref int Action)
-        {
-            //Two Columns
-            GUILayout.Label("Common Alarm Properties", KACResources.styleAddSectionHeading);
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-
-            GUILayout.BeginHorizontal();
-
-            GUILayout.BeginVertical(GUILayout.Width(90));
-            GUILayout.Label("Alarm Name:", KACResources.styleAddHeading);
-            GUILayout.Label("Message:", KACResources.styleAddHeading);
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.Width(260), GUILayout.MaxWidth(260));
-            strName = GUILayout.TextField(strName, KACResources.styleAddField).Replace("|", "");
-            strMessage = GUILayout.TextArea(strMessage, KACResources.styleAddField).Replace("|", "");
-            GUILayout.EndVertical();
-
-            GUILayout.EndHorizontal();
-
-            //Full width one under the two columns for the kill time warp
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("On Alarm:", KACResources.styleAddHeading, GUILayout.Width(90));
-            DrawRadioList(ref Action, "Message Only", "Kill Time Warp", "Pause Game");
-            GUILayout.EndHorizontal();
-
-            GUILayout.EndVertical();
-
+            }            
         }
 
         //Variabled for Raw Alarm screen
@@ -228,8 +165,8 @@ namespace KerbalAlarmClock
             GUILayout.Label("Time type:", KACResources.styleAddHeading, GUILayout.Width(80));
             Boolean blnRawDateStart = blnRawDate;
             Boolean blnRawIntervalStart = blnRawInterval;
-            DrawCheckbox2(ref blnRawDate, "Date");
-            DrawCheckbox2(ref blnRawInterval, "Time Interval");
+            DrawCheckbox(ref blnRawDate, "Date");
+            DrawCheckbox(ref blnRawInterval, "Time Interval");
             if (blnRawDateStart != blnRawDate)
             {
                 blnRawInterval = !blnRawDate;
@@ -299,16 +236,9 @@ namespace KerbalAlarmClock
                 GUILayout.EndVertical();
                 GUILayout.BeginVertical(GUILayout.Width(150), GUILayout.MaxWidth(150));
 
-                if (Settings.TimeAsUT)
-                {
-                    GUILayout.Label(rawTime.UTString(), KACResources.styleContent);
-                    GUILayout.Label(rawTimeToAlarm.UTString(), KACResources.styleContent);
-                }
-                else
-                {
-                    GUILayout.Label(rawTime.DateString(), KACResources.styleContent);
-                    GUILayout.Label(rawTimeToAlarm.IntervalString(), KACResources.styleContent);
-                }
+                GUILayout.Label(KerbalTime.PrintInterval(rawTime, Settings.TimeAsUT), KACResources.styleContent);
+                GUILayout.Label(KerbalTime.PrintInterval(rawTimeToAlarm, Settings.TimeAsUT), KACResources.styleContent);
+
                 GUILayout.EndVertical();
                 GUILayout.Space(15);
                 if (GUILayout.Button("Add Alarm",KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(40)))
@@ -330,7 +260,7 @@ namespace KerbalAlarmClock
         }
 
         //Variables for Node Alarms screen
-        String strNodeMargin = "1";
+        //String strNodeMargin = "1";
         /// <summary>
         /// Screen Layout for adding Alarm from Maneuver Node
         /// </summary>
@@ -338,21 +268,6 @@ namespace KerbalAlarmClock
         {
             GUILayout.BeginVertical();
             GUILayout.Label("Node Details...", KACResources.styleAddSectionHeading);
-
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-
-            GUILayout.BeginHorizontal();
-
-            GUILayout.BeginVertical(GUILayout.Width(140));
-            GUILayout.Label("Margin Minutes:", KACResources.styleAddHeading);
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.Width(210), GUILayout.MaxWidth(210));
-            strNodeMargin = GUILayout.TextField(strNodeMargin, KACResources.styleAddField);
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
-
 
             Vessel myVessel = FlightGlobals.ActiveVessel;
             if (myVessel == null)
@@ -374,15 +289,12 @@ namespace KerbalAlarmClock
                         KerbalTime nodeTime = new KerbalTime(myVessel.patchedConicSolver.maneuverNodes[intNode].UT);
                         KerbalTime nodeInterval = new KerbalTime(nodeTime.UT - KACWorkerGameState.CurrentTime.UT);
 
-                        long lngMarginMinutes=0;
                         KerbalTime nodeAlarm;
                         KerbalTime nodeAlarmInterval;
-
                         try
                         {
-                            lngMarginMinutes = Convert.ToInt64(strNodeMargin);
-                            nodeAlarm = new KerbalTime(nodeTime.UT - (lngMarginMinutes * 60));
-                            nodeAlarmInterval = new KerbalTime(nodeTime.UT - KACWorkerGameState.CurrentTime.UT - (lngMarginMinutes * 60));
+                            nodeAlarm = new KerbalTime(nodeTime.UT - timeMargin.UT);
+                            nodeAlarmInterval = new KerbalTime(nodeTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
                         }
                         catch (Exception)
                         {
@@ -401,24 +313,16 @@ namespace KerbalAlarmClock
                             GUILayout.EndVertical();
                             GUILayout.BeginVertical(GUILayout.Width(150), GUILayout.MaxWidth(150));
 
-                            if (Settings.TimeAsUT)
-                            {
-                                GUILayout.Label(nodeTime.UTString(), KACResources.styleContent);
-                                GUILayout.Label(nodeInterval.UTString(), KACResources.styleContent);
-                                GUILayout.Label(nodeAlarmInterval.UTString(), KACResources.styleContent);
-                            }
-                            else
-                            {
-                                GUILayout.Label(nodeTime.DateString(), KACResources.styleContent);
-                                GUILayout.Label(nodeInterval.IntervalString(), KACResources.styleContent);
-                                GUILayout.Label(nodeAlarmInterval.IntervalString(), KACResources.styleContent);
-                            }
+                            GUILayout.Label(KerbalTime.PrintDate(nodeTime, Settings.TimeAsUT), KACResources.styleContent);
+                            GUILayout.Label(KerbalTime.PrintInterval(nodeInterval, Settings.TimeAsUT), KACResources.styleContent);
+                            GUILayout.Label(KerbalTime.PrintInterval(nodeAlarmInterval, Settings.TimeAsUT), KACResources.styleContent);
+
                             GUILayout.EndVertical();
                             GUILayout.Space(15);
 
                             if (GUILayout.Button("Add Alarm",KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(70)))
                             {
-                                Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmNameNode, strAlarmMessageNode, nodeAlarm.UT, (lngMarginMinutes * 60), KACAlarm.AlarmType.Maneuver,
+                                Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmNameNode, strAlarmMessageNode, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.Maneuver,
                                     (intActionSelected > 0), (intActionSelected > 1), myVessel.patchedConicSolver.maneuverNodes[intNode]));
                                 Settings.Save();
                                 _ShowAddPane = false;
@@ -448,21 +352,6 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             GUILayout.Label("SOI Details...", KACResources.styleAddSectionHeading);
 
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-
-            GUILayout.BeginHorizontal();
-
-            GUILayout.BeginVertical(GUILayout.Width(140));
-            GUILayout.Label("Margin Minutes:", KACResources.styleAddHeading);
-            GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(GUILayout.Width(210), GUILayout.MaxWidth(210));
-            strNodeMargin = GUILayout.TextField(strNodeMargin, KACResources.styleAddField);
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
-
-
             Vessel myVessel = FlightGlobals.ActiveVessel;
             if (myVessel == null)
             {
@@ -480,15 +369,12 @@ namespace KerbalAlarmClock
                     KerbalTime soiTime = new KerbalTime(KACWorkerGameState.CurrentVessel.orbit.UTsoi);
                     KerbalTime soiInterval = new KerbalTime(soiTime.UT - KACWorkerGameState.CurrentTime.UT);
 
-                    long lngMarginMinutes=0;
                     KerbalTime soiAlarm;
                     KerbalTime soiAlarmInterval;
-
                     try
                     {
-                        lngMarginMinutes = Convert.ToInt64(strNodeMargin);
-                        soiAlarm = new KerbalTime(soiTime.UT - (lngMarginMinutes * 60));
-                        soiAlarmInterval = new KerbalTime(soiTime.UT - KACWorkerGameState.CurrentTime.UT - (lngMarginMinutes * 60));
+                        soiAlarm = new KerbalTime(soiTime.UT - timeMargin.UT);
+                        soiAlarmInterval = new KerbalTime(soiTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
                     }
                     catch (Exception)
                     {
@@ -507,24 +393,16 @@ namespace KerbalAlarmClock
                         GUILayout.EndVertical();
                         GUILayout.BeginVertical(GUILayout.Width(150), GUILayout.MaxWidth(150));
 
-                        if (Settings.TimeAsUT)
-                        {
-                            GUILayout.Label(soiTime.UTString(), KACResources.styleContent);
-                            GUILayout.Label(soiInterval.UTString(), KACResources.styleContent);
-                            GUILayout.Label(soiAlarmInterval.UTString(), KACResources.styleContent);
-                        }
-                        else
-                        {
-                            GUILayout.Label(soiTime.DateString(), KACResources.styleContent);
-                            GUILayout.Label(soiInterval.IntervalString(), KACResources.styleContent);
-                            GUILayout.Label(soiAlarmInterval.IntervalString(), KACResources.styleContent);
-                        }
+                        GUILayout.Label(KerbalTime.PrintDate(soiTime, Settings.TimeAsUT), KACResources.styleContent);
+                        GUILayout.Label(KerbalTime.PrintInterval(soiInterval, Settings.TimeAsUT), KACResources.styleContent);
+                        GUILayout.Label(KerbalTime.PrintInterval(soiAlarmInterval, Settings.TimeAsUT), KACResources.styleContent);
+
                         GUILayout.EndVertical();
                         GUILayout.Space(15);
 
                         if (GUILayout.Button("Add Alarm", KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(70)))
                         {
-                            Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmNameSOI, strAlarmMessageSOI, soiAlarm.UT, lngMarginMinutes*60, KACAlarm.AlarmType.SOIChange,
+                            Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmNameSOI, strAlarmMessageSOI, soiAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.SOIChange,
                                 (intActionSelected > 0), (intActionSelected > 1)));
                             Settings.Save();
                             _ShowAddPane = false;
@@ -543,16 +421,10 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
         }
 
-
-
-
-
         //private Dictionary<int, CelestialBody> ParentBodies;
         private List<CelestialBody> XferParentBodies = new List<CelestialBody>();
         private List<CelestialBody> XferOriginBodies = new List<CelestialBody>();
         private List<KACXFerTarget> XferTargetBodies = new List<KACXFerTarget>();
-
-
 
         private static int SortByDistance(CelestialBody c1, CelestialBody c2)
         {
@@ -606,93 +478,136 @@ namespace KerbalAlarmClock
         }
 
         int intAddXferHeight=0;
+        int intXferType = 0;
         private void WindowLayout_AddPane_Transfer()
         {
             GUILayout.BeginVertical();
             GUILayout.Label("Planetary Transfers", KACResources.styleHeading);
-            
-            GUILayout.BeginHorizontal(KACResources.styleAddFieldAreas);
-            GUILayout.Label("Margin Minutes:", KACResources.styleAddHeading,GUILayout.Width(140));
-            strNodeMargin = GUILayout.TextField(strNodeMargin, KACResources.styleAddField,GUILayout.Width(210), GUILayout.MaxWidth(210));
-            GUILayout.EndHorizontal();
-            long lngMarginMinutes = 1;
-            String strMarginConversion = "";
+
+            if (!timeMargin.Valid)
+            {
+                GUILayout.Label("There is an issue in one of the margin fields - see red text",KACResources.styleLabelWarning, GUILayout.ExpandWidth(true));
+            }
+
             try
             {
-                lngMarginMinutes = Convert.ToInt64(strNodeMargin);
-            }
-            catch (Exception)
-            {
-                lngMarginMinutes = 0;
-                strMarginConversion = "Unable to Add the Margin Minutes - 0 will be used";
-            }
-            if (strMarginConversion != "")
-            {
-                GUILayout.Label(strMarginConversion, GUILayout.ExpandWidth(true));
-            }
+                //add something here to select the modelled or formula values
+                if (Settings.XferModelDataLoaded)
+                    DrawRadioList(ref intXferType, "Formula Based", "Modelled Data");
 
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Xfer Parent:", KACResources.styleAddHeading,GUILayout.Width(80));
-            GUILayout.Label(XferParentBodies[intXferCurrentParent].bodyName, KACResources.styleAddXferName, GUILayout.ExpandWidth(true));
-            if (GUILayout.Button(new GUIContent("Change", "Click to cycle through Parent Bodies"), KACResources.styleAddXferOriginButton))
-            {
-                intXferCurrentParent += 1;
-                if (intXferCurrentParent >= XferParentBodies.Count) intXferCurrentParent = 0;
-                SetupXferOrigins();
-                intXferCurrentOrigin = 0;
-                SetupXFerTargets();
-                strAlarmNameXFER = String.Format("{0} Transfer", XferOriginBodies[intXferCurrentOrigin].bodyName);
-            }
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Xfer Origin:", KACResources.styleAddHeading, GUILayout.Width(80));
-            GUILayout.Label(XferOriginBodies[intXferCurrentOrigin].bodyName, KACResources.styleAddXferName, GUILayout.ExpandWidth(true));
-            if (GUILayout.Button(new GUIContent("Change", "Click to cycle through Origin Bodies"), KACResources.styleAddXferOriginButton))
-            {
-                intXferCurrentOrigin += 1;
-                if (intXferCurrentOrigin >= XferOriginBodies.Count) intXferCurrentOrigin = 0;
-                SetupXFerTargets();
-                strAlarmNameXFER = String.Format("{0} Transfer", XferOriginBodies[intXferCurrentOrigin].bodyName);
-            }
-            GUILayout.EndHorizontal();
-
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Target", KACResources.styleAddSectionHeading, GUILayout.Width(80));
-            GUILayout.Label(new GUIContent("Phase Angle","Displayed as \"Current Angle (Target Angle)\""), KACResources.styleAddSectionHeading, GUILayout.Width(120));
-            GUILayout.Label("Time to Xfer", KACResources.styleAddSectionHeading,GUILayout.ExpandWidth(true));
-            GUILayout.Label("Add", KACResources.styleAddSectionHeading,GUILayout.Width(30));
-            GUILayout.EndHorizontal();
-
-            foreach (KACXFerTarget bdyTarget in XferTargetBodies)
-            {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(bdyTarget.Target.bodyName, KACResources.styleAddXferName,GUILayout.Width(80));
-                String strPhase = String.Format("{0:0.00}({1:0.00})", bdyTarget.PhaseAngleCurrent, bdyTarget.PhaseAngleTarget);
-                GUILayout.Label(strPhase, KACResources.styleAddHeading, GUILayout.Width(120));
-                if (Settings.TimeAsUT)
-                    GUILayout.Label(bdyTarget.AlignmentTime.UTString(), KACResources.styleAddHeading, GUILayout.ExpandWidth(true));
-                else
-                    GUILayout.Label(bdyTarget.AlignmentTime.IntervalString(3), KACResources.styleAddHeading, GUILayout.ExpandWidth(true));
-                if (GUILayout.Button("Add", KACResources.styleAddXferButton))
+                GUILayout.Label("Transfer Parent:", KACResources.styleAddHeading,GUILayout.Width(80));
+                GUILayout.Label(XferParentBodies[intXferCurrentParent].bodyName, KACResources.styleAddXferName, GUILayout.ExpandWidth(true));
+                if (GUILayout.Button(new GUIContent("Change", "Click to cycle through Parent Bodies"), KACResources.styleAddXferOriginButton))
                 {
-                    Settings.Alarms.Add(new KACAlarm("", strAlarmNameXFER, strAlarmMessageXFER + "\r\n\tOrigin: " + bdyTarget.Origin.bodyName +  "\r\n\tTarget: " + bdyTarget.Target.bodyName + "\r\n\tMargin Minutes: " + lngMarginMinutes , 
-                        (KACWorkerGameState.CurrentTime.UT + bdyTarget.AlignmentTime.UT - (lngMarginMinutes*60)), lngMarginMinutes*60, KACAlarm.AlarmType.Transfer,
-                        (intActionSelected > 0), (intActionSelected > 1),bdyTarget));
-                    Settings.Save();
-                    _ShowAddPane = false;
+                    intXferCurrentParent += 1;
+                    if (intXferCurrentParent >= XferParentBodies.Count) intXferCurrentParent = 0;
+                    SetupXferOrigins();
+                    intXferCurrentOrigin = 0;
+                    SetupXFerTargets();
+                    strAlarmNameXFER = String.Format("{0} Transfer", XferOriginBodies[intXferCurrentOrigin].bodyName);
                 }
                 GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Transfer Origin:", KACResources.styleAddHeading, GUILayout.Width(80));
+                GUILayout.Label(XferOriginBodies[intXferCurrentOrigin].bodyName, KACResources.styleAddXferName, GUILayout.ExpandWidth(true));
+                if (GUILayout.Button(new GUIContent("Change", "Click to cycle through Origin Bodies"), KACResources.styleAddXferOriginButton))
+                {
+                    intXferCurrentOrigin += 1;
+                    if (intXferCurrentOrigin >= XferOriginBodies.Count) intXferCurrentOrigin = 0;
+                    SetupXFerTargets();
+                    strAlarmNameXFER = String.Format("{0} Transfer", XferOriginBodies[intXferCurrentOrigin].bodyName);
+                }
+                GUILayout.EndHorizontal();
+
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Target", KACResources.styleAddSectionHeading, GUILayout.Width(80));
+                GUILayout.Label(new GUIContent("Phase Angle","Displayed as \"Current Angle (Target Angle)\""), KACResources.styleAddSectionHeading, GUILayout.Width(120));
+                GUILayout.Label("Time to Transfer", KACResources.styleAddSectionHeading, GUILayout.ExpandWidth(true));
+                //GUILayout.Label("Time to Alarm", KACResources.styleAddSectionHeading, GUILayout.ExpandWidth(true));
+                GUILayout.Label("Add", KACResources.styleAddSectionHeading, GUILayout.Width(30));
+                GUILayout.EndHorizontal();
+
+                if (intXferType == 1)
+                {
+                    foreach (KACXFerTarget bdyTarget in XferTargetBodies)
+                    {
+                        GUILayout.BeginHorizontal();
+                        try
+                        {
+
+                        GUILayout.Label(bdyTarget.Target.bodyName, KACResources.styleAddXferName, GUILayout.Width(80));
+
+                        KACXFerModelPoint tmpModelPoint = KACResources.lstXferModelPoints.FirstOrDefault(
+                            m => FlightGlobals.Bodies[m.Origin] == bdyTarget.Origin &&
+                                FlightGlobals.Bodies[m.Target] == bdyTarget.Target && 
+                                m.UT>=KACWorkerGameState.CurrentTime.UT);
+
+                        if (tmpModelPoint == null)
+                        {
+                            GUILayout.Label("No Model Data Found");
+                        }
+                        else
+                        {
+                            String strPhase = String.Format("{0:0.00}({1:0.00})", bdyTarget.PhaseAngleCurrent, tmpModelPoint.PhaseAngle);
+                            GUILayout.Label(strPhase, KACResources.styleAddHeading, GUILayout.Width(120));
+                        }
+                        KerbalTime tmpTime = new KerbalTime(tmpModelPoint.UT-KACWorkerGameState.CurrentTime.UT);
+                        GUILayout.Label(KerbalTime.PrintInterval(tmpTime, Settings.TimeAsUT), KACResources.styleAddHeading, GUILayout.ExpandWidth(true));
+                        
+                        if (GUILayout.Button("Add", KACResources.styleAddXferButton))
+                        {
+                            Settings.Alarms.Add(new KACAlarm("", strAlarmNameXFER, strAlarmMessageXFER + "\r\n\tOrigin: " + bdyTarget.Origin.bodyName + "\r\n\tTarget: " + bdyTarget.Target.bodyName + "\r\n\tMargin: " + new KerbalTime(timeMargin.UT).IntervalString(),
+                                (KACWorkerGameState.CurrentTime.UT + tmpTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmType.TransferModelled,
+                                (intActionSelected > 0), (intActionSelected > 1), bdyTarget));
+                            Settings.Save();
+                            _ShowAddPane = false;
+                        }
+                        }
+                        catch (Exception)
+                        {
+
+                            //throw;
+                        }
+
+                        GUILayout.EndHorizontal();
+                    }
+                }
+                else
+                {
+                    //  This is the formula version, otherwise we go get the UT/phaseangle from the model data
+                    foreach (KACXFerTarget bdyTarget in XferTargetBodies)
+                    {
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Label(bdyTarget.Target.bodyName, KACResources.styleAddXferName, GUILayout.Width(80));
+                        String strPhase = String.Format("{0:0.00}({1:0.00})", bdyTarget.PhaseAngleCurrent, bdyTarget.PhaseAngleTarget);
+                        GUILayout.Label(strPhase, KACResources.styleAddHeading, GUILayout.Width(120));
+
+                        GUILayout.Label(KerbalTime.PrintInterval(bdyTarget.AlignmentTime, Settings.TimeAsUT), KACResources.styleAddHeading, GUILayout.ExpandWidth(true));
+                        //GUILayout.Label(KerbalTime.PrintInterval(new KerbalTime(bdyTarget.AlignmentTime.UT - timeMargin.UT), Settings.TimeAsUT), KACResources.styleAddHeading, GUILayout.ExpandWidth(true));
+                        
+                        if (GUILayout.Button("Add", KACResources.styleAddXferButton))
+                        {
+                            Settings.Alarms.Add(new KACAlarm("", strAlarmNameXFER, strAlarmMessageXFER + "\r\n\tOrigin: " + bdyTarget.Origin.bodyName + "\r\n\tTarget: " + bdyTarget.Target.bodyName + "\r\n\tMargin: " + new KerbalTime(timeMargin.UT).IntervalString(),
+                                (KACWorkerGameState.CurrentTime.UT + bdyTarget.AlignmentTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmType.Transfer,
+                                (intActionSelected > 0), (intActionSelected > 1), bdyTarget));
+                            Settings.Save();
+                            _ShowAddPane = false;
+                        }
+                        GUILayout.EndHorizontal();
+                    }
+                }
+                intAddXferHeight = XferTargetBodies.Count * 26;
+            }
+            catch (Exception ex)
+            {
+                GUILayout.Label("Something weird has happened");
+                DebugLogFormatted(ex.Message);
+                DebugLogFormatted(ex.StackTrace);
             }
 
-            if (XferTargetBodies.Count > 3)
-                intAddXferHeight = (XferTargetBodies.Count - 3) * 27;
-            else
-                intAddXferHeight = 0;
-
-            
             GUILayout.EndVertical();
         }
     }

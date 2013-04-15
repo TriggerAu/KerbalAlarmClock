@@ -222,14 +222,16 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             //GUILayout.Label("Written by:", KACResources.styleAddHeading);
             GUILayout.Label("Documentation and Links:", KACResources.styleAddHeading);
-            //GUILayout.Label("Spaceport Page:", KACResources.styleAddHeading);
+            GUILayout.Label("Spaceport Page:", KACResources.styleAddHeading);
             //GUILayout.Label("Forum Page:", KACResources.styleAddHeading);
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical();
             //GUILayout.Label("Trigger Au",KACResources.styleContent);
-            if (GUILayout.Button("Click Here",KACResources.styleContent))
-                Application.OpenURL("https://kerbalalarmclock.codeplex.com/documentation"); 
+            if (GUILayout.Button("Click Here", KACResources.styleContent))
+                Application.OpenURL("https://sites.google.com/site/kerbalalarmclock/");
+            if (GUILayout.Button("Click Here", KACResources.styleContent))
+                Application.OpenURL("http://kerbalspaceport.com/kerbal-alarm-clock-2/");
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

@@ -496,7 +496,7 @@ namespace KerbalAlarmClock
                     DrawRadioList(ref intXferType, "Formula Based", "Modelled Data");
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("Transfer Parent:", KACResources.styleAddHeading,GUILayout.Width(80));
+                GUILayout.Label("Xfer Parent:", KACResources.styleAddHeading,GUILayout.Width(80));
                 GUILayout.Label(XferParentBodies[intXferCurrentParent].bodyName, KACResources.styleAddXferName, GUILayout.ExpandWidth(true));
                 if (GUILayout.Button(new GUIContent("Change", "Click to cycle through Parent Bodies"), KACResources.styleAddXferOriginButton))
                 {
@@ -510,7 +510,7 @@ namespace KerbalAlarmClock
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("Transfer Origin:", KACResources.styleAddHeading, GUILayout.Width(80));
+                GUILayout.Label("Xfer Origin:", KACResources.styleAddHeading, GUILayout.Width(80));
                 GUILayout.Label(XferOriginBodies[intXferCurrentOrigin].bodyName, KACResources.styleAddXferName, GUILayout.ExpandWidth(true));
                 if (GUILayout.Button(new GUIContent("Change", "Click to cycle through Origin Bodies"), KACResources.styleAddXferOriginButton))
                 {

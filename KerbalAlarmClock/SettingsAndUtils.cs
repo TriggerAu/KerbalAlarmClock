@@ -54,18 +54,34 @@ namespace KerbalAlarmClock
             KSP.IO.File.WriteAllBytes<KerbalAlarmClock>(data,Filename);
         }
 
+
         public static void LoadImageIntoTexture(ref Texture2D tex, String FileName)
         {
-            WWW img1 = new WWW(String.Format("file://{0}Icons/{1}", PlugInPath, FileName));
-            img1.LoadImageIntoTexture(tex);
+            try
+            {
+                tex.LoadImage(LoadFileToArray(FileName));
+            }
+            catch (Exception)
+            {
+                KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0}", FileName);
+            }
         }
 
-        public static void LoadImageIntoTexture(ref Texture2D tex, String FolderName, String FileName)
-        {
-            WWW img1 = new WWW(String.Format("file://{0}{1}/{2}", PlugInPath, FolderName,FileName));
-            img1.LoadImageIntoTexture(tex);
-        }
+        //stop using unity www object as some clients get timeouts searching via the url address
 
+        //public static void LoadImageIntoTexture(ref Texture2D tex, String FileName)
+        //{
+        //    WWW img1 = new WWW(String.Format("file://{0}Icons/{1}", PlugInPath, FileName));
+        //    img1.LoadImageIntoTexture(tex);
+        //}
+
+        //public static void LoadImageIntoTexture(ref Texture2D tex, String FolderName, String FileName)
+        //{
+        //    WWW img1 = new WWW(String.Format("file://{0}{1}/{2}", PlugInPath, FolderName,FileName));
+        //    img1.LoadImageIntoTexture(tex);
+        //}
+
+        #region "offset building"
         public static RectOffset SetWindowRectOffset(RectOffset tmpRectOffset, int intValue)
         {
             tmpRectOffset.left = intValue;
@@ -88,7 +104,9 @@ namespace KerbalAlarmClock
             tmpRectOffset.bottom = Bottom;
             return tmpRectOffset;
         }
+        #endregion
 
+        #region "Math Stuff"
         public static double Clamp(double x, double min, double max)
         {
             return Math.Min(Math.Max(x, min), max);
@@ -110,11 +128,135 @@ namespace KerbalAlarmClock
             if (angle < 0) return angle + 360.0;
             else return angle;
         }
+#endregion
+
+        #region "Orbital Math"
+
+        //returns false if there is no AN/DN on the flight plan
+        public static Boolean CalcTimeToANorDN(Vessel vessel, ANDNNodeType typeOfNode, out Double timeToNode)
+        {
+            Boolean blnReturn = false;
+            timeToNode = 0;
+            try 
+	        {
+                //work out the target type, and get the target orbit
+                if (FlightGlobals.fetch.VesselTarget!=null)
+                {
+
+                    ITargetable target = FlightGlobals.fetch.VesselTarget;
+                    Orbit oTarget = target.GetOrbit();
+                    Vector3d vectVesselPos = vessel.orbit.getRelativePositionAtUT(KACWorkerGameState.CurrentTime.UT);
+
+                    blnReturn = CalcTimeToANorDN(vectVesselPos,vessel.orbit,oTarget,typeOfNode,out timeToNode);
+                }
+	        }
+	        catch (Exception)
+	        {
+
+            }
+            return blnReturn;
+        }
+
+
+
+        #region "AN/DN Code - predominantly the functions from the Kerbal Engineer Redux by cybutek under Creative commons BY-NC-SA - http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_GB"
+        public static Boolean CalcTimeToANorDN(Vector3d position, Orbit origin, Orbit target, ANDNNodeType typeOfNode, out Double timeToNode)
+        {
+            timeToNode = 0d;
+            Boolean blnReturn = false;
+            try
+            {
+                double AngleToANDN;
+                if (typeOfNode== ANDNNodeType.Ascending)
+                    AngleToANDN = CalcAngleToAscendingNode(position,origin,target);
+                else
+                    AngleToANDN = CalcAngleToDescendingNode(position,origin,target);
+                timeToNode = CalcTimeToNode(origin, AngleToANDN);
+                blnReturn = true;
+            }
+            catch (Exception)
+            {
+                //
+            }
+            return blnReturn;
+        }
+
+        public enum ANDNNodeType
+        {
+            Ascending,
+            Descending
+        }
+
+
+        public static double CalcAngleToAscendingNode(Vector3d position, Orbit origin, Orbit target)
+        {
+            double angleToNode = 0d;
+
+            if (origin.inclination < 90)
+            {
+                angleToNode = CalcPhaseAngle(position, GetAscendingNode(origin, target));
+            }
+            else
+            {
+                angleToNode = 360 - CalcPhaseAngle(position, GetAscendingNode(origin, target));
+            }
+
+            return angleToNode;
+        }
+
+        public static double CalcAngleToDescendingNode(Vector3d position, Orbit origin, Orbit target)
+        {
+            double angleToNode = 0d;
+
+            if (origin.inclination < 90)
+            {
+                angleToNode = CalcPhaseAngle(position, GetDescendingNode(origin, target));
+            }
+            else
+            {
+                angleToNode = 360 - CalcPhaseAngle(position, GetDescendingNode(origin, target));
+            }
+
+            return angleToNode;
+        }
+
+        public static Vector3d GetAscendingNode(Orbit origin, Orbit target)
+        {
+            //get the vector at 90 degrees to the two orbits normal so we see the cross over AN
+            return Vector3d.Cross(target.GetOrbitNormal(), origin.GetOrbitNormal());
+        }
+        public static Vector3d GetDescendingNode(Orbit origin, Orbit target)
+        {
+            //get the vector at 90 degrees to the two orbits normal so we see the cross over AN
+            return Vector3d.Cross(origin.GetOrbitNormal(), target.GetOrbitNormal());
+        }
+
+        public static double CalcPhaseAngle(Vector3d origin, Vector3d target)
+        {
+            //angle between the two vectors
+            double phaseAngle = Vector3d.Angle(target, origin);
+            if (Vector3d.Angle(Quaternion.AngleAxis(90, Vector3d.forward) * origin, target) > 90)
+            {
+                phaseAngle = 360 - phaseAngle;
+            }
+            return (phaseAngle + 360) % 360;
+        }
+        public static double CalcTimeToNode(Orbit origin, double angleToNode)
+        {
+            return (origin.period / 360d) * angleToNode;
+        }
+        #endregion
+
+
+        #endregion
+
     }
 
     public static class KACResources
     {
         #region "Textures"
+        
+        //Clock Icons
         public static Texture2D iconNorm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconNormShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconAlarm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
@@ -125,13 +267,24 @@ namespace KerbalAlarmClock
         public static Texture2D iconWarpEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconWarpEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconWarpEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-
         public static Texture2D iconPauseEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconPauseEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconPauseEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconPauseEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconPauseEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconPauseEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+
+        //Alarm List icons
+        public static Texture2D iconMNode = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconSOI = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconAp = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconPe = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconAN = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconDN = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconXFer = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+
+        public static Texture2D iconNone = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconEdit = new Texture2D(16, 16, TextureFormat.ARGB32, false);
 
         public static Texture2D iconWarpList100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconWarpList080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
@@ -147,19 +300,26 @@ namespace KerbalAlarmClock
         public static Texture2D iconPauseList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconPauseList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
-        public static Texture2D iconXFer = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconMNode = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconSOI = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconSOISmall = new Texture2D(14, 11, TextureFormat.ARGB32, false);
-        public static Texture2D iconNone = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconstatusSOI = new Texture2D(14, 11, TextureFormat.ARGB32, false);
 
-        public static Texture2D iconEdit = new Texture2D(16, 16, TextureFormat.ARGB32, false);
+
+        public static Texture2D btnRaw = new Texture2D(20, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnMNode = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnAp = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnPe = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnAN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnDN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnSOI = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnXfer = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+
+        public static Texture2D btnChevronUp = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnChevronDown = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnChevLeft = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnChevRight = new Texture2D(17,16, TextureFormat.ARGB32, false);
 
         public static Texture2D btnRedCross = new Texture2D(16, 16, TextureFormat.ARGB32, false);
         public static Texture2D btnSettings = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         public static Texture2D btnSettingsAttention = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnMin = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnMax = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         public static Texture2D btnAdd = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
         public static Texture2D txtTooltipBackground = new Texture2D(9, 9);//, TextureFormat.ARGB32, false);
@@ -173,57 +333,73 @@ namespace KerbalAlarmClock
 
             try
             {
-                KACUtils.LoadImageIntoTexture(ref iconNorm, "KACIcon-Norm.png");
+                KACUtils.LoadImageIntoTexture(ref iconNorm, "img_iconNorm.png");
+                KACUtils.LoadImageIntoTexture(ref iconNormShow,"img_iconNormShow.png");
+                KACUtils.LoadImageIntoTexture(ref iconAlarm,"img_iconAlarm.png");
+                KACUtils.LoadImageIntoTexture(ref iconAlarmShow,"img_iconAlarmShow.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpEffect100,"img_iconWarpEffect2_100.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpEffect080,"img_iconWarpEffect2_080.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpEffect060,"img_iconWarpEffect2_060.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpEffect040,"img_iconWarpEffect2_040.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpEffect020,"img_iconWarpEffect2_020.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpEffect000,"img_iconWarpEffect2_000.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseEffect100,"img_iconPauseEffect_100.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseEffect080,"img_iconPauseEffect_080.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseEffect060,"img_iconPauseEffect_060.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseEffect040,"img_iconPauseEffect_040.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseEffect020,"img_iconPauseEffect_020.png");
+                KACUtils.LoadImageIntoTexture(ref  iconPauseEffect000,"img_iconPauseEffect_000.png");
 
-                KACUtils.LoadImageIntoTexture(ref iconNormShow,"KACIcon-NormShow.png");
-                KACUtils.LoadImageIntoTexture(ref iconAlarm,"KACIcon-Alarm.png");
-                KACUtils.LoadImageIntoTexture(ref iconAlarmShow,"KACIcon-AlarmShow.png");
-                
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect100,"KACIcon-WarpEffect2_100.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect080,"KACIcon-WarpEffect2_080.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect060,"KACIcon-WarpEffect2_060.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect040,"KACIcon-WarpEffect2_040.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect020,"KACIcon-WarpEffect2_020.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect000,"KACIcon-WarpEffect2_000.png");
 
-                KACUtils.LoadImageIntoTexture(ref iconPauseEffect100,"KACIcon-PauseEffect_100.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseEffect080,"KACIcon-PauseEffect_080.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseEffect060,"KACIcon-PauseEffect_060.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseEffect040,"KACIcon-PauseEffect_040.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseEffect020,"KACIcon-PauseEffect_020.png");
-                KACUtils.LoadImageIntoTexture(ref  iconPauseEffect000,"KACIcon-PauseEffect_000.png");
+                KACUtils.LoadImageIntoTexture(ref iconSOI, "img_listiconSOI.png");
+                KACUtils.LoadImageIntoTexture(ref iconMNode, "img_listiconMNode.png");
+                KACUtils.LoadImageIntoTexture(ref iconAp, "img_listiconAp.png");
+                KACUtils.LoadImageIntoTexture(ref iconPe, "img_listiconPe.png");
+                KACUtils.LoadImageIntoTexture(ref iconAN, "img_listiconAN.png");
+                KACUtils.LoadImageIntoTexture(ref iconDN, "img_listiconDN.png");
+                KACUtils.LoadImageIntoTexture(ref iconXFer, "img_listiconXfer.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpList100, "img_listiconWarpList_100.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpList080,"img_listiconWarpList_080.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpList060,"img_listiconWarpList_060.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpList040,"img_listiconWarpList_040.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpList020,"img_listiconWarpList_020.png");
+                KACUtils.LoadImageIntoTexture(ref iconWarpList000,"img_listiconWarpList_000.png");
 
-                KACUtils.LoadImageIntoTexture(ref iconWarpList100,"KACIcon-WarpList_100.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList080,"KACIcon-WarpList_080.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList060,"KACIcon-WarpList_060.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList040,"KACIcon-WarpList_040.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList020,"KACIcon-WarpList_020.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList000,"KACIcon-WarpList_000.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseList100,"img_listiconPauseList_100.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseList080,"img_listiconPauseList_080.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseList060,"img_listiconPauseList_060.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseList040,"img_listiconPauseList_040.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseList020,"img_listiconPauseList_020.png");
+                KACUtils.LoadImageIntoTexture(ref iconPauseList000,"img_listiconPauseList_000.png");
 
-                KACUtils.LoadImageIntoTexture(ref iconPauseList100,"KACIcon-PauseList_100.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseList080,"KACIcon-PauseList_080.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseList060,"KACIcon-PauseList_060.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseList040,"KACIcon-PauseList_040.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseList020,"KACIcon-PauseList_020.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseList000,"KACIcon-PauseList_000.png");
+                KACUtils.LoadImageIntoTexture(ref iconNone, "img_listiconNone.png");
+                KACUtils.LoadImageIntoTexture(ref iconEdit, "img_listiconEdit.png");
 
-                KACUtils.LoadImageIntoTexture(ref iconSOI, "KACIcon-SOI.png");
-                KACUtils.LoadImageIntoTexture(ref iconSOISmall, "KACIcon-SOISmall.png");
-                KACUtils.LoadImageIntoTexture(ref iconMNode, "KACIcon-MNode.png");
-                KACUtils.LoadImageIntoTexture(ref iconXFer, "KACIcon-Xfer.png");
-                KACUtils.LoadImageIntoTexture(ref iconNone, "KACIcon-None.png");
+                KACUtils.LoadImageIntoTexture(ref iconstatusSOI, "img_statusiconSOI.png");
 
-                KACUtils.LoadImageIntoTexture(ref iconEdit, "KACIcon-Edit.png");
+                KACUtils.LoadImageIntoTexture(ref btnRaw, "img_buttonTypeRaw.png");
+                KACUtils.LoadImageIntoTexture(ref btnMNode, "img_buttonTypeMNode.png");
+                KACUtils.LoadImageIntoTexture(ref btnAp, "img_buttonTypeAp.png");
+                KACUtils.LoadImageIntoTexture(ref btnPe, "img_buttonTypePe.png");
+                KACUtils.LoadImageIntoTexture(ref btnAN, "img_buttonTypeAN.png");
+                KACUtils.LoadImageIntoTexture(ref btnDN, "img_buttonTypeDN.png");
+                KACUtils.LoadImageIntoTexture(ref btnSOI, "img_buttonTypeSOI.png");
+                KACUtils.LoadImageIntoTexture(ref btnXfer, "img_buttonTypeXfer.png");
 
-                KACUtils.LoadImageIntoTexture(ref btnRedCross, "KACIcon-ButtonRedCross.png");
-                KACUtils.LoadImageIntoTexture(ref btnSettings,"KACIcon-ButtonSettings.png");
-                KACUtils.LoadImageIntoTexture(ref btnSettingsAttention, "KACIcon-ButtonSettingsAttention.png");
-                KACUtils.LoadImageIntoTexture(ref btnMin, "KACIcon-ButtonMin.png");
-                KACUtils.LoadImageIntoTexture(ref btnMax,"KACIcon-ButtonMax.png");
-                KACUtils.LoadImageIntoTexture(ref btnAdd,"KACIcon-ButtonAdd.png");
 
-                KACUtils.LoadImageIntoTexture(ref txtTooltipBackground, "Textures", "TooltipBackground.png");
-                
+                KACUtils.LoadImageIntoTexture(ref btnChevronUp, "img_buttonChevronUp.png");
+                KACUtils.LoadImageIntoTexture(ref btnChevronDown, "img_buttonChevronDown.png");
+                KACUtils.LoadImageIntoTexture(ref btnChevLeft, "img_buttonChevronLeft.png");
+                KACUtils.LoadImageIntoTexture(ref btnChevRight, "img_buttonChevronRight.png");
+
+                KACUtils.LoadImageIntoTexture(ref btnRedCross, "img_buttonRedCross.png");
+                KACUtils.LoadImageIntoTexture(ref btnSettings, "img_buttonSettings.png");
+                KACUtils.LoadImageIntoTexture(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
+                KACUtils.LoadImageIntoTexture(ref btnAdd, "img_buttonAdd.png");
+
+                KACUtils.LoadImageIntoTexture(ref txtTooltipBackground, "txt_TooltipBackground.png");
+
+
                 //KACUtils.LoadImageIntoTexture(ref txtRedTint, "Textures", "RedOverlay.png");
                 
                 //KACUtils.LoadImageIntoTexture(ref txtBlackSquare, "Textures", "BlackSquare.png");
@@ -429,6 +605,8 @@ namespace KerbalAlarmClock
         public static GUIStyle styleCheckbox;
         public static GUIStyle styleCheckboxLabel;
 
+        public static GUIStyle styleButtonList;
+
         public static GUIStyle styleSmallButton;
 
         public static GUIStyle styleFlagIcon;
@@ -448,12 +626,14 @@ namespace KerbalAlarmClock
         public static GUIStyle styleAddHeading;
         public static GUIStyle styleAddField;
         public static GUIStyle styleAddFieldError;
-        //public static GUIStyle styleAddFieldErrorOverlay;
+        //public static GUIStyle styleAddFieldErorOverlay;
+        public static GUIStyle styleAddFieldGreen;
         public static GUIStyle styleAddFieldAreas;
         public static GUIStyle styleAddAlarmArea;
         public static GUIStyle styleAddXferName;
         public static GUIStyle styleAddXferButton;
         public static GUIStyle styleAddXferOriginButton;
+        public static GUIStyle styleAddMessageField;
         
         //AlarmMessage Styles
         public static GUIStyle styleAlarmMessage;
@@ -540,6 +720,10 @@ namespace KerbalAlarmClock
             //styleCheckboxLabel.hover.textColor = Color.red;
             //styleCheckboxLabel.onHover.textColor = Color.red;
 
+            styleButtonList = new GUIStyle(styleDefButton);
+            styleButtonList.fixedHeight = 26;
+            styleButtonList.padding = KACUtils.SetRectOffset(styleButtonList.padding, 0);
+
             styleSmallButton = new GUIStyle(GUI.skin.button);
             styleSmallButton.alignment = TextAnchor.MiddleCenter;
             styleSmallButton.fixedWidth = 30;
@@ -601,11 +785,19 @@ namespace KerbalAlarmClock
 
             styleAddField = new GUIStyle(styleDefTextField);
             styleAddField.stretchWidth = true;
-            styleAddField.alignment = TextAnchor.MiddleLeft;
+            styleAddField.alignment = TextAnchor.UpperLeft;
             styleAddField.normal.textColor = Color.yellow;
 
             styleAddFieldError = new GUIStyle(styleAddField);
             styleAddFieldError.normal.textColor = Color.red;
+
+            styleAddFieldGreen = new GUIStyle(styleAddField);
+            styleAddFieldGreen.normal.textColor = Color.green;
+
+            styleAddMessageField = new GUIStyle(styleAddField);
+            styleAddMessageField.wordWrap = true;
+            styleAddMessageField.stretchHeight = true;
+            styleAddMessageField.stretchWidth = false;
 
             //styleAddFieldErrorOverlay = new GUIStyle(styleDefLabel);
             //styleAddFieldErrorOverlay.normal.background = txtRedTint;
@@ -626,13 +818,13 @@ namespace KerbalAlarmClock
 
             styleAddXferButton = new GUIStyle(styleDefButton);
             styleAddXferButton.fixedWidth = 40;
-            styleAddXferButton.fixedHeight = 22;
+            styleAddXferButton.fixedHeight = 20;
             styleAddXferButton.fontSize = 11;
             styleAddXferButton.alignment = TextAnchor.MiddleCenter;
 
             styleAddXferOriginButton = new GUIStyle(styleDefButton);
             styleAddXferOriginButton.fixedWidth = 60;
-            styleAddXferOriginButton.fixedHeight = 22;
+            styleAddXferOriginButton.fixedHeight = 20;
             styleAddXferOriginButton.fontSize=11;
             styleAddXferOriginButton.alignment = TextAnchor.MiddleCenter;
 
@@ -715,14 +907,10 @@ namespace KerbalAlarmClock
             {
                 lstXferModelPoints = new List<KACXFerModelPoint>();
 
-                WWW DataFile = new WWW(String.Format("file://{0}Data/TransferModelData.csv", KACUtils.PlugInPath));
-                //loop to read file
-                while (!DataFile.isDone) { } 
-            
-                //convert it
-                String strData = DataFile.text;
+                //read in the data file
+                String strData = KSP.IO.File.ReadAllText<KerbalAlarmClock>("data_TransferModelData.csv");
+                //split to lines
                 String[] strLines = strData.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
                 String[] strFields;
                 for(int intLine=1;intLine<strLines.Length;intLine++)
         	    {
@@ -737,9 +925,9 @@ namespace KerbalAlarmClock
                 blnReturn = true;
                 KACWorker.DebugLogFormatted("Transfer Modelling Data Load Complete");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                KACWorker.DebugLogFormatted("Transfer Modelling Data Failed - is the data file there and correct");
+                KACWorker.DebugLogFormatted("Transfer Modelling Data Failed - is the data file there and correct\r\n{0}",ex.Message);
             }
             return blnReturn;
         }
@@ -807,14 +995,20 @@ namespace KerbalAlarmClock
         public int AlarmPosition = 1;
         public Boolean AlarmDeleteOnClose = false;
         public Boolean HideOnPause = true;
-        public Boolean TimeAsUT = false;
+        //public Boolean TimeAsUT = false;
+        public KerbalTime.PrintTimeFormat TimeFormat = KerbalTime.PrintTimeFormat.KSPString;
         public Boolean ShowTooltips = true;
 
         public Boolean AlarmXferRecalc = true;
         public double AlarmXferRecalcThreshold = 180;
-
-        public Boolean XferModelLoadData = false;
+        public Boolean AlarmXferDisplayList = false;
+        public Boolean XferModelLoadData = true;
         public Boolean XferModelDataLoaded = false;
+        public Boolean XferUseModelData = true;
+
+        public Boolean AlarmNodeRecalc = true;
+        public double AlarmNodeRecalcThreshold = 180;
+
 
         public Boolean AlarmAddSOIAuto = false;
         public double AlarmAddSOIAutoThreshold = 180;
@@ -866,11 +1060,20 @@ namespace KerbalAlarmClock
                 this.AlarmDeleteOnClose = configfile.GetValue("AlarmDeleteOnClose", false);
                 this.ShowTooltips = configfile.GetValue("ShowTooltips", true);
                 this.HideOnPause = configfile.GetValue("HideOnPause", true);
-                this.TimeAsUT = configfile.GetValue("TimeAsUT", false);
+                this.TimeFormat = configfile.GetValue<KerbalTime.PrintTimeFormat>("TimeFormat", KerbalTime.PrintTimeFormat.KSPString);
+                if (configfile.GetValue<bool>("TimeAsUT", false) == true)
+                {
+                    this.TimeFormat = KerbalTime.PrintTimeFormat.TimeAsUT;
+                    configfile.SetValue("TimeAsUT", false);
+                    configfile.SetValue("TimeFormat", Enum.GetName(typeof(KerbalTime.PrintTimeFormat), this.TimeFormat));
+                    configfile.save();
+                }
 
                 this.AlarmXferRecalc = configfile.GetValue("AlarmXferRecalc", true);
                 this.AlarmXferRecalcThreshold = configfile.GetValue<Double>("AlarmXferRecalcThreshold", 180);
-
+                this.AlarmXferDisplayList = configfile.GetValue("AlarmXferDisplayList", false);
+                this.XferUseModelData = configfile.GetValue("XferUseModelData", false);
+                                
                 this.AlarmAddSOIAuto = configfile.GetValue("AlarmAddSOIAuto", false);
                 this.AlarmAddSOIAutoThreshold = configfile.GetValue<Double>("AlarmAddSOIAutoThreshold", 180);
                 //this.AlarmAddSOIMargin = configfile.GetValue("AlarmAddSOIMargin", 120);
@@ -916,6 +1119,7 @@ namespace KerbalAlarmClock
 
         private void LoadAlarms()
         {
+            string SettingsVersion = "2";
             Alarms = new KACAlarmList();
             KSP.IO.TextReader tr = KSP.IO.TextReader.CreateForType<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title));
             String strFile = tr.ReadToEnd();
@@ -926,10 +1130,24 @@ namespace KerbalAlarmClock
                 String strAlarm = strFile.Substring(0,strFile.IndexOf("|<ENDLINE>"));
                 strFile = strFile.Substring(strAlarm.Length + "|<ENDLINE>".Length).TrimStart("\r\n".ToCharArray());
 
-                if(!strAlarm.StartsWith("VesselID|"))
+                if (strAlarm.StartsWith("SettingsVersion|"))
+                {
+                    SettingsVersion = strAlarm.Split("|".ToCharArray())[1];
+                }
+                else if (!strAlarm.StartsWith("VesselID|"))
                 {
                     KACAlarm tmpAlarm = new KACAlarm();
-                    tmpAlarm.LoadFromString2(strAlarm);
+
+                    switch (SettingsVersion)
+                    {
+                        //case "3":
+                        //    tmpAlarm.LoadFromString3(strAlarm);
+                        //    break;
+                        default:
+                            tmpAlarm.LoadFromString2(strAlarm);
+                            break;
+                    }
+                    
                     Alarms.Add(tmpAlarm);
                 }
 	        }
@@ -958,11 +1176,13 @@ namespace KerbalAlarmClock
             configfile.SetValue("AlarmDeleteOnClose", this.AlarmDeleteOnClose);
             configfile.SetValue("ShowTooltips", this.ShowTooltips);
             configfile.SetValue("HideOnPause", this.HideOnPause);
-            configfile.SetValue("TimeAsUT", this.TimeAsUT);
+            configfile.SetValue("TimeFormat", Enum.GetName(typeof(KerbalTime.PrintTimeFormat),this.TimeFormat));
 
             configfile.SetValue("AlarmXferRecalc", this.AlarmXferRecalc);
             configfile.SetValue("AlarmXferRecalcThreshold", this.AlarmXferRecalcThreshold);
-
+            configfile.SetValue("AlarmXferDisplayList", this.AlarmXferDisplayList);
+            configfile.SetValue("XferUseModelData", this.XferUseModelData);
+            
             configfile.SetValue("AlarmAddSOIAuto", this.AlarmAddSOIAuto);
             configfile.SetValue("AlarmAddSOIAutoThreshold", this.AlarmAddSOIAutoThreshold);
             //configfile.SetValue("AlarmAddSOIMargin", this.AlarmAddSOIMargin);
@@ -979,15 +1199,16 @@ namespace KerbalAlarmClock
             KACWorker.DebugLogFormatted("Saved Config");
 
             //Now Save the Alarms
-            SaveAlarms();
+            //SaveAlarms2();
+            SaveAlarms2();
             KACWorker.DebugLogFormatted("Saved Alarms");
         }
 
-        private void SaveAlarms()
+        private void SaveAlarms2()
         {
             KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title));
             //Write the header
-            tw.WriteLine("VesselID|Name|Message|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|Options-Manuever/Xfer|<ENDLINE>");
+            tw.WriteLine("VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|Options-Manuever/Xfer|<ENDLINE>");
             foreach (KACAlarm tmpAlarm in Alarms.BySaveName(HighLogic.CurrentGame.Title))
             {
                 //Now Write Each alarm
@@ -996,6 +1217,21 @@ namespace KerbalAlarmClock
             //And close the file
             tw.Close();
         }
+
+        //private void SaveAlarms3()
+        //{
+        //    KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title));
+        //    //Write the header
+        //    tw.WriteLine("SettingsVersion|3|<ENDLINE>");
+        //    tw.WriteLine("VesselID|Name|Notes|Details|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|Options-Manuever/Xfer|<ENDLINE>");
+        //    foreach (KACAlarm tmpAlarm in Alarms.BySaveName(HighLogic.CurrentGame.Title))
+        //    {
+        //        //Now Write Each alarm
+        //        tw.WriteLine(tmpAlarm.SerializeString3() + "|<ENDLINE>");
+        //    }
+        //    //And close the file
+        //    tw.Close();
+        //}
 
         public Boolean getLatestVersion()
         {

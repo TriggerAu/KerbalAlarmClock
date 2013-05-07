@@ -63,11 +63,11 @@ namespace KerbalAlarmClock
                     break;
                 case 1:
                     WindowLayout_SettingsSpecifics();
-                    intSettingsHeight = 282;
+                    intSettingsHeight = 344;
                     break;
                 case 2:
                     WindowLayout_SettingsAbout();
-                    intSettingsHeight = 254;
+                    intSettingsHeight = 306;
                     break;
                 default:
                     break;
@@ -97,8 +97,18 @@ namespace KerbalAlarmClock
             if (DrawCheckbox(ref Settings.ShowTooltips, "Show Tooltips on Mouse Hover"))
                 Settings.Save();
 
-            if (DrawCheckbox(ref Settings.TimeAsUT, "Display Times as UT (instead of Date/Time)"))
+            int intTimeFormat = (int)Settings.TimeFormat;
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Time Format:", KACResources.styleAddHeading, GUILayout.Width(90));
+            if (DrawRadioList(ref intTimeFormat, new String[] { "UT", "KSP Time", "Normal Time" }))
+            {   
+                Settings.TimeFormat = (KerbalTime.PrintTimeFormat)intTimeFormat;
                 Settings.Save();
+            }
+            GUILayout.EndHorizontal();
+
+            //if (DrawCheckbox(ref Settings.TimeAsUT, "Display Times as UT (instead of Date/Time)"))
+            //    Settings.Save();
 
             GUILayout.EndVertical();
 
@@ -129,6 +139,7 @@ namespace KerbalAlarmClock
 
             GUILayout.EndVertical();
         }
+        private int AddInterfaceType = 1;
 
         private void WindowLayout_SettingsSpecifics()
         {
@@ -170,6 +181,20 @@ namespace KerbalAlarmClock
                 if (Settings.AlarmXferRecalc)
                 {
                     RecalcTransferAlarmTimes(true);
+                }
+            }
+            GUILayout.EndVertical();
+
+            //Transfer Alarm Stuff
+            GUILayout.Label("Orbital Node Alarms (Ap, Pe, AN, DN)", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            if (DrawCheckbox(ref Settings.AlarmNodeRecalc, new GUIContent("Auto Recalc of Node points", strAlarmDescNode)))
+            {
+                Settings.Save();
+                //if it was turned on then force a recalc regardless of the gap
+                if (Settings.AlarmNodeRecalc)
+                {
+                    RecalcNodeAlarmTimes(true);
                 }
             }
             GUILayout.EndVertical();
@@ -223,7 +248,7 @@ namespace KerbalAlarmClock
             //GUILayout.Label("Written by:", KACResources.styleAddHeading);
             GUILayout.Label("Documentation and Links:", KACResources.styleAddHeading);
             GUILayout.Label("Spaceport Page:", KACResources.styleAddHeading);
-            //GUILayout.Label("Forum Page:", KACResources.styleAddHeading);
+            GUILayout.Label("Forum Page:", KACResources.styleAddHeading);
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical();
@@ -232,6 +257,9 @@ namespace KerbalAlarmClock
                 Application.OpenURL("https://sites.google.com/site/kerbalalarmclock/");
             if (GUILayout.Button("Click Here", KACResources.styleContent))
                 Application.OpenURL("http://kerbalspaceport.com/kerbal-alarm-clock-2/");
+            if (GUILayout.Button("Click Here", KACResources.styleContent))
+                Application.OpenURL("http://forum.kerbalspaceprogram.com/showthread.php/24786-Kerbal-Alarm-Clock");
+
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

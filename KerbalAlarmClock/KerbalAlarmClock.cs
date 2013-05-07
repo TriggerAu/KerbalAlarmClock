@@ -111,6 +111,43 @@ namespace KerbalAlarmClock
             }
         }
 
+        public static Boolean ApPointExists
+        {
+            get
+            {
+                Boolean blnReturn = false;
+
+                if (FlightGlobals.ActiveVessel != null)
+                {
+                    if (FlightGlobals.ActiveVessel.orbit != null)
+                    {
+                        if (FlightGlobals.ActiveVessel.orbit.timeToAp > 0
+                            && (CurrentTime.UT + FlightGlobals.ActiveVessel.orbit.timeToAp < FlightGlobals.ActiveVessel.orbit.EndUT))
+                            blnReturn = true;
+                    }
+                }
+                return blnReturn;
+            }
+        }
+        public static Boolean PePointExists
+        {
+            get
+            {
+                Boolean blnReturn = false;
+
+                if (FlightGlobals.ActiveVessel != null)
+                {
+                    if (FlightGlobals.ActiveVessel.orbit != null)
+                    {
+                        if (FlightGlobals.ActiveVessel.orbit.timeToAp > 0
+                            && (CurrentTime.UT + FlightGlobals.ActiveVessel.orbit.timeToAp < FlightGlobals.ActiveVessel.orbit.EndUT))
+                            blnReturn = true;
+                    }
+                }
+                return blnReturn;
+            }
+        }
+
         //do null checks on all these!!!!!
         public static void SetCurrentGUIStates()
         {
@@ -391,6 +428,7 @@ namespace KerbalAlarmClock
         {
             _WindowDebugID = rnd.Next(1000, 2000000);
             _WindowAddID = rnd.Next(1000, 2000000);
+            _WindowAddMessagesID = rnd.Next(1000, 2000000);
             _WindowMainID = rnd.Next(1000, 2000000);
             _WindowSettingsID = rnd.Next(1000, 2000000);
             _WindowEditID = rnd.Next(1000, 2000000);
@@ -464,13 +502,20 @@ namespace KerbalAlarmClock
 
                     double timeSOIChange = 0;
                     double timeSOIAlarm = 0;
+
+                    String strSOIAlarmName = "";
+                    String strSOIAlarmNotes = "";
                     //double timeSOIAlarm = 0;
                     if (Settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
                     {
                         timeSOIChange = KACWorkerGameState.CurrentVessel.orbit.UTsoi;
                         //timeSOIAlarm = timeSOIChange - Settings.AlarmAddSOIMargin;
-                        strAlarmNameSOI = KACWorkerGameState.CurrentVessel.vesselName + "";
-                        strAlarmMessageSOI = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
+                        //strOldAlarmNameSOI = KACWorkerGameState.CurrentVessel.vesselName + "";
+                        //strOldAlarmMessageSOI = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
+                        //                "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
+                        //                "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
+                        strSOIAlarmName = KACWorkerGameState.CurrentVessel.vesselName;// + "-Leaving " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName;
+                        strSOIAlarmNotes = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
                                         "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
                                         "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
                     }
@@ -498,7 +543,9 @@ namespace KerbalAlarmClock
                             //Otherwise if its in the future add a new alarm
                         else if (timeSOIAlarm > KACWorkerGameState.CurrentTime.UT)
                         {
-                            Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmNameSOI, strAlarmMessageSOI, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
+                            //Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strOldAlarmNameSOI, strOldAlarmMessageSOI, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
+                            //    KACAlarm.AlarmType.SOIChange, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
+                            Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strSOIAlarmName, strSOIAlarmNotes, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
                                 KACAlarm.AlarmType.SOIChange, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
                         }
                     }
@@ -523,6 +570,12 @@ namespace KerbalAlarmClock
                 {
                     //Adjust any transfer window alarms until they hit the threshold
                     RecalcTransferAlarmTimes(false);
+                }
+
+                if (Settings.AlarmNodeRecalc)
+                {
+                    //Adjust any Ap,Pe,AN,DNs as flight path changes
+                    RecalcNodeAlarmTimes(false);
                 }
 
                 //Work out how many game seconds will pass till this runs again
@@ -550,7 +603,49 @@ namespace KerbalAlarmClock
                     //DebugLogFormatted("{0}+{1}-{2}", KACWorkerGameState.CurrentTime.UT.ToString(), tmpTarget.AlignmentTime.UT.ToString(), tmpAlarm.AlarmMarginSecs.ToString());
                     //recalc the transfer spot, but dont move it if the difference is more than the threshold value
                     if (Math.Abs(KACWorkerGameState.CurrentTime.UT - tmpTarget.AlignmentTime.UT) < Settings.AlarmXferRecalcThreshold || OverrideDriftThreshold)
-                        tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT + tmpTarget.AlignmentTime.UT - tmpAlarm.AlarmMarginSecs;
+                        tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + tmpTarget.AlignmentTime.UT;
+                }
+            }
+        }
+
+        List<KACAlarm.AlarmType> TypesToRecalc = new List<KACAlarm.AlarmType>() {KACAlarm.AlarmType.Apoapsis,KACAlarm.AlarmType.Periapsis,
+                                                                                KACAlarm.AlarmType.AscendingNode,KACAlarm.AlarmType.DescendingNode};
+        private void RecalcNodeAlarmTimes(Boolean OverrideDriftThreshold)
+        {
+            //only do these recalcs for the current flight plan
+            foreach (KACAlarm tmpAlarm in Settings.Alarms.Where(a => TypesToRecalc.Contains(a.TypeOfAlarm) && a.VesselID==KACWorkerGameState.CurrentVessel.id.ToString()))
+            {
+                if (tmpAlarm.Remaining.UT > Settings.AlarmNodeRecalcThreshold)
+                {
+                    switch (tmpAlarm.TypeOfAlarm)
+	                {
+                        case KACAlarm.AlarmType.Apoapsis:
+                            if (KACWorkerGameState.ApPointExists &&
+                                ((Math.Abs(KACWorkerGameState.CurrentVessel.orbit.timeToAp) > Settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
+                                tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + KACWorkerGameState.CurrentVessel.orbit.timeToAp;
+                            break;
+                        case KACAlarm.AlarmType.Periapsis:
+                            if (KACWorkerGameState.PePointExists &&
+                                ((Math.Abs(KACWorkerGameState.CurrentVessel.orbit.timeToPe) > Settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
+                                tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + KACWorkerGameState.CurrentVessel.orbit.timeToPe;
+                            break;
+                        case KACAlarm.AlarmType.AscendingNode:
+                            Double timeToAN;
+                            Boolean blnANExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Ascending, out timeToAN);
+                            if (blnANExists &&
+                                ((Math.Abs(timeToAN) > Settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
+                                tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + timeToAN;
+                            break;
+                        case KACAlarm.AlarmType.DescendingNode:
+                            Double timeToDN;
+                            Boolean blnDNExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Descending, out timeToDN);
+                            if (blnDNExists &&
+                                ((Math.Abs(timeToDN) > Settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
+                                tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + timeToDN;
+                            break;
+                        default:
+                            break;
+	                }
                 }
             }
         }

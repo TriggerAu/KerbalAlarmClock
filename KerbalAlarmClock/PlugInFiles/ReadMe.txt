@@ -4,7 +4,8 @@ How to stop Jeb from flying past his destination at Warp speed.
 
 By Trigger Au
 
-Forum Thread for latest: http://forum.kerbalspaceprogram.com/showthread.php/43666-Kerbal-Alarm-Clock
+Forum Thread for latest: http://forum.kerbalspaceprogram.com/showthread.php/24786-Kerbal-Alarm-Clock
+Documentation Site: https://sites.google.com/site/kerbalalarmclock
 
 INSTALLATION
 ******************* NOTE  ******************* NOTE ******************* NOTE *******************
@@ -16,7 +17,21 @@ TROUBLESHOOTING
 The plugin records troubleshooting data in the "KSP_Data\outut_log.txt".
 If there are errors in loading the config you can delete the "\PluginData\kerbalalarmclock\config.xml" and restart the game
 
+LICENSE
+Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
+
 VERSION HISTORY
+Version 1.4.0.2		-	KSP Version: 0.19.1
+- Changed resource loading method to use direct file access - prevents some peoples issues with timeouts
+- Added new Add Alarm window format - big change...
+- Added new alarm types - Apoapsis, Periapsis, Ascending Node, Descending Node - thanks to Cybutek for use of his AN/DN calc functions from the Kerbal Engineer
+- These alarms can be set to adjust if the flightplan changes
+- Added a 2nd form of transfer calculation for transfers between bodies orbiting Kerbol - this uses voneiden'd excellent modelled data
+- Ability to disconnect alarm from ships (and see this)
+- Added another time format - hh:MM:ss - can toggle between them
+- Added extra links to about tab
+- And all the things I could remmeber from forum posts/PM's before the great crash :P
+
 Version 1.3.5.1		-	KSP Version: 0.19.1
 - New Documentation Site link
 - Tidied up a minor GUI layout or two

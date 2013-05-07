@@ -69,6 +69,7 @@ namespace KerbalAlarmClock
             //}
         }
 
+
         public void DebugActionTriggered(GameScenes loadedscene)
         {
             DebugLogFormatted("Manual Debug Action Initiated");
@@ -144,17 +145,80 @@ namespace KerbalAlarmClock
             //WriteManeuverFile(FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes,"Debug\\Nodes.txt");
         }
 
-        //int intTestheight = 336;
-        //int intTestheight2 = 336;
+
+
+            //Orbit activeOrbit = FlightGlobals.fetch.activeVessel.orbit;
+            //Orbit targetOrbit = (FlightGlobals.fetch.VesselTarget as Vessel).orbit;
+            //Vector3d activePosition = activeOrbit.getRelativePositionAtUT(Planetarium.GetUniversalTime());
+            //double ascendingNode = CalcAngleToAscendingNode(activePosition, activeOrbit, targetOrbit);
+            //double timeToAN = CalcTimeToNode(activeOrbit, ascendingNode);
+
+            //DebugLogFormatted("AN:{0}", timeToAN.ToString());
+
+
+
+        //private double CalcAngleToAscendingNode(Vector3d position, Orbit origin, Orbit target)
+        //{
+        //    double angleToNode = 0d;
+
+        //    if (origin.inclination < 90)
+        //    {
+        //        angleToNode = CalcPhaseAngle(position, GetAscendingNode(origin, target));
+        //    }
+        //    else
+        //    {
+        //        angleToNode = 360 - CalcPhaseAngle(position, GetAscendingNode(origin, target));
+        //    }
+
+        //    return angleToNode;
+        //}
+
+        //private Vector3d GetAscendingNode(Orbit origin, Orbit target)
+        //{
+        //    return Vector3d.Cross(target.GetOrbitNormal(), origin.GetOrbitNormal());
+        //}
+
+        //private double CalcPhaseAngle(Vector3d origin, Vector3d target)
+        //{
+        //    double phaseAngle = Vector3d.Angle(target, origin);
+        //    if (Vector3d.Angle(Quaternion.AngleAxis(90, Vector3d.forward) * origin, target) > 90)
+        //    {
+        //        phaseAngle = 360 - phaseAngle;
+        //    }
+        //    return (phaseAngle + 360) % 360;
+        //}
+
+
+
+        //private double CalcTimeToNode(Orbit origin, double angleToNode)
+        //{
+        //    return (origin.period / 360d) * angleToNode;
+        //}
+
+        //int intTestheight = 0;
+        //int intTestheight2 = 0;
+        //int intTestheight3 = 0;
+        //int intTestheight4 = 0;
         //int intTestheight3 = 336;
 
         public void FillDebugWindow(int WindowID)
         {
             GUILayout.BeginHorizontal();
+            //GUILayout.Label("Alarm Add Interface:", KACResources.styleAddHeading, GUILayout.Width(90));
+            //AddInterfaceType = Convert.ToInt32(GUILayout.TextField(AddInterfaceType.ToString()));
+            //GUILayout.EndHorizontal();
 
-            GUILayout.BeginVertical();
-            //GUILayout.Label("A");
-            //GUILayout.Label("B");
+
+            GUILayout.BeginHorizontal();
+
+            //GUILayout.BeginVertical();
+            //GUILayout.Label("test1:");
+            //GUILayout.Label("test2:");
+            //GUILayout.Label("test3:");
+            //GUILayout.Label("test4:");
+
+            //GUILayout.Label("AN1:");
+            //GUILayout.Label("AN2:");
             //GUILayout.Label("Window Padding:", GUILayout.ExpandWidth(true));
             //GUILayout.Label("MainWindowWidth:", GUILayout.ExpandWidth(true));
             //GUILayout.Label("MainWindowMinHeight:", GUILayout.ExpandWidth(true));
@@ -177,6 +241,17 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             //intTestheight = Convert.ToInt32(GUILayout.TextField(intTestheight.ToString()));
             //intTestheight2 = Convert.ToInt32(GUILayout.TextField(intTestheight2.ToString()));
+            //intTestheight3 = Convert.ToInt32(GUILayout.TextField(intTestheight3.ToString()));
+            //intTestheight4 = Convert.ToInt32(GUILayout.TextField(intTestheight4.ToString()));
+
+
+            ////Double timeToAN;
+            ////Boolean blnANExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Ascending, out timeToAN);
+            //GUILayout.Label(Settings.XferUseModelData.ToString());
+            //GUILayout.Label(Settings.XferModelDataLoaded.ToString());
+            //if (blnANExists)
+            //    GUILayout.Label(timeToAN.ToString());
+
             //intTestheight3 = Convert.ToInt32(GUILayout.TextField(intTestheight3.ToString()));
             ////intSettingsPaneHeight = Convert.ToInt32(GUILayout.TextField(intSettingsPaneHeight.ToString()));
             //String strPadding = KACResources.styleWindow.padding.left.ToString();

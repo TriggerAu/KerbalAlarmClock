@@ -77,12 +77,12 @@ namespace KerbalAlarmClock
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Alarm Time:", KACResources.styleAlarmMessageTime);
-            GUILayout.Label(KerbalTime.PrintDate(tmpAlarm.AlarmTime, Settings.TimeAsUT), KACResources.styleAlarmMessageTime);
+            GUILayout.Label(KerbalTime.PrintDate(tmpAlarm.AlarmTime, Settings.TimeFormat), KACResources.styleAlarmMessageTime);
             if (tmpAlarm.TypeOfAlarm!=KACAlarm.AlarmType.Raw)
-            GUILayout.Label("(m: " + KerbalTime.PrintInterval(new KerbalTime(tmpAlarm.AlarmMarginSecs),3, Settings.TimeAsUT)+ ")", KACResources.styleAlarmMessageTime);
+            GUILayout.Label("(m: " + KerbalTime.PrintInterval(new KerbalTime(tmpAlarm.AlarmMarginSecs),3, Settings.TimeFormat)+ ")", KACResources.styleAlarmMessageTime);
             GUILayout.EndHorizontal();
 
-            GUILayout.Label(tmpAlarm.Message, KACResources.styleAlarmMessage);
+            GUILayout.Label(tmpAlarm.Notes, KACResources.styleAlarmMessage);
 
             GUILayout.BeginHorizontal();
             DrawCheckbox(ref tmpAlarm.DeleteOnClose, "Delete On Close",0 );
@@ -126,7 +126,11 @@ namespace KerbalAlarmClock
           
             GUILayout.EndVertical();
 
-            tmpAlarm.AlarmWindowHeight = 148 + tmpAlarm.Message.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32; 
+            int intLines = tmpAlarm.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length;
+            if (intLines == 0) intLines = 1;
+            tmpAlarm.AlarmWindowHeight = 148 +
+                 intLines * 16 +
+                intNoOfActionButtons * 32; 
             SetTooltipText();
             GUI.DragWindow();
 
@@ -134,7 +138,7 @@ namespace KerbalAlarmClock
 
         private static void DrawStoredVesselIDMissing(String VesselID)
         {
-            if (!StoredVesselExists(VesselID))
+            if (VesselID!="" && !StoredVesselExists(VesselID))
             {
                 GUILayout.Label("Stored VesselID no longer exists",KACResources.styleLabelWarning);
             }
@@ -157,9 +161,10 @@ namespace KerbalAlarmClock
                 if (alarmEdit.PauseGame) intActionSelected = 2;
 
                 Double MarginStarting = alarmEdit.AlarmMarginSecs;
-                int intHeight_EditWindowCommon = 88 + alarmEdit.Message.Split("\r\n".ToCharArray(),StringSplitOptions.RemoveEmptyEntries).Length * 16;
+                int intHeight_EditWindowCommon = 88 +
+                    alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16;
                 if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw) intHeight_EditWindowCommon += 28;
-                WindowLayout_CommonFields(ref alarmEdit.Name, ref alarmEdit.Message, ref intActionSelected, ref alarmEdit.AlarmMarginSecs, alarmEdit.TypeOfAlarm, intHeight_EditWindowCommon);
+                WindowLayout_CommonFields(ref alarmEdit.Name, ref alarmEdit.Notes, ref intActionSelected, ref alarmEdit.AlarmMarginSecs, alarmEdit.TypeOfAlarm, intHeight_EditWindowCommon);
                 //Adjust the UT of the alarm if the margin changed
                 if (alarmEdit.AlarmMarginSecs != MarginStarting)
                 {
@@ -173,10 +178,10 @@ namespace KerbalAlarmClock
                 if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw)
                 {
                     GUILayout.Label("Alarm Time:", KACResources.styleContent);
-                    GUILayout.Label(KerbalTime.PrintInterval(new KerbalTime(alarmEdit.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT), Settings.TimeAsUT), KACResources.styleAddHeading);
+                    GUILayout.Label(KerbalTime.PrintInterval(new KerbalTime(alarmEdit.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT), Settings.TimeFormat), KACResources.styleAddHeading);
                 }
                 GUILayout.Label("Event Time:", KACResources.styleContent);
-                GUILayout.Label(KerbalTime.PrintInterval(new KerbalTime(alarmEdit.AlarmTime.UT + alarmEdit.AlarmMarginSecs-KACWorkerGameState.CurrentTime.UT),Settings.TimeAsUT),KACResources.styleAddHeading);
+                GUILayout.Label(KerbalTime.PrintInterval(new KerbalTime(alarmEdit.AlarmTime.UT + alarmEdit.AlarmMarginSecs-KACWorkerGameState.CurrentTime.UT),Settings.TimeFormat),KACResources.styleAddHeading);
                 GUILayout.EndHorizontal();
 
                 
@@ -197,7 +202,7 @@ namespace KerbalAlarmClock
                     _ShowEditPane = false;
                 }
 
-                intAlarmEditHeight = 197 + alarmEdit.Message.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32;
+                intAlarmEditHeight = 197 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32;
                 if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw)
                     intAlarmEditHeight += 28;
             }
@@ -208,10 +213,10 @@ namespace KerbalAlarmClock
                 GUILayout.BeginVertical(GUI.skin.textArea);
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("Alarm Name:", KACResources.styleAlarmMessageTime);
+                GUILayout.Label("Alarm:", KACResources.styleAlarmMessageTime);
                 GUILayout.Label(alarmEdit.Name, KACResources.styleAlarmMessageTime);
                 GUILayout.EndHorizontal();
-                GUILayout.Label(alarmEdit.Message, KACResources.styleAlarmMessage);
+                GUILayout.Label(alarmEdit.Notes, KACResources.styleAlarmMessage);
 
                 DrawStoredVesselIDMissing(alarmEdit.VesselID);
                 GUILayout.EndVertical();
@@ -225,7 +230,9 @@ namespace KerbalAlarmClock
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
                     _ShowEditPane = false;
 
-                intAlarmEditHeight = 112 + alarmEdit.Message.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons*32;
+                intAlarmEditHeight = 112 +
+                    alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 +
+                    intNoOfActionButtons * 32;
             }
             SetTooltipText();
         }

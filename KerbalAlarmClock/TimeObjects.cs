@@ -125,6 +125,54 @@ namespace KerbalAlarmClock
             return strReturn;
         }
 
+        public String IntervalDateTimeString()
+        {
+            return IntervalDateTimeString(6);
+        }
+        public String IntervalDateTimeString(int segments)
+        {
+            String strReturn = "";
+
+            if (UT < 0) strReturn += "+ ";
+
+            int intUsed = 0;
+
+            if (intUsed < segments && YearEarth != 0)
+            {
+                strReturn += String.Format("{0}y", Math.Abs(YearEarth));
+                intUsed++;
+            }
+
+            if (intUsed < segments && (DayEarth != 0 || intUsed > 0))
+            {
+                if (intUsed > 0) strReturn += ", ";
+                strReturn += String.Format("{0}d", Math.Abs(DayEarth));
+                intUsed++;
+            }
+
+            if (intUsed < segments && (HourEarth != 0 || intUsed > 0))
+            {
+                if (intUsed > 0) strReturn += ", ";
+                strReturn += String.Format("{0:00}", Math.Abs(HourEarth));
+                intUsed++;
+            }
+            if (intUsed < segments && (Minute != 0 || intUsed > 0))
+            {
+                if (intUsed > 0) strReturn += ":";
+                strReturn += String.Format("{0:00}", Math.Abs(Minute));
+                intUsed++;
+            }
+            if (intUsed < segments)// && (Second != 0 || intUsed > 0))
+            {
+                if (intUsed > 0) strReturn += ":";
+                strReturn += String.Format("{0:00}", Math.Abs(Second));
+                intUsed++;
+            }
+
+
+            return strReturn;
+        }
+
         public String DateString()
         {
             return String.Format("Year {0},Day {1}, {2:00}:{3:00}:{4:00}", YearEarth + 1, DayEarth + 1, HourEarth, Minute, Second);
@@ -166,24 +214,47 @@ namespace KerbalAlarmClock
             Years * HoursPerYearEarth * 60 * 60;
         }
 
-        public static String PrintInterval(KerbalTime timeTemp,  Boolean TimeAsUT)
+        public static String PrintInterval(KerbalTime timeTemp,  KerbalTime.PrintTimeFormat TimeFormat)
         {
-            return PrintInterval(timeTemp, 3, TimeAsUT);
-        }
-        public static String PrintInterval(KerbalTime timeTemp,int Segments,Boolean TimeAsUT)
-        {
-            if (TimeAsUT)
-                return timeTemp.UTString();
-            else
-                return timeTemp.IntervalString(Segments);
+            return PrintInterval(timeTemp, 3, TimeFormat);
         }
 
-        public static String PrintDate(KerbalTime timeTemp, Boolean TimeAsUT)
+        //rework these to get teh right formats!!!!!
+        public static String PrintInterval(KerbalTime timeTemp, int Segments, KerbalTime.PrintTimeFormat TimeFormat)
         {
-            if (TimeAsUT)
-                return timeTemp.UTString();
-            else
-                return timeTemp.DateString();
+            switch (TimeFormat )
+            {
+                case PrintTimeFormat.TimeAsUT:
+                    return timeTemp.UTString();
+                case PrintTimeFormat.KSPString:
+                    return timeTemp.IntervalString(Segments);
+                case PrintTimeFormat.DateTimeString:
+                    return timeTemp.IntervalDateTimeString(Segments);
+                default:
+                    return timeTemp.IntervalString(Segments);
+            }
+        }
+
+        public static String PrintDate(KerbalTime timeTemp, KerbalTime.PrintTimeFormat TimeFormat)
+        {
+            switch (TimeFormat)
+            {
+                case PrintTimeFormat.TimeAsUT:
+                    return timeTemp.UTString();
+                case PrintTimeFormat.KSPString:
+                    return timeTemp.DateString();
+                case PrintTimeFormat.DateTimeString:
+                    return timeTemp.DateString();
+                default:
+                    return timeTemp.DateString();
+            }
+        }
+
+        public enum PrintTimeFormat
+        {
+            TimeAsUT,
+            KSPString,
+            DateTimeString
         }
 #endregion
     }
@@ -271,20 +342,33 @@ namespace KerbalAlarmClock
     /// </summary>
     public class KACAlarm
     {
-        //Some Structure
+        //Some Structures
+        //"R","M","A","P","A","D","S","X"
         public enum AlarmType
         {
-            Raw,
-            Maneuver,
-            SOIChange,
-            Transfer,
-            TransferModelled
+            Raw=0,
+            Maneuver=1,
+            SOIChange=6,
+            Transfer=7,
+            TransferModelled=8,
+            Apoapsis=2,
+            Periapsis=3,
+            AscendingNode=4,
+            DescendingNode=5
+        }
+
+        public enum AlarmAction
+        {
+            MessageOnly,
+            KillWarp,
+            PauseGame
         }
 
         public String SaveName = "";                                    //Which Save File
         public String VesselID = "";                                    //uniqueID of Vessel
         public String Name = "";                                        //Name of Alarm
-        public String Message = "";                                     //Some descriptive text
+        //public String Message = "";                                     //Some descriptive text
+        public String Notes = "";                                       //Entered extra details
         public AlarmType TypeOfAlarm=AlarmType.Raw;                     //What Type of Alarm
 
         public KerbalTime AlarmTime = new KerbalTime();                 //UT of the alarm
@@ -328,13 +412,14 @@ namespace KerbalAlarmClock
                 SaveName = HighLogic.CurrentGame.Title;
             AlarmTime.UT = UT;
         }
-        public KACAlarm(String vID, String NewName, String NewMessage, double UT,Double Margin,AlarmType atype, Boolean NewHaltWarp, Boolean NewPause)
+
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause)
         {
             if (KACWorkerGameState.IsFlightMode)
                 SaveName = HighLogic.CurrentGame.Title;
             VesselID = vID;
             Name = NewName;
-            Message = NewMessage;
+            Notes = NewNotes;
             AlarmTime.UT = UT;
             AlarmMarginSecs = Margin;
             TypeOfAlarm = atype;
@@ -343,13 +428,13 @@ namespace KerbalAlarmClock
             PauseGame = NewPause;
         }
 
-        public KACAlarm(String vID, String NewName, String NewMessage, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, ManeuverNode NewManeuver)
+        public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, ManeuverNode NewManeuver)
         {
             if (KACWorkerGameState.IsFlightMode)
                 SaveName = HighLogic.CurrentGame.Title;
             VesselID = vID;
             Name = NewName;
-            Message = NewMessage;
+            Notes = NewNotes;
             AlarmTime.UT = UT;
             AlarmMarginSecs = Margin;
             TypeOfAlarm = atype;
@@ -359,13 +444,13 @@ namespace KerbalAlarmClock
             ManNode = NewManeuver;
         }
 
-        public KACAlarm(String vID, String NewName, String NewMessage, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, KACXFerTarget NewTarget)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, KACXFerTarget NewTarget)
         {
             if (KACWorkerGameState.IsFlightMode)
                 SaveName = HighLogic.CurrentGame.Title;
             VesselID = vID;
             Name = NewName;
-            Message = NewMessage;
+            Notes = NewNotes;
             AlarmTime.UT = UT;
             AlarmMarginSecs = Margin;
             TypeOfAlarm = atype;
@@ -383,15 +468,15 @@ namespace KerbalAlarmClock
         /// <returns>CSV String of persistant properties</returns>
         public String SerializeString()
         {
-            return KACUtils.PipeSepVariables(SaveName, Name, Enabled, AlarmTime.UT, HaltWarp, PauseGame, Message);
+            return KACUtils.PipeSepVariables(SaveName, Name, Enabled, AlarmTime.UT, HaltWarp, PauseGame, Notes);
         }
 
         public String SerializeString2()
         {
-            //"VesselID, Name, Message, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Manuever/Xfer"
+            //"VesselID, Name, Notes, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Manuever/Xfer"
             String strReturn = "";
             strReturn += VesselID + "|";
-            strReturn += KACUtils.PipeSepVariables(Name, Message, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame);
+            strReturn += KACUtils.PipeSepVariables(Name, Notes, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame);
             strReturn += "|";
             if (ManNode != null)
             {
@@ -407,7 +492,7 @@ namespace KerbalAlarmClock
             return strReturn;
         }
 
-        /// <summary>
+         /// <summary>
         /// Basically deserializing the alarm
         /// </summary>
         /// <param name="AlarmDetails"></param>
@@ -421,21 +506,21 @@ namespace KerbalAlarmClock
             AlarmTime.UT = Convert.ToDouble(vars[3]);
             HaltWarp = Convert.ToBoolean(vars[4]);
             if (vars.Length == 6)
-                Message = vars[5];
+                Notes = vars[5];
             else
             {
                 PauseGame = Convert.ToBoolean(vars[5]);
-                Message = vars[6];
+                Notes = vars[6];
             }
         }
 
         public void LoadFromString2(String AlarmDetails)
         {
-            String[] vars = AlarmDetails.Split("|".ToCharArray(),StringSplitOptions.None);
+            String[] vars = AlarmDetails.Split("|".ToCharArray(), StringSplitOptions.None);
             SaveName = HighLogic.CurrentGame.Title;
-            VesselID=vars[0];
+            VesselID = vars[0];
             Name = vars[1];
-            Message = vars[2];
+            Notes = vars[2];
             AlarmTime.UT = Convert.ToDouble(vars[3]);
             AlarmMarginSecs = Convert.ToDouble(vars[4]);
             TypeOfAlarm = (KACAlarm.AlarmType)Enum.Parse(typeof(KACAlarm.AlarmType), vars[5]);
@@ -458,7 +543,7 @@ namespace KerbalAlarmClock
                             );
                     ManNode.nodeRotation = new Quaternion(Convert.ToSingle(manparts[4]),
                                                         Convert.ToSingle(manparts[5]),
-                                                        Convert.ToSingle(manparts[6]),           
+                                                        Convert.ToSingle(manparts[6]),
                                                         Convert.ToSingle(manparts[7])
                             );
                     break;

@@ -44,7 +44,6 @@ if($ChoiceRtn -eq 0)
         ForEach-Object {$_ -replace "%VERSIONSTRING%",$VersionString} |
             Set-Content "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\ReadMe.txt"
 
-
     #Copy the source files
     "Copying Source..."
     Copy-Item "$SourcePath\*.cs"  "$($DestFullPath)\KerbalAlarmClockSource_$($VersionString)"

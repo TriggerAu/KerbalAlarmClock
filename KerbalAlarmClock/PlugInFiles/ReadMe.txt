@@ -21,6 +21,9 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 1.4.0.3		-	KSP Version: 0.19.1
+- Minor changes to facilitate Linux paths and case sensitivity
+
 Version 1.4.0.2		-	KSP Version: 0.19.1
 - Changed resource loading method to use direct file access - prevents some peoples issues with timeouts
 - Added new Add Alarm window format - big change...

@@ -2,7 +2,7 @@
 
 #Run by powershell BuildKACFiles.ps1 -VersionString "X.X.X.X"
 
-$SourcePath= "D:\Programming\KSP\KerbalAlarmClock\DevBranch\Source"
+$SourcePath= "D:\Programming\KSP\KerbalAlarmClock\DevBranch-20Legacy\Source"
 $DestRootPath="D:\Programming\KSP\KerbalAlarmClockUpload"
 $DestFullPath= "$($DestRootPath)\v$($VersionString)"
 $7ZipPath="c:\Program Files\7-Zip\7z.exe" 

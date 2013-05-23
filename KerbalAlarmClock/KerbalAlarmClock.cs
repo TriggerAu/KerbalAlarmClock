@@ -29,12 +29,12 @@ namespace KerbalAlarmClock
     public static class KACWorkerGameState
     {
         public static String LastSaveGameName = "";
-        public static GameScenes LastGUIScene=GameScenes.SPLASHSCREEN;
+        public static GameScenes LastGUIScene=GameScenes.LOADING;
         public static Vessel LastVessel=null;
         public static CelestialBody LastSOIBody=null;
 
         public static String CurrentSaveGameName = "";
-        public static GameScenes CurrentGUIScene=GameScenes.SPLASHSCREEN;
+        public static GameScenes CurrentGUIScene=GameScenes.LOADING;
         public static Vessel CurrentVessel=null;
         public static CelestialBody CurrentSOIBody=null;
 

@@ -21,6 +21,9 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 1.4.1.0		-	KSP Version: 0.20
+- Recompile and minor changes to package structure to facilitate 0.20 Legacy Mode
+
 Version 1.4.0.3		-	KSP Version: 0.19.1
 - Minor changes to facilitate Linux paths and case sensitivity
 

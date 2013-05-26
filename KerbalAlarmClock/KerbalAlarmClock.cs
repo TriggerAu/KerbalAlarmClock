@@ -10,22 +10,6 @@ using KSP;
 namespace KerbalAlarmClock
 {
 
-    /// <summary>
-    /// Basic Part piece that creates the Classes that run in the background at all times
-    /// </summary>
-    partial class KerbalAlarmClock : PartModule
-    {
-        public static KACSettings Settings = new KACSettings();
-
-        public override void OnAwake()
-        {
-            if (KACBehaviour.GameObjectInstance == null)
-                KACBehaviour.GameObjectInstance = GameObject.Find("KACBehaviour") ?? new GameObject("KACBehaviour", typeof(KACBehaviour));
-
-        }
-    }
-
-
     public static class KACWorkerGameState
     {
         public static String LastSaveGameName = "";
@@ -192,12 +176,26 @@ namespace KerbalAlarmClock
     }
 
     /// <summary>
+    /// Have to do this behaviour or some of the textures are unloaded on first entry into flight mode
+    /// </summary>
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    public class KerbalAlarmClockTextureLoader : MonoBehaviour
+    {
+         //Awake Event - when the DLL is loaded
+        public void Awake()
+        {
+            KACResources.loadGUIAssets();
+        }
+    }
+
+    /// <summary>
     /// This is the behaviour object that we hook events on to 
     /// </summary>
-    public class KACBehaviour : MonoBehaviour
+    [KSPAddon(KSPAddon.Startup.Flight, false) ]
+    public class KerbalAlarmClock : MonoBehaviour
     {
-        //Game object that keeps us running
-        public static GameObject GameObjectInstance;
+        //Global Settings
+        public static KACSettings Settings = new KACSettings();
         
         //GameState Objects for the monobehaviour
         private Boolean IsInPostDrawQueue=false ;
@@ -207,26 +205,25 @@ namespace KerbalAlarmClock
 
         //Worker and Settings objects
         private KACWorker WorkerObjectInstance;
-        private KACSettings Settings;
         public static float UpdateInterval = 0.2F;
 
         //Constructor to set KACWorker parent object to this and access to the settings
-        public KACBehaviour()
+        public KerbalAlarmClock()
         {
             WorkerObjectInstance = new KACWorker(this);
-            Settings = KerbalAlarmClock.Settings;
         }
 
         //Awake Event - when the DLL is loaded
         public void Awake()
         {
             KACWorker.DebugLogFormatted("Awakening the KerbalAlarmClock");
-            //Keep the Behaviour active even on scene Loads
-            DontDestroyOnLoad(this);
 
             //Load Image resources
             KACResources.loadGUIAssets();
-            
+
+            //Load the Settings values from the file
+            Settings.Load();
+
             //Load Hohmann modelling data
             if (Settings.XferModelLoadData)
                 Settings.XferModelDataLoaded = KACResources.LoadModelPoints();
@@ -238,6 +235,8 @@ namespace KerbalAlarmClock
             KACWorker.DebugLogFormatted("Invoking Worker Function KerbalAlarmClock");
             CancelInvoke();
             InvokeRepeating("BehaviourUpdate", UpdateInterval, UpdateInterval);
+            
+            //Reenable for during code debug
             //InvokeRepeating("DebugWriter", 2F, 2F);
         }
 
@@ -443,12 +442,13 @@ namespace KerbalAlarmClock
         {
             KACWorkerGameState.SetCurrentFlightStates();
 
-            if (KACWorkerGameState.ChangedSaveGameName)
-            {
-                DebugLogFormatted("SaveGame - {0} - {1}", KACWorkerGameState.LastSaveGameName, KACWorkerGameState.CurrentSaveGameName);
-                if (KACWorkerGameState.CurrentSaveGameName != "")
-                    Settings.Load();
-            }
+            //NOT NEEDED NOW THAT IT ONLY LOADS IN FLIGHT MODE 
+            //if (KACWorkerGameState.ChangedSaveGameName)
+            //{
+            //    DebugLogFormatted("SaveGame - {0} - {1}", KACWorkerGameState.LastSaveGameName, KACWorkerGameState.CurrentSaveGameName);
+            //    if (KACWorkerGameState.CurrentSaveGameName != "")
+            //        Settings.Load();
+            //}
 
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
@@ -491,103 +491,143 @@ namespace KerbalAlarmClock
                 //Are we adding SOI Alarms
                 if (Settings.AlarmAddSOIAuto)
                 {
-                    //Is there an SOI Point on the path - looking for next action on the path use orbit.patchEndTransition - enum of Orbit.PatchTransitionType
-                    //  FINAL - fixed orbit no change
-                    //  ESCAPE - leaving SOI
-                    //  ENCOUNTER - entering new SOI inside current SOI
-                    //  INITIAL - ???
-                    //  MANEUVER - Maneuver Node
-                    // orbit.UTsoi - time of next SOI change (base on above transition types - ie if type is final this time can be ignored)
-                    //orbit.nextpatch gives you the next orbit and you can read the new SOI!!!
-
-                    double timeSOIChange = 0;
-                    double timeSOIAlarm = 0;
-
-                    String strSOIAlarmName = "";
-                    String strSOIAlarmNotes = "";
-                    //double timeSOIAlarm = 0;
-                    if (Settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
-                    {
-                        timeSOIChange = KACWorkerGameState.CurrentVessel.orbit.UTsoi;
-                        //timeSOIAlarm = timeSOIChange - Settings.AlarmAddSOIMargin;
-                        //strOldAlarmNameSOI = KACWorkerGameState.CurrentVessel.vesselName + "";
-                        //strOldAlarmMessageSOI = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
-                        //                "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
-                        //                "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
-                        strSOIAlarmName = KACWorkerGameState.CurrentVessel.vesselName;// + "-Leaving " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName;
-                        strSOIAlarmNotes = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
-                                        "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
-                                        "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
-                    }
-
-                    //is there an SOI alarm for this ship already that has not been triggered
-                    KACAlarm tmpSOIAlarm =
-                    Settings.Alarms.Find(delegate(KACAlarm a) {
-                                            return
-                                                (a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
-                                                && (a.TypeOfAlarm==KACAlarm.AlarmType.SOIChange)
-                                                && (a.Triggered==false);
-                    });
-                    
-                    //Is there an SOI point
-                    if (timeSOIChange != 0)
-                    {
-                        timeSOIAlarm = timeSOIChange - Settings.AlarmAutoSOIMargin;
-                        //and an existing alarm
-                        if (tmpSOIAlarm != null)
-                        {
-                            //update the time (if more than threshold secs)
-                            if (tmpSOIAlarm.Remaining.UT>Settings.AlarmAddSOIAutoThreshold)
-                                tmpSOIAlarm.AlarmTime.UT = timeSOIAlarm;
-                        }
-                            //Otherwise if its in the future add a new alarm
-                        else if (timeSOIAlarm > KACWorkerGameState.CurrentTime.UT)
-                        {
-                            //Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strOldAlarmNameSOI, strOldAlarmMessageSOI, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
-                            //    KACAlarm.AlarmType.SOIChange, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
-                            Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strSOIAlarmName, strSOIAlarmNotes, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
-                                KACAlarm.AlarmType.SOIChange, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
-                        }
-                    }
-                    else
-                    {
-                        //remove any existing alarm - if less than threshold - this means old alarms not touched
-                        if (tmpSOIAlarm != null && (tmpSOIAlarm.Remaining.UT > Settings.AlarmAddSOIAutoThreshold))
-                        {
-                            Settings.Alarms.Remove(tmpSOIAlarm);
-                        }
-                    }
-
-                                        
+                    MonitorSOIOnPath();                 
                     //Are we doing the base catchall
                     if (Settings.AlarmCatchSOIChange)
                     {
-                        GlobalSOICatchAll(KACBehaviour.UpdateInterval * TimeWarp.CurrentRate);
+                        GlobalSOICatchAll(KerbalAlarmClock.UpdateInterval * TimeWarp.CurrentRate);
                     }
                 }
 
-                if (Settings.AlarmXferRecalc)
-                {
-                    //Adjust any transfer window alarms until they hit the threshold
-                    RecalcTransferAlarmTimes(false);
-                }
 
-                if (Settings.AlarmNodeRecalc)
+                //Only do these recalcs at 1x or physwarp...
+                if (TimeWarp.CurrentRate==1 || (TimeWarp.WarpMode==TimeWarp.Modes.LOW))
                 {
-                    //Adjust any Ap,Pe,AN,DNs as flight path changes
-                    RecalcNodeAlarmTimes(false);
+                    if (Settings.AlarmSOIRecalc)
+                    {
+                        //Adjust any transfer window alarms until they hit the threshold
+                        RecalcSOIAlarmTimes(false);
+                    }
+
+                    if (Settings.AlarmXferRecalc)
+                    {
+                        //Adjust any transfer window alarms until they hit the threshold
+                        RecalcTransferAlarmTimes(false);
+                    }
+
+                    if (Settings.AlarmNodeRecalc)
+                    {
+                        //Adjust any Ap,Pe,AN,DNs as flight path changes
+                        RecalcNodeAlarmTimes(false);
+                    }
                 }
 
                 //Work out how many game seconds will pass till this runs again
                 double SecondsTillNextUpdate;
                 double dWarpRate = TimeWarp.CurrentRate;
-                SecondsTillNextUpdate = KACBehaviour.UpdateInterval * dWarpRate;
+                SecondsTillNextUpdate = KerbalAlarmClock.UpdateInterval * dWarpRate;
 
                 //Loop through the alarms
                 ParseAlarmsAndAffectWarpAndPause(SecondsTillNextUpdate);
             }
-
             KACWorkerGameState.SetLastFlightStatesToCurrent();
+        }
+
+        private void MonitorSOIOnPath()
+        {
+            //Is there an SOI Point on the path - looking for next action on the path use orbit.patchEndTransition - enum of Orbit.PatchTransitionType
+            //  FINAL - fixed orbit no change
+            //  ESCAPE - leaving SOI
+            //  ENCOUNTER - entering new SOI inside current SOI
+            //  INITIAL - ???
+            //  MANEUVER - Maneuver Node
+            // orbit.UTsoi - time of next SOI change (base on above transition types - ie if type is final this time can be ignored)
+            //orbit.nextpatch gives you the next orbit and you can read the new SOI!!!
+
+            double timeSOIChange = 0;
+            double timeSOIAlarm = 0;
+
+            String strSOIAlarmName = "";
+            String strSOIAlarmNotes = "";
+            //double timeSOIAlarm = 0;
+            if (Settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
+            {
+                timeSOIChange = KACWorkerGameState.CurrentVessel.orbit.UTsoi;
+                //timeSOIAlarm = timeSOIChange - Settings.AlarmAddSOIMargin;
+                //strOldAlarmNameSOI = KACWorkerGameState.CurrentVessel.vesselName + "";
+                //strOldAlarmMessageSOI = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
+                //                "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
+                //                "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
+                strSOIAlarmName = KACWorkerGameState.CurrentVessel.vesselName;// + "-Leaving " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName;
+                strSOIAlarmNotes = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
+                                "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
+                                "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
+            }
+
+            //is there an SOI alarm for this ship already that has not been triggered
+            KACAlarm tmpSOIAlarm =
+            Settings.Alarms.Find(delegate(KACAlarm a)
+            {
+                return
+                    (a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
+                    && ((a.TypeOfAlarm == KACAlarm.AlarmType.SOIChangeAuto) || (a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange))
+                    && (a.Triggered == false);
+            });
+
+            //if theres a manual SOI alarm already then ignore it
+            if ((tmpSOIAlarm != null) && tmpSOIAlarm.TypeOfAlarm == KACAlarm.AlarmType.SOIChange)
+            {
+                //Dont touch manually created SOI Alarms
+            }
+            else
+            {
+                //Is there an SOI point
+                if (timeSOIChange != 0)
+                {
+                    timeSOIAlarm = timeSOIChange - Settings.AlarmAutoSOIMargin;
+                    //and an existing alarm
+                    if (tmpSOIAlarm != null)
+                    {
+                        //update the time (if more than threshold secs)
+                        if (tmpSOIAlarm.Remaining.UT > Settings.AlarmAddSOIAutoThreshold)
+                            tmpSOIAlarm.AlarmTime.UT = timeSOIAlarm;
+                    }
+                    //Otherwise if its in the future add a new alarm
+                    else if (timeSOIAlarm > KACWorkerGameState.CurrentTime.UT)
+                    {
+                        //Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strOldAlarmNameSOI, strOldAlarmMessageSOI, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
+                        //    KACAlarm.AlarmType.SOIChange, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
+                        Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strSOIAlarmName, strSOIAlarmNotes, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
+                            KACAlarm.AlarmType.SOIChangeAuto, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
+                    }
+                }
+                else
+                {
+                    //remove any existing alarm - if less than threshold - this means old alarms not touched
+                    if (tmpSOIAlarm != null && (tmpSOIAlarm.Remaining.UT > Settings.AlarmAddSOIAutoThreshold))
+                    {
+                        Settings.Alarms.Remove(tmpSOIAlarm);
+                    }
+                }
+
+            }
+        }
+
+        private void RecalcSOIAlarmTimes(Boolean OverrideDriftThreshold)
+        {
+            foreach (KACAlarm tmpAlarm in Settings.Alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange))
+            {
+                if (tmpAlarm.Remaining.UT > Settings.AlarmSOIRecalcThreshold)
+                {
+                    //do the check/update on these
+                    if (Settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
+                    {
+                        double timeSOIChange = 0;
+                        timeSOIChange = KACWorkerGameState.CurrentVessel.orbit.UTsoi;
+                        tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentVessel.orbit.UTsoi - tmpAlarm.AlarmMarginSecs;
+                    }
+                }
+            }
         }
 
         private void RecalcTransferAlarmTimes(Boolean OverrideDriftThreshold)
@@ -787,7 +827,7 @@ namespace KerbalAlarmClock
         /// Some Structured logging to the debug file
         /// </summary>
         /// <param name="Message"></param>
-        public static void DebugLogFormatted(String Message, params String[] strParams )
+        public static void DebugLogFormatted(String Message, params object[] strParams )
         {
             Message = String.Format(Message, strParams);
             String strMessageLine = String.Format("{0},KerbalAlarmClock,{1}", DateTime.Now, Message);

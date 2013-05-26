@@ -11,7 +11,7 @@ INSTALLATION
 ******************* NOTE  ******************* NOTE ******************* NOTE *******************
 IF YOU WANT TO MAINTAIN YOUR SETTINGS DO NOT COPY THE CONFIG.XML FILE OVER
 ******************* NOTE  ******************* NOTE ******************* NOTE *******************
-Copy the folders to the KSP application.
+Copy the folders into the KSP_OS application folder.
 
 TROUBLESHOOTING
 The plugin records troubleshooting data in the "KSP_Data\outut_log.txt".
@@ -21,6 +21,13 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.0.0.0		-	KSP Version: 0.20
+- Rebuild and rewrite for 0.20 Game Database Loading Structure
+- Also fixes for - only recalc alarms when under Physwarp or nowarp - stops creep at high warp
+- Reset Defaults for autocalc to prevent creep
+- Reset Defaults for Transfer Mode
+- Added position of icon to config.xml so people can move it around as needed
+
 Version 1.4.1.0		-	KSP Version: 0.20
 - Recompile and minor changes to package structure to facilitate 0.20 Legacy Mode
 

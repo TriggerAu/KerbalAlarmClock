@@ -2,7 +2,7 @@
 
 #Run by powershell BuildKACFiles.ps1 -VersionString "X.X.X.X"
 
-$SourcePath= "D:\Programming\KSP\KerbalAlarmClock\DevBranch-20Legacy\Source"
+$SourcePath= "D:\Programming\KSP\KerbalAlarmClock\DevBranch\Source"
 $DestRootPath="D:\Programming\KSP\KerbalAlarmClockUpload"
 $DestFullPath= "$($DestRootPath)\v$($VersionString)"
 $7ZipPath="c:\Program Files\7-Zip\7z.exe" 
@@ -35,14 +35,15 @@ if($ChoiceRtn -eq 0)
     #Copy the items 
     "Copying Plugin..."
     Copy-Item "$SourcePath\PluginFiles" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)" -Recurse
-    Copy-Item "$SourcePath\bin\Debug\KerbalAlarmClock.dll" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\Plugins" 
+    Copy-Item "$SourcePath\bin\Debug\KerbalAlarmClock.dll" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\GameData\TriggerTech" 
     #Update the Text files with the version String
     (Get-Content "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\info.txt") |
         ForEach-Object {$_ -replace "%VERSIONSTRING%",$VersionString} |
             Set-Content "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\info.txt"
-    (Get-Content "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\ReadMe.txt") |
+    (Get-Content "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\ReadMe-KerbalAlarmClock.txt") |
         ForEach-Object {$_ -replace "%VERSIONSTRING%",$VersionString} |
-            Set-Content "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\ReadMe.txt"
+            Set-Content "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\ReadMe-KerbalAlarmClock.txt"
+	Move-Item "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\ReadMe-KerbalAlarmClock.txt" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\GameData\TriggerTech\"
 
     #Copy the source files
     "Copying Source..."

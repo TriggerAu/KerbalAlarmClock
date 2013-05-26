@@ -40,9 +40,9 @@ namespace KerbalAlarmClock
 
             //option for xfer mode
             if (Settings.XferUseModelData)
-                intXferType = 1;
-            else
                 intXferType = 0;
+            else
+                intXferType = 1;
 
             //default margin
             timeMargin.BuildFromUT(Settings.AlarmDefaultMargin);
@@ -197,18 +197,6 @@ namespace KerbalAlarmClock
                 new GUIContent(KACResources.btnXfer,"Transfer Window")
             };
 
-        GUIContent[] guiTypes2 = new GUIContent[]
-            {
-                new GUIContent("Raw Time",KACResources.btnRaw,"Raw Time Alarm"),
-                new GUIContent("Maneuver",KACResources.btnMNode,"Maneuver Node"),
-                new GUIContent("Apoapsis",KACResources.btnAp,"Apoapsis"),
-                new GUIContent("Periapsis",KACResources.btnPe,"Periapsis"),
-                new GUIContent("Ascending",KACResources.btnAN,"Ascending Node"),
-                new GUIContent("Descending",KACResources.btnDN,"Descending Node"),
-                new GUIContent("SOI Change",KACResources.btnSOI,"SOI Change"),
-                new GUIContent("Transfer",KACResources.btnXfer,"Transfer Window")
-            };
-
         KACAlarm.AlarmType[] TypesForAttachOption = new KACAlarm.AlarmType[] 
             { 
                 KACAlarm.AlarmType.Raw, 
@@ -223,21 +211,14 @@ namespace KerbalAlarmClock
         /// <param name="WindowID"></param>
         public void FillAddWindow(int WindowID)
         {
-            if (AddInterfaceType ==1)
-                GUILayout.BeginVertical();
-            else
-                GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical();
 
             //AddType =  (KACAlarm.AlarmType)GUILayout.Toolbar((int)AddType, strAddTypes,KACResources.styleButton);
             GUIContent[] guiButtons = guiTypes;
-            if (AddInterfaceType == 2) guiButtons = guiTypes2;
             if (DrawButtonList(ref AddType,guiButtons))
             {
                 AddTypeChanged();
             }
-
-            if (AddInterfaceType != 1)
-                GUILayout.BeginVertical();
 
             //calc height for common stuff
             intHeight_AddWindowCommon = 64;
@@ -290,13 +271,7 @@ namespace KerbalAlarmClock
                     break;
             }
 
-            if (AddInterfaceType == 1)
-                GUILayout.EndVertical();
-            else
-            {
-                GUILayout.EndVertical();
-                GUILayout.EndHorizontal();
-            }
+            GUILayout.EndVertical();
             
             SetTooltipText();
         }
@@ -591,7 +566,7 @@ namespace KerbalAlarmClock
         }
 
         int intAddXferHeight=317;
-        int intXferType = 0;
+        int intXferType = 1;
         private void WindowLayout_AddPane_Transfer()
         {
             intAddXferHeight = 317;

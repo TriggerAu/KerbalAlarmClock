@@ -118,7 +118,8 @@ namespace KerbalAlarmClock
                     }
                 }
 
-                if (GUI.Button(new Rect(152, 0, 32, 32), new GUIContent(iconToShow,"Click to Toggle"), KACResources.styleIconStyle))
+                //draw the icon button
+                if (GUI.Button(Settings.IconPos, new GUIContent(iconToShow,"Click to Toggle"), KACResources.styleIconStyle))
                 {
                     Settings.WindowVisible = !Settings.WindowVisible;
                     Settings.Save();
@@ -181,7 +182,7 @@ namespace KerbalAlarmClock
             //Min or normal window
             if (Settings.WindowMinimized)
             {
-                MainWindowPos.height = intMainWindowMinHeight;
+                MainWindowPos.height = intMainWindowMinHeight + 2;
             }
             else
             {
@@ -190,13 +191,14 @@ namespace KerbalAlarmClock
                 if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count > 1)
                 {
                     if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count<2)
-                        MainWindowPos.height = intMainWindowBaseHeight + intMainWindowAlarmListItemHeight;
+                        MainWindowPos.height = intMainWindowBaseHeight;
                     else if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count < Settings.AlarmListMaxAlarmsInt)
                         MainWindowPos.height = intMainWindowBaseHeight + ((Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count - 1) * intMainWindowAlarmListItemHeight);
                     else
                         //this is scrolling
                         MainWindowPos.height = (intMainWindowBaseHeight -3) + ((Settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) + intMainWindowAlarmListScrollPad;
                 }
+                else MainWindowPos.height = intMainWindowBaseHeight+2;
             }
 
             //Now show the window
@@ -264,17 +266,24 @@ namespace KerbalAlarmClock
             }
 
             //SOI AutoAlarm stuff
-            if (Settings.AlarmAddSOIAuto)
+            if (Settings.AlarmAddSOIAuto || Settings.AlarmSOIRecalc)
             {
-                String SOITooltip  = "SOI Auto Add Enabled";
-                if (Settings.AlarmCatchSOIChange)
+                String SOITooltip = "";
+                if (Settings.AlarmSOIRecalc)
+                    SOITooltip = "SOI Recalculation is enabled";
+                if (Settings.AlarmAddSOIAuto)
                 {
-                    SOITooltip += "-plus catchall";
+                    if (SOITooltip != "") SOITooltip += "\r\n";
+                    SOITooltip += "SOI Auto Add Enabled";
+                    if (Settings.AlarmCatchSOIChange)
+                    {
+                        SOITooltip += "-plus catchall";
+                    }
+                    if (Settings.AlarmOnSOIChange_Action > 1) SOITooltip += " (Pause Action)";
+                    else if (Settings.AlarmOnSOIChange_Action > 0) SOITooltip += " (Warp Kill Action)";
                 }
-                if (Settings.AlarmOnSOIChange_Action > 1) SOITooltip += " (Pause Action)";
-                else if (Settings.AlarmOnSOIChange_Action > 0) SOITooltip += " (Warp Kill Action)";
-                GUIContent SOIIcon = new GUIContent(KACResources.iconstatusSOI, SOITooltip);
-                GUILayout.Label(SOIIcon,KACResources.styleSOIIndicator);
+                GUIContent SOIIcon = new GUIContent(KACResources.iconSOI, SOITooltip);
+                GUILayout.Label(SOIIcon, KACResources.styleSOIIndicator);
             }
             
 
@@ -464,6 +473,7 @@ namespace KerbalAlarmClock
                     GUILayout.Label(KACResources.iconMNode, KACResources.styleAlarmIcon);
                     break;
                 case KACAlarm.AlarmType.SOIChange:
+                case KACAlarm.AlarmType.SOIChangeAuto:
                     GUILayout.Label(KACResources.iconSOI, KACResources.styleAlarmIcon);
                     break;
                 case KACAlarm.AlarmType.Transfer:
@@ -488,20 +498,58 @@ namespace KerbalAlarmClock
             }
 
             //Set the Content up
-            
+            //int intMaxWidth = intTestheight;
+            //String strTimeToAlarm = String.Format(" ({0})",KerbalTime.PrintInterval(tmpAlarm.Remaining, Settings.TimeFormat));
+            //float fTimeToAlarmWidth;
+            //KACResources.styleAlarmText.CalcMinMaxWidth(new GUIContent(strTimeToAlarm),out fOutMin1,out fOutMax1);
+            //fTimeToAlarmWidth = fOutMax1;
+
+            //String strTextToDisplay = tmpAlarm.Name;
+            //KACResources.styleAlarmText.CalcMinMaxWidth(new GUIContent(strTextToDisplay), out fOutMin, out fOutMax);
+            //while (strTextToDisplay.Length>10 &&(  fOutMax+fTimeToAlarmWidth>intMaxWidth) )
+            //{
+            //    strTextToDisplay = strTextToDisplay.Remove(strTextToDisplay.Length - 2);
+            //    KACResources.styleAlarmText.CalcMinMaxWidth(new GUIContent(strTextToDisplay), out fOutMin, out fOutMax);
+            //}
+
+            ////String strLabelText = strTextToDisplay + strTimeToAlarm;
+            //String strTimeText = String.Format("({0})", KerbalTime.PrintInterval(tmpAlarm.Remaining, Settings.TimeFormat));
+            //String strLabelText = tmpAlarm.Name;
+
+            //GUIStyle styleLabel = new GUIStyle(KACResources.styleAlarmText);
+            //if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))
+            //    styleLabel.normal.textColor=Color.gray;
+
+            //GUIStyle styleTime = new GUIStyle(styleLabel);
+            //styleTime.stretchWidth = true;
+
+            //GUIContent contAlarmLabel = new GUIContent(strLabelText, tmpAlarm.Notes);
+            //GUIContent contAlarmTime = new GUIContent(strTimeText, tmpAlarm.Notes);
+
+            ////calc correct width for first part
+            //KACResources.styleAlarmText.CalcMinMaxWidth(contAlarmTime, out fOutMin, out fOutMax);
+            //styleLabel.CalcMinMaxWidth(contAlarmLabel, out fOutMin1, out fOutMax1);
+
+            //int intMaxWidth = intTestheight;
+            //if (fOutMax1 + fOutMax > intMaxWidth)
+            //    fOutMax1 = intMaxWidth - fOutMax;
+
+            //if ((alarmEdit == tmpAlarm) && _ShowEditPane)
+            //{
+            //    intMaxWidth -= 20;
+            //}
+
+            //float width1 = fOutMin1;
+
             String strLabelText = "";
-            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name,KerbalTime.PrintInterval(tmpAlarm.Remaining,Settings.TimeFormat ));
+            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, KerbalTime.PrintInterval(tmpAlarm.Remaining, Settings.TimeFormat));
 
-            GUIStyle styleLabel = KACResources.styleAlarmText;
+            GUIStyle styleLabel = new GUIStyle( KACResources.styleAlarmText);
             if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))
-                styleLabel = KACResources.styleAlarmTextGrayed;
-            GUIStyle styleLabelWarpWorking = KACResources.styleLabelWarp;
-            if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))
-                styleLabelWarpWorking = KACResources.styleLabelWarpGrayed;
+                styleLabel.normal.textColor=Color.gray;
             GUIContent contAlarmLabel = new GUIContent(strLabelText, tmpAlarm.Notes);
-
             //Draw a button that looks like a label.
-            if (GUILayout.Button(contAlarmLabel, styleLabel))
+            if (GUILayout.Button(contAlarmLabel, styleLabel, GUILayout.MaxWidth(218)))
             {
                 if (!_ShowSettings)
                 {
@@ -943,10 +991,7 @@ namespace KerbalAlarmClock
         {
             int InitialChoice = Selected;
 
-            if (AddInterfaceType != 1)
-                GUILayout.BeginVertical();
-            else
-                GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal();
 
             for (int intChoice = 0; intChoice < Choices.Length; intChoice++)
             {
@@ -958,10 +1003,7 @@ namespace KerbalAlarmClock
                         Selected=intChoice;
                 }
             }
-            if (AddInterfaceType != 1)
-                GUILayout.EndVertical();
-            else
-                GUILayout.EndHorizontal();
+            GUILayout.EndHorizontal();
 
             if (InitialChoice != Selected)
                 DebugLogFormatted(String.Format("Button List Changed:{0} to {1}", InitialChoice, Selected));

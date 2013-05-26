@@ -57,9 +57,14 @@ namespace KerbalAlarmClock
 
         public static void LoadImageIntoTexture(ref Texture2D tex, String FileName)
         {
+
             try
             {
-                tex.LoadImage(LoadFileToArray(FileName));
+                //KACWorker.DebugLogFormatted("Loading: TriggerTech/Textures/KerbalAlarmClock/{0}", FileName);
+                tex = GameDatabase.Instance.GetTexture("TriggerTech/Textures/KerbalAlarmClock/" + FileName.Replace(".png", ""), false);
+                //if (tex == null) KACWorker.DebugLogFormatted("Textures Empty");
+
+                //tex.LoadImage(LoadFileToArray(FileName));
             }
             catch (Exception)
             {
@@ -300,7 +305,7 @@ namespace KerbalAlarmClock
         public static Texture2D iconPauseList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         public static Texture2D iconPauseList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
-        public static Texture2D iconstatusSOI = new Texture2D(14, 11, TextureFormat.ARGB32, false);
+        //public static Texture2D iconstatusSOI = new Texture2D(14, 11, TextureFormat.ARGB32, false);
 
 
         public static Texture2D btnRaw = new Texture2D(20, 20, TextureFormat.ARGB32, false);
@@ -375,7 +380,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageIntoTexture(ref iconNone, "img_listiconNone.png");
                 KACUtils.LoadImageIntoTexture(ref iconEdit, "img_listiconEdit.png");
 
-                KACUtils.LoadImageIntoTexture(ref iconstatusSOI, "img_statusiconSOI.png");
+                //KACUtils.LoadImageIntoTexture(ref iconstatusSOI, "img_statusiconSOI.png");
 
                 KACUtils.LoadImageIntoTexture(ref btnRaw, "img_buttonTypeRaw.png");
                 KACUtils.LoadImageIntoTexture(ref btnMNode, "img_buttonTypeMNode.png");
@@ -614,7 +619,7 @@ namespace KerbalAlarmClock
         //List Styles
         public static GUIStyle styleAlarmListArea;
         public static GUIStyle styleAlarmText;
-        public static GUIStyle styleAlarmTextGrayed;
+        //public static GUIStyle styleAlarmTextGrayed;
         public static GUIStyle styleAlarmIcon;
         public static GUIStyle styleLabelWarp;
         public static GUIStyle styleLabelWarpGrayed;
@@ -744,14 +749,17 @@ namespace KerbalAlarmClock
             styleAlarmText = new GUIStyle(styleDefLabel);
             styleAlarmText.normal.textColor = Color.white;
             styleAlarmText.alignment = TextAnchor.MiddleLeft;
+            styleAlarmText.wordWrap = true;
             styleAlarmText.stretchWidth = true;
+            //styleAlarmText.wordWrap = false;
+            //styleAlarmText.stretchWidth = false;
+            //styleAlarmText.clipping = TextClipping.Clip;
+
             //this doesn't work unless you set the background texture apparently - without the stock backgrounds its a bit difficult to match graphically
             //styleAlarmText.hover.textColor = Color.red;
 
-            styleAlarmTextGrayed = new GUIStyle(styleDefLabel);
-            styleAlarmTextGrayed.normal.textColor = Color.gray;
-            styleAlarmTextGrayed.alignment = TextAnchor.MiddleLeft;
-            styleAlarmTextGrayed.stretchWidth = true;
+            //styleAlarmTextGrayed = new GUIStyle(styleAlarmText);
+            //styleAlarmTextGrayed.normal.textColor = Color.gray;
 
             styleAlarmIcon = new GUIStyle(styleDefLabel);
             styleAlarmIcon.alignment = TextAnchor.UpperCenter;
@@ -945,7 +953,23 @@ namespace KerbalAlarmClock
         {
             get
             {
-                return ((this.VersionWeb != "") && (this.Version != this.VersionWeb));
+                if (this.VersionWeb == "")
+                    return false;
+                else
+                    try
+                    {
+                        //if there was a string and its version is greater than the current running one then alert
+                        Version vTest = new Version(this.VersionWeb);
+                        return (System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.CompareTo(vTest) < 0);
+                    }
+                    catch (Exception ex)
+                    {
+                        KACWorker.DebugLogFormatted("webversion: '{0}'", this.VersionWeb);
+                        KACWorker.DebugLogFormatted("Unable to compare versions: {0}", ex.Message);
+                        return false;
+                    }
+
+                //return ((this.VersionWeb != "") && (this.Version != this.VersionWeb));
             }
         }
 
@@ -971,6 +995,8 @@ namespace KerbalAlarmClock
         public Boolean WindowVisible = false;
         public Boolean WindowMinimized = false;
         public Rect WindowPos;
+
+        public Rect IconPos;
 
         public KACAlarmList Alarms = new KACAlarmList();
 
@@ -1004,15 +1030,18 @@ namespace KerbalAlarmClock
         public Boolean AlarmXferDisplayList = false;
         public Boolean XferModelLoadData = true;
         public Boolean XferModelDataLoaded = false;
-        public Boolean XferUseModelData = true;
+        public Boolean XferUseModelData = false;
 
-        public Boolean AlarmNodeRecalc = true;
+        public Boolean AlarmNodeRecalc = false;
         public double AlarmNodeRecalcThreshold = 180;
-
 
         public Boolean AlarmAddSOIAuto = false;
         public double AlarmAddSOIAutoThreshold = 180;
         public double AlarmAutoSOIMargin = 900;
+
+        public Boolean AlarmSOIRecalc = false;
+        public double AlarmSOIRecalcThreshold = 180;
+
         //public double AlarmAddSOIMargin = 120;
         public Boolean AlarmCatchSOIChange = false;
         public int AlarmOnSOIChange_Action = 1;
@@ -1053,6 +1082,9 @@ namespace KerbalAlarmClock
                 this.WindowPos = configfile.GetValue<Rect>("WindowPos");
                 this.WindowPos.height = 100;
 
+                this.IconPos = configfile.GetValue<Rect>("IconPos", new Rect(152, 0, 32, 32));
+                this.IconPos.height = 32; this.IconPos.width = 32;
+
                 this.AlarmListMaxAlarms = configfile.GetValue("AlarmListMaxAlarms", "10");
                 this.AlarmDefaultAction = configfile.GetValue<int>("AlarmDefaultAction", 1);
                 this.AlarmDefaultMargin = configfile.GetValue<Double>("AlarmDefaultMargin", 60);
@@ -1073,13 +1105,19 @@ namespace KerbalAlarmClock
                 this.AlarmXferRecalcThreshold = configfile.GetValue<Double>("AlarmXferRecalcThreshold", 180);
                 this.AlarmXferDisplayList = configfile.GetValue("AlarmXferDisplayList", false);
                 this.XferUseModelData = configfile.GetValue("XferUseModelData", false);
-                                
+
+                this.AlarmNodeRecalc = configfile.GetValue("AlarmNodeRecalc", false);
+                this.AlarmNodeRecalcThreshold = configfile.GetValue<Double>("AlarmNodeRecalcThreshold", 180);
+                
                 this.AlarmAddSOIAuto = configfile.GetValue("AlarmAddSOIAuto", false);
                 this.AlarmAddSOIAutoThreshold = configfile.GetValue<Double>("AlarmAddSOIAutoThreshold", 180);
                 //this.AlarmAddSOIMargin = configfile.GetValue("AlarmAddSOIMargin", 120);
                 this.AlarmAutoSOIMargin = configfile.GetValue<Double>("AlarmAutoSOIMargin", 900);
                 this.AlarmCatchSOIChange = configfile.GetValue("AlarmOnSOIChange", false);
                 this.AlarmOnSOIChange_Action = configfile.GetValue("AlarmOnSOIChange_Action", 1);
+
+                this.AlarmSOIRecalc = configfile.GetValue("AlarmSOIRecalc", false);
+                this.AlarmSOIRecalcThreshold = configfile.GetValue<Double>("AlarmSOIRecalcThreshold", 180);
 
                 //HIGHLOGIC IS NOT YET SET HERE!!!
                 if (KSP.IO.File.Exists<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title)))
@@ -1169,6 +1207,8 @@ namespace KerbalAlarmClock
             configfile.SetValue("WindowMinimized", this.WindowMinimized);
             configfile.SetValue("WindowPos", this.WindowPos);
 
+            configfile.SetValue("IconPos", this.IconPos);
+
             configfile.SetValue("AlarmListMaxAlarms", this.AlarmListMaxAlarms);
             configfile.SetValue("AlarmPosition", this.AlarmPosition);
             configfile.SetValue("AlarmDefaultAction", this.AlarmDefaultAction);
@@ -1182,13 +1222,19 @@ namespace KerbalAlarmClock
             configfile.SetValue("AlarmXferRecalcThreshold", this.AlarmXferRecalcThreshold);
             configfile.SetValue("AlarmXferDisplayList", this.AlarmXferDisplayList);
             configfile.SetValue("XferUseModelData", this.XferUseModelData);
-            
+
+            configfile.SetValue("AlarmNodeRecalc", this.AlarmNodeRecalc);
+            configfile.SetValue("AlarmNodeRecalcThreshold", this.AlarmNodeRecalcThreshold);
+
             configfile.SetValue("AlarmAddSOIAuto", this.AlarmAddSOIAuto);
             configfile.SetValue("AlarmAddSOIAutoThreshold", this.AlarmAddSOIAutoThreshold);
             //configfile.SetValue("AlarmAddSOIMargin", this.AlarmAddSOIMargin);
             configfile.SetValue("AlarmAutoSOIMargin", this.AlarmAutoSOIMargin);
             configfile.SetValue("AlarmOnSOIChange", this.AlarmCatchSOIChange);
             configfile.SetValue("AlarmOnSOIChange_Action", this.AlarmOnSOIChange_Action);
+
+            configfile.SetValue("AlarmSOIRecalc", this.AlarmSOIRecalc);
+            configfile.SetValue("AlarmSOIRecalcThreshold", this.AlarmSOIRecalcThreshold);
 
             //for (int intAlarm = 0; intAlarm < Alarms.Count; intAlarm++)
             //{

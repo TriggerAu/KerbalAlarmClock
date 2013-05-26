@@ -16,7 +16,7 @@ namespace KerbalAlarmClock
 
         int intAlarmDefaultsBoxheight = 105;
         int intUpdateBoxheight = 116;
-        int intSOIBoxheight = 136;
+        int intSOIBoxheight = 166;
 
         KerbalTimeStringArray timeDefaultMargin = new KerbalTimeStringArray();
         KerbalTimeStringArray timeAutoSOIMargin = new KerbalTimeStringArray();
@@ -63,7 +63,7 @@ namespace KerbalAlarmClock
                     break;
                 case 1:
                     WindowLayout_SettingsSpecifics();
-                    intSettingsHeight = 344;
+                    intSettingsHeight = 374;
                     break;
                 case 2:
                     WindowLayout_SettingsAbout();
@@ -139,13 +139,23 @@ namespace KerbalAlarmClock
 
             GUILayout.EndVertical();
         }
-        private int AddInterfaceType = 1;
 
         private void WindowLayout_SettingsSpecifics()
         {
             //Sperer of Influence Stuff
             GUILayout.Label("Sphere Of Influence Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(intSOIBoxheight));
+
+            if (DrawCheckbox(ref Settings.AlarmSOIRecalc, new GUIContent("Auto Recalc of Manual SOI Alarms", strAlarmDescXfer)))
+            {
+                Settings.Save();
+                //if it was turned on then force a recalc regardless of the gap
+                if (Settings.AlarmSOIRecalc)
+                {
+                    RecalcSOIAlarmTimes(true);
+                }
+            }
+
             if (DrawCheckbox(ref Settings.AlarmAddSOIAuto, new GUIContent("Detect and Add Alarms for SOI Changes", strAlarmDescSOI)))
                 Settings.Save();
             if (!Settings.AlarmAddSOIAuto)
@@ -185,7 +195,7 @@ namespace KerbalAlarmClock
             }
             GUILayout.EndVertical();
 
-            //Transfer Alarm Stuff
+            //Node Alarm Stuff
             GUILayout.Label("Orbital Node Alarms (Ap, Pe, AN, DN)", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
             if (DrawCheckbox(ref Settings.AlarmNodeRecalc, new GUIContent("Auto Recalc of Node points", strAlarmDescNode)))

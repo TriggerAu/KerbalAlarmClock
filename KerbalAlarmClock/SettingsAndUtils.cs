@@ -145,11 +145,10 @@ namespace KerbalAlarmClock
             try 
 	        {
                 //work out the target type, and get the target orbit
-                if (FlightGlobals.fetch.VesselTarget!=null)
-                {
-
-                    ITargetable target = FlightGlobals.fetch.VesselTarget;
-                    Orbit oTarget = target.GetOrbit();
+                //if (FlightGlobals.fetch.VesselTarget != null)
+                if (KACWorkerGameState.CurrentVesselTarget is Vessel || KACWorkerGameState.CurrentVesselTarget is CelestialBody)
+                    {
+                    Orbit oTarget = KACWorkerGameState.CurrentVesselTarget.GetOrbit();
                     Vector3d vectVesselPos = vessel.orbit.getRelativePositionAtUT(KACWorkerGameState.CurrentTime.UT);
 
                     blnReturn = CalcTimeToANorDN(vectVesselPos,vessel.orbit,oTarget,typeOfNode,out timeToNode);
@@ -1046,7 +1045,10 @@ namespace KerbalAlarmClock
         public Boolean AlarmCatchSOIChange = false;
         public int AlarmOnSOIChange_Action = 1;
 
-
+        //Strings to store objects to reset after ship switch;
+        public String LoadManNode = "";
+        public string LoadVesselTarget = "";
+        
         public List<GameScenes> DrawScenes = new List<GameScenes> { GameScenes.FLIGHT };
         public List<GameScenes> BehaviourScenes = new List<GameScenes> { GameScenes.FLIGHT };
         public List<VesselType> VesselTypesForSOI = new List<VesselType>() { VesselType.Base, VesselType.Lander, VesselType.Probe, VesselType.Ship, VesselType.Station };
@@ -1118,6 +1120,9 @@ namespace KerbalAlarmClock
 
                 this.AlarmSOIRecalc = configfile.GetValue("AlarmSOIRecalc", false);
                 this.AlarmSOIRecalcThreshold = configfile.GetValue<Double>("AlarmSOIRecalcThreshold", 180);
+
+                this.LoadManNode = configfile.GetValue("LoadManNode", "");
+                this.LoadVesselTarget = configfile.GetValue("LoadVesselTarget", "");
 
                 //HIGHLOGIC IS NOT YET SET HERE!!!
                 if (KSP.IO.File.Exists<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title)))
@@ -1194,9 +1199,19 @@ namespace KerbalAlarmClock
         public void Save()
         {
 
+            SaveConfig();
+
+            SaveLoadObjects();
+
+            SaveAlarms();
+        }
+
+        public void SaveConfig()
+        {
             KACWorker.DebugLogFormatted("Saving Config");
 
             KSP.IO.PluginConfiguration configfile = KSP.IO.PluginConfiguration.CreateForType<KerbalAlarmClock>();
+            configfile.load();
 
             configfile.SetValue("DailyUpdateCheck", this.DailyVersionCheck);
             configfile.SetValue("VersionCheckDate_Attempt", this.VersionCheckDate_AttemptString);
@@ -1216,7 +1231,7 @@ namespace KerbalAlarmClock
             configfile.SetValue("AlarmDeleteOnClose", this.AlarmDeleteOnClose);
             configfile.SetValue("ShowTooltips", this.ShowTooltips);
             configfile.SetValue("HideOnPause", this.HideOnPause);
-            configfile.SetValue("TimeFormat", Enum.GetName(typeof(KerbalTime.PrintTimeFormat),this.TimeFormat));
+            configfile.SetValue("TimeFormat", Enum.GetName(typeof(KerbalTime.PrintTimeFormat), this.TimeFormat));
 
             configfile.SetValue("AlarmXferRecalc", this.AlarmXferRecalc);
             configfile.SetValue("AlarmXferRecalcThreshold", this.AlarmXferRecalcThreshold);
@@ -1235,26 +1250,28 @@ namespace KerbalAlarmClock
 
             configfile.SetValue("AlarmSOIRecalc", this.AlarmSOIRecalc);
             configfile.SetValue("AlarmSOIRecalcThreshold", this.AlarmSOIRecalcThreshold);
-
-            //for (int intAlarm = 0; intAlarm < Alarms.Count; intAlarm++)
-            //{
-            //    configfile.SetValue("Alarm_" + intAlarm.ToString(), Alarms[intAlarm].SerializeString());
-            //}
-
             configfile.save();
             KACWorker.DebugLogFormatted("Saved Config");
 
-            //Now Save the Alarms
-            //SaveAlarms2();
-            SaveAlarms2();
-            KACWorker.DebugLogFormatted("Saved Alarms");
         }
 
-        private void SaveAlarms2()
+        public void SaveLoadObjects()
         {
+            KACWorker.DebugLogFormatted("Saving Load Objects");
+            KSP.IO.PluginConfiguration configfile = KSP.IO.PluginConfiguration.CreateForType<KerbalAlarmClock>();
+            configfile.load();
+            configfile.SetValue("LoadManNode", this.LoadManNode);
+            configfile.SetValue("LoadVesselTarget", this.LoadVesselTarget);
+            configfile.save();
+            KACWorker.DebugLogFormatted("Saved Load Objects");
+        }
+
+        public void SaveAlarms()
+        {
+            KACWorker.DebugLogFormatted("Saving Alarms");
             KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title));
             //Write the header
-            tw.WriteLine("VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|Options-Manuever/Xfer|<ENDLINE>");
+            tw.WriteLine("VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|Options-Manuever/Xfer/Target|<ENDLINE>");
             foreach (KACAlarm tmpAlarm in Alarms.BySaveName(HighLogic.CurrentGame.Title))
             {
                 //Now Write Each alarm
@@ -1262,6 +1279,7 @@ namespace KerbalAlarmClock
             }
             //And close the file
             tw.Close();
+            KACWorker.DebugLogFormatted("Saved Alarms");
         }
 
         //private void SaveAlarms3()

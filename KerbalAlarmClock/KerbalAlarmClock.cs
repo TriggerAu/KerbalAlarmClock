@@ -16,16 +16,19 @@ namespace KerbalAlarmClock
         public static GameScenes LastGUIScene=GameScenes.LOADING;
         public static Vessel LastVessel=null;
         public static CelestialBody LastSOIBody=null;
+        public static ITargetable LastVesselTarget = null;
 
         public static String CurrentSaveGameName = "";
         public static GameScenes CurrentGUIScene=GameScenes.LOADING;
-        public static Vessel CurrentVessel=null;
-        public static CelestialBody CurrentSOIBody=null;
+        public static Vessel CurrentVessel = null;
+        public static CelestialBody CurrentSOIBody = null;
+        public static ITargetable CurrentVesselTarget = null;
 
         public static Boolean ChangedSaveGameName { get { return (LastSaveGameName != CurrentSaveGameName); } }
         public static Boolean ChangedGUIScene { get { return (LastGUIScene != CurrentGUIScene); } }
         public static Boolean ChangedVessel { get { if(LastVessel==null) return true; else return (LastVessel != CurrentVessel); } }
         public static Boolean ChangedSOIBody { get { if (LastSOIBody == null) return true; else return (LastSOIBody != CurrentSOIBody); } }
+        public static Boolean ChangedVesselTarget { get { if (LastVesselTarget == null) return true; else return (LastVesselTarget != CurrentVesselTarget); } }
 
         //The current UT time - for alarm comparison
         public static KerbalTime CurrentTime = new KerbalTime();
@@ -158,11 +161,13 @@ namespace KerbalAlarmClock
             {
                 KACWorkerGameState.CurrentVessel = FlightGlobals.ActiveVessel;
                 KACWorkerGameState.CurrentSOIBody = FlightGlobals.ActiveVessel.mainBody;
+                KACWorkerGameState.CurrentVesselTarget = FlightGlobals.fetch.VesselTarget;
             }
             else
             {
                 KACWorkerGameState.CurrentVessel = null;
                 KACWorkerGameState.CurrentSOIBody = null;
+                KACWorkerGameState.CurrentVesselTarget = null;
             }
         }
 
@@ -172,6 +177,7 @@ namespace KerbalAlarmClock
             KACWorkerGameState.LastTime = KACWorkerGameState.CurrentTime;
             KACWorkerGameState.LastVessel = KACWorkerGameState.CurrentVessel;
             KACWorkerGameState.LastSOIBody = KACWorkerGameState.CurrentSOIBody;
+            KACWorkerGameState.LastVesselTarget= KACWorkerGameState.CurrentVesselTarget;
         }
     }
 
@@ -461,21 +467,55 @@ namespace KerbalAlarmClock
                 }
 
                 // Do we need to restore a maneuverNode after a ship jump - give it 4 secs of attempts for changes to ship
-                if (manToRestore != null && KACWorkerGameState.IsFlightMode)
+                if (Settings.LoadManNode != "" && KACWorkerGameState.IsFlightMode)
                 {
+                    List<ManeuverNode> manNodesToRestore = KACAlarm.ManNodeDeserializeList(Settings.LoadManNode);
                     manToRestoreAttempts += 1;
                     DebugLogFormatted("Attempting to restore a maneuver node-Try {0}",manToRestoreAttempts.ToString());
-                    RestoreManeuverNode(manToRestore);
+                    RestoreManeuverNodeList(manNodesToRestore);
                     if (KACWorkerGameState.ManeuverNodeExists)
                     {
-                        manToRestore = null;
+                        Settings.LoadManNode = "";
+                        Settings.SaveLoadObjects();
+                        manNodesToRestore = null;
                         manToRestoreAttempts = 0;
                     }
                     if (manToRestoreAttempts > 19)
                     {
                         DebugLogFormatted("20 attempts adding Node failed - giving up");
-                        manToRestore = null;
+                        Settings.LoadManNode = "";
+                        Settings.SaveLoadObjects();
+                        manNodesToRestore = null;
                         manToRestoreAttempts = 0;
+                    }
+                }
+
+                // Do we need to restore a Target after a ship jump - give it 4 secs of attempts for changes to ship
+                if (Settings.LoadVesselTarget != "" && KACWorkerGameState.IsFlightMode)
+                {
+                    ITargetable targetToRestore = KACAlarm.TargetDeserialize(Settings.LoadVesselTarget);
+                    targetToRestoreAttempts += 1;
+                    DebugLogFormatted("Attempting to restore a Target-Try {0}", targetToRestoreAttempts.ToString());
+
+                    if (targetToRestore is Vessel)
+                        FlightGlobals.fetch.SetVesselTarget(targetToRestore as Vessel);
+                    else if (targetToRestore is CelestialBody)
+                        FlightGlobals.fetch.SetVesselTarget(targetToRestore as CelestialBody);
+
+                    if (FlightGlobals.fetch.VesselTarget!=null)
+                    {
+                        Settings.LoadVesselTarget="";
+                        Settings.SaveLoadObjects();
+                        targetToRestore = null;
+                        targetToRestoreAttempts = 0;
+                    }
+                    if (targetToRestoreAttempts > 19)
+                    {
+                        DebugLogFormatted("20 attempts adding target failed - giving up");
+                        Settings.LoadVesselTarget = "";
+                        Settings.SaveLoadObjects();
+                        targetToRestore = null;
+                        targetToRestoreAttempts = 0;
                     }
                 }
 
@@ -615,7 +655,7 @@ namespace KerbalAlarmClock
 
         private void RecalcSOIAlarmTimes(Boolean OverrideDriftThreshold)
         {
-            foreach (KACAlarm tmpAlarm in Settings.Alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange))
+            foreach (KACAlarm tmpAlarm in Settings.Alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()))
             {
                 if (tmpAlarm.Remaining.UT > Settings.AlarmSOIRecalcThreshold)
                 {
@@ -813,8 +853,18 @@ namespace KerbalAlarmClock
             }
         }
 
-        private ManeuverNode manToRestore = null;
+        private Int32 targetToRestoreAttempts = 0;
         private Int32 manToRestoreAttempts = 0;
+
+        public void RestoreManeuverNodeList(List<ManeuverNode> newManNodes)
+        {
+            
+            foreach (ManeuverNode tmpMNode in newManNodes)
+            {
+                RestoreManeuverNode(tmpMNode);
+            }
+        }
+
         public void RestoreManeuverNode(ManeuverNode newManNode)
         {
             ManeuverNode tmpNode = FlightGlobals.ActiveVessel.patchedConicSolver.AddManeuverNode(newManNode.UT);

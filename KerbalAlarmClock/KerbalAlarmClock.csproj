@@ -40,14 +40,14 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\~Games\KSP_Win_PlugInTest\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\~Games\KSP_Win_PlugInTest\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -130,10 +130,10 @@
   <PropertyGroup>
     <PostBuildEvent>rem Build deployment versions
 rem Need to copy all bits to plugin test game
-rem copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\GameData\TriggerTech"
+copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\GameData\TriggerTech"
 
 rem and then run the game
-rem "D:\~Games\KSP_Win_PlugInTest\KSP.exe"
+"D:\~Games\KSP_Win_PlugInTest\KSP.exe"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -44,6 +44,8 @@ namespace KerbalAlarmClock
                                 tmpAlarm.AlarmWindow.height = tmpAlarm.AlarmWindowHeight;
                             }
                             String strAlarmText = tmpAlarm.Name;
+                            
+                            //TODO:Add other types
                             switch (tmpAlarm.TypeOfAlarm)
                             {
                                 case KACAlarm.AlarmType.Raw:
@@ -143,9 +145,22 @@ namespace KerbalAlarmClock
                 GUILayout.Label("Stored VesselID no longer exists",KACResources.styleLabelWarning);
             }
         }
-        private static Boolean StoredVesselExists(String VesselID)
+        public static Boolean StoredVesselExists(String VesselID)
         {
             return (VesselID != "") && (FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID) != null);
+        }
+        public static Vessel StoredVessel(String VesselID)
+        {
+            return FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID);
+        }
+
+        public static Boolean CelestialBodyExists(String BodyName)
+        {
+            return (BodyName != "") && (FlightGlobals.Bodies.FirstOrDefault(b => b.bodyName == BodyName) != null);
+        }
+        public static CelestialBody CelestialBody(String BodyName)
+        {
+            return FlightGlobals.Bodies.FirstOrDefault(a => a.bodyName == BodyName);
         }
 
         private KACAlarm alarmEdit;
@@ -245,30 +260,58 @@ namespace KerbalAlarmClock
             if (tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
             {
                 //There is a node and the alarm + Margin is not expired
-                if ((tmpAlarm.ManNode != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
+                if ((tmpAlarm.ManNodes != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
                 {
                     //Check if theres a manuever node and if so put a label saying that it already exists
                     //only display this node button if its the active ship
                     //Add this sae functionality to the alarm triggered window
                     //Add a jump to ship button if not the active ship
                     //As well as to the 
-                    String strRestoretext = "Restore Maneuver Node";
+                    String strRestoretext = "Restore Maneuver Node(s)";
                     if (FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.Count > 0)
-                        strRestoretext += "\r\nNOTE: There is already a Node on the flight path";
+                    {
+                        strRestoretext = "Replace Maneuver Node(s)";
+                        //if the count and UT's are the same then go from there
+                        if (!KACAlarm.CompareManNodeListSimple(FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes,tmpAlarm.ManNodes))
+                            strRestoretext += "\r\nNOTE: There is already a Node on the flight path";
+                        else
+                            strRestoretext += "\r\nNOTE: These Node's appear to be already set on the flight path";
+                    }
                     intReturnNoOfButtons++;
                     if (GUILayout.Button(strRestoretext, KACResources.styleButton))
                     {
                         DebugLogFormatted("Attempting to add Node");
-                        RestoreManeuverNode(tmpAlarm.ManNode);
+                        FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.Clear();
+                        RestoreManeuverNodeList(tmpAlarm.ManNodes);
                     }
                 }
-
+                //There is a stored Target, that hasnt passed and its not the current target
+                if ((tmpAlarm.TargetObject != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
+                {
+                    String strRestoretext = "Restore Target";
+                    if (KACWorkerGameState.CurrentVesselTarget != null)
+                    {
+                        strRestoretext = "Replace Target";
+                        if (KACWorkerGameState.CurrentVesselTarget != tmpAlarm.TargetObject)
+                            strRestoretext += "\r\nNOTE: There is already a target and this will change";
+                        else
+                            strRestoretext += "\r\nNOTE: This already appears to be the target";
+                    }
+                    intReturnNoOfButtons++;
+                    if (GUILayout.Button(strRestoretext, KACResources.styleButton))
+                    {
+                        if (tmpAlarm.TargetObject is Vessel)
+                            FlightGlobals.fetch.SetVesselTarget(tmpAlarm.TargetObject as Vessel);
+						else if (tmpAlarm.TargetObject is CelestialBody)
+                            FlightGlobals.fetch.SetVesselTarget(tmpAlarm.TargetObject as CelestialBody);
+                    }
+                }
             }
             else
             {
                 //not current vessel
                 //There is a node and the alarm + Margin is not expired
-                if (tmpAlarm.ManNode != null && tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs > 0)
+                if (tmpAlarm.ManNodes != null && tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs > 0)
                 {
                     intReturnNoOfButtons++;
                     if (GUILayout.Button("Jump To Ship and Restore Maneuver Node", KACResources.styleButton))
@@ -276,13 +319,31 @@ namespace KerbalAlarmClock
                         Vessel tmpVessel = FindVesselForAlarm(tmpAlarm);
 
                         FlightGlobals.SetActiveVessel(tmpVessel);
+
                         //Set the Node in memory to restore once the ship change has completed
-                        manToRestore = tmpAlarm.ManNode;
+                        Settings.LoadManNode = KACAlarm.ManNodeSerializeList(tmpAlarm.ManNodes);
+                        Settings.SaveLoadObjects();
                     }
                 }
 
+                //There is a target and the alarm has not expired
+                if (tmpAlarm.TargetObject != null && tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs > 0)
+                {
+                    intReturnNoOfButtons++;
+                    if (GUILayout.Button("Jump To Ship and Restore Target", KACResources.styleButton))
+                    {
+                        Vessel tmpVessel = FindVesselForAlarm(tmpAlarm);
+
+                        FlightGlobals.SetActiveVessel(tmpVessel);
+                        
+                        //Set the Target in persistant file to restore once the ship change has completed...
+                        Settings.LoadVesselTarget = KACAlarm.TargetSerialize(tmpAlarm.TargetObject);
+                        Settings.SaveLoadObjects();
+                    }
+                }
+                
                 intReturnNoOfButtons++;
-                //Or just jump to ship - regardless of alarm tie
+                //Or just jump to ship - regardless of alarm time
                 if (GUILayout.Button("Jump To Ship", KACResources.styleButton))
                 {
                     Vessel tmpVessel = FindVesselForAlarm(tmpAlarm);
@@ -293,7 +354,6 @@ namespace KerbalAlarmClock
             }
             return intReturnNoOfButtons;
         }
-
 
         private static Vessel FindVesselForAlarm(KACAlarm tmpAlarm)
         {

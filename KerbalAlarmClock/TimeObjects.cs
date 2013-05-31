@@ -380,10 +380,50 @@ namespace KerbalAlarmClock
 
         public Boolean DeleteOnClose;                                   //Whether the checkbox is on or off for this
 
-        public ManeuverNode ManNode;                                    //Stored ManeuverNode attached to alarm
+        //public ManeuverNode ManNode;                                  //Stored ManeuverNode attached to alarm
+        public List<ManeuverNode> ManNodes=null;                        //Stored ManeuverNode's attached to alarm
 
         public String XferOriginBodyName = "";                          //Stored orbital transfer details
         public String XferTargetBodyName = "";
+
+        //Have to generate these details when the target object is set
+        private ITargetable _TargetObject = null;                       //Stored Target Details
+        
+        //Vessel Target - needs the fancy get routine as the alarms load before the vessels are loaded.
+        //This means that each time the object is accessed if its not yet loaded it trys again
+        public ITargetable TargetObject
+        {
+            get {
+                if (_TargetObject != null)
+                    return _TargetObject;
+                else
+                {
+                    //is there something to load here from the string
+                    if (TargetLoader != "")
+                    {
+                        String[] TargetParts = TargetLoader.Split(",".ToCharArray());
+                        switch (TargetParts[0])
+                        {
+                            case "Vessel":
+                                if (KACWorker.StoredVesselExists(TargetParts[1]))
+                                    _TargetObject = KACWorker.StoredVessel(TargetParts[1]);
+                                break;
+                            case "CelestialBody":
+                                if (KACWorker.CelestialBodyExists(TargetParts[1]))
+                                    TargetObject = KACWorker.CelestialBody(TargetParts[1]);
+                                break;
+                            default:
+                                KACWorker.DebugLogFormatted("No Target Found:{0}", TargetLoader);
+                                break;
+                        }
+                    }
+                    return _TargetObject;
+                }
+            }
+            set { _TargetObject = value; }
+        }
+        //Need this one as some vessels arent loaded when the config comes in
+        public String TargetLoader = "";
 
         //Dynamic props down here
         public KerbalTime Remaining = new KerbalTime();                 //UT value of how long till the alarm fires
@@ -429,37 +469,26 @@ namespace KerbalAlarmClock
             PauseGame = NewPause;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, ManeuverNode NewManeuver)
+        public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, List<ManeuverNode> NewManeuvers)
+            : this(vID, NewName, NewNotes, UT, Margin, atype, NewHaltWarp, NewPause)
         {
-            if (KACWorkerGameState.IsFlightMode)
-                SaveName = HighLogic.CurrentGame.Title;
-            VesselID = vID;
-            Name = NewName;
-            Notes = NewNotes;
-            AlarmTime.UT = UT;
-            AlarmMarginSecs = Margin;
-            TypeOfAlarm = atype;
-            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
-            HaltWarp = NewHaltWarp;
-            PauseGame = NewPause;
-            ManNode = NewManeuver;
+            //set maneuver node
+            ManNodes = NewManeuvers;
         }
 
         public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, KACXFerTarget NewTarget)
+            : this(vID, NewName, NewNotes, UT, Margin, atype, NewHaltWarp, NewPause)
         {
-            if (KACWorkerGameState.IsFlightMode)
-                SaveName = HighLogic.CurrentGame.Title;
-            VesselID = vID;
-            Name = NewName;
-            Notes = NewNotes;
-            AlarmTime.UT = UT;
-            AlarmMarginSecs = Margin;
-            TypeOfAlarm = atype;
-            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
-            HaltWarp = NewHaltWarp;
-            PauseGame = NewPause;
+            //Set target details
             XferOriginBodyName = NewTarget.Origin.bodyName;
             XferTargetBodyName = NewTarget.Target.bodyName;
+        }
+
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, ITargetable NewTarget)
+            : this(vID,NewName,NewNotes,UT,Margin,atype,NewHaltWarp,NewPause)
+        {
+            //Set the ITargetable proerty
+            TargetObject = NewTarget;
         }
         #endregion
 
@@ -479,16 +508,19 @@ namespace KerbalAlarmClock
             strReturn += VesselID + "|";
             strReturn += KACUtils.PipeSepVariables(Name, Notes, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame);
             strReturn += "|";
-            if (ManNode != null)
+
+            if (ManNodes != null)
             {
-                strReturn += ManNode.UT;
-                strReturn += "," + KACUtils.CommaSepVariables(ManNode.DeltaV.x, ManNode.DeltaV.y, ManNode.DeltaV.z);
-                strReturn += "," + KACUtils.CommaSepVariables(ManNode.nodeRotation.x, ManNode.nodeRotation.y, ManNode.nodeRotation.z, ManNode.nodeRotation.w);
+                strReturn += ManNodeSerializeList(ManNodes);
             } 
-            else if (XferTargetBodyName!=null)
+            else if (XferTargetBodyName!=null && XferTargetBodyName!="")
             {
                 strReturn += "" + XferOriginBodyName;
                 strReturn += "," + XferTargetBodyName;
+            }
+            else if (TargetObject != null)
+            {
+                strReturn += KACAlarm.TargetSerialize(TargetObject);
             }
             return strReturn;
         }
@@ -532,23 +564,9 @@ namespace KerbalAlarmClock
             String strOptions = vars[9];
             switch (TypeOfAlarm)
             {
-                case AlarmType.Raw:
-                    break;
                 case AlarmType.Maneuver:
-                    ManNode = new ManeuverNode();
-                    String[] manparts = strOptions.Split(",".ToCharArray());
-                    ManNode.UT = Convert.ToDouble(manparts[0]);
-                    ManNode.DeltaV = new Vector3d(Convert.ToDouble(manparts[1]),
-                                                Convert.ToDouble(manparts[2]),
-                                                Convert.ToDouble(manparts[3])
-                            );
-                    ManNode.nodeRotation = new Quaternion(Convert.ToSingle(manparts[4]),
-                                                        Convert.ToSingle(manparts[5]),
-                                                        Convert.ToSingle(manparts[6]),
-                                                        Convert.ToSingle(manparts[7])
-                            );
-                    break;
-                case AlarmType.SOIChange:
+                    //Generate the Nodes List from the string
+                    ManNodes = ManNodeDeserializeList(strOptions);
                     break;
                 case AlarmType.Transfer:
                     try
@@ -563,12 +581,153 @@ namespace KerbalAlarmClock
                         KACWorker.DebugLogFormatted(ex.Message);
                     }
                     break;
-                case AlarmType.TransferModelled:
+                case AlarmType.AscendingNode:
+                case AlarmType.DescendingNode:
+                    if (strOptions != "")
+                    {
+                        //find the targetable object and set it
+                        TargetObject = TargetDeserialize(strOptions);               
+                        if (TargetObject==null && strOptions.StartsWith("Vessel,"))
+                            TargetLoader = strOptions;
+                    }
                     break;
+                //case AlarmType.ApproachClosest:
+                //case AlarmType.ApproachDistance:
+                //    string[] TargetParts = strOptions.Split(",".ToCharArray());;
+                //    TargetType = TargetParts[0];
+                //    TargetID = TargetParts[1];
+                //    //Set the targetable object
+                //    TargetObject = null;
+                //    break;
+
+                //case AlarmType.Raw:
+                //    break;
+                //case AlarmType.SOIChange:
+                //    break;
+                //case AlarmType.TransferModelled:
+                //    break;
                 default:
                     break;
             }
         }
+
+        public static ITargetable TargetDeserialize(String strInput)
+        {
+            ITargetable tReturn = null;
+            String[] TargetParts = strInput.Split(",".ToCharArray());
+            switch (TargetParts[0])
+            {
+                case "Vessel":
+                    if (KACWorker.StoredVesselExists(TargetParts[1]))
+                        tReturn = KACWorker.StoredVessel(TargetParts[1]);
+                    break;
+                case "CelestialBody":
+                    if (KACWorker.CelestialBodyExists(TargetParts[1]))
+                        tReturn = KACWorker.CelestialBody(TargetParts[1]);
+                    break;
+                default:
+                    break;
+            }
+            return tReturn;
+        }
+
+        public static String TargetSerialize(ITargetable tInput)
+        {
+            string strReturn = "";
+
+            strReturn += tInput.GetType();
+            strReturn += ",";
+
+            if (tInput is Vessel)
+            {
+                Vessel tmpVessel = tInput as Vessel;
+                strReturn += tmpVessel.id.ToString();
+            }
+            else if (tInput is CelestialBody)
+            {
+                CelestialBody tmpBody = tInput as CelestialBody;
+                strReturn += tmpBody.bodyName;
+            }
+
+            return strReturn;
+
+        }
+
+        public static List<ManeuverNode> ManNodeDeserializeList(String strInput)
+        {
+            List<ManeuverNode> lstReturn = new List<ManeuverNode>();
+
+            String[] strInputParts = strInput.Split(",".ToCharArray());
+            KACWorker.DebugLogFormatted("Found {0} Maneuver Nodes to deserialize", strInputParts.Length / 8);
+
+            //There are 8 parts per mannode
+            for (int iNode = 0; iNode < strInputParts.Length / 8; iNode++)
+            {
+                String strTempNode = String.Join(",", strInputParts.Skip(iNode * 8).Take(8).ToArray());
+                lstReturn.Add(ManNodeDeserialize(strTempNode));
+            }
+
+            return lstReturn;
+        }
+
+        public static ManeuverNode ManNodeDeserialize(String strInput)
+        {
+            ManeuverNode mReturn =  new ManeuverNode();
+            String[] manparts = strInput.Split(",".ToCharArray());
+            mReturn.UT = Convert.ToDouble(manparts[0]);
+            mReturn.DeltaV = new Vector3d(Convert.ToDouble(manparts[1]),
+                                        Convert.ToDouble(manparts[2]),
+                                        Convert.ToDouble(manparts[3])
+                    );
+            mReturn.nodeRotation = new Quaternion(Convert.ToSingle(manparts[4]),
+                                                Convert.ToSingle(manparts[5]),
+                                                Convert.ToSingle(manparts[6]),
+                                                Convert.ToSingle(manparts[7])
+                    );
+            return mReturn;
+        }
+
+        public static string ManNodeSerializeList(List<ManeuverNode> mInput)
+        {
+            String strReturn = "";
+            foreach (ManeuverNode tmpMNode in mInput)
+            {
+                strReturn += ManNodeSerialize(tmpMNode);
+                strReturn += ",";
+            }
+            strReturn.TrimEnd(",".ToCharArray());
+            return strReturn;
+        }
+
+        public static string ManNodeSerialize(ManeuverNode mInput)
+        {
+            String strReturn = mInput.UT.ToString();
+            strReturn += "," + KACUtils.CommaSepVariables(mInput.DeltaV.x, mInput.DeltaV.y, mInput.DeltaV.z);
+            strReturn += "," + KACUtils.CommaSepVariables(mInput.nodeRotation.x, mInput.nodeRotation.y, mInput.nodeRotation.z, mInput.nodeRotation.w);
+            return strReturn;
+        }
+
+        public static Boolean CompareManNodeListSimple(List<ManeuverNode> l1, List<ManeuverNode> l2)
+        {
+            Boolean blnReturn = true;
+
+            if (l1.Count != l2.Count)
+                blnReturn=false;
+            else
+            {
+                for (int i = 0; i < l1.Count; i++)
+                {
+                    if (l1[i].UT != l2[i].UT)
+                        blnReturn = false;
+                    else if (l1[i].DeltaV != l2[i].DeltaV)
+                        blnReturn = false;
+                }
+            }
+
+            return blnReturn;
+        }
+
+
 
         public static int SortByUT(KACAlarm c1, KACAlarm c2)
         {

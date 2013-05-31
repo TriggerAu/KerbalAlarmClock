@@ -11,16 +11,31 @@ INSTALLATION
 ******************* NOTE  ******************* NOTE ******************* NOTE *******************
 IF YOU WANT TO MAINTAIN YOUR SETTINGS DO NOT COPY THE CONFIG.XML FILE OVER
 ******************* NOTE  ******************* NOTE ******************* NOTE *******************
-Copy the folders into the KSP_OS application folder.
+
+Installing the plugin involves copying the plugin files into the correct location in the KSP aplication folder
+1. Extract the Zip file you have downloaded to a temporary Location
+2. Open the Extracted folder structure and open the KerbalAlarmClock_v%VERSIONSTRING% Folder
+3. Inside this you will find a GameData folder which contains all the content you will need
+4. Open another window to your KSP application folder - We'll call this <KSP_OS>
+5. Copy the Contents of the extracted GameData folder to the <KSP_OS>\GameData Folder
+6. Start the Game and enjoy :)
 
 TROUBLESHOOTING
-The plugin records troubleshooting data in the "KSP_Data\outut_log.txt".
-If there are errors in loading the config you can delete the "\PluginData\kerbalalarmclock\config.xml" and restart the game
+The plugin records troubleshooting data in the "<KSP_OS>\KSP_Data\output_log.txt".
+If there are errors in loading the config you can delete the "<KSP_OS>\GameData\TriggerTech\PluginData\KerbalAlarmClock\config.xml" and restart the game
 
 LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.1.0.0		-	KSP Version: 0.20.2
+- Tweaked for 0.20.2
+- Added functionality to Store/Restore Vessel Targets for AN/DN Alarms
+- Expanded Store/Restore of Maneuver Nodes to include a list of all nodes from time of alarm
+- Resolved an issue with the SOI recalc code that was resetting all SOI Alarms to one time
+- Restored the "Jump and Restore" functionality that stopped working in 0.20
+- Improved the Save/Load routines to compartmentalise them
+
 Version 2.0.0.0		-	KSP Version: 0.20
 - Rebuild and rewrite for 0.20 Game Database Loading Structure
 - Also fixes for - only recalc alarms when under Physwarp or nowarp - stops creep at high warp

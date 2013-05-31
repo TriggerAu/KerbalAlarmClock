@@ -403,6 +403,7 @@ namespace KerbalAlarmClock
                 {
                     Boolean blnFoundNode = false;
                     String strMarginConversion = "";
+                    //loop to find the first future node
                     for (int intNode = 0; (intNode < myVessel.patchedConicSolver.maneuverNodes.Count) && !blnFoundNode; intNode++)
                     {
                         KerbalTime nodeTime = new KerbalTime(myVessel.patchedConicSolver.maneuverNodes[intNode].UT);
@@ -426,8 +427,11 @@ namespace KerbalAlarmClock
                         {
                             if (DrawAddAlarm(nodeTime,nodeInterval,nodeAlarmInterval))
                             {
+                                //Get a list of all future Maneuver Nodes - thats what the skip does
+                                List<ManeuverNode> manNodesToStore = myVessel.patchedConicSolver.maneuverNodes.Skip(intNode).ToList<ManeuverNode>();
+
                                 Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.Maneuver,
-                                    (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), myVessel.patchedConicSolver.maneuverNodes[intNode]));
+                                    (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), manNodesToStore));
                                 Settings.Save();
                                 _ShowAddPane = false;
                             }
@@ -481,8 +485,12 @@ namespace KerbalAlarmClock
                     {
                         if (DrawAddAlarm(eventTime, eventInterval, eventAlarmInterval))
                         {
-                            Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, eventAlarm.UT, timeMargin.UT, AddType,
-                                (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame)));
+                            KACAlarm newAlarm = new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, eventAlarm.UT, timeMargin.UT, AddType,
+                                (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame));
+                            if (AddType == KACAlarm.AlarmType.AscendingNode || AddType == KACAlarm.AlarmType.DescendingNode)
+                                newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
+
+                            Settings.Alarms.Add(newAlarm);
                             Settings.Save();
                             _ShowAddPane = false;
                         }
@@ -508,7 +516,7 @@ namespace KerbalAlarmClock
         {
             Double f1 = c1.orbit.semiMajorAxis;
             double f2 = c2.orbit.semiMajorAxis;
-            DebugLogFormatted("{0}-{1}", f1.ToString(), f2.ToString());
+            //DebugLogFormatted("{0}-{1}", f1.ToString(), f2.ToString());
             return f1.CompareTo(f2);
         }
 

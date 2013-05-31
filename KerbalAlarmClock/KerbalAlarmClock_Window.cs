@@ -439,7 +439,7 @@ namespace KerbalAlarmClock
                     foreach (KACAlarm tmpAlarm in AlarmsToRemove)
                     {
                         Settings.Alarms.Remove(tmpAlarm);
-                        Settings.Save();
+                        Settings.SaveAlarms();
                     }
                     //is the game paused, yet we deleted any active pause alarms??
                     if (Settings.Alarms.FirstOrDefault(a => (a.AlarmWindowID != 0 && a.PauseGame == true)) == null)

@@ -251,23 +251,24 @@ namespace KerbalAlarmClock
             //GUILayout.EndHorizontal();
 
 
-            //GUILayout.BeginHorizontal();
-            //GUILayout.BeginVertical();
-            //GUILayout.Label("test:");
-            ////GUILayout.Label("test2:");
-            ////GUILayout.Label("test3:");
-            ////GUILayout.Label("test4:");
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical();
+            GUILayout.Label("test:");
+            //GUILayout.Label("test2:");
+            //GUILayout.Label("test3:");
+            //GUILayout.Label("test4:");
 
-            //GUILayout.EndVertical();
-            //GUILayout.BeginVertical();
+            GUILayout.EndVertical();
+            GUILayout.BeginVertical();
 
+            
             //intTestheight = Convert.ToInt32(GUILayout.TextField(intTestheight.ToString()));
-            ////intTestheight2 = Convert.ToInt32(GUILayout.TextField(intTestheight2.ToString()));
-            ////intTestheight3 = Convert.ToInt32(GUILayout.TextField(intTestheight3.ToString()));
-            ////intTestheight4 = Convert.ToInt32(GUILayout.TextField(intTestheight4.ToString()));
+            //intTestheight2 = Convert.ToInt32(GUILayout.TextField(intTestheight2.ToString()));
+            //intTestheight3 = Convert.ToInt32(GUILayout.TextField(intTestheight3.ToString()));
+            //intTestheight4 = Convert.ToInt32(GUILayout.TextField(intTestheight4.ToString()));
 
-            //GUILayout.EndVertical();
-            //GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
 
 
 
@@ -426,16 +427,30 @@ namespace KerbalAlarmClock
         //    if (m.Count > 0)
         //    {
         //        KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(FileName);
-        //        tw.WriteLine("attachedGizmo:" + m[0].attachedGizmo);
-        //        tw.WriteLine("DeltaV:" + m[0].DeltaV);
-        //        tw.WriteLine("nextPatch:" + m[0].nextPatch);
-        //        tw.WriteLine("nodeRotation:" + m[0].nodeRotation);
-        //        tw.WriteLine("patch:" + m[0].patch);
-        //        tw.WriteLine("scaledSpaceTarget:" + m[0].scaledSpaceTarget);
-        //        tw.WriteLine("solver:" + m[0].solver);
-        //        tw.WriteLine("UT:" + m[0].UT);
+        //        String strInfo="";
+        //        foreach (ManeuverNode mNode in m)
+        //        {
+        //            strInfo += WriteNodeDetails(mNode);
+        //        }
+        //        strInfo+= KACAlarm.ManNodeSerializeList(FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes) + "\r\n";
+        //        //strInfo+= KACAlarm.ManNodeSerializeList(tmpAlarm.ManNodes)+ "\r\n";
+        //        tw.WriteLine(strInfo);
         //        tw.Close();
         //    }
+        //}
+
+        //private static string WriteNodeDetails( ManeuverNode mNode)
+        //{
+        //    String strInfo = "";
+        //    strInfo += "attachedGizmo:" + mNode.attachedGizmo + "\r\n";
+        //    strInfo += "DeltaV:" + mNode.DeltaV + "\r\n";
+        //    strInfo += "nextPatch:" + mNode.nextPatch + "\r\n";
+        //    strInfo += "nodeRotation:" + mNode.nodeRotation + "\r\n";
+        //    strInfo += "patch:" + mNode.patch + "\r\n";
+        //    strInfo += "scaledSpaceTarget:" + mNode.scaledSpaceTarget + "\r\n";
+        //    strInfo += "solver:" + mNode.solver + "\r\n";
+        //    strInfo += "UT:" + mNode.UT + "\r\n";
+        //    return strInfo;
         //}
 
         //public void WriteOrbitFile(Orbit o, String FileName)

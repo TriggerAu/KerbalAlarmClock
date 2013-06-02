@@ -130,10 +130,10 @@
   <PropertyGroup>
     <PostBuildEvent>rem Build deployment versions
 rem Need to copy all bits to plugin test game
-copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\GameData\TriggerTech"
+rem copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\GameData\TriggerTech"
 
 rem and then run the game
-"D:\~Games\KSP_Win_PlugInTest\KSP.exe"
+rem "D:\~Games\KSP_Win_PlugInTest\KSP.exe"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

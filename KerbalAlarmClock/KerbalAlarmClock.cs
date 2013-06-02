@@ -832,7 +832,7 @@ namespace KerbalAlarmClock
                 }
 
                 //if in the next two updates we would pass the alarm time then slow down the warp
-                if (!tmpAlarm.Actioned && tmpAlarm.Enabled && tmpAlarm.HaltWarp)
+                if (!tmpAlarm.Actioned && tmpAlarm.Enabled && (tmpAlarm.HaltWarp || tmpAlarm.PauseGame))
                 {
                     Double TimeNext = KACWorkerGameState.CurrentTime.UT + SecondsTillNextUpdate * 2;
                     //DebugLogFormatted(CurrentTime.UT.ToString() + "," + TimeNext.ToString());

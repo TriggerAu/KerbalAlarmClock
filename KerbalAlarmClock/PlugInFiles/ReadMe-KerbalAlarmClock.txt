@@ -28,6 +28,9 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.1.1.0		-	KSP Version: 0.20.2
+- Fixed issue with Pause alarms not slowing down warp first
+
 Version 2.1.0.0		-	KSP Version: 0.20.2
 - Tweaked for 0.20.2
 - Added functionality to Store/Restore Vessel Targets for AN/DN Alarms

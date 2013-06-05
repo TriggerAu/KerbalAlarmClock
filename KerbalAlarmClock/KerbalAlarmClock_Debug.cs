@@ -253,7 +253,9 @@ namespace KerbalAlarmClock
 
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical();
-            GUILayout.Label("test:");
+            GUILayout.Label("PeExists:");
+            GUILayout.Label("TimeToPe:");
+            //GUILayout.Label("test1:");
             //GUILayout.Label("test2:");
             //GUILayout.Label("test3:");
             //GUILayout.Label("test4:");
@@ -261,7 +263,6 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
             GUILayout.BeginVertical();
 
-            
             //intTestheight = Convert.ToInt32(GUILayout.TextField(intTestheight.ToString()));
             //intTestheight2 = Convert.ToInt32(GUILayout.TextField(intTestheight2.ToString()));
             //intTestheight3 = Convert.ToInt32(GUILayout.TextField(intTestheight3.ToString()));

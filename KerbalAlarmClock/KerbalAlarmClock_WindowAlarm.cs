@@ -45,7 +45,6 @@ namespace KerbalAlarmClock
                             }
                             String strAlarmText = tmpAlarm.Name;
                             
-                            //TODO:Add other types
                             switch (tmpAlarm.TypeOfAlarm)
                             {
                                 case KACAlarm.AlarmType.Raw:
@@ -53,11 +52,19 @@ namespace KerbalAlarmClock
                                 case KACAlarm.AlarmType.Maneuver:
                                     strAlarmText+= " - Maneuver Node";break;
                                 case KACAlarm.AlarmType.SOIChange:
-                                    strAlarmText+= " - SOI Change";break;
+                                case KACAlarm.AlarmType.SOIChangeAuto:
+                                    strAlarmText += " - SOI Change"; break;
                                 case KACAlarm.AlarmType.Transfer:
-                                    strAlarmText += " - Transfer Point"; break;
                                 case KACAlarm.AlarmType.TransferModelled:
                                     strAlarmText += " - Transfer Point"; break;
+                                case KACAlarm.AlarmType.Apoapsis:
+                                    strAlarmText += " - Apoapsis"; break;
+                                case KACAlarm.AlarmType.Periapsis:
+                                    strAlarmText += " - Periapsis"; break;
+                                case KACAlarm.AlarmType.AscendingNode:
+                                    strAlarmText += " - Ascending Node"; break;
+                                case KACAlarm.AlarmType.DescendingNode:
+                                    strAlarmText += " - Descending Node"; break;
                                 default:
                                     strAlarmText+= " - Manual";break;
                             }
@@ -192,10 +199,10 @@ namespace KerbalAlarmClock
                 GUILayout.BeginHorizontal();
                 if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw)
                 {
-                    GUILayout.Label("Alarm Time:", KACResources.styleContent);
+                    GUILayout.Label("Time To Alarm:", KACResources.styleContent);
                     GUILayout.Label(KerbalTime.PrintInterval(new KerbalTime(alarmEdit.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT), Settings.TimeFormat), KACResources.styleAddHeading);
                 }
-                GUILayout.Label("Event Time:", KACResources.styleContent);
+                GUILayout.Label("Time To Event:", KACResources.styleContent);
                 GUILayout.Label(KerbalTime.PrintInterval(new KerbalTime(alarmEdit.AlarmTime.UT + alarmEdit.AlarmMarginSecs-KACWorkerGameState.CurrentTime.UT),Settings.TimeFormat),KACResources.styleAddHeading);
                 GUILayout.EndHorizontal();
 

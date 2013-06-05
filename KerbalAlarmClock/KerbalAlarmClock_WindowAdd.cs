@@ -303,11 +303,23 @@ namespace KerbalAlarmClock
             }
             GUILayout.EndHorizontal();
 
-            if (DrawTimeEntry(ref rawEntry, TimeEntryPrecision.Days,"Time:",100,35,15))
+            if (intRawType == 0)
             {
-
+                //date
+                KerbalTimeStringArray rawDate = new KerbalTimeStringArray(rawEntry.UT + KerbalTime.timeDateOffest.UT);
+                if (DrawTimeEntry(ref rawDate, TimeEntryPrecision.Years, "Time:", 50, 35, 15))
+                {
+                    rawEntry.BuildFromUT(rawDate.UT - KerbalTime.timeDateOffest.UT);
+                }
             }
+            else
+            {
+                //interval
+                if (DrawTimeEntry(ref rawEntry, TimeEntryPrecision.Years, "Time:", 50, 35, 15))
+                {
 
+                }
+            }
             GUILayout.BeginHorizontal();
             GUILayout.Label("UT (raw seconds):", KACResources.styleAddHeading,GUILayout.Width(100));
             strRawUT = GUILayout.TextField(strRawUT, KACResources.styleAddField);
@@ -346,37 +358,72 @@ namespace KerbalAlarmClock
             }
         }
 
-        private Boolean DrawAddAlarm(KerbalTime AlarmDate,KerbalTime TimeToEvent,KerbalTime TimeToAlarm)
+        private Boolean DrawAddAlarm(KerbalTime AlarmDate, KerbalTime TimeToEvent, KerbalTime TimeToAlarm)
         {
             Boolean blnReturn = false;
             int intLineHeight = 18;
             //work out the strings
             GUILayout.BeginHorizontal(KACResources.styleAddAlarmArea);
-            GUILayout.BeginVertical(GUILayout.Width(100), GUILayout.MaxWidth(100));
-            GUILayout.Label(strAlarmEventName + " Date:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
-            if (AddType != KACAlarm.AlarmType.Raw)
-                GUILayout.Label("Time to " + strAlarmEventName + ":", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
-
-            GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
-            GUILayout.EndVertical();
             GUILayout.BeginVertical();
 
-            GUILayout.Label(KerbalTime.PrintInterval(AlarmDate, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Date:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(40), GUILayout.MaxWidth(40));
+            GUILayout.Label(KerbalTime.PrintDate(AlarmDate, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+            GUILayout.EndHorizontal();
             if (AddType != KACAlarm.AlarmType.Raw)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Time to " + strAlarmEventName + ":", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(100), GUILayout.MaxWidth(100));
                 GUILayout.Label(KerbalTime.PrintInterval(TimeToEvent, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(100), GUILayout.MaxWidth(100));
             GUILayout.Label(KerbalTime.PrintInterval(TimeToAlarm, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
-
+            GUILayout.EndHorizontal();
             GUILayout.EndVertical();
+
             GUILayout.Space(10);
             int intButtonHeight = 36;
             if (AddType != KACAlarm.AlarmType.Raw) intButtonHeight += 22;
             if (GUILayout.Button("Add Alarm", KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(intButtonHeight)))
             {
-                blnReturn=true;
+                blnReturn = true;
             }
             GUILayout.EndHorizontal();
             return blnReturn;
         }
+        //private Boolean DrawAddAlarm(KerbalTime AlarmDate, KerbalTime TimeToEvent, KerbalTime TimeToAlarm)
+        //{
+        //    Boolean blnReturn = false;
+        //    int intLineHeight = 18;
+        //    //work out the strings
+        //    GUILayout.BeginHorizontal(KACResources.styleAddAlarmArea);
+        //    GUILayout.BeginVertical(GUILayout.Width(100), GUILayout.MaxWidth(100));
+        //    GUILayout.Label(strAlarmEventName + " Date:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
+        //    if (AddType != KACAlarm.AlarmType.Raw)
+        //        GUILayout.Label("Time to " + strAlarmEventName + ":", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
+
+        //    GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
+        //    GUILayout.EndVertical();
+        //    GUILayout.BeginVertical();
+
+        //    GUILayout.Label(KerbalTime.PrintDate(AlarmDate, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+        //    if (AddType != KACAlarm.AlarmType.Raw)
+        //        GUILayout.Label(KerbalTime.PrintInterval(TimeToEvent, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+        //    GUILayout.Label(KerbalTime.PrintInterval(TimeToAlarm, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+
+        //    GUILayout.EndVertical();
+        //    GUILayout.Space(10);
+        //    int intButtonHeight = 36;
+        //    if (AddType != KACAlarm.AlarmType.Raw) intButtonHeight += 22;
+        //    if (GUILayout.Button("Add Alarm", KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(intButtonHeight)))
+        //    {
+        //        blnReturn = true;
+        //    }
+        //    GUILayout.EndHorizontal();
+        //    return blnReturn;
+        //}
 
         ////Variables for Node Alarms screen
         ////String strNodeMargin = "1";

@@ -109,7 +109,7 @@ namespace KerbalAlarmClock
                     if (FlightGlobals.ActiveVessel.orbit != null)
                     {
                         if (FlightGlobals.ActiveVessel.orbit.timeToAp > 0
-                            && (CurrentTime.UT + FlightGlobals.ActiveVessel.orbit.timeToAp < FlightGlobals.ActiveVessel.orbit.EndUT))
+                            && ((CurrentTime.UT + FlightGlobals.ActiveVessel.orbit.timeToAp) < FlightGlobals.ActiveVessel.orbit.EndUT))
                             blnReturn = true;
                     }
                 }
@@ -126,8 +126,8 @@ namespace KerbalAlarmClock
                 {
                     if (FlightGlobals.ActiveVessel.orbit != null)
                     {
-                        if (FlightGlobals.ActiveVessel.orbit.timeToAp > 0
-                            && (CurrentTime.UT + FlightGlobals.ActiveVessel.orbit.timeToAp < FlightGlobals.ActiveVessel.orbit.EndUT))
+                        if (FlightGlobals.ActiveVessel.orbit.timeToPe > 0
+                            && ((CurrentTime.UT + FlightGlobals.ActiveVessel.orbit.timeToPe) < FlightGlobals.ActiveVessel.orbit.EndUT))
                             blnReturn = true;
                     }
                 }
@@ -211,7 +211,7 @@ namespace KerbalAlarmClock
 
         //Worker and Settings objects
         private KACWorker WorkerObjectInstance;
-        public static float UpdateInterval = 0.2F;
+        public static float UpdateInterval = 0.25F;
 
         //Constructor to set KACWorker parent object to this and access to the settings
         public KerbalAlarmClock()
@@ -443,7 +443,7 @@ namespace KerbalAlarmClock
 
         //Updates the variables that are used in the drawing - this is not on the OnGUI thread
         private Dictionary<String, KACVesselSOI> lstVessels = new Dictionary<String,KACVesselSOI>();
-        
+        int intPeriodicSaveCounter=0;
         public void UpdateDetails()
         {
             KACWorkerGameState.SetCurrentFlightStates();
@@ -562,6 +562,26 @@ namespace KerbalAlarmClock
                     }
                 }
 
+                //Periodically save the alarms list if any of the recalcs are on and the current vessel has alarms of that type
+                //if its one in twenty then resave - every 5 secs
+                intPeriodicSaveCounter++;
+                if (intPeriodicSaveCounter > (5/KerbalAlarmClock.UpdateInterval))
+                {
+                    intPeriodicSaveCounter = 0;
+                    Boolean blnPeriodicSave = false;
+                    if (Settings.AlarmXferRecalc && Settings.Alarms.FirstOrDefault(a=>a.TypeOfAlarm== KACAlarm.AlarmType.Transfer)!=null)
+                        blnPeriodicSave=true;
+                    else if (Settings.AlarmAddSOIAuto && Settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChangeAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
+                        blnPeriodicSave = true;
+                    else if (Settings.AlarmSOIRecalc && Settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
+                        blnPeriodicSave = true;
+                    else if (Settings.AlarmNodeRecalc && Settings.Alarms.FirstOrDefault(a => TypesToRecalc.Contains(a.TypeOfAlarm) && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
+                        blnPeriodicSave = true;
+
+                    if (blnPeriodicSave)
+                        Settings.SaveAlarms();
+                }
+
                 //Work out how many game seconds will pass till this runs again
                 double SecondsTillNextUpdate;
                 double dWarpRate = TimeWarp.CurrentRate;
@@ -639,6 +659,7 @@ namespace KerbalAlarmClock
                         //    KACAlarm.AlarmType.SOIChange, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
                         Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strSOIAlarmName, strSOIAlarmNotes, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
                             KACAlarm.AlarmType.SOIChangeAuto, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
+                        Settings.SaveAlarms();
                     }
                 }
                 else

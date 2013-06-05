@@ -339,7 +339,9 @@ namespace KerbalAlarmClock
             GUILayout.Label("Current Time:", KACResources.styleHeading);
 
             //Work out the right text and tooltip and display the button as a label
-            GUIContent contCurrentTime = new GUIContent(KerbalTime.PrintDate(KACWorkerGameState.CurrentTime, Settings.TimeFormat), "Click to toggle through time formats");
+            KerbalTime.PrintTimeFormat MainClockFormat = KerbalTime.PrintTimeFormat.DateTimeString;
+            if (Settings.TimeFormat == KerbalTime.PrintTimeFormat.TimeAsUT) MainClockFormat = KerbalTime.PrintTimeFormat.TimeAsUT;
+            GUIContent contCurrentTime = new GUIContent(KerbalTime.PrintDate(KACWorkerGameState.CurrentTime, MainClockFormat), "Click to toggle through time formats");
             if (GUILayout.Button(contCurrentTime, KACResources.styleContent))
             {
                 switch (Settings.TimeFormat)

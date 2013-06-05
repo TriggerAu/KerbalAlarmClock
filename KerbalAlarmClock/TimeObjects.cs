@@ -13,8 +13,10 @@ namespace KerbalAlarmClock
     /// </summary>
     public class KerbalTime
     {
+
         //really there are 31,446,925.9936 seconds in a year, use 365*24 so the reciprocal math 
         //  to go to years and get back to full days isnt confusing - have to sort this out some day though.
+        //NOTE: KSP Dates appear to all be 365 * 24 as well - no fractions - woohoo
         const double HoursPerYearEarth = 365 * 24;
 
         #region "Constructors"
@@ -23,6 +25,10 @@ namespace KerbalAlarmClock
         public KerbalTime(double NewUT)
         {
             UT = NewUT;
+        }
+        public KerbalTime(double Years, double Days, double Hours, double Minutes, double Seconds)
+        {
+            UT = KerbalTime.BuildUTFromRaw(Years, Days, Hours, Minutes, Seconds);
         }
         #endregion
 
@@ -175,6 +181,11 @@ namespace KerbalAlarmClock
 
         public String DateString()
         {
+            return String.Format("Year {0},Day {1}, {2}h, {3}m, {4}s", YearEarth + 1, DayEarth + 1, HourEarth, Minute, Second);
+        }
+
+        public String DateTimeString()
+        {
             return String.Format("Year {0},Day {1}, {2:00}:{3:00}:{4:00}", YearEarth + 1, DayEarth + 1, HourEarth, Minute, Second);
         }
 
@@ -201,6 +212,9 @@ namespace KerbalAlarmClock
         }
 
 #region "Static Functions"
+        //fudging for dates
+        public static KerbalTime timeDateOffest = new KerbalTime(1, 1, 0, 0, 0);
+
         public static Double BuildUTFromRaw(String Years, String Days, String Hours, String Minutes, String Seconds)
         {
             return BuildUTFromRaw(Convert.ToDouble(Years), Convert.ToDouble(Days), Convert.ToDouble(Hours), Convert.ToDouble(Minutes), Convert.ToDouble(Seconds));
@@ -219,7 +233,6 @@ namespace KerbalAlarmClock
             return PrintInterval(timeTemp, 3, TimeFormat);
         }
 
-        //rework these to get teh right formats!!!!!
         public static String PrintInterval(KerbalTime timeTemp, int Segments, KerbalTime.PrintTimeFormat TimeFormat)
         {
             switch (TimeFormat )
@@ -244,9 +257,9 @@ namespace KerbalAlarmClock
                 case PrintTimeFormat.KSPString:
                     return timeTemp.DateString();
                 case PrintTimeFormat.DateTimeString:
-                    return timeTemp.DateString();
+                    return timeTemp.DateTimeString();
                 default:
-                    return timeTemp.DateString();
+                    return timeTemp.DateTimeString();
             }
         }
 

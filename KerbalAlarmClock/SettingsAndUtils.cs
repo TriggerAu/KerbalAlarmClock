@@ -993,7 +993,7 @@ namespace KerbalAlarmClock
 
         public Boolean WindowVisible = false;
         public Boolean WindowMinimized = false;
-        public Rect WindowPos;
+        public Rect WindowPos = new Rect(3, 55, 300, 45);
 
         public Rect IconPos;
 
@@ -1081,8 +1081,7 @@ namespace KerbalAlarmClock
 				
 				this.WindowVisible = configfile.GetValue("WindowVisible", false);
                 this.WindowMinimized = configfile.GetValue("WindowMinimized", false);
-                this.WindowPos = configfile.GetValue<Rect>("WindowPos");
-                this.WindowPos.height = 100;
+                this.WindowPos = configfile.GetValue<Rect>("WindowPos", new Rect(3,55,300, 45));
 
                 this.IconPos = configfile.GetValue<Rect>("IconPos", new Rect(152, 0, 32, 32));
                 this.IconPos.height = 32; this.IconPos.width = 32;
@@ -1194,6 +1193,12 @@ namespace KerbalAlarmClock
                     Alarms.Add(tmpAlarm);
                 }
 	        }
+            
+            //TODO: Need a better way to do this - maybe change the triggered and actioned items to be UT Values 
+            // of when they happened, then we can save load based on whats going on and if UT is after the load time we reset
+            //now loop through the alarms and set to triggered those that are in the past
+
+
         }
 
         public void Save()

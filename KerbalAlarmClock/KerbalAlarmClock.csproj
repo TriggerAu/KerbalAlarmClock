@@ -66,7 +66,6 @@
     <None Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\data_TransferModelData.csv" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\config.xml" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\data_TransferModelData.txt" />
     <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonAdd.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonChevronDown.png" />

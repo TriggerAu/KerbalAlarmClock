@@ -18,8 +18,8 @@ namespace KerbalAlarmClock
         int intUpdateBoxheight = 116;
         int intSOIBoxheight = 166;
 
-        KerbalTimeStringArray timeDefaultMargin = new KerbalTimeStringArray();
-        KerbalTimeStringArray timeAutoSOIMargin = new KerbalTimeStringArray();
+        KACTimeStringArray timeDefaultMargin = new KACTimeStringArray();
+        KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray();
         private void NewSettingsWindow()
         {
             if (Settings.VersionAttentionFlag)
@@ -102,7 +102,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("Time Format:", KACResources.styleAddHeading, GUILayout.Width(90));
             if (DrawRadioList(ref intTimeFormat, new String[] { "UT", "KSP Time", "Normal Time" }))
             {   
-                Settings.TimeFormat = (KerbalTime.PrintTimeFormat)intTimeFormat;
+                Settings.TimeFormat = (KACTime.PrintTimeFormat)intTimeFormat;
                 Settings.Save();
             }
             GUILayout.EndHorizontal();
@@ -128,7 +128,7 @@ namespace KerbalAlarmClock
             if (DrawAlarmActionChoice(ref Settings.AlarmDefaultAction, "Default Action:", 90))
                 Settings.Save();
 
-            if (DrawTimeEntry(ref timeDefaultMargin, TimeEntryPrecision.Hours, "Default Margin:",100))
+            if (DrawTimeEntry(ref timeDefaultMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Default Margin:", 100))
             {
                 //convert it and save it in the settings
                 Settings.AlarmDefaultMargin = timeDefaultMargin.UT;
@@ -171,7 +171,7 @@ namespace KerbalAlarmClock
                 {
                     Settings.Save();
                 }
-                if (DrawTimeEntry(ref timeAutoSOIMargin, TimeEntryPrecision.Hours, "Alarm Margin:", 100))
+                if (DrawTimeEntry(ref timeAutoSOIMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Alarm Margin:", 100))
                 {
                     //convert it and save it in the settings
                     Settings.AlarmAutoSOIMargin = timeAutoSOIMargin.UT;

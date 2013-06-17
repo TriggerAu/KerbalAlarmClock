@@ -152,6 +152,11 @@ namespace KerbalAlarmClock
         private static int _WindowEditID = 0;
         private static Rect _WindowEditRect;
 
+        //Earth Alarm Window
+        private Boolean _ShowEarthAlarm = false;
+        private static int _WindowEarthAlarmID = 0;
+        private static Rect _WindowEarthAlarmRect;
+
         //Debug Window
         private Boolean _ShowDebugPane = false;
         private static int _WindowDebugID = 0;
@@ -164,10 +169,13 @@ namespace KerbalAlarmClock
 
         int intMainWindowAlarmListItemHeight = 26;
         int intMainWindowAlarmListScrollPad = 3;
+        int intMainWindowEarthTimeHeight = 26;
 
         int intPaneWindowWidth = 380;
         int intAddPaneWindowWidth = 320;
         long AddWindowHeight;
+
+        long EarthWindowHeight = 216;
 
         public void DrawWindows()
         {
@@ -200,6 +208,10 @@ namespace KerbalAlarmClock
                 }
                 else MainWindowPos.height = intMainWindowBaseHeight+2;
             }
+            if (Settings.ShowEarthTime)
+            {
+                MainWindowPos.height += intMainWindowEarthTimeHeight;
+            }
 
             //Now show the window
             Settings.WindowPos = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + Settings.Version,KACResources.styleWindow);
@@ -225,6 +237,8 @@ namespace KerbalAlarmClock
                     case KACAlarm.AlarmType.Transfer:                        
                     case KACAlarm.AlarmType.TransferModelled:
                         AddWindowHeight = intAddXferHeight; break;
+                    case KACAlarm.AlarmType.Closest:
+                        AddWindowHeight = 230; break;
                     default: AddWindowHeight = 250; break;
                 }
                 AddWindowHeight += intHeight_AddWindowCommon;
@@ -233,6 +247,14 @@ namespace KerbalAlarmClock
                 if (_ShowAddMessages)
                 {
                     _WindowAddMessagesRect = GUILayout.Window(_WindowAddMessagesID, new Rect(_WindowAddRect.x + _WindowAddRect.width, _WindowAddRect.y, 200, AddWindowHeight), FillAddMessagesWindow, "");
+                }
+            }
+            else if (_ShowEarthAlarm)
+            {
+                _WindowEarthAlarmRect = GUILayout.Window(_WindowEarthAlarmID, new Rect(Settings.WindowPos.x + Settings.WindowPos.width, Settings.WindowPos.y +Settings.WindowPos.height-EarthWindowHeight, intAddPaneWindowWidth, EarthWindowHeight), FillEarthAlarmWindow, "Add Earth Time Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
+                if (_ShowAddMessages)
+                {
+                    _WindowAddMessagesRect = GUILayout.Window(_WindowAddMessagesID, new Rect(_WindowEarthAlarmRect.x + _WindowEarthAlarmRect.width, _WindowEarthAlarmRect.y, 200, EarthWindowHeight), FillAddMessagesWindow, "");
                 }
             }
             else if (_ShowEditPane)
@@ -310,6 +332,7 @@ namespace KerbalAlarmClock
                 NewSettingsWindow();
                 _ShowAddPane = false;
                 _ShowEditPane = false;
+                _ShowEarthAlarm = false;
             }
             if (DrawToggle(ref _ShowAddPane, new GUIContent(KACResources.btnAdd,"Add New Alarm..."), KACResources.styleSmallButton) && _ShowAddPane)
             {
@@ -317,6 +340,7 @@ namespace KerbalAlarmClock
                 NewAddAlarm();
                 _ShowSettings = false;
                 _ShowEditPane = false;
+                _ShowEarthAlarm = false;
             }
 
             GUILayout.EndHorizontal();
@@ -336,38 +360,56 @@ namespace KerbalAlarmClock
 
             //Current Game time at the botttom of the control 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Current Time:", KACResources.styleHeading);
+
+            if (GUILayout.Button(new GUIContent("Current Time:","Toggle Display of time from an alternate galaxy on a planet called \"Earth\""), KACResources.styleHeading))
+            {
+                Settings.ShowEarthTime = !Settings.ShowEarthTime;
+            }
 
             //Work out the right text and tooltip and display the button as a label
-            KerbalTime.PrintTimeFormat MainClockFormat = KerbalTime.PrintTimeFormat.DateTimeString;
-            if (Settings.TimeFormat == KerbalTime.PrintTimeFormat.TimeAsUT) MainClockFormat = KerbalTime.PrintTimeFormat.TimeAsUT;
-            GUIContent contCurrentTime = new GUIContent(KerbalTime.PrintDate(KACWorkerGameState.CurrentTime, MainClockFormat), "Click to toggle through time formats");
+            KACTime.PrintTimeFormat MainClockFormat = KACTime.PrintTimeFormat.DateTimeString;
+            if (Settings.TimeFormat == KACTime.PrintTimeFormat.TimeAsUT) MainClockFormat = KACTime.PrintTimeFormat.TimeAsUT;
+            GUIContent contCurrentTime = new GUIContent(KACTime.PrintDate(KACWorkerGameState.CurrentTime, MainClockFormat), "Click to toggle through time formats");
             if (GUILayout.Button(contCurrentTime, KACResources.styleContent))
             {
                 switch (Settings.TimeFormat)
                 {
-                    case KerbalTime.PrintTimeFormat.TimeAsUT: Settings.TimeFormat = KerbalTime.PrintTimeFormat.KSPString; break;
-                    case KerbalTime.PrintTimeFormat.KSPString: Settings.TimeFormat = KerbalTime.PrintTimeFormat.DateTimeString; break;
-                    case KerbalTime.PrintTimeFormat.DateTimeString: Settings.TimeFormat = KerbalTime.PrintTimeFormat.TimeAsUT; break;
-                    default: Settings.TimeFormat = KerbalTime.PrintTimeFormat.KSPString; break;
+                    case KACTime.PrintTimeFormat.TimeAsUT: Settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
+                    case KACTime.PrintTimeFormat.KSPString: Settings.TimeFormat = KACTime.PrintTimeFormat.DateTimeString; break;
+                    case KACTime.PrintTimeFormat.DateTimeString: Settings.TimeFormat = KACTime.PrintTimeFormat.TimeAsUT; break;
+                    default: Settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
                 }
                 Settings.Save();
             }
-            //GUIContent contCurrentTime;
-            //if (Settings.TimeAsUT)
-            //    contCurrentTime=new GUIContent(KACWorkerGameState.CurrentTime.UTString(), "Click to change to Date Format");
-            //else
-            //    contCurrentTime=new GUIContent(KACWorkerGameState.CurrentTime.DateString(), "Click to change to UT Display");
-            //if (GUILayout.Button(contCurrentTime, KACResources.styleContent))
-            //    Settings.TimeAsUT = !Settings.TimeAsUT;
-
-
             GUILayout.EndHorizontal();
-            
+
+            if (Settings.ShowEarthTime)
+            {
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button(new GUIContent("Earth Time:", "Hide Display of \"Real\" Time"), KACResources.styleHeadingEarth))
+                {
+                    Settings.ShowEarthTime = !Settings.ShowEarthTime;
+                }
+                GUILayout.Label(DateTime.Now.ToLongTimeString(), KACResources.styleContentEarth);
+                if (DrawToggle(ref _ShowEarthAlarm, new GUIContent(KACResources.btnAdd, "Add New Alarm..."), KACResources.styleSmallButton) && _ShowEarthAlarm)
+                {
+                    //reset the add stuff
+                    NewEarthAlarm();
+                    _ShowSettings = false;
+                    _ShowEditPane = false;
+                    _ShowAddPane = false;
+                }
+                GUILayout.EndHorizontal();
+            }
+
+
             GUILayout.EndVertical();
             SetTooltipText();
             GUI.DragWindow();
         }
+
+        String strAlarmEarthHour="";
+        String strAlarmEarthMin = "";
 
         //Display minimal info about the next alarm
         private void WindowLayout_Minimized()
@@ -492,7 +534,10 @@ namespace KerbalAlarmClock
                     GUILayout.Label(KACResources.iconAN, KACResources.styleAlarmIcon);
                     break;
                 case KACAlarm.AlarmType.DescendingNode:
-                    GUILayout.Label(KACResources.iconDN , KACResources.styleAlarmIcon);
+                    GUILayout.Label(KACResources.iconDN, KACResources.styleAlarmIcon);
+                    break;
+                case KACAlarm.AlarmType.Closest:
+                    GUILayout.Label(KACResources.iconClosest, KACResources.styleAlarmIcon);
                     break;
                 default:
                     GUILayout.Label(KACResources.iconNone, KACResources.styleAlarmIcon);
@@ -544,7 +589,7 @@ namespace KerbalAlarmClock
             //float width1 = fOutMin1;
 
             String strLabelText = "";
-            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, KerbalTime.PrintInterval(tmpAlarm.Remaining, Settings.TimeFormat));
+            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, KACTime.PrintInterval(tmpAlarm.Remaining, Settings.TimeFormat));
 
             GUIStyle styleLabel = new GUIStyle( KACResources.styleAlarmText);
             if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))
@@ -611,7 +656,7 @@ namespace KerbalAlarmClock
 
         private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref int Action, ref Double Margin, KACAlarm.AlarmType TypeOfAlarm,int WindowHeight)
         {
-            KerbalTimeStringArray tmpTime = new KerbalTimeStringArray(Margin);
+            KACTimeStringArray tmpTime = new KACTimeStringArray(Margin);
             WindowLayout_CommonFields(ref strName, ref strMessage, ref Action, ref tmpTime, TypeOfAlarm,WindowHeight);
             Margin = tmpTime.UT;
         }
@@ -619,7 +664,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref int Action, ref KerbalTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref int Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
         {
             //Two Columns
             GUILayout.Label("Common Alarm Properties", KACResources.styleAddSectionHeading);
@@ -642,9 +687,9 @@ namespace KerbalAlarmClock
             //Full width one under the two columns for the kill time warp
             DrawAlarmActionChoice(ref Action, "On Alarm:", 90);
 
-            if (TypeOfAlarm != KACAlarm.AlarmType.Raw)
+            if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime)
             {
-                DrawTimeEntry(ref Margin, TimeEntryPrecision.Hours, "Alarm Margin:", 90);
+                DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecision.Hours, "Alarm Margin:", 90);
             }
 
             GUILayout.EndVertical();
@@ -654,7 +699,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields2(ref String strName,ref Boolean blnAttachVessel, ref KACAlarm.AlarmAction Action, ref KerbalTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields2(ref String strName,ref Boolean blnAttachVessel, ref KACAlarm.AlarmAction Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
         {
             //Two Columns
             String strTitle = "";
@@ -669,6 +714,7 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmType.Periapsis: strTitle = "Periapsis"; break;
                 case KACAlarm.AlarmType.AscendingNode: strTitle = "Ascending Node"; break;
                 case KACAlarm.AlarmType.DescendingNode: strTitle = "Descending Node"; break;
+                case KACAlarm.AlarmType.EarthTime: strTitle = "Earth Time"; break;
                 default: strTitle = "Raw Time"; break;
 	        }
             strTitle += " Alarm - Common Properties";
@@ -697,9 +743,9 @@ namespace KerbalAlarmClock
             //Full width one under the two columns for the kill time warp
             DrawAlarmActionChoice2(ref Action, "Action:", 60);
 
-            if (TypeOfAlarm != KACAlarm.AlarmType.Raw)
+            if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime)
             {
-                DrawTimeEntry(ref Margin, TimeEntryPrecision.Hours, "Margin:", 60);
+                DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecision.Hours, "Margin:", 60);
             }
             GUILayout.EndVertical();
         }
@@ -861,17 +907,17 @@ namespace KerbalAlarmClock
 
 
 
-        public Boolean DrawTimeEntry(ref KerbalTimeStringArray time, TimeEntryPrecision Prec,  params GUILayoutOption[] options)
+        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, params GUILayoutOption[] options)
         {
             return DrawTimeEntry(ref time, Prec, "", 0, 40,20);
         }
 
-        public Boolean DrawTimeEntry(ref KerbalTimeStringArray time, TimeEntryPrecision Prec, String LabelText, int LabelWidth, params GUILayoutOption[] options)
+        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, String LabelText, int LabelWidth, params GUILayoutOption[] options)
         {
             return DrawTimeEntry(ref time, Prec, LabelText, LabelWidth, 40,20);
         }
 
-        public Boolean DrawTimeEntry(ref KerbalTimeStringArray time, TimeEntryPrecision Prec, String LabelText, int LabelWidth, int FieldWidth, int SuffixWidth, params GUILayoutOption[] options)
+        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, String LabelText, int LabelWidth, int FieldWidth, int SuffixWidth, params GUILayoutOption[] options)
         {
             Boolean blnReturn = false;
 
@@ -880,7 +926,7 @@ namespace KerbalAlarmClock
                 GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth));
             
             String strTemp;
-            if (Prec >= TimeEntryPrecision.Years)
+            if (Prec >= KACTimeStringArray.TimeEntryPrecision.Years)
             {
                 strTemp = time.Years;
                 if (DrawTimeField(ref strTemp, "y", FieldWidth, SuffixWidth))
@@ -889,7 +935,7 @@ namespace KerbalAlarmClock
                     time.Years = strTemp;
                 }
             }
-            if (Prec >= TimeEntryPrecision.Days)
+            if (Prec >= KACTimeStringArray.TimeEntryPrecision.Days)
             {
                 strTemp = time.Days;
                 if (DrawTimeField(ref strTemp, "d", FieldWidth, SuffixWidth))
@@ -898,7 +944,7 @@ namespace KerbalAlarmClock
                     time.Days = strTemp;
                 }
             }
-            if (Prec >= TimeEntryPrecision.Hours)
+            if (Prec >= KACTimeStringArray.TimeEntryPrecision.Hours)
             {
                 strTemp = time.Hours;
                 if (DrawTimeField(ref strTemp, "h", FieldWidth, SuffixWidth))
@@ -907,7 +953,7 @@ namespace KerbalAlarmClock
                     time.Hours = strTemp;
                 }
             }
-            if (Prec >= TimeEntryPrecision.Minutes)
+            if (Prec >= KACTimeStringArray.TimeEntryPrecision.Minutes)
             {
                 strTemp = time.Minutes;
                 if (DrawTimeField(ref strTemp, "m", FieldWidth, SuffixWidth))
@@ -916,7 +962,7 @@ namespace KerbalAlarmClock
                     time.Minutes = strTemp;
                 }
             }
-            if (Prec >= TimeEntryPrecision.Seconds)
+            if (Prec >= KACTimeStringArray.TimeEntryPrecision.Seconds)
             {
                 strTemp = time.Seconds;
                 if (DrawTimeField(ref strTemp, "s", FieldWidth, SuffixWidth))
@@ -962,33 +1008,15 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        public Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params String[] Choices)
-        {
-            int Selection = (int)selType;
-            Boolean blnReturn = DrawButtonList(ref Selection, Choices);
-            selType = (KACAlarm.AlarmType)Selection;
-            return blnReturn;
-        }
-
         public Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params GUIContent[] Choices)
         {
-            int Selection = (int)selType;
+            int Selection = KACAlarm.AlarmTypeToButton[selType];
             Boolean blnReturn = DrawButtonList(ref Selection, Choices);
-            selType = (KACAlarm.AlarmType)Selection;
+            if (blnReturn)
+                selType = KACAlarm.AlarmTypeFromButton[Selection];
             return blnReturn;
         }
 
-        public Boolean DrawButtonList(ref int Selected, params String[] Choices)
-        {
-            GUIContent[] buttons = new GUIContent[Choices.Length];
-
-            for (int intChoice = 0; intChoice < Choices.Length; intChoice++)
-            {
-                buttons[intChoice] = new GUIContent(Choices[intChoice]);                
-            }
-
-            return DrawButtonList(ref Selected, buttons);
-        }
         public Boolean DrawButtonList(ref int Selected, params GUIContent[] Choices)
         {
             int InitialChoice = Selected;

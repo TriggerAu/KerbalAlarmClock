@@ -5,51 +5,12 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using System.Xml.Serialization;
 
 namespace KerbalAlarmClock
 {
     public partial class KACWorker 
     {
-        //public static double timeOfClosestApproach(Orbit a, Orbit b, double time,out double closestdistance)
-        //{
-            
-        //    return timeOfClosestApproach(a, b, time, a.period, 20, out closestdistance);
-        //}
-
-        //public static double timeOfClosestApproach(Orbit a, Orbit b, double time, int orbit, out double closestdistance)
-        //{
-        //    //return timeOfClosestApproach(a, b, time + ((orbit - 1) * a.period), (orbit * a.period), 20, out closestdistance);
-        //    return timeOfClosestApproach(a, b, time + ((orbit - 1) * a.period), a.period, 20, out closestdistance);
-        //}
-
-        //public static double timeOfClosestApproach(Orbit a, Orbit b, double time, double periodtoscan, double numDivisions,out double closestdistance)
-        //{
-        //    double closestApproachTime = time;
-        //    double closestApproachDistance = Double.MaxValue;
-        //    double minTime = time;
-        //    double maxTime = time + periodtoscan;
-        //    //int numDivisions = 20;
-
-        //    for (int iter = 0; iter < 8; iter++)
-        //    {
-        //        double dt = (maxTime - minTime) / numDivisions;
-        //        for (int i = 0; i < numDivisions; i++)
-        //        {
-        //            double t = minTime + i * dt;
-        //            double distance = (a.getRelativePositionAtUT(t) + a.referenceBody.position - (b.getRelativePositionAtUT(t)+b.referenceBody.position)).magnitude;
-        //            if (distance < closestApproachDistance)
-        //            {
-        //                closestApproachDistance = distance;
-        //                closestApproachTime = t;
-        //            }
-        //        }
-        //        minTime = KACUtils.Clamp(closestApproachTime - dt, time, time + a.period);
-        //        maxTime = KACUtils.Clamp(closestApproachTime + dt, time, time + a.period);
-        //    }
-
-        //    closestdistance = closestApproachDistance;
-        //    return closestApproachTime;
-        //}
 
         public void DebugActionTimed(GameScenes loadedscene)
         {
@@ -236,10 +197,10 @@ namespace KerbalAlarmClock
         //    return (origin.period / 360d) * angleToNode;
         //}
 
-        //int intTestheight = 156;
-        //int intTestheight2 = 0;
-        //int intTestheight3 = 0;
-        //int intTestheight4 = 0;
+        int intTestheight = 100;
+        int intTestheight2 = 30;
+        int intTestheight3 = 0;
+        int intTestheight4 = 0;
         //int intTestheight3 = 336;
 
         public void FillDebugWindow(int WindowID)
@@ -253,20 +214,19 @@ namespace KerbalAlarmClock
 
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical();
-            GUILayout.Label("PeExists:");
-            GUILayout.Label("TimeToPe:");
-            //GUILayout.Label("test1:");
-            //GUILayout.Label("test2:");
-            //GUILayout.Label("test3:");
-            //GUILayout.Label("test4:");
+            GUILayout.Label("test1:");
+            GUILayout.Label("test2:");
+            GUILayout.Label("test3:");
+            GUILayout.Label("test4:");
 
             GUILayout.EndVertical();
             GUILayout.BeginVertical();
 
-            //intTestheight = Convert.ToInt32(GUILayout.TextField(intTestheight.ToString()));
-            //intTestheight2 = Convert.ToInt32(GUILayout.TextField(intTestheight2.ToString()));
-            //intTestheight3 = Convert.ToInt32(GUILayout.TextField(intTestheight3.ToString()));
-            //intTestheight4 = Convert.ToInt32(GUILayout.TextField(intTestheight4.ToString()));
+            intTestheight = Convert.ToInt32(GUILayout.TextField(intTestheight.ToString()));
+            intTestheight2 = Convert.ToInt32(GUILayout.TextField(intTestheight2.ToString()));
+            intTestheight3 = Convert.ToInt32(GUILayout.TextField(intTestheight3.ToString()));
+            intTestheight4 = Convert.ToInt32(GUILayout.TextField(intTestheight4.ToString()));
+
 
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
@@ -343,8 +303,31 @@ namespace KerbalAlarmClock
 
             //if (FlightGlobals.fetch.VesselTarget != null)
             //{
-            //    KerbalTime ktmp;
+
+            //    double dblClosestDistance;
+            //    int intClosestOrbitPass;
+            //    double dblClosestUT = KACUtils.timeOfClosestApproach(KACWorkerGameState.CurrentVessel.orbit,
+            //                                                            KACWorkerGameState.CurrentVesselTarget.GetOrbit(),
+            //                                                            KACWorkerGameState.CurrentTime.UT,
+            //                                                            KACWorkerGameState.CurrentVessel.orbit.period * intOrbits,
+            //                                                            20,
+            //                                                            out dblClosestDistance,
+            //                                                            out intClosestOrbitPass);
+
+            //    string strDisplay = string.Format("s:{0:0},e:{1:0},p:{2:0},dist:{3:0},Time:{4:0}",
+            //            KACWorkerGameState.CurrentTime.UT,
+            //           KACWorkerGameState.CurrentTime.UT + (KACWorkerGameState.CurrentVessel.orbit.period * intOrbits),
+            //            KACWorkerGameState.CurrentVessel.orbit.period,
+            //            dblClosestDistance,
+            //            dblClosestUT);
+            //    GUILayout.Label(strDisplay);
+            //    GUILayout.Label(string.Format("Orbits:{0} - p:{1}", intOrbits, KACWorkerGameState.CurrentVessel.orbit.period));
+
+
+            //    KACTime ktmp;
             //    double closestdistance;
+
+
             //    ktmp = new KerbalTime(timeOfClosestApproach(KACWorkerGameState.CurrentVessel.orbit,
             //        FlightGlobals.fetch.VesselTarget.GetOrbit(),
             //        KACWorkerGameState.CurrentTime.UT,
@@ -357,24 +340,24 @@ namespace KerbalAlarmClock
             //    //    KACWorkerGameState.CurrentVessel.orbit.period * 5,150) - KACWorkerGameState.CurrentTime.UT);
             //    //GUILayout.Label(KerbalTime.PrintInterval(ktmp, Settings.TimeFormat));
 
-            //    for (int i = 1; i < 6; i++)
-            //    {
+                //for (int i = 1; i < 10; i++)
+                //{
 
-            //        ktmp = new KerbalTime(timeOfClosestApproach(KACWorkerGameState.CurrentVessel.orbit,
-            //            FlightGlobals.fetch.VesselTarget.GetOrbit(),
-            //            KACWorkerGameState.CurrentTime.UT,
-            //            i,
-            //            out closestdistance)
-            //            - KACWorkerGameState.CurrentTime.UT);
-            //        string strDisplay = string.Format("s:{0:0},e:{1:0},p:{2:0},dist:{3:0},Time:{4:0}",
-            //            KACWorkerGameState.CurrentTime.UT + ((i - 1) * KACWorkerGameState.CurrentVessel.orbit.period),
-            //           KACWorkerGameState.CurrentTime.UT + ((i) * KACWorkerGameState.CurrentVessel.orbit.period),
-            //            KACWorkerGameState.CurrentVessel.orbit.period,
-            //            closestdistance,
-            //            ktmp.UT);
-            //        GUILayout.Label(strDisplay);
-            //        GUILayout.Label(string.Format("\to:{0}-{1}", KerbalTime.PrintInterval(ktmp, Settings.TimeFormat), closestdistance));
-            //    }
+                //    ktmp = new KACTime(KACUtils.timeOfClosestApproach(KACWorkerGameState.CurrentVessel.orbit,
+                //        FlightGlobals.fetch.VesselTarget.GetOrbit(),
+                //        KACWorkerGameState.CurrentTime.UT,
+                //        i,
+                //        out closestdistance)
+                //        - KACWorkerGameState.CurrentTime.UT);
+                //    strDisplay = string.Format("s:{0:0},e:{1:0},p:{2:0},dist:{3:0},Time:{4:0}",
+                //        KACWorkerGameState.CurrentTime.UT + ((i - 1) * KACWorkerGameState.CurrentVessel.orbit.period),
+                //       KACWorkerGameState.CurrentTime.UT + ((i) * KACWorkerGameState.CurrentVessel.orbit.period),
+                //        KACWorkerGameState.CurrentVessel.orbit.period,
+                //        closestdistance,
+                //        ktmp.UT);
+                //    GUILayout.Label(strDisplay);
+                //    GUILayout.Label(string.Format("\to:{0}-{1}", KACTime.PrintInterval(ktmp, Settings.TimeFormat), closestdistance));
+                //}
             //    /////////////////////////////////////////////////////////////////////////
             //    //need to draw up start and end of each prbit times to see whats going on!!
             //    /////////////////////////////////////////////////////////////////////////
@@ -385,7 +368,7 @@ namespace KerbalAlarmClock
             //else
             //{
             //    GUILayout.Label("NoTarget");
-            //    GUILayout.Label("NoTarget");
+            ////    GUILayout.Label("NoTarget");
             //}
 
 

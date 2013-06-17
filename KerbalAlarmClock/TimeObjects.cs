@@ -11,7 +11,7 @@ namespace KerbalAlarmClock
     /// <summary>
     /// A class to store the UT of events and get back useful data
     /// </summary>
-    public class KerbalTime
+    public class KACTime
     {
 
         //really there are 31,446,925.9936 seconds in a year, use 365*24 so the reciprocal math 
@@ -20,15 +20,15 @@ namespace KerbalAlarmClock
         const double HoursPerYearEarth = 365 * 24;
 
         #region "Constructors"
-        public KerbalTime()
+        public KACTime()
         { }
-        public KerbalTime(double NewUT)
+        public KACTime(double NewUT)
         {
             UT = NewUT;
         }
-        public KerbalTime(double Years, double Days, double Hours, double Minutes, double Seconds)
+        public KACTime(double Years, double Days, double Hours, double Minutes, double Seconds)
         {
-            UT = KerbalTime.BuildUTFromRaw(Years, Days, Hours, Minutes, Seconds);
+            UT = KACTime.BuildUTFromRaw(Years, Days, Hours, Minutes, Seconds);
         }
         #endregion
 
@@ -42,7 +42,7 @@ namespace KerbalAlarmClock
         /// <param name="Seconds"></param>
         public void BuildUT(double Years, double Days, double Hours, double Minutes, double Seconds)
         {
-            UT = KerbalTime.BuildUTFromRaw(Years, Days, Hours, Minutes, Seconds);
+            UT = KACTime.BuildUTFromRaw(Years, Days, Hours, Minutes, Seconds);
         }
 
         public void BuildUT(String Years, String Days, String Hours, String Minutes, String Seconds)
@@ -213,7 +213,7 @@ namespace KerbalAlarmClock
 
 #region "Static Functions"
         //fudging for dates
-        public static KerbalTime timeDateOffest = new KerbalTime(1, 1, 0, 0, 0);
+        public static KACTime timeDateOffest = new KACTime(1, 1, 0, 0, 0);
 
         public static Double BuildUTFromRaw(String Years, String Days, String Hours, String Minutes, String Seconds)
         {
@@ -228,12 +228,12 @@ namespace KerbalAlarmClock
             Years * HoursPerYearEarth * 60 * 60;
         }
 
-        public static String PrintInterval(KerbalTime timeTemp,  KerbalTime.PrintTimeFormat TimeFormat)
+        public static String PrintInterval(KACTime timeTemp,  KACTime.PrintTimeFormat TimeFormat)
         {
             return PrintInterval(timeTemp, 3, TimeFormat);
         }
 
-        public static String PrintInterval(KerbalTime timeTemp, int Segments, KerbalTime.PrintTimeFormat TimeFormat)
+        public static String PrintInterval(KACTime timeTemp, int Segments, KACTime.PrintTimeFormat TimeFormat)
         {
             switch (TimeFormat )
             {
@@ -248,7 +248,7 @@ namespace KerbalAlarmClock
             }
         }
 
-        public static String PrintDate(KerbalTime timeTemp, KerbalTime.PrintTimeFormat TimeFormat)
+        public static String PrintDate(KACTime timeTemp, KACTime.PrintTimeFormat TimeFormat)
         {
             switch (TimeFormat)
             {
@@ -272,8 +272,18 @@ namespace KerbalAlarmClock
 #endregion
     }
 
-    public class KerbalTimeStringArray
+    public class KACTimeStringArray
     {
+        public enum TimeEntryPrecision
+        {
+            Seconds = 0,
+            Minutes = 1,
+            Hours = 2,
+            Days = 3,
+            Years = 4
+        }
+
+
         private String _Years="",_Days="",_Hours="",_Minutes="",_Seconds="";
 
         public String Years { get { return _Years; } set { _Years = value; SetValid(); } }
@@ -285,8 +295,8 @@ namespace KerbalAlarmClock
         public Boolean Valid { get { return _Valid; } }
         Boolean _Valid=true;
 
-        public KerbalTimeStringArray() {}
-        public KerbalTimeStringArray(Double NewUT)
+        public KACTimeStringArray() {}
+        public KACTimeStringArray(Double NewUT)
         {
             BuildFromUT(NewUT);
         }
@@ -311,7 +321,7 @@ namespace KerbalAlarmClock
 
         public void BuildFromUT(Double UT)
         {
-            KerbalTime timeTemp = new KerbalTime(UT);
+            KACTime timeTemp = new KACTime(UT);
             Years = timeTemp.YearEarth.ToString();
             Days = timeTemp.DayEarth.ToString();
             Hours = timeTemp.HourEarth.ToString();
@@ -323,7 +333,7 @@ namespace KerbalAlarmClock
         {
             get 
             {
-                return KerbalTime.BuildUTFromRaw(
+                return KACTime.BuildUTFromRaw(
                     ZeroString(Years), 
                     ZeroString(Days), 
                     ZeroString(Hours), 
@@ -342,14 +352,6 @@ namespace KerbalAlarmClock
         }
     }
 
-    public enum TimeEntryPrecision
-    {
-        Seconds = 0,
-        Minutes = 1,
-        Hours = 2,
-        Days = 3,
-        Years = 4
-    }
     /// <summary>
     /// Class to hold an Alarm event
     /// </summary>
@@ -359,17 +361,46 @@ namespace KerbalAlarmClock
         //"R","M","A","P","A","D","S","X"
         public enum AlarmType
         {
-            Raw=0,
-            Maneuver=1,
-            SOIChange=6,
-            SOIChangeAuto = 9,
-            Transfer = 7,
-            TransferModelled=8,
-            Apoapsis=2,
-            Periapsis=3,
-            AscendingNode=4,
-            DescendingNode=5
+            Raw,
+            Maneuver,
+            Apoapsis,
+            Periapsis,
+            AscendingNode,
+            DescendingNode,
+            Closest,
+            SOIChange,
+            SOIChangeAuto,
+            Transfer,
+            TransferModelled,
+            EarthTime
         }
+
+
+        public static Dictionary<AlarmType, int> AlarmTypeToButton = new Dictionary<AlarmType, int>() {
+            {AlarmType.Raw, 0},
+            {AlarmType.Maneuver , 1},
+            {AlarmType.Apoapsis , 2},
+            {AlarmType.Periapsis , 2},
+            {AlarmType.AscendingNode , 3},
+            {AlarmType.DescendingNode , 3},
+            {AlarmType.Closest , 4},
+            {AlarmType.SOIChange , 5},
+            {AlarmType.SOIChangeAuto , 5},
+            {AlarmType.Transfer , 6},
+            {AlarmType.TransferModelled , 6}
+        };
+        public static Dictionary<int,AlarmType> AlarmTypeFromButton = new Dictionary<int,AlarmType>() {
+            {0,AlarmType.Raw},
+            {1,AlarmType.Maneuver },
+            {2,AlarmType.Apoapsis },
+            {3,AlarmType.AscendingNode },
+            {4,AlarmType.Closest },
+            {5,AlarmType.SOIChange },
+            {6,AlarmType.Transfer }
+        };
+
+
+
 
         public enum AlarmAction
         {
@@ -385,11 +416,13 @@ namespace KerbalAlarmClock
         public String Notes = "";                                       //Entered extra details
         public AlarmType TypeOfAlarm=AlarmType.Raw;                     //What Type of Alarm
 
-        public KerbalTime AlarmTime = new KerbalTime();                 //UT of the alarm
+        public KACTime AlarmTime = new KACTime();                 //UT of the alarm
         public Double AlarmMarginSecs = 0;                               //What the margin from the event was
         public Boolean Enabled = true;                                  //Whether it is enabled - not in use currently
         public Boolean HaltWarp = true;                                 //Whether the time warp will be halted at this event
         public Boolean PauseGame = false;                               //Whether the Game will be paused at this event
+
+        public Double ActionedAt = 0;                                   //At What UT an alarm was actioned at (for use in not refiring fired events on ship change)
 
         public Boolean DeleteOnClose;                                   //Whether the checkbox is on or off for this
 
@@ -439,7 +472,7 @@ namespace KerbalAlarmClock
         public String TargetLoader = "";
 
         //Dynamic props down here
-        public KerbalTime Remaining = new KerbalTime();                 //UT value of how long till the alarm fires
+        public KACTime Remaining = new KACTime();                        //UT value of how long till the alarm fires
         public Boolean WarpInfluence = false;                           //Whether the Warp setting is being influenced by this alarm
 
         public Boolean Triggered = false;                               //Has this alarm been triggered
@@ -538,6 +571,40 @@ namespace KerbalAlarmClock
             return strReturn;
         }
 
+        //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Manuever|Xfer|Target|Options|<ENDLINE>");
+        public String SerializeString3()
+        {
+            //"VesselID, Name, Notes, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Manuever/Xfer"
+            String strReturn = "";
+            strReturn += VesselID + "|";
+            strReturn += KACUtils.PipeSepVariables(Name, Notes, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame,ActionedAt);
+            strReturn += "|";
+
+            if (ManNodes != null)
+            {
+                strReturn += ManNodeSerializeList(ManNodes);
+            }
+            strReturn += "|";
+
+            if (XferTargetBodyName != null && XferTargetBodyName != "")
+            {
+                strReturn += "" + XferOriginBodyName;
+                strReturn += "," + XferTargetBodyName;
+            }
+            strReturn += "|";
+            
+            if (TargetObject != null)
+            {
+                strReturn += KACAlarm.TargetSerialize(TargetObject);
+            }
+            strReturn += "|";
+
+            //Extra Options go here if we need it later
+            strReturn += "|";
+            return strReturn;
+        }
+
+
          /// <summary>
         /// Basically deserializing the alarm
         /// </summary>
@@ -604,25 +671,67 @@ namespace KerbalAlarmClock
                             TargetLoader = strOptions;
                     }
                     break;
-                //case AlarmType.ApproachClosest:
-                //case AlarmType.ApproachDistance:
-                //    string[] TargetParts = strOptions.Split(",".ToCharArray());;
-                //    TargetType = TargetParts[0];
-                //    TargetID = TargetParts[1];
-                //    //Set the targetable object
-                //    TargetObject = null;
-                //    break;
-
-                //case AlarmType.Raw:
-                //    break;
-                //case AlarmType.SOIChange:
-                //    break;
-                //case AlarmType.TransferModelled:
-                //    break;
                 default:
                     break;
             }
         }
+
+        public void LoadFromString3(String AlarmDetails,Double CurrentUT)
+        {
+            //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Manuever|Xfer|Target|Options|<ENDLINE>");
+
+            String[] vars = AlarmDetails.Split("|".ToCharArray(), StringSplitOptions.None);
+            this.SaveName = HighLogic.CurrentGame.Title;
+            this.VesselID = vars[0];
+            this.Name = KACUtils.DecodeVarStrings(vars[1]);
+            this.Notes = KACUtils.DecodeVarStrings(vars[2]);
+            this.AlarmTime.UT = Convert.ToDouble(vars[3]);
+            this.AlarmMarginSecs = Convert.ToDouble(vars[4]);
+            this.TypeOfAlarm = (KACAlarm.AlarmType)Enum.Parse(typeof(KACAlarm.AlarmType), vars[5]);
+            this.Enabled = Convert.ToBoolean(vars[6]);
+            this.HaltWarp = Convert.ToBoolean(vars[7]);
+            this.PauseGame = Convert.ToBoolean(vars[8]);
+            this.ActionedAt = Convert.ToDouble(vars[9]);
+
+            if (vars[10] != "")
+                this.ManNodes = ManNodeDeserializeList(vars[10]);
+
+            if (vars[11] != "")
+            {
+                try
+                {
+                    String[] XferParts = vars[11].Split(",".ToCharArray());
+                    this.XferOriginBodyName = XferParts[0];
+                    this.XferTargetBodyName = XferParts[1];
+                }
+                catch (Exception ex)
+                {
+                    KACWorker.DebugLogFormatted("Unable to load transfer details for {0}", Name);
+                    KACWorker.DebugLogFormatted(ex.Message);
+                }
+            }
+            if (vars[12] != "")
+            {
+                //find the targetable object and set it
+                this.TargetObject = TargetDeserialize(vars[12]);
+                if (this.TargetObject == null && vars[12].StartsWith("Vessel,"))
+                    this.TargetLoader = vars[12];
+            }
+
+
+
+
+            //Now do the work to set Actioned/triggered/etc if needed
+            if (ActionedAt > 0 && CurrentUT > ActionedAt)
+            {
+                KACWorker.DebugLogFormatted("Suppressing Alarm on Load:{0}", this.Name);
+                this.Triggered = true;
+                this.Actioned = true;
+                this.AlarmWindowClosed = true;
+            }
+
+        }
+
 
         public static ITargetable TargetDeserialize(String strInput)
         {
@@ -708,7 +817,7 @@ namespace KerbalAlarmClock
                 strReturn += ManNodeSerialize(tmpMNode);
                 strReturn += ",";
             }
-            strReturn.TrimEnd(",".ToCharArray());
+            strReturn = strReturn.TrimEnd(",".ToCharArray());
             return strReturn;
         }
 
@@ -917,8 +1026,8 @@ namespace KerbalAlarmClock
             public double PhaseAngleTarget360 {get{return KACUtils.clampDegrees360(_PhaseAngleTarget); }}
             public double PhaseAngleCurrent360 {get{return KACUtils.clampDegrees360(_PhaseAngleCurrent); }}
 
-            private KerbalTime _AlignmentTime= new KerbalTime();
-            public KerbalTime AlignmentTime
+            private KACTime _AlignmentTime= new KACTime();
+            public KACTime AlignmentTime
             {
                 get
                 {
@@ -930,7 +1039,7 @@ namespace KerbalAlarmClock
                         angleToMakeUp += 360;
 
                     double UTToTarget = Math.Floor(Math.Abs(angleToMakeUp / angleChangepersec));
-                    KerbalTime tmeReturn = new KerbalTime(UTToTarget);
+                    KACTime tmeReturn = new KACTime(UTToTarget);
                     return tmeReturn;
                 }
             }

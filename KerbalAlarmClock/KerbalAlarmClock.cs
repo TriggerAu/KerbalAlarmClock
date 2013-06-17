@@ -31,8 +31,8 @@ namespace KerbalAlarmClock
         public static Boolean ChangedVesselTarget { get { if (LastVesselTarget == null) return true; else return (LastVesselTarget != CurrentVesselTarget); } }
 
         //The current UT time - for alarm comparison
-        public static KerbalTime CurrentTime = new KerbalTime();
-        public static KerbalTime LastTime = new KerbalTime();
+        public static KACTime CurrentTime = new KACTime();
+        public static KACTime LastTime = new KACTime();
 
         public static Boolean CurrentlyUnderWarpInfluence = false;
         public static DateTime CurrentWarpInfluenceStartTime;
@@ -181,21 +181,21 @@ namespace KerbalAlarmClock
         }
     }
 
-    /// <summary>
-    /// Have to do this behaviour or some of the textures are unloaded on first entry into flight mode
-    /// </summary>
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
-    public class KerbalAlarmClockTextureLoader : MonoBehaviour
-    {
-         //Awake Event - when the DLL is loaded
-        public void Awake()
-        {
-            KACResources.loadGUIAssets();
-        }
-    }
+    ///// <summary>
+    ///// Have to do this behaviour or some of the textures are unloaded on first entry into flight mode
+    ///// </summary>
+    //[KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    //public class KerbalAlarmClockTextureLoader : MonoBehaviour
+    //{
+    //     //Awake Event - when the DLL is loaded
+    //    public void Awake()
+    //    {
+    //        KACResources.loadGUIAssets();
+    //    }
+    //}
 
     /// <summary>
-    /// This is the behaviour object that we hook events on to 
+    /// This is the behaviour object that we hook events on to for flight
     /// </summary>
     [KSPAddon(KSPAddon.Startup.Flight, false) ]
     public class KerbalAlarmClock : MonoBehaviour
@@ -437,7 +437,7 @@ namespace KerbalAlarmClock
             _WindowMainID = rnd.Next(1000, 2000000);
             _WindowSettingsID = rnd.Next(1000, 2000000);
             _WindowEditID = rnd.Next(1000, 2000000);
-
+            _WindowEarthAlarmID = rnd.Next(1000, 2000000);
         }
         #endregion
 
@@ -823,31 +823,46 @@ namespace KerbalAlarmClock
                         tmpAlarm.WarpInfluence = false;
 
                 //Update Remaining interval for each alarm
-                tmpAlarm.Remaining.UT = tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT;
-
+                if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmType.EarthTime)
+                    tmpAlarm.Remaining.UT = tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT;
+                else
+                    tmpAlarm.Remaining.UT = (EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds;
+                
                 //set triggered for passed alarms so the OnGUI part can draw the window later
-                if ((KACWorkerGameState.CurrentTime.UT >= tmpAlarm.AlarmTime.UT) && (tmpAlarm.Enabled) && (!tmpAlarm.Triggered))
+                //if ((KACWorkerGameState.CurrentTime.UT >= tmpAlarm.AlarmTime.UT) && (tmpAlarm.Enabled) && (!tmpAlarm.Triggered))
+                if ((tmpAlarm.Remaining.UT<=0) && (tmpAlarm.Enabled) && (!tmpAlarm.Triggered))
                 {
-                    DebugLogFormatted("Triggering Alarm - " + tmpAlarm.Name);
-                    tmpAlarm.Triggered = true;
-
-                    //If we are simply past the time make sure we halt the warp
-                    if (tmpAlarm.PauseGame)
+                    if (tmpAlarm.ActionedAt > 0)
                     {
-                        DebugLogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
-                        TimeWarp.SetRate(0, true);
-                        FlightDriver.SetPause(true);
+                        KACWorker.DebugLogFormatted("Suppressing Alarm due to Actioned At being set:{0}", tmpAlarm.Name);
+                        tmpAlarm.Triggered = true;
+                        tmpAlarm.Actioned = true;
+                        tmpAlarm.AlarmWindowClosed = true;
                     }
-                    else if (tmpAlarm.HaltWarp)
+                    else
                     {
-                        if (!FlightDriver.Pause)
+
+                        DebugLogFormatted("Triggering Alarm - " + tmpAlarm.Name);
+                        tmpAlarm.Triggered = true;
+
+                        //If we are simply past the time make sure we halt the warp
+                        if (tmpAlarm.PauseGame)
                         {
-                            DebugLogFormatted(String.Format("{0}-Halt Warp", tmpAlarm.Name));
+                            DebugLogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
                             TimeWarp.SetRate(0, true);
+                            FlightDriver.SetPause(true);
                         }
-                        else
+                        else if (tmpAlarm.HaltWarp)
                         {
-                            DebugLogFormatted(String.Format("{0}-Game paused, skipping Halt Warp", tmpAlarm.Name));
+                            if (!FlightDriver.Pause)
+                            {
+                                DebugLogFormatted(String.Format("{0}-Halt Warp", tmpAlarm.Name));
+                                TimeWarp.SetRate(0, true);
+                            }
+                            else
+                            {
+                                DebugLogFormatted(String.Format("{0}-Game paused, skipping Halt Warp", tmpAlarm.Name));
+                            }
                         }
                     }
                 }

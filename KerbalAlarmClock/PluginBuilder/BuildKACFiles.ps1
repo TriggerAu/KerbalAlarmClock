@@ -1,13 +1,29 @@
-﻿param([String]$VersionString = $(throw "-VersionString is required so we know what folder to build.`r`n`r`n"))
+﻿param([String]$VersionString)
+#param([String]$VersionString = $(throw "-VersionString is required so we know what folder to build.`r`n`r`n"))
 
 #Run by powershell BuildKACFiles.ps1 -VersionString "X.X.X.X"
+#  or it will try and read the dll version
 
 $SourcePath= "D:\Programming\KSP\KerbalAlarmClock\DevBranch\Source"
 $DestRootPath="D:\Programming\KSP\KerbalAlarmClockUpload"
-$DestFullPath= "$($DestRootPath)\v$($VersionString)"
 $7ZipPath="c:\Program Files\7-Zip\7z.exe" 
 
-"This will build v$($VersionString) of the Kerbal Alarm Clock"
+if ($VersionString -eq "")
+{
+	$dll = get-item "$SourcePath\bin\Debug\KerbalAlarmClock.dll"
+	$VersionString = $dll.VersionInfo.ProductVersion
+}
+
+if ($VersionString -eq "")
+{
+	throw "No version read from the dll and no -VersionString provided so we don't know what folder to build.`r`n`r`n"
+
+}
+
+$DestFullPath= "$($DestRootPath)\v$($VersionString)"
+
+
+"`r`nThis will build v$($VersionString) of the Kerbal Alarm Clock"
 "`tFrom:`t$($SourcePath)"
 "`tTo:`t$($DestFullPath)"
 $Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
@@ -55,7 +71,9 @@ if($ChoiceRtn -eq 0)
 
     # Now Zip it up
 
-    & "$($7ZipPath)" a "$($DestFullPath)\KerbalAlarmClock_$($VersionString).zip" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)" 
+    & "$($7ZipPath)" a "$($DestFullPath)\KerbalAlarmClock_$($VersionString).zip" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)" -xr!"info.txt"
+	& "$($7ZipPath)" a "$($DestFullPath)\KerbalAlarmClock_$($VersionString).zip" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\info.txt"
+	& "$($7ZipPath)" a "$($DestFullPath)\KerbalAlarmClock_$($VersionString).zip" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\GameData\TriggerTech\ReadMe-KerbalAlarmClock.txt"
     & "$($7ZipPath)" a "$($DestFullPath)\KerbalAlarmClockSource_$($VersionString).zip" "$($DestFullPath)\KerbalAlarmClockSource_$($VersionString)" 
 }
 

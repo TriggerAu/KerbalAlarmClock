@@ -19,7 +19,8 @@ namespace KerbalAlarmClock
                 if (tmpAlarm.Enabled)
                 {
                     //also test triggered and actioned
-                    if (KACWorkerGameState.CurrentTime.UT >= tmpAlarm.AlarmTime.UT)
+                    //if (KACWorkerGameState.CurrentTime.UT >= tmpAlarm.AlarmTime.UT)
+                    if ((tmpAlarm.Remaining.UT<=0))
                     {
                         if (tmpAlarm.Triggered && !tmpAlarm.Actioned)
                         {
@@ -65,6 +66,8 @@ namespace KerbalAlarmClock
                                     strAlarmText += " - Ascending Node"; break;
                                 case KACAlarm.AlarmType.DescendingNode:
                                     strAlarmText += " - Descending Node"; break;
+                                case KACAlarm.AlarmType.EarthTime:
+                                    strAlarmText += " - Earth Alarm"; break;
                                 default:
                                     strAlarmText+= " - Manual";break;
                             }
@@ -86,9 +89,12 @@ namespace KerbalAlarmClock
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Alarm Time:", KACResources.styleAlarmMessageTime);
-            GUILayout.Label(KerbalTime.PrintDate(tmpAlarm.AlarmTime, Settings.TimeFormat), KACResources.styleAlarmMessageTime);
-            if (tmpAlarm.TypeOfAlarm!=KACAlarm.AlarmType.Raw)
-            GUILayout.Label("(m: " + KerbalTime.PrintInterval(new KerbalTime(tmpAlarm.AlarmMarginSecs),3, Settings.TimeFormat)+ ")", KACResources.styleAlarmMessageTime);
+            if (tmpAlarm.TypeOfAlarm!= KACAlarm.AlarmType.EarthTime)
+                GUILayout.Label(KACTime.PrintDate(tmpAlarm.AlarmTime, Settings.TimeFormat), KACResources.styleAlarmMessageTime);
+            else
+                GUILayout.Label(EarthTimeDecode(tmpAlarm.AlarmTime.UT).ToLongTimeString(), KACResources.styleAlarmMessageTime);
+            if (tmpAlarm.TypeOfAlarm!=KACAlarm.AlarmType.Raw && tmpAlarm.TypeOfAlarm!= KACAlarm.AlarmType.EarthTime)
+                GUILayout.Label("(m: " + KACTime.PrintInterval(new KACTime(tmpAlarm.AlarmMarginSecs),3, Settings.TimeFormat)+ ")", KACResources.styleAlarmMessageTime);
             GUILayout.EndHorizontal();
 
             GUILayout.Label(tmpAlarm.Notes, KACResources.styleAlarmMessage);
@@ -127,6 +133,8 @@ namespace KerbalAlarmClock
             if (GUILayout.Button(strText, KACResources.styleButton))
             {
                 tmpAlarm.AlarmWindowClosed = true;
+                tmpAlarm.ActionedAt = KACWorkerGameState.CurrentTime.UT;
+                Settings.SaveAlarms();
                 if (tmpAlarm.PauseGame)
                     FlightDriver.SetPause(false);
                 if (tmpAlarm.DeleteOnClose)
@@ -147,14 +155,14 @@ namespace KerbalAlarmClock
 
         private static void DrawStoredVesselIDMissing(String VesselID)
         {
-            if (VesselID!="" && !StoredVesselExists(VesselID))
+            if (VesselID!=null && VesselID != "" && !StoredVesselExists(VesselID))
             {
                 GUILayout.Label("Stored VesselID no longer exists",KACResources.styleLabelWarning);
             }
         }
         public static Boolean StoredVesselExists(String VesselID)
         {
-            return (VesselID != "") && (FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID) != null);
+            return (VesselID != null) && (VesselID != "") && (FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID) != null);
         }
         public static Vessel StoredVessel(String VesselID)
         {
@@ -175,7 +183,7 @@ namespace KerbalAlarmClock
         private int intAlarmEditHeight;
         public void FillEditWindow(int WindowID)
         {
-            if (alarmEdit.AlarmTime.UT > KACWorkerGameState.CurrentTime.UT)
+            if (alarmEdit.Remaining.UT > 0)
             {
                 //Edit the Alarm if its not yet passed
                 int intActionSelected = 0;
@@ -185,7 +193,8 @@ namespace KerbalAlarmClock
                 Double MarginStarting = alarmEdit.AlarmMarginSecs;
                 int intHeight_EditWindowCommon = 88 +
                     alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16;
-                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw) intHeight_EditWindowCommon += 28;
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.EarthTime)
+                    intHeight_EditWindowCommon += 28;
                 WindowLayout_CommonFields(ref alarmEdit.Name, ref alarmEdit.Notes, ref intActionSelected, ref alarmEdit.AlarmMarginSecs, alarmEdit.TypeOfAlarm, intHeight_EditWindowCommon);
                 //Adjust the UT of the alarm if the margin changed
                 if (alarmEdit.AlarmMarginSecs != MarginStarting)
@@ -197,13 +206,16 @@ namespace KerbalAlarmClock
 
                 //Draw the old and new times
                 GUILayout.BeginHorizontal();
-                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw)
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.EarthTime)
                 {
                     GUILayout.Label("Time To Alarm:", KACResources.styleContent);
-                    GUILayout.Label(KerbalTime.PrintInterval(new KerbalTime(alarmEdit.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT), Settings.TimeFormat), KACResources.styleAddHeading);
+                    GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT), Settings.TimeFormat), KACResources.styleAddHeading);
                 }
                 GUILayout.Label("Time To Event:", KACResources.styleContent);
-                GUILayout.Label(KerbalTime.PrintInterval(new KerbalTime(alarmEdit.AlarmTime.UT + alarmEdit.AlarmMarginSecs-KACWorkerGameState.CurrentTime.UT),Settings.TimeFormat),KACResources.styleAddHeading);
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.EarthTime)
+                    GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT + alarmEdit.AlarmMarginSecs-KACWorkerGameState.CurrentTime.UT),Settings.TimeFormat),KACResources.styleAddHeading);
+                else
+                    GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.Remaining.UT), KACTime.PrintTimeFormat.DateTimeString  ), KACResources.styleAddHeading);
                 GUILayout.EndHorizontal();
 
                 
@@ -264,6 +276,7 @@ namespace KerbalAlarmClock
         {
             int intReturnNoOfButtons = 0;
             //is it the current vessel?
+
             if (tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
             {
                 //There is a node and the alarm + Margin is not expired
@@ -292,7 +305,7 @@ namespace KerbalAlarmClock
                         RestoreManeuverNodeList(tmpAlarm.ManNodes);
                     }
                 }
-                //There is a stored Target, that hasnt passed and its not the current target
+                //There is a stored Target, that hasnt passed
                 if ((tmpAlarm.TargetObject != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
                 {
                     String strRestoretext = "Restore Target";
@@ -334,6 +347,7 @@ namespace KerbalAlarmClock
                 }
 
                 //There is a target and the alarm has not expired
+
                 if (tmpAlarm.TargetObject != null && tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs > 0)
                 {
                     intReturnNoOfButtons++;

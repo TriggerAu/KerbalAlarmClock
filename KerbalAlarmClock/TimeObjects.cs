@@ -718,16 +718,22 @@ namespace KerbalAlarmClock
                     this.TargetLoader = vars[12];
             }
 
-
-
-
             //Now do the work to set Actioned/triggered/etc if needed
+            //KACWorker.DebugLogFormatted("A:{0},T:{1:0},Act:{2:0}", this.Name, CurrentUT, this.ActionedAt);
             if (ActionedAt > 0 && CurrentUT > ActionedAt)
             {
                 KACWorker.DebugLogFormatted("Suppressing Alarm on Load:{0}", this.Name);
                 this.Triggered = true;
                 this.Actioned = true;
                 this.AlarmWindowClosed = true;
+            }
+            else if (ActionedAt > CurrentUT)
+            {
+                KACWorker.DebugLogFormatted("Reenabling Alarm on Load:{0}", this.Name);
+                this.Triggered = false;
+                this.Actioned = false;
+                this.ActionedAt = 0;
+                this.AlarmWindowClosed = false;
             }
 
         }

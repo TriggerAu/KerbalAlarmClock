@@ -90,7 +90,7 @@ namespace KerbalAlarmClock
         {
             Texture2D iconToShow;
             //Replace this with workerstate object that can test for pause and catch errors - is it doing this in flight mode??
-            if (!KACWorkerGameState.PauseMenuOpen)
+            if (!KACWorkerGameState.PauseMenuOpen && !KACWorkerGameState.FlightResultsDialogOpen)
             {
                 if (FlightDriver.Pause)
                 {
@@ -228,12 +228,14 @@ namespace KerbalAlarmClock
                     case KACAlarm.AlarmType.Raw: 
                         AddWindowHeight = 250; break;
                     case KACAlarm.AlarmType.Maneuver:
-                    case KACAlarm.AlarmType.Apoapsis: 
-                    case KACAlarm.AlarmType.Periapsis:
-                    case KACAlarm.AlarmType.AscendingNode: 
-                    case KACAlarm.AlarmType.DescendingNode:
                     case KACAlarm.AlarmType.SOIChange:
                         AddWindowHeight = 182; break;
+                    case KACAlarm.AlarmType.Apoapsis:
+                    case KACAlarm.AlarmType.Periapsis:
+                        AddWindowHeight = 208; break;
+                    case KACAlarm.AlarmType.AscendingNode:
+                    case KACAlarm.AlarmType.DescendingNode:
+                        AddWindowHeight = 234; break;
                     case KACAlarm.AlarmType.Transfer:                        
                     case KACAlarm.AlarmType.TransferModelled:
                         AddWindowHeight = intAddXferHeight; break;
@@ -642,8 +644,6 @@ namespace KerbalAlarmClock
 
             return blnReturn;
         }
-
-        
 
         public void ResetPanes()
         {

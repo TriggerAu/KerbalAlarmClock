@@ -56,6 +56,18 @@ namespace KerbalAlarmClock
             }
         }
 
+        public static Boolean FlightResultsDialogOpen
+        {
+            get
+            {
+                try { return FlightResultsDialog.isDisplaying; }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
         //Does the active vessel have any manuever nodes
         public static Boolean ManeuverNodeExists
         {
@@ -211,7 +223,7 @@ namespace KerbalAlarmClock
 
         //Worker and Settings objects
         private KACWorker WorkerObjectInstance;
-        public static float UpdateInterval = 0.25F;
+        public static float UpdateInterval = 0.1F;
 
         //Constructor to set KACWorker parent object to this and access to the settings
         public KerbalAlarmClock()
@@ -240,12 +252,34 @@ namespace KerbalAlarmClock
             //Set up the updating function - do this 5 times a sec not on every frame.
             KACWorker.DebugLogFormatted("Invoking Worker Function KerbalAlarmClock");
             CancelInvoke();
-            InvokeRepeating("BehaviourUpdate", UpdateInterval, UpdateInterval);
+
+            SetupRepeatingFunction_BehaviourUpdate(Settings.BehaviourChecksPerSec);
             
             //Reenable for during code debug
-            //InvokeRepeating("DebugWriter", 2F, 2F);
+            //SetupRepeatingFunction("DebugWriter", 2F);
         }
 
+        public void SetupRepeatingFunction_BehaviourUpdate(int ChecksPerSec)
+        {
+            SetupRepeatingFunction("BehaviourUpdate", ChecksPerSec);
+        }
+        public void SetupRepeatingFunction(String FunctionName, int ChecksPerSec)
+        {
+            float Interval = 1F / ChecksPerSec;
+            SetupRepeatingFunction(FunctionName, Interval);
+        }
+        public void SetupRepeatingFunction(String FunctionName, float SecsInterval)
+        {
+            Debug.Log(SecsInterval);
+            if (IsInvoking(FunctionName))
+            {
+                KACWorker.DebugLogFormatted("Cancelling repeating Behaviour({0})", FunctionName);
+                CancelInvoke(FunctionName);
+            }
+            KACWorker.DebugLogFormatted("Setting up repeating Behaviour({1}) every {0:0.00} Secs", SecsInterval, FunctionName);
+            InvokeRepeating(FunctionName, SecsInterval, SecsInterval);
+        }
+        
         #region "Update Code"
         //Update Function - Happens on every frame - this is where behavioural stuff is typically done
         public void Update()
@@ -316,6 +350,7 @@ namespace KerbalAlarmClock
                     tmpAlarm.AlarmWindowID = 0;
                     tmpAlarm.AlarmWindowClosed = false;
                     tmpAlarm.Actioned = false;
+                    tmpAlarm.ActionedAt = 0;
                 }
             }
             else if (LastGameVessel == null)
@@ -395,6 +430,12 @@ namespace KerbalAlarmClock
                     WorkerObjectInstance.DrawWindows();
                 }
             }
+
+            //If Game is paused then update Earth Alarms for list drawing
+            if (Settings.WindowVisible && FlightDriver.Pause)
+            {
+                WorkerObjectInstance.UpdateEarthAlarms();
+            }
         }
 
         public void DebugWriter()
@@ -418,10 +459,10 @@ namespace KerbalAlarmClock
 
         //Constructor - link to parent and set up time
         #region "Constructor"
-        private MonoBehaviour parentBehaviour;
+        private KerbalAlarmClock parentBehaviour;
         private KACSettings Settings;
 
-        public KACWorker(MonoBehaviour parent)
+        public KACWorker(KerbalAlarmClock parent)
         {
             parentBehaviour = parent;
             Settings = KerbalAlarmClock.Settings;
@@ -732,14 +773,39 @@ namespace KerbalAlarmClock
                             break;
                         case KACAlarm.AlarmType.AscendingNode:
                             Double timeToAN;
-                            Boolean blnANExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Ascending, out timeToAN);
+                            //Boolean blnANExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Ascending, out timeToAN);
+                            Boolean blnANExists;
+                            if (KACWorkerGameState.CurrentVesselTarget == null)
+                            {
+                                blnANExists = KACWorkerGameState.CurrentVessel.orbit.AscendingNodeEquatorialExists();
+                                timeToAN = KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNodeEquatorial(KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT;
+                            }
+                            else
+                            {
+                                blnANExists= KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit());
+                                timeToAN = KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT;
+                            }
+
                             if (blnANExists &&
                                 ((Math.Abs(timeToAN) > Settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
                                 tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + timeToAN;
                             break;
+
                         case KACAlarm.AlarmType.DescendingNode:
                             Double timeToDN;
-                            Boolean blnDNExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Descending, out timeToDN);
+                            //Boolean blnDNExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Descending, out timeToDN);
+                            Boolean blnDNExists;
+                            if (KACWorkerGameState.CurrentVesselTarget == null)
+                            {
+                                blnDNExists = KACWorkerGameState.CurrentVessel.orbit.DescendingNodeEquatorialExists();
+                                timeToDN = KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNodeEquatorial(KACWorkerGameState.CurrentTime.UT - KACWorkerGameState.CurrentTime.UT);
+                            }
+                            else
+                            {
+                                blnDNExists = KACWorkerGameState.CurrentVessel.orbit.DescendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit());
+                                timeToDN = KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT;
+                            }
+
                             if (blnDNExists &&
                                 ((Math.Abs(timeToDN) > Settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
                                 tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + timeToDN;
@@ -807,6 +873,17 @@ namespace KerbalAlarmClock
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Only called when game is in puased state
+        /// </summary>
+        public void UpdateEarthAlarms()
+        {
+            foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Where(a=>a.TypeOfAlarm== KACAlarm.AlarmType.EarthTime))
+            {
+                tmpAlarm.Remaining.UT = (EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds;
             }
         }
 

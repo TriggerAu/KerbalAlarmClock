@@ -37,6 +37,22 @@ namespace KerbalAlarmClock
             //work out the correct kerbaltime values
             timeDefaultMargin.BuildFromUT(Settings.AlarmDefaultMargin);
             timeAutoSOIMargin.BuildFromUT(Settings.AlarmAutoSOIMargin);
+
+            contChecksPerSecChoices =  new GUIContent[] { 
+                                new GUIContent("10"), 
+                                new GUIContent("20"), 
+                                new GUIContent("50"), 
+                                new GUIContent("100"), 
+                                new GUIContent("Custom (" + Settings.BehaviourChecksPerSec_Custom.ToString() + ")")
+                            };
+            switch (Settings.BehaviourChecksPerSec)
+            {
+                case 10: intChecksPerSecChoice = 0; break;
+                case 20: intChecksPerSecChoice = 1; break;
+                case 50: intChecksPerSecChoice = 2; break;
+                case 100: intChecksPerSecChoice = 3; break;
+                default: intChecksPerSecChoice = 4; break;
+            }
         }
 
         public void FillSettingsWindow(int WindowID)
@@ -59,7 +75,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 368;
+                    intSettingsHeight = 424;
                     break;
                 case 1:
                     WindowLayout_SettingsSpecifics();
@@ -78,6 +94,8 @@ namespace KerbalAlarmClock
             SetTooltipText();
         }
 
+        int intChecksPerSecChoice = 0;
+        GUIContent[] contChecksPerSecChoices;
         private void WindowLayout_SettingsGlobal()
         {
             //Preferences
@@ -103,12 +121,36 @@ namespace KerbalAlarmClock
             if (DrawRadioList(ref intTimeFormat, new String[] { "UT", "KSP Time", "Normal Time" }))
             {   
                 Settings.TimeFormat = (KACTime.PrintTimeFormat)intTimeFormat;
-                Settings.Save();
+                Settings.SaveConfig();
             }
             GUILayout.EndHorizontal();
 
             //if (DrawCheckbox(ref Settings.TimeAsUT, "Display Times as UT (instead of Date/Time)"))
             //    Settings.Save();
+
+            GUILayout.EndVertical();
+
+            GUILayout.Label("Time Warp/Math Checks", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+            GUILayout.BeginHorizontal();
+
+            GUILayout.Label("Checks per Sec:", KACResources.styleAddHeading, GUILayout.Width(100));
+            if (DrawButtonList(ref intChecksPerSecChoice,contChecksPerSecChoices))
+            {
+                switch (intChecksPerSecChoice)
+                {
+                    case 0: Settings.BehaviourChecksPerSec = 10; break;
+                    case 1: Settings.BehaviourChecksPerSec = 20; break;
+                    case 2: Settings.BehaviourChecksPerSec = 50; break;
+                    case 3: Settings.BehaviourChecksPerSec = 100; break;
+                    default: Settings.BehaviourChecksPerSec = Settings.BehaviourChecksPerSec_Custom; break;
+                }
+                parentBehaviour.SetupRepeatingFunction_BehaviourUpdate(Settings.BehaviourChecksPerSec);
+                Settings.SaveConfig();
+            }
+
+            GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
 

@@ -272,15 +272,26 @@ namespace KerbalAlarmClock
                     WindowLayout_AddPane_NodeEvent(KACWorkerGameState.PePointExists, KACWorkerGameState.CurrentVessel.orbit.timeToPe);
                     break;
                 case KACAlarm.AlarmType.AscendingNode:
-                    //work out the target orbit type and then call the functions    
-                    Double timeToAN;
-                    Boolean blnANExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Ascending, out timeToAN);
-                    WindowLayout_AddPane_NodeEvent(blnANExists, timeToAN);
+                    if (KACWorkerGameState.CurrentVesselTarget==null)
+                    {
+                        WindowLayout_AddPane_NodeEvent(KACWorkerGameState.CurrentVessel.orbit.AscendingNodeEquatorialExists(),
+                                                        KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNodeEquatorial(KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT);
+                    }
+                    else{
+                        WindowLayout_AddPane_NodeEvent(KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()),
+                                                        KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT);
+                    }
                     break;
                 case KACAlarm.AlarmType.DescendingNode:
-                    Double timeToDN;
-                    Boolean blnDNExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Descending, out timeToDN);
-                    WindowLayout_AddPane_NodeEvent(blnDNExists, timeToDN);
+                    if (KACWorkerGameState.CurrentVesselTarget==null)
+                    {
+                        WindowLayout_AddPane_NodeEvent(KACWorkerGameState.CurrentVessel.orbit.DescendingNodeEquatorialExists(),
+                                                        KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNodeEquatorial(KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT);
+                    }
+                    else{
+                        WindowLayout_AddPane_NodeEvent(KACWorkerGameState.CurrentVessel.orbit.DescendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()),
+                                                        KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT);
+                    }
                     break;
                 case KACAlarm.AlarmType.Closest:
                     WindowLayout_AddPane_ClosestApproach();
@@ -436,12 +447,14 @@ namespace KerbalAlarmClock
             if (AddType != KACAlarm.AlarmType.Raw)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("Time to " + strAlarmEventName + ":", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(120), GUILayout.MaxWidth(120));
+                //GUILayout.Label("Time to " + strAlarmEventName + ":", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(120), GUILayout.MaxWidth(120));
+                GUILayout.Label("Time to " + strAlarmEventName + ":", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
                 GUILayout.Label(KACTime.PrintInterval(TimeToEvent, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
                 GUILayout.EndHorizontal();
             }
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(120), GUILayout.MaxWidth(120));
+            //GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(120), GUILayout.MaxWidth(120));
+            GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
             GUILayout.Label(KACTime.PrintInterval(TimeToAlarm, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
@@ -559,10 +572,19 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
         }
 
+
+        List<KACAlarm.AlarmType> lstAlarmsWithTarget = new List<KACAlarm.AlarmType> { KACAlarm.AlarmType.AscendingNode, KACAlarm.AlarmType.DescendingNode };
         private void WindowLayout_AddPane_NodeEvent(Boolean PointFound,Double timeToPoint)
         {
             GUILayout.BeginVertical();
             GUILayout.Label(strAlarmEventName + " Details...", KACResources.styleAddSectionHeading);
+            if (lstAlarmsWithTarget.Contains(AddType))
+            {
+                if (KACWorkerGameState.CurrentVesselTarget == null)
+                    GUILayout.Label("Equatorial Nodes (No Vessel Target)", KACResources.styleAddXferName, GUILayout.Height(18));
+                else
+                    GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName,GUILayout.Height(18));
+            }
 
             Vessel myVessel = FlightGlobals.ActiveVessel;
             if (myVessel == null)
@@ -963,23 +985,36 @@ namespace KerbalAlarmClock
                     GUILayout.EndHorizontal();
 
                     intOrbits = (int) fltOrbits;
-                    double dblClosestDistance = 0;
-                    int intClosestOrbitPass=0;
-                    double dblClosestUT = KACUtils.timeOfClosestApproach(KACWorkerGameState.CurrentVessel.orbit,
-                                                                        KACWorkerGameState.CurrentVesselTarget.GetOrbit(),
-                                                                        KACWorkerGameState.CurrentTime.UT,
-                                                                        KACWorkerGameState.CurrentVessel.orbit.period * intOrbits,
-                                                                        20,
-                                                                        out dblClosestDistance,
-                                                                        out intClosestOrbitPass);
+                    int intClosestOrbitPass = 0;
+                    double dblClosestDistance = Double.MaxValue;
+                    double dblClosestUT = 0;
+                    
+                    double dblOrbitTestClosest= Double.MaxValue;
+                    double dblOrbitTestClosestUT = 0;
+                    for (int intOrbitToTest = 1; intOrbitToTest <= intOrbits; intOrbitToTest++)
+			        {
+                        dblOrbitTestClosestUT=KACUtils.timeOfClosestApproach(KACWorkerGameState.CurrentVessel.orbit,
+                                                                            KACWorkerGameState.CurrentVesselTarget.GetOrbit(),
+                                                                            KACWorkerGameState.CurrentTime.UT,
+                                                                            intOrbitToTest,
+                                                                            out dblOrbitTestClosest
+                                                                            );
+                        if (dblOrbitTestClosest < dblClosestDistance)
+                        {
+                            dblClosestDistance = dblOrbitTestClosest;
+                            dblClosestUT = dblOrbitTestClosestUT;
+                            intClosestOrbitPass = intOrbitToTest;
+                        }
+			        }
+                    
 
                     GUILayout.BeginHorizontal();
                     GUILayout.Label("Distance:", KACResources.styleAddHeading, GUILayout.Width(70));
                     String strDistance = string.Format("{0:#}m", dblClosestDistance);
-                    if (dblClosestDistance > 999) strDistance = string.Format("{0:#.0}Km", dblClosestDistance/1000);
+                    if (dblClosestDistance > 999) strDistance = string.Format("{0:#.0}km", dblClosestDistance/1000);
                     GUILayout.Label(strDistance, KACResources.styleAddXferName, GUILayout.Width(90));
-                    GUILayout.Label("On Orbit:", KACResources.styleAddHeading, GUILayout.Width(intTestheight3));
-                    GUILayout.Label(intClosestOrbitPass.ToString(), KACResources.styleAddXferName, GUILayout.Width(intTestheight4));
+                    GUILayout.Label("On Orbit:", KACResources.styleAddHeading);
+                    GUILayout.Label(intClosestOrbitPass.ToString(), KACResources.styleAddXferName);
                     GUILayout.EndHorizontal();
                     GUILayout.EndVertical();
 

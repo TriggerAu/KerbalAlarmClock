@@ -66,6 +66,8 @@ namespace KerbalAlarmClock
                                     strAlarmText += " - Ascending Node"; break;
                                 case KACAlarm.AlarmType.DescendingNode:
                                     strAlarmText += " - Descending Node"; break;
+                                case KACAlarm.AlarmType.Closest:
+                                    strAlarmText += " - Closest Approach"; break;
                                 case KACAlarm.AlarmType.EarthTime:
                                     strAlarmText += " - Earth Alarm"; break;
                                 default:
@@ -134,11 +136,11 @@ namespace KerbalAlarmClock
             {
                 tmpAlarm.AlarmWindowClosed = true;
                 tmpAlarm.ActionedAt = KACWorkerGameState.CurrentTime.UT;
-                Settings.SaveAlarms();
                 if (tmpAlarm.PauseGame)
                     FlightDriver.SetPause(false);
                 if (tmpAlarm.DeleteOnClose)
                     Settings.Alarms.Remove(tmpAlarm);
+                Settings.SaveAlarms();
             }
           
             GUILayout.EndVertical();

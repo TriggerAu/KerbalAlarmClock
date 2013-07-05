@@ -66,6 +66,9 @@ namespace KerbalAlarmClock
 
         public Rect IconPos;
 
+        public int BehaviourChecksPerSec = 10;
+        public int BehaviourChecksPerSec_Custom = 40;
+
         public KACAlarmList Alarms = new KACAlarmList();
 
         public String AlarmListMaxAlarms="10";
@@ -157,6 +160,9 @@ namespace KerbalAlarmClock
                 this.IconPos = configfile.GetValue<Rect>("IconPos", new Rect(152, 0, 32, 32));
                 this.IconPos.height = 32; this.IconPos.width = 32;
 
+                this.BehaviourChecksPerSec = configfile.GetValue("BehaviourChecksPerSec", 10);
+                this.BehaviourChecksPerSec_Custom = configfile.GetValue("BehaviourChecksPerSecCustom",40);
+
                 this.AlarmListMaxAlarms = configfile.GetValue("AlarmListMaxAlarms", "10");
                 this.AlarmDefaultAction = configfile.GetValue<int>("AlarmDefaultAction", 1);
                 this.AlarmDefaultMargin = configfile.GetValue<Double>("AlarmDefaultMargin", 60);
@@ -165,9 +171,14 @@ namespace KerbalAlarmClock
                 this.ShowTooltips = configfile.GetValue("ShowTooltips", true);
                 this.ShowEarthTime = configfile.GetValue("ShowEarthTime", false);
                 this.HideOnPause = configfile.GetValue("HideOnPause", true);
-                this.TimeFormat = configfile.GetValue<KACTime.PrintTimeFormat>("TimeFormat", KACTime.PrintTimeFormat.KSPString);
+                String strTimeFormat = configfile.GetValue("TimeFormat", "KSPString");
+                KACWorker.DebugLogFormatted("{0}",strTimeFormat);
+                this.TimeFormat = (KACTime.PrintTimeFormat)Enum.Parse(typeof(KACTime.PrintTimeFormat), strTimeFormat);
+                //this.TimeFormat = configfile.GetValue<KACTime.PrintTimeFormat>("TimeFormat", KACTime.PrintTimeFormat.KSPString);
+                KACWorker.DebugLogFormatted("{0}",this.TimeFormat.ToString());
                 if (configfile.GetValue<bool>("TimeAsUT", false) == true)
                 {
+                    KACWorker.DebugLogFormatted("Forcing New Format");
                     this.TimeFormat = KACTime.PrintTimeFormat.TimeAsUT;
                     configfile.SetValue("TimeAsUT", false);
                     configfile.SetValue("TimeFormat", Enum.GetName(typeof(KACTime.PrintTimeFormat), this.TimeFormat));
@@ -295,6 +306,8 @@ namespace KerbalAlarmClock
             configfile.SetValue("WindowPos", this.WindowPos);
 
             configfile.SetValue("IconPos", this.IconPos);
+
+            configfile.SetValue("BehaviourChecksPerSec", this.BehaviourChecksPerSec);
 
             configfile.SetValue("AlarmListMaxAlarms", this.AlarmListMaxAlarms);
             configfile.SetValue("AlarmPosition", this.AlarmPosition);

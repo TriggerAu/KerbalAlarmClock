@@ -161,116 +161,116 @@ namespace KerbalAlarmClock
         #region "Orbital Math"
 
         //returns false if there is no AN/DN on the flight plan
-        public static Boolean CalcTimeToANorDN(Vessel vessel, ANDNNodeType typeOfNode, out Double timeToNode)
-        {
-            Boolean blnReturn = false;
-            timeToNode = 0;
-            try
-            {
-                //work out the target type, and get the target orbit
-                //if (FlightGlobals.fetch.VesselTarget != null)
-                if (KACWorkerGameState.CurrentVesselTarget is Vessel || KACWorkerGameState.CurrentVesselTarget is CelestialBody)
-                {
-                    Orbit oTarget = KACWorkerGameState.CurrentVesselTarget.GetOrbit();
-                    Vector3d vectVesselPos = vessel.orbit.getRelativePositionAtUT(KACWorkerGameState.CurrentTime.UT);
+        //public static Boolean CalcTimeToANorDN(Vessel vessel, ANDNNodeType typeOfNode, out Double timeToNode)
+        //{
+        //    Boolean blnReturn = false;
+        //    timeToNode = 0;
+        //    try
+        //    {
+        //        //work out the target type, and get the target orbit
+        //        //if (FlightGlobals.fetch.VesselTarget != null)
+        //        if (KACWorkerGameState.CurrentVesselTarget is Vessel || KACWorkerGameState.CurrentVesselTarget is CelestialBody)
+        //        {
+        //            Orbit oTarget = KACWorkerGameState.CurrentVesselTarget.GetOrbit();
+        //            Vector3d vectVesselPos = vessel.orbit.getRelativePositionAtUT(KACWorkerGameState.CurrentTime.UT);
 
-                    blnReturn = CalcTimeToANorDN(vectVesselPos, vessel.orbit, oTarget, typeOfNode, out timeToNode);
-                }
-            }
-            catch (Exception)
-            {
+        //            blnReturn = CalcTimeToANorDN(vectVesselPos, vessel.orbit, oTarget, typeOfNode, out timeToNode);
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
 
-            }
-            return blnReturn;
-        }
+        //    }
+        //    return blnReturn;
+        //}
 
-        #region "AN/DN Code - predominantly the functions from the Kerbal Engineer Redux by cybutek under Creative commons BY-NC-SA - http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_GB"
-        public static Boolean CalcTimeToANorDN(Vector3d position, Orbit origin, Orbit target, ANDNNodeType typeOfNode, out Double timeToNode)
-        {
-            timeToNode = 0d;
-            Boolean blnReturn = false;
-            try
-            {
-                double AngleToANDN;
-                if (typeOfNode == ANDNNodeType.Ascending)
-                    AngleToANDN = CalcAngleToAscendingNode(position, origin, target);
-                else
-                    AngleToANDN = CalcAngleToDescendingNode(position, origin, target);
-                timeToNode = CalcTimeToNode(origin, AngleToANDN);
-                blnReturn = true;
-            }
-            catch (Exception)
-            {
-                //
-            }
-            return blnReturn;
-        }
+        //#region "AN/DN Code - predominantly the functions from the Kerbal Engineer Redux by cybutek under Creative commons BY-NC-SA - http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_GB"
+        //public static Boolean CalcTimeToANorDN(Vector3d position, Orbit origin, Orbit target, ANDNNodeType typeOfNode, out Double timeToNode)
+        //{
+        //    timeToNode = 0d;
+        //    Boolean blnReturn = false;
+        //    try
+        //    {
+        //        double AngleToANDN;
+        //        if (typeOfNode == ANDNNodeType.Ascending)
+        //            AngleToANDN = CalcAngleToAscendingNode(position, origin, target);
+        //        else
+        //            AngleToANDN = CalcAngleToDescendingNode(position, origin, target);
+        //        timeToNode = CalcTimeToNode(origin, AngleToANDN);
+        //        blnReturn = true;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        //
+        //    }
+        //    return blnReturn;
+        //}
 
-        public enum ANDNNodeType
-        {
-            Ascending,
-            Descending
-        }
+        //public enum ANDNNodeType
+        //{
+        //    Ascending,
+        //    Descending
+        //}
 
 
-        public static double CalcAngleToAscendingNode(Vector3d position, Orbit origin, Orbit target)
-        {
-            double angleToNode = 0d;
+        //public static double CalcAngleToAscendingNode(Vector3d position, Orbit origin, Orbit target)
+        //{
+        //    double angleToNode = 0d;
 
-            if (origin.inclination < 90)
-            {
-                angleToNode = CalcPhaseAngle(position, GetAscendingNode(origin, target));
-            }
-            else
-            {
-                angleToNode = 360 - CalcPhaseAngle(position, GetAscendingNode(origin, target));
-            }
+        //    if (origin.inclination < 90)
+        //    {
+        //        angleToNode = CalcPhaseAngle(position, GetAscendingNode(origin, target));
+        //    }
+        //    else
+        //    {
+        //        angleToNode = 360 - CalcPhaseAngle(position, GetAscendingNode(origin, target));
+        //    }
 
-            return angleToNode;
-        }
+        //    return angleToNode;
+        //}
 
-        public static double CalcAngleToDescendingNode(Vector3d position, Orbit origin, Orbit target)
-        {
-            double angleToNode = 0d;
+        //public static double CalcAngleToDescendingNode(Vector3d position, Orbit origin, Orbit target)
+        //{
+        //    double angleToNode = 0d;
 
-            if (origin.inclination < 90)
-            {
-                angleToNode = CalcPhaseAngle(position, GetDescendingNode(origin, target));
-            }
-            else
-            {
-                angleToNode = 360 - CalcPhaseAngle(position, GetDescendingNode(origin, target));
-            }
+        //    if (origin.inclination < 90)
+        //    {
+        //        angleToNode = CalcPhaseAngle(position, GetDescendingNode(origin, target));
+        //    }
+        //    else
+        //    {
+        //        angleToNode = 360 - CalcPhaseAngle(position, GetDescendingNode(origin, target));
+        //    }
 
-            return angleToNode;
-        }
+        //    return angleToNode;
+        //}
 
-        public static Vector3d GetAscendingNode(Orbit origin, Orbit target)
-        {
-            //get the vector at 90 degrees to the two orbits normal so we see the cross over AN
-            return Vector3d.Cross(target.GetOrbitNormal(), origin.GetOrbitNormal());
-        }
-        public static Vector3d GetDescendingNode(Orbit origin, Orbit target)
-        {
-            //get the vector at 90 degrees to the two orbits normal so we see the cross over AN
-            return Vector3d.Cross(origin.GetOrbitNormal(), target.GetOrbitNormal());
-        }
+        //public static Vector3d GetAscendingNode(Orbit origin, Orbit target)
+        //{
+        //    //get the vector at 90 degrees to the two orbits normal so we see the cross over AN
+        //    return Vector3d.Cross(target.GetOrbitNormal(), origin.GetOrbitNormal());
+        //}
+        //public static Vector3d GetDescendingNode(Orbit origin, Orbit target)
+        //{
+        //    //get the vector at 90 degrees to the two orbits normal so we see the cross over AN
+        //    return Vector3d.Cross(origin.GetOrbitNormal(), target.GetOrbitNormal());
+        //}
 
-        public static double CalcPhaseAngle(Vector3d origin, Vector3d target)
-        {
-            //angle between the two vectors
-            double phaseAngle = Vector3d.Angle(target, origin);
-            if (Vector3d.Angle(Quaternion.AngleAxis(90, Vector3d.forward) * origin, target) > 90)
-            {
-                phaseAngle = 360 - phaseAngle;
-            }
-            return (phaseAngle + 360) % 360;
-        }
-        public static double CalcTimeToNode(Orbit origin, double angleToNode)
-        {
-            return (origin.period / 360d) * angleToNode;
-        }
-        #endregion
+        //public static double CalcPhaseAngle(Vector3d origin, Vector3d target)
+        //{
+        //    //angle between the two vectors
+        //    double phaseAngle = Vector3d.Angle(target, origin);
+        //    if (Vector3d.Angle(Quaternion.AngleAxis(90, Vector3d.forward) * origin, target) > 90)
+        //    {
+        //        phaseAngle = 360 - phaseAngle;
+        //    }
+        //    return (phaseAngle + 360) % 360;
+        //}
+        //public static double CalcTimeToNode(Orbit origin, double angleToNode)
+        //{
+        //    return (origin.period / 360d) * angleToNode;
+        //}
+        //#endregion
 
         #region "timeOfClosestApproach Code - "
         public static Vector3d getAbsolutePositionAtUT(Orbit orbit, double UT)
@@ -292,12 +292,6 @@ namespace KerbalAlarmClock
         }
 
         public static double timeOfClosestApproach(Orbit oOrig, Orbit oTgt, double timeStart, double periodtoscan, double numDivisions, out double closestdistance)
-        {
-            int intOrbit=0;
-            return timeOfClosestApproach(oOrig, oTgt, timeStart, periodtoscan, numDivisions, out closestdistance,out intOrbit);
-        }
-        
-        public static double timeOfClosestApproach(Orbit oOrig, Orbit oTgt, double timeStart, double periodtoscan, double numDivisions, out double closestdistance,out int ClosestDistanceOnOrbitNum)
         {
             double closestApproachTime = timeStart;
             double closestApproachDistance = Double.MaxValue;
@@ -326,8 +320,6 @@ namespace KerbalAlarmClock
             }
 
             closestdistance = closestApproachDistance;
-
-            ClosestDistanceOnOrbitNum = (int)Math.Floor((closestApproachTime - timeStart) / oOrig.period) + 1;
             return closestApproachTime;
         }
 

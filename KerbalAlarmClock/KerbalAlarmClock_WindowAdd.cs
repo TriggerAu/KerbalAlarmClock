@@ -583,7 +583,16 @@ namespace KerbalAlarmClock
                 if (KACWorkerGameState.CurrentVesselTarget == null)
                     GUILayout.Label("Equatorial Nodes (No Vessel Target)", KACResources.styleAddXferName, GUILayout.Height(18));
                 else
-                    GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName,GUILayout.Height(18));
+                {
+
+                    if (KACWorkerGameState.CurrentVesselTarget is Vessel)
+                        GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName,GUILayout.Height(18));
+                    else if (KACWorkerGameState.CurrentVesselTarget is CelestialBody)
+                        GUILayout.Label("Target Body: " + ((CelestialBody)KACWorkerGameState.CurrentVesselTarget).bodyName, KACResources.styleAddXferName,GUILayout.Height(18));
+                    else
+                        GUILayout.Label("Object Targeted", KACResources.styleAddXferName, GUILayout.Height(18));
+                        //GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName, GUILayout.Height(18));
+                    }
             }
 
             Vessel myVessel = FlightGlobals.ActiveVessel;

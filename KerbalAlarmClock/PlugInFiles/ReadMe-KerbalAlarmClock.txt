@@ -28,6 +28,9 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.4.0.2		-	KSP Version: 0.20.2
+- Fixed stupid mistake AN/DN GUI Code
+
 Version 2.4.0.1		-	KSP Version: 0.20.2
 - Changed AN/DN code to use Mechjeb style ones to correct for my lack of math skills
 - Changed AN/DN Add so if there is no target it displays the equatorial AN/DN times

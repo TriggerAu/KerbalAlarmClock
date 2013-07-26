@@ -27,7 +27,7 @@ namespace KerbalAlarmClock
                     try
                     {
                         //if there was a string and its version is greater than the current running one then alert
-                        Version vTest = new Version(this.VersionWeb);
+                        System.Version vTest = new System.Version(this.VersionWeb);
                         return (System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.CompareTo(vTest) < 0);
                     }
                     catch (Exception ex)

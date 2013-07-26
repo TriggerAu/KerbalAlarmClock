@@ -274,23 +274,34 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmType.AscendingNode:
                     if (KACWorkerGameState.CurrentVesselTarget==null)
                     {
-                        WindowLayout_AddPane_NodeEvent(KACWorkerGameState.CurrentVessel.orbit.AscendingNodeEquatorialExists(),
-                                                        KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNodeEquatorial(KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT);
+                        WindowLayout_AddPane_AscendingNodeEquatorial();
                     }
-                    else{
-                        WindowLayout_AddPane_NodeEvent(KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()),
-                                                        KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT);
+                    else if (KACWorkerGameState.CurrentVessel.orbit.referenceBody == KACWorkerGameState.CurrentVesselTarget.GetOrbit().referenceBody) {
+                        //Must be orbiting Same parent body for this to make sense
+                        WindowLayout_AddPane_AscendingNode();
+                    }
+                    else
+                    {
+                        GUILayout.Label("Target Not Currently Orbiting Same Parent", KACResources.styleAddXferName, GUILayout.Height(18));
+                        GUILayout.Label("", KACResources.styleAddXferName, GUILayout.Height(18));
+                        GUILayout.Label("There is no Ascending Node between orbits", KACResources.styleAddXferName, GUILayout.Height(18));
                     }
                     break;
                 case KACAlarm.AlarmType.DescendingNode:
                     if (KACWorkerGameState.CurrentVesselTarget==null)
                     {
-                        WindowLayout_AddPane_NodeEvent(KACWorkerGameState.CurrentVessel.orbit.DescendingNodeEquatorialExists(),
-                                                        KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNodeEquatorial(KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT);
+                        WindowLayout_AddPane_DescendingNodeEquatorial();
                     }
-                    else{
-                        WindowLayout_AddPane_NodeEvent(KACWorkerGameState.CurrentVessel.orbit.DescendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()),
-                                                        KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT);
+                    else if (KACWorkerGameState.CurrentVessel.orbit.referenceBody == KACWorkerGameState.CurrentVesselTarget.GetOrbit().referenceBody)
+                    {
+                        //Must be orbiting Same parent body for this to make sense
+                        WindowLayout_AddPane_DescendingNode();
+                    }
+                    else
+                    {
+                        GUILayout.Label("Target Not Currently Orbiting Same Parent", KACResources.styleAddXferName, GUILayout.Height(18));
+                        GUILayout.Label("", KACResources.styleAddXferName, GUILayout.Height(18));
+                        GUILayout.Label("There is no Ascending Node between orbits", KACResources.styleAddXferName, GUILayout.Height(18));
                     }
                     break;
                 case KACAlarm.AlarmType.Closest:
@@ -304,6 +315,57 @@ namespace KerbalAlarmClock
             
             SetTooltipText();
         }
+
+        private void WindowLayout_AddPane_AscendingNodeEquatorial()
+        {
+            Double dblNodeTime = 0;
+            Boolean blnNodeFound = KACWorkerGameState.CurrentVessel.orbit.AscendingNodeEquatorialExists();
+            if (blnNodeFound)
+            {
+                try { dblNodeTime = KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNodeEquatorial(KACWorkerGameState.CurrentTime.UT); }
+                catch { blnNodeFound = false; }
+            }
+            WindowLayout_AddPane_NodeEvent(blnNodeFound, dblNodeTime - KACWorkerGameState.CurrentTime.UT);
+        }
+
+        private void WindowLayout_AddPane_DescendingNodeEquatorial()
+        {
+            Double dblNodeTime = 0;
+            Boolean blnNodeFound = KACWorkerGameState.CurrentVessel.orbit.DescendingNodeEquatorialExists();
+            if (blnNodeFound)
+            {
+                try { dblNodeTime = KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNodeEquatorial(KACWorkerGameState.CurrentTime.UT); }
+                catch { blnNodeFound = false; }
+            }
+            WindowLayout_AddPane_NodeEvent(blnNodeFound, dblNodeTime - KACWorkerGameState.CurrentTime.UT);
+        }
+
+        private void WindowLayout_AddPane_AscendingNode()
+        {
+            Double dblNodeTime = 0;
+            Boolean blnNodeFound = KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit());
+            if (blnNodeFound)
+            {
+                try { dblNodeTime = KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT); }
+                catch { blnNodeFound = false; }
+            }
+            WindowLayout_AddPane_NodeEvent(blnNodeFound, dblNodeTime - KACWorkerGameState.CurrentTime.UT);
+        }
+        private void WindowLayout_AddPane_DescendingNode()
+        {
+            Double dblNodeTime = 0;
+            Boolean blnNodeFound = KACWorkerGameState.CurrentVessel.orbit.DescendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit());
+            if (blnNodeFound)
+            {
+                try { dblNodeTime = KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT); }
+                catch { blnNodeFound = false; }
+            }
+            WindowLayout_AddPane_NodeEvent(blnNodeFound, dblNodeTime - KACWorkerGameState.CurrentTime.UT);
+        }
+
+
+
+
 
         public void WindowLayout_AddTypeApPe()
         {
@@ -581,10 +643,9 @@ namespace KerbalAlarmClock
             if (lstAlarmsWithTarget.Contains(AddType))
             {
                 if (KACWorkerGameState.CurrentVesselTarget == null)
-                    GUILayout.Label("Equatorial Nodes (No Vessel Target)", KACResources.styleAddXferName, GUILayout.Height(18));
+                    GUILayout.Label("Equatorial Nodes (No Valid Target)", KACResources.styleAddXferName, GUILayout.Height(18));
                 else
                 {
-
                     if (KACWorkerGameState.CurrentVesselTarget is Vessel)
                         GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName,GUILayout.Height(18));
                     else if (KACWorkerGameState.CurrentVesselTarget is CelestialBody)
@@ -592,7 +653,7 @@ namespace KerbalAlarmClock
                     else
                         GUILayout.Label("Object Targeted", KACResources.styleAddXferName, GUILayout.Height(18));
                         //GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName, GUILayout.Height(18));
-                    }
+                }
             }
 
             Vessel myVessel = FlightGlobals.ActiveVessel;

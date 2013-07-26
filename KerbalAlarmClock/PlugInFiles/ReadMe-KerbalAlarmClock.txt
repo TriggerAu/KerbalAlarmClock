@@ -28,6 +28,10 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.5.0.0		-	KSP Version: 0.21.1
+- Recompiled it for 0.21
+- Fixed some issues with Hyperbolic orbits and AN/DN Nodes
+
 Version 2.4.0.2		-	KSP Version: 0.20.2
 - Fixed stupid mistake AN/DN GUI Code
 

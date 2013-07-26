@@ -230,6 +230,48 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
+
+            //if (KACWorkerGameState.CurrentVesselTarget == null)
+            //    GUILayout.Label("Equatorial Nodes (No Vessel Target)", KACResources.styleAddXferName, GUILayout.Height(18));
+            //else
+            //{
+            //    if (KACWorkerGameState.CurrentVessel.orbit.referenceBody ==KACWorkerGameState.CurrentVesselTarget.GetOrbit().referenceBody)
+            //    {
+            //        if (KACWorkerGameState.CurrentVesselTarget is Vessel)
+            //            GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName, GUILayout.Height(18));
+            //        else if (KACWorkerGameState.CurrentVesselTarget is CelestialBody)
+            //            GUILayout.Label("Target Body: " + ((CelestialBody)KACWorkerGameState.CurrentVesselTarget).bodyName, KACResources.styleAddXferName, GUILayout.Height(18));
+            //        else
+            //            GUILayout.Label("Object Targeted", KACResources.styleAddXferName, GUILayout.Height(18));
+            //        //GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName, GUILayout.Height(18));
+            //    }
+            //    else
+            //    {
+            //        GUILayout.Label("Target Not Orbiting Same Parent", KACResources.styleAddXferName, GUILayout.Height(18));
+            //    }
+            //}
+            //if (KACWorkerGameState.CurrentVesselTarget == null)
+            //{
+            //    GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.AscendingNodeEquatorialExists().ToString());
+            //                                    //KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNodeEquatorial(KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT);
+            //}
+            //else
+            //{
+            //    GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()).ToString());
+            //                                    //KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT) - KACWorkerGameState.CurrentTime.UT);
+            //}
+
+
+            //GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.AscendingNodeEquatorialExists().ToString());
+            //GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNodeEquatorial(KACWorkerGameState.CurrentTime.UT).ToString());
+            //GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition.ToString());
+            //GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.UTsoi.ToString());
+
+
+            //Settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
+            //{
+            //    timeSOIChange = KACWorkerGameState.CurrentVessel.orbit.UTsoi
+
             //if (FlightGlobals.fetch.VesselTarget != null)
             //{
             //    if (KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(FlightGlobals.fetch.VesselTarget.GetOrbit()))

@@ -367,11 +367,14 @@ namespace KerbalAlarmClock
             Periapsis,
             AscendingNode,
             DescendingNode,
+            LaunchRendevous,
             Closest,
             SOIChange,
             SOIChangeAuto,
             Transfer,
             TransferModelled,
+            Distance,
+            Crew,
             EarthTime
         }
 
@@ -383,11 +386,14 @@ namespace KerbalAlarmClock
             {AlarmType.Periapsis , 2},
             {AlarmType.AscendingNode , 3},
             {AlarmType.DescendingNode , 3},
+            {AlarmType.LaunchRendevous , 3},
             {AlarmType.Closest , 4},
+            {AlarmType.Distance , 4},
             {AlarmType.SOIChange , 5},
             {AlarmType.SOIChangeAuto , 5},
             {AlarmType.Transfer , 6},
-            {AlarmType.TransferModelled , 6}
+            {AlarmType.TransferModelled , 6},
+            {AlarmType.Crew , 7}
         };
         public static Dictionary<int,AlarmType> AlarmTypeFromButton = new Dictionary<int,AlarmType>() {
             {0,AlarmType.Raw},
@@ -396,7 +402,8 @@ namespace KerbalAlarmClock
             {3,AlarmType.AscendingNode },
             {4,AlarmType.Closest },
             {5,AlarmType.SOIChange },
-            {6,AlarmType.Transfer }
+            {6,AlarmType.Transfer },
+            {7,AlarmType.Crew }
         };
 
 
@@ -416,8 +423,8 @@ namespace KerbalAlarmClock
         public String Notes = "";                                       //Entered extra details
         public AlarmType TypeOfAlarm=AlarmType.Raw;                     //What Type of Alarm
 
-        public KACTime AlarmTime = new KACTime();                 //UT of the alarm
-        public Double AlarmMarginSecs = 0;                               //What the margin from the event was
+        public KACTime AlarmTime = new KACTime();                       //UT of the alarm
+        public Double AlarmMarginSecs = 0;                              //What the margin from the event was
         public Boolean Enabled = true;                                  //Whether it is enabled - not in use currently
         public Boolean HaltWarp = true;                                 //Whether the time warp will be halted at this event
         public Boolean PauseGame = false;                               //Whether the Game will be paused at this event
@@ -490,20 +497,23 @@ namespace KerbalAlarmClock
         #region "Constructors"
         public KACAlarm()
         {
-            if (KACWorkerGameState.IsFlightMode)
-                SaveName = HighLogic.CurrentGame.Title;
+            //if (KACWorkerGameState.IsFlightMode)
+            try { SaveName = HighLogic.CurrentGame.Title; }
+            catch (Exception) { }
         }
         public KACAlarm(double UT)
         {
-            if (KACWorkerGameState.IsFlightMode)
-                SaveName = HighLogic.CurrentGame.Title;
+            //if (KACWorkerGameState.IsFlightMode)
+            try { SaveName = HighLogic.CurrentGame.Title; }
+            catch (Exception) { }
             AlarmTime.UT = UT;
         }
 
         public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause)
         {
-            if (KACWorkerGameState.IsFlightMode)
-                SaveName = HighLogic.CurrentGame.Title;
+            //if (KACWorkerGameState.IsFlightMode)
+            try { SaveName = HighLogic.CurrentGame.Title; }
+            catch (Exception) { }
             VesselID = vID;
             Name = NewName;
             Notes = NewNotes;
@@ -663,6 +673,7 @@ namespace KerbalAlarmClock
                     break;
                 case AlarmType.AscendingNode:
                 case AlarmType.DescendingNode:
+                case AlarmType.LaunchRendevous:
                     if (strOptions != "")
                     {
                         //find the targetable object and set it

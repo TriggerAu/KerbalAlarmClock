@@ -301,7 +301,6 @@ namespace KerbalAlarmClock
             //work out iterations for precision - we only really need to within a second - so how many iterations do we actually need
             //Each iteration gets us 1/10th of the period to scan
 
-
             for (int iter = 0; iter < 8; iter++)
             {
                 double dt = (maxTime - minTime) / numDivisions;
@@ -322,6 +321,102 @@ namespace KerbalAlarmClock
             closestdistance = closestApproachDistance;
             return closestApproachTime;
         }
+
+        public static double timeOfTargetDistance(Orbit oOrig, Orbit oTgt, double timeStart, int orbit, out double closestdistance,double targetDistance)
+        {
+            //return timeOfClosestApproach(a, b, time + ((orbit - 1) * a.period), (orbit * a.period), 20, out closestdistance);
+            return timeOfTargetDistance(oOrig, oTgt, timeStart + ((orbit - 1) * oOrig.period), oOrig.period, 20, out closestdistance,targetDistance);
+        }
+
+        public static double timeOfTargetDistance(Orbit oOrig, Orbit oTgt, double timeStart, double periodtoscan, double numDivisions, out double closestdistance, double targetDistance)
+        {
+            double closestApproachTime = timeStart;
+            double closestApproachDistance = Double.MaxValue;
+            double minTime = timeStart;
+            double maxTime = timeStart + periodtoscan;
+
+            //work out iterations for precision - we only really need to within a second - so how many iterations do we actually need
+            //Each iteration gets us 1/10th of the period to scan
+
+            for (int iter = 0; iter < 8; iter++)
+            {
+                double dt = (maxTime - minTime) / numDivisions;
+                for (int i = 0; i < numDivisions; i++)
+                {
+                    double t = minTime + i * dt;
+                    double distance = (getAbsolutePositionAtUT(oOrig, t) - getAbsolutePositionAtUT(oTgt, t)).magnitude;
+                    if (Math.Abs(distance -targetDistance) < closestApproachDistance)
+                    {
+                        closestApproachDistance = Math.Abs(distance - targetDistance);
+                        closestApproachTime = t;
+                    }
+                }
+                minTime = KACUtils.Clamp(closestApproachTime - dt, timeStart, timeStart + periodtoscan);
+                maxTime = KACUtils.Clamp(closestApproachTime + dt, timeStart, timeStart + periodtoscan);
+            }
+
+            closestdistance = closestApproachDistance+targetDistance;
+            return closestApproachTime;
+        }
+
+
+        public static double timeOfTargetAltitude(Orbit oOrig, double timeStart, out double closestdistance, double targetDistance)
+        {
+            //return timeOfClosestApproach(a, b, time + ((orbit - 1) * a.period), (orbit * a.period), 20, out closestdistance);
+            return timeOfTargetAltitude(oOrig,  timeStart , 20, out closestdistance, targetDistance);
+        }
+
+        //enum OrbitAltitudeDirection
+        //{
+        //    Ascending=1,
+        //    Descending=2
+        //}
+
+        public static double timeOfTargetAltitude(Orbit oOrig, double timeStart, double numDivisions, out double closestdistance, double targetAltitude)
+        {
+            double closestApproachTime = timeStart;
+            double closestApproachAltitude = Double.MaxValue;
+            double minTime = timeStart;
+
+            //work out the end of the period to scan based on whether we are above or below the target altitude
+            double UTofEndOrbitAltDirection;
+            double startAltitude = oOrig.getRelativePositionAtUT(timeStart).magnitude-oOrig.referenceBody.Radius;
+            if (startAltitude < targetAltitude)
+                UTofEndOrbitAltDirection = oOrig.StartUT + oOrig.timeToAp;
+            else
+                UTofEndOrbitAltDirection = oOrig.StartUT + oOrig.timeToPe;
+
+            double periodtoscan = UTofEndOrbitAltDirection - timeStart;
+            double maxTime = UTofEndOrbitAltDirection;
+
+            //work out iterations for precision - we only really need to within a second - so how many iterations do we actually need
+            //Each iteration gets us 1/10th of the period to scan
+
+            for (int iter = 0; iter < 8; iter++)
+            {
+                double dt = (maxTime - minTime) / numDivisions;
+                for (int i = 0; i < numDivisions; i++)
+                {
+                    double t = minTime + i * dt;
+                    double distance = oOrig.getRelativePositionAtUT(t).magnitude-oOrig.referenceBody.Radius;
+
+                    //TODO: NEED TO DO SOMETHING HERE WITH PRECISION!!!! How many decimal place to compare to
+                    //something about = if its not substantially closer, but is substantialy later then ignore it.
+                    //ie if the later crossing is 1meter closer, but its 600 secs later then keep the earlier one
+                    if (Math.Abs(distance - targetAltitude) < closestApproachAltitude)
+                    {
+                        closestApproachAltitude = Math.Abs(distance - targetAltitude);
+                        closestApproachTime = t;
+                    }
+                }
+                minTime = KACUtils.Clamp(closestApproachTime - dt, timeStart, timeStart + periodtoscan);
+                maxTime = KACUtils.Clamp(closestApproachTime + dt, timeStart, timeStart + periodtoscan);
+            }
+
+            closestdistance = closestApproachAltitude + targetAltitude;
+            return closestApproachTime;
+        }
+
 
         #endregion
 

@@ -1,4 +1,4 @@
-﻿LATESTVERSION|1.0|LATESTVERSION|
+﻿LATESTVERSION|2.2|LATESTVERSION|
 
 Times and Phase angles for the first 101 years for All Hohmann transfers
 Calculated using the KSP Mission Control toolkit - http://forum.kerbalspaceprogram.com/showthread.php/40063-WIP-Mission-control-for-KSP-guide-for-basics-of-celestial-mechanics

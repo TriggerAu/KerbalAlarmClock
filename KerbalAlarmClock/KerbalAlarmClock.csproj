@@ -40,17 +40,21 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KerbalAlarmClock_GameState.cs" />
+    <Compile Include="KerbalAlarmClock_ViewWorker.cs" />
+    <Compile Include="KerbalAlarmClock_WindowAdd_AscDescNodes.cs" />
+    <Compile Include="KerbalAlarmClock_WindowAdd_Distance.cs" />
     <Compile Include="KerbalAlarmClock_WindowEarth.cs" />
     <Compile Include="KerbalAlarmClock_WindowAdd.cs" />
     <Compile Include="KerbalAlarmClock.cs" />
@@ -58,6 +62,7 @@
     <Compile Include="KerbalAlarmClock_Window.cs" />
     <Compile Include="KerbalAlarmClock_WindowAlarm.cs" />
     <Compile Include="KerbalAlarmClock_WindowSettings.cs" />
+    <Compile Include="MechJebAscentAutopilot.cs" />
     <Compile Include="MuMech_OrbitExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.cs" />
@@ -84,6 +89,7 @@
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeAp.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeApPe.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeClosest.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_ButtonTypeCrew.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeDN.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeMNode.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypePe.png" />
@@ -109,8 +115,10 @@
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconAN.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconAp.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconClosest.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconCrew.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconDN.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconEdit.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconLaunchRendezvous.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconMNode.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconNone.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconPauseList_000.png" />
@@ -136,10 +144,22 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rem Build deployment versions
+
+if exist "C:\~Games\KSP_Win_PlugInTest\KSP.exe" (
+	set DestPath="C:\~Games\KSP_Win_PlugInTest\GameData\TriggerTech"
+	set Binary="C:\~Games\KSP_Win_PlugInTest\KSP.exe"
+) else (
+	set DestPath="D:\~Games\KSP_Win_PlugInTest\GameData\TriggerTech"
+	set Binary="D:\~Games\KSP_Win_PlugInTest\KSP.exe"
+)
+
 rem Need to copy all bits to plugin test game
-rem copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\GameData\TriggerTech"
+rem copy "$(TargetPath)" %25DestPath%25
 
 rem and then run the game
+rem %25Binary%25
+
+rem copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\GameData\TriggerTech"
 rem "D:\~Games\KSP_Win_PlugInTest\KSP.exe"
 </PostBuildEvent>
   </PropertyGroup>

@@ -66,10 +66,14 @@ namespace KerbalAlarmClock
                                     strAlarmText += " - Ascending Node"; break;
                                 case KACAlarm.AlarmType.DescendingNode:
                                     strAlarmText += " - Descending Node"; break;
+                                case KACAlarm.AlarmType.LaunchRendevous:
+                                    strAlarmText += " - Launch Rendevous"; break;
                                 case KACAlarm.AlarmType.Closest:
                                     strAlarmText += " - Closest Approach"; break;
                                 case KACAlarm.AlarmType.EarthTime:
                                     strAlarmText += " - Earth Alarm"; break;
+                                case KACAlarm.AlarmType.Crew:
+                                    strAlarmText += " - Kerbal Alarm"; break;
                                 default:
                                     strAlarmText+= " - Manual";break;
                             }
@@ -95,7 +99,7 @@ namespace KerbalAlarmClock
                 GUILayout.Label(KACTime.PrintDate(tmpAlarm.AlarmTime, Settings.TimeFormat), KACResources.styleAlarmMessageTime);
             else
                 GUILayout.Label(EarthTimeDecode(tmpAlarm.AlarmTime.UT).ToLongTimeString(), KACResources.styleAlarmMessageTime);
-            if (tmpAlarm.TypeOfAlarm!=KACAlarm.AlarmType.Raw && tmpAlarm.TypeOfAlarm!= KACAlarm.AlarmType.EarthTime)
+            if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmType.Raw && tmpAlarm.TypeOfAlarm != KACAlarm.AlarmType.EarthTime && tmpAlarm.TypeOfAlarm != KACAlarm.AlarmType.Crew)
                 GUILayout.Label("(m: " + KACTime.PrintInterval(new KACTime(tmpAlarm.AlarmMarginSecs),3, Settings.TimeFormat)+ ")", KACResources.styleAlarmMessageTime);
             GUILayout.EndHorizontal();
 
@@ -115,15 +119,18 @@ namespace KerbalAlarmClock
                 GUILayout.Label("Time Warp Halted", KACResources.styleAlarmMessageAction);
             }
             GUILayout.EndHorizontal();
-            DrawStoredVesselIDMissing(tmpAlarm.VesselID);
+            if (tmpAlarm.TypeOfAlarm == KACAlarm.AlarmType.Crew)
+                DrawStoredCrewMissing(tmpAlarm.VesselID);
+            else
+                DrawStoredVesselIDMissing(tmpAlarm.VesselID);
             GUILayout.EndVertical();
 
             int intNoOfActionButtons = 0;
-            //if the alarm has a vessel ID associated
-            if (StoredVesselExists(tmpAlarm.VesselID))
-            {
-                intNoOfActionButtons=DrawAlarmActionButtons(tmpAlarm);
-            }
+            //if the alarm has a vessel ID/Kerbal associated
+            if (StoredVesselOrCrewExists(tmpAlarm.VesselID,tmpAlarm.TypeOfAlarm))
+                //TODO:Gotta fix the jump part
+                if (!parentBehaviour.ViewAlarmsOnly)
+                    intNoOfActionButtons = DrawAlarmActionButtons(tmpAlarm);
 
             //Work out the text
             String strText = "Close Alarm";
@@ -155,6 +162,24 @@ namespace KerbalAlarmClock
 
         }
 
+
+        //VesselOrCrewStuff
+        private static Boolean StoredVesselOrCrewExists(String ID, KACAlarm.AlarmType aType)
+        {
+            if (aType == KACAlarm.AlarmType.Crew && StoredCrewExists(ID))
+            {
+                return true;
+            }
+            else if (StoredVesselExists(ID))
+            {
+                return true;
+            }
+            else return false;
+
+        }
+
+
+        //Stuff to do with stored VesselIDs
         private static void DrawStoredVesselIDMissing(String VesselID)
         {
             if (VesselID!=null && VesselID != "" && !StoredVesselExists(VesselID))
@@ -171,6 +196,53 @@ namespace KerbalAlarmClock
             return FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID);
         }
 
+        //Stuff to do with Stored Kerbal Crew
+        public static List<ProtoCrewMember> AllAssignedCrew()
+        {
+            List<ProtoCrewMember> lstReturn = new List<ProtoCrewMember>();
+            foreach (Vessel v in FlightGlobals.Vessels)
+            {
+                List<ProtoCrewMember> pCM = v.GetVesselCrew();
+                foreach (ProtoCrewMember CM in pCM)
+                {
+                    lstReturn.Add(CM);
+                }
+            }
+            return lstReturn;
+        }
+        private static void DrawStoredCrewMissing(String KerbalName)
+        {
+            if (KerbalName != null && KerbalName != "" && !StoredCrewExists(KerbalName))
+            {
+                GUILayout.Label("Cannot find the stored Kerbal - perhaps he's lost :(", KACResources.styleLabelWarning);
+            }
+        }
+        public static Boolean StoredCrewExists(String KerbalName)
+        {
+            return (KerbalName != null) && (KerbalName != "") && (AllAssignedCrew().FirstOrDefault(cm=>cm.name==KerbalName) != null);
+        }
+
+        public static ProtoCrewMember StoredCrew(String KerbalName)
+        {
+            return AllAssignedCrew().FirstOrDefault(cm => cm.name == KerbalName);
+        }
+        public static Vessel StoredCrewVessel(String KerbalName)
+        {
+            foreach (Vessel v in FlightGlobals.Vessels)
+            {
+                List<ProtoCrewMember> pCM = v.GetVesselCrew();
+                foreach (ProtoCrewMember CM in pCM)
+                {
+                    if (CM.name == KerbalName)
+                    {
+                        return v;
+                    }
+                }
+            }
+            return null;
+        }
+
+        //Stuff to do with Celestial Bodies
         public static Boolean CelestialBodyExists(String BodyName)
         {
             return (BodyName != "") && (FlightGlobals.Bodies.FirstOrDefault(b => b.bodyName == BodyName) != null);
@@ -195,7 +267,7 @@ namespace KerbalAlarmClock
                 Double MarginStarting = alarmEdit.AlarmMarginSecs;
                 int intHeight_EditWindowCommon = 88 +
                     alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16;
-                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.EarthTime)
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Crew)
                     intHeight_EditWindowCommon += 28;
                 WindowLayout_CommonFields(ref alarmEdit.Name, ref alarmEdit.Notes, ref intActionSelected, ref alarmEdit.AlarmMarginSecs, alarmEdit.TypeOfAlarm, intHeight_EditWindowCommon);
                 //Adjust the UT of the alarm if the margin changed
@@ -204,11 +276,14 @@ namespace KerbalAlarmClock
                     alarmEdit.AlarmTime.UT += MarginStarting - alarmEdit.AlarmMarginSecs;
                 }
                 //Draw warning if the vessel no longer exists
-                DrawStoredVesselIDMissing(alarmEdit.VesselID);
+                if (alarmEdit.TypeOfAlarm == KACAlarm.AlarmType.Crew)
+                    DrawStoredCrewMissing(alarmEdit.VesselID);
+                else
+                    DrawStoredVesselIDMissing(alarmEdit.VesselID);
 
                 //Draw the old and new times
                 GUILayout.BeginHorizontal();
-                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.EarthTime)
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Crew)
                 {
                     GUILayout.Label("Time To Alarm:", KACResources.styleContent);
                     GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT), Settings.TimeFormat), KACResources.styleAddHeading);
@@ -225,12 +300,11 @@ namespace KerbalAlarmClock
                 alarmEdit.PauseGame = (intActionSelected > 1);
 
                 int intNoOfActionButtons = 0;
-                //if the alarm has a vessel ID associated
-                if (StoredVesselExists(alarmEdit.VesselID))
-                {
-                    intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit);
-                    
-                }
+                //if the alarm has a vessel ID/Kerbal associated
+                if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
+                    //TODO:Gotta fix the jump part
+                    if (!parentBehaviour.ViewAlarmsOnly)
+                        intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit);
 
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
                 {
@@ -238,8 +312,9 @@ namespace KerbalAlarmClock
                     _ShowEditPane = false;
                 }
 
+                //TODO: Edit the height of this for when we have big text in restore button
                 intAlarmEditHeight = 197 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32;
-                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw)
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Crew)
                     intAlarmEditHeight += 28;
             }
             else
@@ -254,14 +329,19 @@ namespace KerbalAlarmClock
                 GUILayout.EndHorizontal();
                 GUILayout.Label(alarmEdit.Notes, KACResources.styleAlarmMessage);
 
-                DrawStoredVesselIDMissing(alarmEdit.VesselID);
+                //Draw warning if the vessel no longer exists
+                if (alarmEdit.TypeOfAlarm == KACAlarm.AlarmType.Crew)
+                    DrawStoredCrewMissing(alarmEdit.VesselID);
+                else
+                    DrawStoredVesselIDMissing(alarmEdit.VesselID);
                 GUILayout.EndVertical();
 
                 int intNoOfActionButtons=0;
-                if (StoredVesselExists(alarmEdit.VesselID))
-                {
-                    intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit);
-                }
+                //if the alarm has a vessel ID/Kerbal associated
+                if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
+                    //TODO:Gotta fix the jump part
+                    if (!parentBehaviour.ViewAlarmsOnly)
+                        intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit);
 
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
                     _ShowEditPane = false;
@@ -272,17 +352,17 @@ namespace KerbalAlarmClock
             }
             SetTooltipText();
         }
-
-
+        
         private int DrawAlarmActionButtons(KACAlarm tmpAlarm)
         {
             int intReturnNoOfButtons = 0;
-            //is it the current vessel?
-
-            if (tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
+            
+            ////is it the current vessel?
+            if ((!parentBehaviour.ViewAlarmsOnly) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
             {
                 //There is a node and the alarm + Margin is not expired
-                if ((tmpAlarm.ManNodes != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
+                if ((tmpAlarm.ManNodes != null))
+                //if ((tmpAlarm.ManNodes != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
                 {
                     //Check if theres a manuever node and if so put a label saying that it already exists
                     //only display this node button if its the active ship
@@ -299,6 +379,10 @@ namespace KerbalAlarmClock
                         else
                             strRestoretext += "\r\nNOTE: These Node's appear to be already set on the flight path";
                     }
+                    if ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) < 0)
+                    {
+                        strRestoretext += "\r\nWARNING: The stored Nodes are in the past";
+                    }
                     intReturnNoOfButtons++;
                     if (GUILayout.Button(strRestoretext, KACResources.styleButton))
                     {
@@ -308,8 +392,9 @@ namespace KerbalAlarmClock
                     }
                 }
                 //There is a stored Target, that hasnt passed
-                if ((tmpAlarm.TargetObject != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
-                {
+                //if ((tmpAlarm.TargetObject != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
+                if ((tmpAlarm.TargetObject != null))
+                    {
                     String strRestoretext = "Restore Target";
                     if (KACWorkerGameState.CurrentVesselTarget != null)
                     {
@@ -333,15 +418,22 @@ namespace KerbalAlarmClock
             {
                 //not current vessel
                 //There is a node and the alarm + Margin is not expired
-                if (tmpAlarm.ManNodes != null && tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs > 0)
-                {
+                //if (tmpAlarm.ManNodes != null && tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs > 0)
+                if (tmpAlarm.ManNodes != null)
+                    {
+                    String strRestoretext = "Jump To Ship and Restore Maneuver Node";
+                    if ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) < 0)
+                    {
+                        strRestoretext += "\r\nWARNING: The stored Nodes are in the past";
+                    }
                     intReturnNoOfButtons++;
-                    if (GUILayout.Button("Jump To Ship and Restore Maneuver Node", KACResources.styleButton))
+
+                    if (GUILayout.Button(strRestoretext, KACResources.styleButton))
                     {
                         Vessel tmpVessel = FindVesselForAlarm(tmpAlarm);
 
-                        FlightGlobals.SetActiveVessel(tmpVessel);
-
+                        JumpToVessel(tmpVessel);
+                       
                         //Set the Node in memory to restore once the ship change has completed
                         Settings.LoadManNode = KACAlarm.ManNodeSerializeList(tmpAlarm.ManNodes);
                         Settings.SaveLoadObjects();
@@ -349,16 +441,16 @@ namespace KerbalAlarmClock
                 }
 
                 //There is a target and the alarm has not expired
-
-                if (tmpAlarm.TargetObject != null && tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs > 0)
+                //if (tmpAlarm.TargetObject != null && tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs > 0)
+                if (tmpAlarm.TargetObject != null )
                 {
                     intReturnNoOfButtons++;
                     if (GUILayout.Button("Jump To Ship and Restore Target", KACResources.styleButton))
                     {
                         Vessel tmpVessel = FindVesselForAlarm(tmpAlarm);
 
-                        FlightGlobals.SetActiveVessel(tmpVessel);
-                        
+                        JumpToVessel(tmpVessel);
+                         
                         //Set the Target in persistant file to restore once the ship change has completed...
                         Settings.LoadVesselTarget = KACAlarm.TargetSerialize(tmpAlarm.TargetObject);
                         Settings.SaveLoadObjects();
@@ -367,28 +459,75 @@ namespace KerbalAlarmClock
                 
                 intReturnNoOfButtons++;
                 //Or just jump to ship - regardless of alarm time
-                if (GUILayout.Button("Jump To Ship", KACResources.styleButton))
+                String strButton = "Jump To Ship";
+                if (tmpAlarm.TypeOfAlarm == KACAlarm.AlarmType.Crew) strButton = strButton.Replace("Ship", "Kerbal");
+                if (GUILayout.Button(strButton, KACResources.styleButton))
                 {
+
                     Vessel tmpVessel = FindVesselForAlarm(tmpAlarm);
                     // tmpVessel.MakeActive();
 
-                    FlightGlobals.SetActiveVessel(tmpVessel);
+                    JumpToVessel(tmpVessel);
                 }
             }
             return intReturnNoOfButtons;
         }
 
+        private static void JumpToVessel(Vessel vTarget)
+        {
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+            {
+                FlightGlobals.SetActiveVessel(vTarget);
+            }
+            else
+            {
+                int intVesselidx = getVesselIdx(vTarget);
+                if (intVesselidx < 0)
+                {
+                    DebugLogFormatted("Couldn't find the index for the vessel {0}({1})", vTarget.vesselName, vTarget.id.ToString());
+                }
+                else
+                {
+                    //Save it to get the time updated then over you go
+                    //HighLogic.CurrentGame.Save(HighLogic.CurrentGame);
+                    GamePersistence.SaveGame(HighLogic.CurrentGame,"persistent",HighLogic.SaveFolder , SaveMode.OVERWRITE);
+                    FlightDriver.StartAndFocusVessel(HighLogic.CurrentGame, intVesselidx);
+                }
+            }
+        }
+
         private static Vessel FindVesselForAlarm(KACAlarm tmpAlarm)
         {
             Vessel tmpVessel;
-            tmpVessel = FlightGlobals.Vessels.Find(delegate(Vessel v)
+            String strVesselID = "";
+            if (tmpAlarm.TypeOfAlarm == KACAlarm.AlarmType.Crew)
             {
-                return (tmpAlarm.VesselID == v.id.ToString());
+                strVesselID = StoredCrewVessel(tmpAlarm.VesselID).id.ToString();
             }
-                        );
+            else
+            {
+                strVesselID = tmpAlarm.VesselID;
+            }
+
+            tmpVessel = FlightGlobals.Vessels.Find(delegate(Vessel v)
+                {
+                    return (strVesselID == v.id.ToString());
+                }
+            );
             return tmpVessel;
         }
-        
 
+        private static int getVesselIdx(Vessel vtarget)
+        {
+            for (int i = 0; i < FlightGlobals.Vessels.Count; i++)
+            {
+                if (FlightGlobals.Vessels[i].id == vtarget.id)
+                {
+                    DebugLogFormatted("Found Target idx={0} ({1})", i, vtarget.id.ToString());
+                    return i;
+                }
+            }
+            return -1;
+        }
     }
 }

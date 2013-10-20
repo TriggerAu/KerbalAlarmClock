@@ -64,7 +64,19 @@ namespace KerbalAlarmClock
         public Boolean WindowMinimized = false;
         public Rect WindowPos = new Rect(3, 55, 300, 45);
 
+        public Boolean WindowVisible_SpaceCenter = false;
+        public Boolean WindowMinimized_SpaceCenter = false;
+        public Rect WindowPos_SpaceCenter = new Rect(3, 36, 300, 45);
+
+        public Boolean WindowVisible_TrackingStation = false;
+        public Boolean WindowMinimized_TrackingStation = false;
+        public Rect WindowPos_TrackingStation = new Rect(202, 45, 300, 45);
+
         public Rect IconPos;
+        public Rect IconPos_SpaceCenter;
+        public Boolean IconShow_SpaceCenter = true;
+        public Rect IconPos_TrackingStation;
+        public Boolean IconShow_TrackingStation = true;
 
         public int BehaviourChecksPerSec = 10;
         public int BehaviourChecksPerSec_Custom = 40;
@@ -123,7 +135,7 @@ namespace KerbalAlarmClock
         public String LoadManNode = "";
         public string LoadVesselTarget = "";
         
-        public List<GameScenes> DrawScenes = new List<GameScenes> { GameScenes.FLIGHT };
+        public List<GameScenes> DrawScenes = new List<GameScenes> { GameScenes.FLIGHT,GameScenes.SPACECENTER,GameScenes.TRACKSTATION };
         public List<GameScenes> BehaviourScenes = new List<GameScenes> { GameScenes.FLIGHT };
         public List<VesselType> VesselTypesForSOI = new List<VesselType>() { VesselType.Base, VesselType.Lander, VesselType.Probe, VesselType.Ship, VesselType.Station };
         public List<Orbit.PatchTransitionType> SOITransitions = new List<Orbit.PatchTransitionType> { Orbit.PatchTransitionType.ENCOUNTER, Orbit.PatchTransitionType.ESCAPE };
@@ -152,13 +164,28 @@ namespace KerbalAlarmClock
                 catch (Exception) { this.VersionCheckDate_Success = new DateTime(); }
                 
                 this.VersionWeb = configfile.GetValue("VersionWeb", "");
-				
-				this.WindowVisible = configfile.GetValue("WindowVisible", false);
+
+                this.WindowVisible = configfile.GetValue("WindowVisible", false);
                 this.WindowMinimized = configfile.GetValue("WindowMinimized", false);
-                this.WindowPos = configfile.GetValue<Rect>("WindowPos", new Rect(3,55,300, 45));
+                this.WindowPos = configfile.GetValue<Rect>("WindowPos", new Rect(3, 55, 300, 45));
+
+                this.WindowVisible_SpaceCenter = configfile.GetValue("WindowVisible_SpaceCenter", false);
+                this.WindowMinimized_SpaceCenter = configfile.GetValue("WindowMinimized_SpaceCenter", false);
+                this.WindowPos_SpaceCenter = configfile.GetValue<Rect>("WindowPos_SpaceCenter", new Rect(3, 36, 300, 45));
+
+                this.WindowVisible_TrackingStation = configfile.GetValue("WindowVisible_TrackingStation", false);
+                this.WindowMinimized_TrackingStation = configfile.GetValue("WindowMinimized_TrackingStation", false);
+                this.WindowPos_TrackingStation = configfile.GetValue<Rect>("WindowPos_TrackingStation", new Rect(202, 45, 300, 45));
 
                 this.IconPos = configfile.GetValue<Rect>("IconPos", new Rect(152, 0, 32, 32));
                 this.IconPos.height = 32; this.IconPos.width = 32;
+                this.IconPos_SpaceCenter = configfile.GetValue<Rect>("IconPos_SpaceCenter", new Rect(3, 3, 32, 32));
+                this.IconPos_SpaceCenter.height = 32; this.IconPos_TrackingStation.width = 32;
+                this.IconPos_TrackingStation = configfile.GetValue<Rect>("IconPos_TrackingStation", new Rect(202, 0, 32, 32));
+                this.IconPos_TrackingStation.height = 32; this.IconPos_TrackingStation.width = 32;
+
+                this.IconShow_SpaceCenter = configfile.GetValue("IconShow_SpaceCenter", true);
+                this.IconShow_TrackingStation = configfile.GetValue("IconShow_TrackingStation", true);
 
                 this.BehaviourChecksPerSec = configfile.GetValue("BehaviourChecksPerSec", 10);
                 this.BehaviourChecksPerSec_Custom = configfile.GetValue("BehaviourChecksPerSecCustom",40);
@@ -172,10 +199,10 @@ namespace KerbalAlarmClock
                 this.ShowEarthTime = configfile.GetValue("ShowEarthTime", false);
                 this.HideOnPause = configfile.GetValue("HideOnPause", true);
                 String strTimeFormat = configfile.GetValue("TimeFormat", "KSPString");
-                KACWorker.DebugLogFormatted("{0}",strTimeFormat);
+                //KACWorker.DebugLogFormatted("{0}",strTimeFormat);
                 this.TimeFormat = (KACTime.PrintTimeFormat)Enum.Parse(typeof(KACTime.PrintTimeFormat), strTimeFormat);
                 //this.TimeFormat = configfile.GetValue<KACTime.PrintTimeFormat>("TimeFormat", KACTime.PrintTimeFormat.KSPString);
-                KACWorker.DebugLogFormatted("{0}",this.TimeFormat.ToString());
+                //KACWorker.DebugLogFormatted("{0}",this.TimeFormat.ToString());
                 if (configfile.GetValue<bool>("TimeAsUT", false) == true)
                 {
                     KACWorker.DebugLogFormatted("Forcing New Format");
@@ -305,7 +332,19 @@ namespace KerbalAlarmClock
             configfile.SetValue("WindowMinimized", this.WindowMinimized);
             configfile.SetValue("WindowPos", this.WindowPos);
 
+            configfile.SetValue("WindowVisible_SpaceCenter", this.WindowVisible_SpaceCenter);
+            configfile.SetValue("WindowMinimized_SpaceCenter", this.WindowMinimized_SpaceCenter);
+            configfile.SetValue("WindowPos_SpaceCenter", this.WindowPos_SpaceCenter);
+
+            configfile.SetValue("WindowVisible_TrackingStation", this.WindowVisible_TrackingStation);
+            configfile.SetValue("WindowMinimized_TrackingStation", this.WindowMinimized_TrackingStation);
+            configfile.SetValue("WindowPos_TrackingStation", this.WindowPos_TrackingStation);
+
             configfile.SetValue("IconPos", this.IconPos);
+            configfile.SetValue("IconPos_SpaceCenter", this.IconPos_SpaceCenter);
+            configfile.SetValue("IconShow_SpaceCenter", this.IconShow_SpaceCenter);
+            configfile.SetValue("IconPos_TrackingStation", this.IconPos_TrackingStation);
+            configfile.SetValue("IconShow_TrackingStation", this.IconShow_TrackingStation);
 
             configfile.SetValue("BehaviourChecksPerSec", this.BehaviourChecksPerSec);
 
@@ -384,8 +423,6 @@ namespace KerbalAlarmClock
             }
             //And close the file
             tw.Close();
-
-            KACWorker.DebugLogFormatted("Saved Alarms");
         }
 
         public Boolean getLatestVersion()

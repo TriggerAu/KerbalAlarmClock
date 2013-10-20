@@ -64,8 +64,8 @@ namespace KerbalAlarmClock
 
             //String[] strSettingsTabs = new String[] { "All Alarms", "Specific Types", "Sounds", "About" };
             String[] strSettingsTabs = new String[] { "All Alarms","Specific Types","About" };
-            GUIContent[] contSettingsTabs = new GUIContent[] { new GUIContent("All Alarms"), new GUIContent("Specific Types"), new GUIContent("About") };
-            GUIContent[] contSettingsTabsNewVersion = new GUIContent[] { new GUIContent("All Alarms"), new GUIContent("Specific Types"), new GUIContent(" About",KACResources.btnSettingsAttention) };
+            GUIContent[] contSettingsTabs = new GUIContent[] { new GUIContent("All Alarms"), new GUIContent("Specific Types"), new GUIContent("Visibility"), new GUIContent("About") };
+            GUIContent[] contSettingsTabsNewVersion = new GUIContent[] { new GUIContent("All Alarms"), new GUIContent("Specific Types"), new GUIContent("Visibility"), new GUIContent(" About", KACResources.btnSettingsAttention) };
 
             GUIContent[] conTabstoShow = contSettingsTabs;
             if (Settings.VersionAvailable) conTabstoShow = contSettingsTabsNewVersion;
@@ -82,6 +82,10 @@ namespace KerbalAlarmClock
                     intSettingsHeight = 374;
                     break;
                 case 2:
+                    WindowLayout_SettingsIcons();
+                    intSettingsHeight = 406;
+                    break;
+                case 3:
                     WindowLayout_SettingsAbout();
                     intSettingsHeight = 306;
                     break;
@@ -146,7 +150,7 @@ namespace KerbalAlarmClock
                     case 3: Settings.BehaviourChecksPerSec = 100; break;
                     default: Settings.BehaviourChecksPerSec = Settings.BehaviourChecksPerSec_Custom; break;
                 }
-                parentBehaviour.SetupRepeatingFunction_BehaviourUpdate(Settings.BehaviourChecksPerSec);
+                parentBehaviour.SetupRepeatingFunction_BehaviourUpdate( Settings.BehaviourChecksPerSec);
                 Settings.SaveConfig();
             }
 
@@ -252,6 +256,55 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
         }
 
+
+        private void WindowLayout_SettingsIcons()
+        {
+            Boolean blnTemp = false;
+            DrawIconPos("Flight Mode", false, ref blnTemp, ref Settings.IconPos,ref Settings.WindowVisible);
+
+            DrawIconPos("Space Center", true, ref Settings.IconShow_SpaceCenter, ref Settings.IconPos_SpaceCenter, ref Settings.WindowVisible_SpaceCenter);
+
+            DrawIconPos("Tracking Station", true, ref Settings.IconShow_TrackingStation, ref Settings.IconPos_TrackingStation,ref Settings.WindowVisible_TrackingStation);
+
+        }
+
+        private void DrawIconPos(String Title,Boolean Toggleable, ref Boolean IconShow,ref Rect IconPos,ref Boolean WindowVisible)
+        {
+            GUILayout.Label(Title, KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            //Checkbox to show/hide
+            if (Toggleable)
+            {
+                if (DrawCheckbox(ref IconShow, new GUIContent("Alarm Clock Visible", "Show the Kerbal Alarm Clock Icon in this Game Mode")))
+                {
+                    WindowVisible = IconShow;
+                    Settings.Save();
+                }
+            }
+            GUILayout.Label("Icon Position",KACResources.styleAddSectionHeading);
+            //Now two columns
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Horizontal: ", KACResources.styleAddHeading);
+            GUILayout.Label(string.Format("{0}", Math.Floor((IconPos.xMin)).ToString()), KACResources.styleAddXferName, GUILayout.Width(50));
+            GUILayout.EndHorizontal(); 
+            IconPos.xMin = Convert.ToInt32(Math.Floor(GUILayout.HorizontalSlider(IconPos.xMin, 0, Screen.width - 32)));
+            IconPos.xMax = IconPos.xMin + 32;
+            GUILayout.EndVertical();
+            GUILayout.BeginVertical();
+            GUILayout.BeginHorizontal(); 
+            GUILayout.Label("Vertical: ", KACResources.styleAddHeading);
+            GUILayout.Label(string.Format("{0}", Math.Floor((IconPos.yMin)).ToString()), KACResources.styleAddXferName, GUILayout.Width(50));
+            GUILayout.EndHorizontal(); 
+            IconPos.yMin = Convert.ToInt32(Math.Floor(GUILayout.HorizontalSlider(IconPos.yMin, 0, Screen.height - 32)));
+            IconPos.yMax = IconPos.yMin + 32;
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
+
+        }
 
         private void WindowLayout_SettingsAbout()
         {

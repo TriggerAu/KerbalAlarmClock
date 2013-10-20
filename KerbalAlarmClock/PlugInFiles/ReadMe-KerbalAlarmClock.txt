@@ -28,6 +28,16 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.6.1.0		-	KSP Version: 0.22
+- Recompiled it for 0.22
+- Added Crew Alarms (track Kerbal rather than Vessel)
+- Added Distance Target Alarms - distance from target vessel or altitude above planet
+- Added Launch Rendezvous Alarm (under Ascending/Descending Node for Landed craft) - MechJeb2 code - thanks r4m0n
+- Allow restoration of Nodes that you have passed (useful for interplanetary burns)
+- Added missing Dres Transfer Model data - thanks Voneiden
+- Added view only version of Alarm clock to both Space Center and Tracking Station
+- Added options to hide/move the icon for all three visible scenes
+
 Version 2.5.0.0		-	KSP Version: 0.21.1
 - Recompiled it for 0.21
 - Fixed some issues with Hyperbolic orbits and AN/DN Nodes

@@ -83,6 +83,10 @@ namespace KerbalAlarmClock
 
         public KACAlarmList Alarms = new KACAlarmList();
 
+        public Boolean AllowJumpFromViewOnly = true;
+        public Boolean BackupSaves = true;
+        public int BackupSavesToKeep = 20;
+
         public String AlarmListMaxAlarms="10";
         public int AlarmListMaxAlarmsInt
         {
@@ -189,6 +193,11 @@ namespace KerbalAlarmClock
 
                 this.BehaviourChecksPerSec = configfile.GetValue("BehaviourChecksPerSec", 10);
                 this.BehaviourChecksPerSec_Custom = configfile.GetValue("BehaviourChecksPerSecCustom",40);
+
+                this.BackupSaves = configfile.GetValue("BackupSaves",true);
+                this.BackupSavesToKeep = configfile.GetValue("BackupSavesToKeep",20);
+
+                this.AllowJumpFromViewOnly = configfile.GetValue("AllowJumpFromViewOnly", true);
 
                 this.AlarmListMaxAlarms = configfile.GetValue("AlarmListMaxAlarms", "10");
                 this.AlarmDefaultAction = configfile.GetValue<int>("AlarmDefaultAction", 1);
@@ -347,6 +356,11 @@ namespace KerbalAlarmClock
             configfile.SetValue("IconShow_TrackingStation", this.IconShow_TrackingStation);
 
             configfile.SetValue("BehaviourChecksPerSec", this.BehaviourChecksPerSec);
+
+            configfile.SetValue("BackupSaves", this.BackupSaves);
+            configfile.SetValue("BackupSavesToKeep", this.BackupSavesToKeep);
+
+            configfile.SetValue("AllowJumpFromViewOnly", this.AllowJumpFromViewOnly);
 
             configfile.SetValue("AlarmListMaxAlarms", this.AlarmListMaxAlarms);
             configfile.SetValue("AlarmPosition", this.AlarmPosition);

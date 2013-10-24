@@ -128,8 +128,8 @@ namespace KerbalAlarmClock
             int intNoOfActionButtons = 0;
             //if the alarm has a vessel ID/Kerbal associated
             if (StoredVesselOrCrewExists(tmpAlarm.VesselID,tmpAlarm.TypeOfAlarm))
-                //TODO:Gotta fix the jump part
-                if (!parentBehaviour.ViewAlarmsOnly)
+                //option to allow jumping from view only ships
+                if (!parentBehaviour.ViewAlarmsOnly || Settings.AllowJumpFromViewOnly)
                     intNoOfActionButtons = DrawAlarmActionButtons(tmpAlarm);
 
             //Work out the text
@@ -302,8 +302,8 @@ namespace KerbalAlarmClock
                 int intNoOfActionButtons = 0;
                 //if the alarm has a vessel ID/Kerbal associated
                 if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
-                    //TODO:Gotta fix the jump part
-                    if (!parentBehaviour.ViewAlarmsOnly)
+                    //option to allow jumping from view only ships
+                    if (!parentBehaviour.ViewAlarmsOnly || Settings.AllowJumpFromViewOnly)
                         intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit);
 
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
@@ -339,8 +339,8 @@ namespace KerbalAlarmClock
                 int intNoOfActionButtons=0;
                 //if the alarm has a vessel ID/Kerbal associated
                 if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
-                    //TODO:Gotta fix the jump part
-                    if (!parentBehaviour.ViewAlarmsOnly)
+                    //option to allow jumping from view only ships
+                    if (!parentBehaviour.ViewAlarmsOnly || Settings.AllowJumpFromViewOnly)
                         intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit);
 
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
@@ -477,7 +477,10 @@ namespace KerbalAlarmClock
         {
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
-                FlightGlobals.SetActiveVessel(vTarget);
+                if (KACUtils.BackupSaves())
+                    FlightGlobals.SetActiveVessel(vTarget);
+                else 
+                    DebugLogFormatted("Not Switching - unable to backup saves");
             }
             else
             {
@@ -488,10 +491,23 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
-                    //Save it to get the time updated then over you go
-                    //HighLogic.CurrentGame.Save(HighLogic.CurrentGame);
-                    GamePersistence.SaveGame(HighLogic.CurrentGame,"persistent",HighLogic.SaveFolder , SaveMode.OVERWRITE);
-                    FlightDriver.StartAndFocusVessel(HighLogic.CurrentGame, intVesselidx);
+                    try
+                    {
+                        if (KACUtils.BackupSaves())
+                        {
+                            String strret = GamePersistence.SaveGame("KACJumpToShip", HighLogic.SaveFolder, SaveMode.OVERWRITE);
+                            Game tmpGame = GamePersistence.LoadGame(strret, HighLogic.SaveFolder, false, false);
+                            FlightDriver.StartAndFocusVessel(tmpGame, intVesselidx);
+                        }
+                        else
+                        {
+                            DebugLogFormatted("Not Switching - unable to backup saves");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        DebugLogFormatted("Unable to save/load for jump to ship: {0}", ex.Message);
+                    }
                 }
             }
         }

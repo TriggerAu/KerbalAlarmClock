@@ -155,7 +155,6 @@ if exist "C:\~Games\KSP_Win_PlugInTest\KSP.exe" (
 
 rem Need to copy all bits to plugin test game
 rem copy "$(TargetPath)" %25DestPath%25
-
 rem and then run the game
 rem %25Binary%25
 

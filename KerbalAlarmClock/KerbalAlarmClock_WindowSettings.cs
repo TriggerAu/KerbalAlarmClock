@@ -75,7 +75,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 424;
+                    intSettingsHeight = 542;
                     break;
                 case 1:
                     WindowLayout_SettingsSpecifics();
@@ -129,10 +129,28 @@ namespace KerbalAlarmClock
             }
             GUILayout.EndHorizontal();
 
+            if (DrawCheckbox(ref Settings.AllowJumpFromViewOnly, "Allow Ship Jump in Space Center and Tracking Station"))
+                Settings.Save();
+
             //if (DrawCheckbox(ref Settings.TimeAsUT, "Display Times as UT (instead of Date/Time)"))
             //    Settings.Save();
 
             GUILayout.EndVertical();
+
+            GUIContent Saveheader = new GUIContent("Save File Backups", "This option will save your persistent and quicksave files prior to switching ships using the KAC Jump buttons");
+            GUILayout.Label(Saveheader, KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas,GUILayout.Height(64));
+            if (DrawCheckbox(ref Settings.BackupSaves, "Backup Saves on Ship Jump"))
+                Settings.Save();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Backups to Keep:", KACResources.styleAddHeading, GUILayout.Width(110));
+            GUILayout.Label(Settings.BackupSavesToKeep.ToString(), KACResources.styleAddXferName, GUILayout.Width(25));
+            Settings.BackupSavesToKeep = (int)Math.Floor(GUILayout.HorizontalSlider((float)Settings.BackupSavesToKeep, 3, 50));
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
+
 
             GUILayout.Label("Time Warp/Math Checks", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);

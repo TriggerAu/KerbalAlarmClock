@@ -28,6 +28,11 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.6.2.0		-	KSP Version: 0.22
+- Added functionality to allow you to jump to a ship from space center and tracking station view lists
+- Added functionality to backup save files before switching ships using KAC
+- Both these features are configurable
+
 Version 2.6.1.0		-	KSP Version: 0.22
 - Recompiled it for 0.22
 - Added Crew Alarms (track Kerbal rather than Vessel)

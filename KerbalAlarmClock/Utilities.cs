@@ -12,8 +12,83 @@ namespace KerbalAlarmClock
 {
     public static class KACUtils
     {
+        //public static String AppPath = KSPUtil.ApplicationRootPath.Replace("\\", "/");
+        //public static String PlugInPath = AppPath + "PluginData/KerbalAlarmClock/";
         public static String AppPath = KSPUtil.ApplicationRootPath.Replace("\\", "/");
-        public static String PlugInPath = AppPath + "PluginData/KerbalAlarmClock/";
+        public static String SavePath;
+
+        public static Boolean BackupSaves()
+        {
+            if (!KerbalAlarmClock.Settings.BackupSaves)
+            {
+                return true;
+            }
+
+            Boolean blnReturn=false;
+            KACWorker.DebugLogFormatted("Backing up saves");
+
+            if (!System.IO.Directory.Exists(SavePath))
+            {
+                KACWorker.DebugLogFormatted("Saves Path not found: {0}");
+            }
+            else
+            {
+                if (!System.IO.File.Exists(String.Format("{0}\\persistent.sfs", SavePath)))
+                {
+                    KACWorker.DebugLogFormatted("Persistent.sfs file not found: {0}\\persistent.sfs", SavePath);
+                }
+                else
+                {
+                    try
+                    {
+                        System.IO.File.Copy(String.Format("{0}\\persistent.sfs", SavePath),
+                                            String.Format("{0}\\KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now),
+                                            true);
+                        KACWorker.DebugLogFormatted("Backed Up Persistent.sfs as: {0}\\KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now);
+                        
+                        //Now go for the quicksave
+                        if (System.IO.File.Exists(String.Format("{0}\\quicksave.sfs", SavePath)))
+                        {
+                            System.IO.File.Copy(String.Format("{0}\\quicksave.sfs", SavePath),
+                                                String.Format("{0}\\KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now),
+                                                true);
+                            KACWorker.DebugLogFormatted("Backed Up quicksave.sfs as: {0}\\KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now);
+                        }                        
+                        blnReturn = true;
+
+                        PurgeOldBackups();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        KACWorker.DebugLogFormatted("Unable to backup: {0}\\persistent.sfs\r\n\t{1}", SavePath,ex.Message);
+                    }
+                }
+            }
+
+            return blnReturn;
+        }
+
+        private static void PurgeOldBackups()
+        {
+            PurgeOldBackups("persistent.sfs");
+            PurgeOldBackups("quicksave.sfs");
+        }
+
+        private static void PurgeOldBackups(String OriginalName)
+        {
+            //Now delete any old ones greater than the list to keep
+            List<System.IO.FileInfo> SaveBackups = new System.IO.DirectoryInfo(SavePath).GetFiles(string.Format("KACBACKUP*{0}",OriginalName)).ToList<System.IO.FileInfo>();
+            KACWorker.DebugLogFormatted("{0} KACBackup...{1} Saves found", SaveBackups.Count,OriginalName);
+
+            List<System.IO.FileInfo> SaveBackupsToDelete = SaveBackups.OrderByDescending(fi => fi.CreationTime).Skip(KerbalAlarmClock.Settings.BackupSavesToKeep).ToList<System.IO.FileInfo>();
+            KACWorker.DebugLogFormatted("{0} KACBackup...{1} Saves to purge", SaveBackupsToDelete.Count, OriginalName);
+            for (int i = SaveBackupsToDelete.Count - 1; i >= 0; i--)
+            {
+                KACWorker.DebugLogFormatted("\tDeleting {0}", SaveBackupsToDelete[i].Name);
+                SaveBackupsToDelete[i].Delete();
+            }
+        }
 
         //generic function
         public static String PipeSepVariables(params object[] vars)

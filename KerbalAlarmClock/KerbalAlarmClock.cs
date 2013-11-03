@@ -60,7 +60,7 @@ namespace KerbalAlarmClock
         private Vessel LastGameVessel;
 
         //Worker and Settings objects
-        private KACWorker WorkerObjectInstance;
+        public static KACWorker WorkerObjectInstance;
         public static float UpdateInterval = 0.1F;
 
         //Constructor to set KACWorker parent object to this and access to the settings
@@ -351,6 +351,7 @@ namespace KerbalAlarmClock
             _WindowSettingsID = rnd.Next(1000, 2000000);
             _WindowEditID = rnd.Next(1000, 2000000);
             _WindowEarthAlarmID = rnd.Next(1000, 2000000);
+            _WindowBackupFailedID = rnd.Next(1000, 2000000);
         }
         #endregion
 
@@ -375,7 +376,7 @@ namespace KerbalAlarmClock
                 if (KACWorkerGameState.ChangedVessel)
                 {
                     String strVesselName = "No Vessel";
-                        if (KACWorkerGameState.LastVessel!=null) strVesselName=KACWorkerGameState.LastVessel.vesselName;
+                    if (KACWorkerGameState.LastVessel!=null) strVesselName=KACWorkerGameState.LastVessel.vesselName;
                     DebugLogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
                 }
 
@@ -475,6 +476,13 @@ namespace KerbalAlarmClock
                     }
                 }
 
+                //Are we adding Man Node Alarms
+                if (Settings.AlarmAddManAuto)
+                {
+                    MonitorManNodeOnPath();
+                }
+
+
                 //Periodically save the alarms list if any of the recalcs are on and the current vessel has alarms of that type
                 //if its one in twenty then resave - every 5 secs
                 intPeriodicSaveCounter++;
@@ -489,6 +497,8 @@ namespace KerbalAlarmClock
                     else if (Settings.AlarmSOIRecalc && Settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
                         blnPeriodicSave = true;
                     else if (Settings.AlarmNodeRecalc && Settings.Alarms.FirstOrDefault(a => TypesToRecalc.Contains(a.TypeOfAlarm) && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
+                        blnPeriodicSave = true;
+                    else if (Settings.AlarmAddManAuto && Settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.ManeuverAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
                         blnPeriodicSave = true;
 
                     if (blnPeriodicSave)
@@ -524,6 +534,10 @@ namespace KerbalAlarmClock
             String strSOIAlarmName = "";
             String strSOIAlarmNotes = "";
             //double timeSOIAlarm = 0;
+
+            if (Settings.AlarmAddSOIAuto_ExcludeEVA && KACWorkerGameState.CurrentVessel.vesselType == VesselType.EVA)
+                return;
+
             if (Settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
             {
                 timeSOIChange = KACWorkerGameState.CurrentVessel.orbit.UTsoi;
@@ -745,6 +759,44 @@ namespace KerbalAlarmClock
                             lstVessels[tmpVessel.id.ToString()].SOIName = tmpVessel.mainBody.bodyName;
                         }
                     }
+                }
+            }
+        }
+
+
+        //TODO: DO WE NEED AN ManeuevrAuto alarm type?
+        private void MonitorManNodeOnPath()
+        {
+            //is there an alarm
+            KACAlarm tmpAlarm = Settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.ManeuverAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString());
+
+            //is there an alarm and no man node?
+            if(Settings.AlarmAddManAuto_andRemove && !KACWorkerGameState.ManeuverNodeExists)
+            {
+                Settings.Alarms.Remove(tmpAlarm);
+            }
+            else if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
+            {
+                KACTime nodeAutoAlarm;
+                nodeAutoAlarm = new KACTime(KACWorkerGameState.ManeuverNodeFuture.UT - Settings.AlarmAddManAutoMargin);
+                
+                List<ManeuverNode> manNodesToStore = KACWorkerGameState.ManeuverNodesFuture;
+
+                String strManNodeAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
+                String strManNodeAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Maneuver Node";
+
+                //Are we updating an alarm
+                if (tmpAlarm != null)
+                {
+                    tmpAlarm.AlarmTime.UT = nodeAutoAlarm.UT;
+                    tmpAlarm.ManNodes = manNodesToStore;
+                }
+                else
+                {
+                    //or are we setting a new one
+                    Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, Settings.AlarmAddManAutoMargin, KACAlarm.AlarmType.ManeuverAuto,
+                        (Settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.KillWarp), (Settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.PauseGame), manNodesToStore));
+                    Settings.Save();
                 }
             }
         }

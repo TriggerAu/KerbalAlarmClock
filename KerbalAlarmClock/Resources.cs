@@ -41,7 +41,7 @@ namespace KerbalAlarmClock
         public static Texture2D iconDN = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconXFer = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconClosest = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconlaunchRendezvous = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconLaunchRendezvous = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconCrew = new Texture2D(18, 14, TextureFormat.ARGB32, false);
 
         public static Texture2D iconNone = new Texture2D(18, 14, TextureFormat.ARGB32, false);
@@ -125,7 +125,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageIntoTexture(ref iconXFer, "img_listiconXfer.png");
                 KACUtils.LoadImageIntoTexture(ref iconClosest, "img_listiconClosest.png");
                 KACUtils.LoadImageIntoTexture(ref iconCrew, "img_listiconCrew.png");
-                KACUtils.LoadImageIntoTexture(ref iconlaunchRendezvous, "img_listiconlaunchRendezvous.png");
+                KACUtils.LoadImageIntoTexture(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.png");
                 KACUtils.LoadImageIntoTexture(ref iconWarpList100, "img_listiconWarpList_100.png");
                 KACUtils.LoadImageIntoTexture(ref iconWarpList080, "img_listiconWarpList_080.png");
                 KACUtils.LoadImageIntoTexture(ref iconWarpList060, "img_listiconWarpList_060.png");

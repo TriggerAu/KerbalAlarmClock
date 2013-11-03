@@ -196,8 +196,6 @@ namespace KerbalAlarmClock
         }
         #endregion
 
-
-
         /// <summary>
         /// Draw the icon on the screen
         /// </summary>
@@ -280,6 +278,13 @@ namespace KerbalAlarmClock
         private Boolean _ShowEarthAlarm = false;
         private static int _WindowEarthAlarmID = 0;
         private static Rect _WindowEarthAlarmRect;
+
+        //Earth Alarm Window
+        private Boolean _ShowBackupFailedMessage = false;
+        private DateTime _ShowBackupFailedMessageAt = DateTime.Now;
+        private int _ShowBackupFailedMessageForSecs=10;
+        private static int _WindowBackupFailedID = 0;
+        private static Rect _WindowBackupFailedRect;
 
         //Debug Window
         private Boolean _ShowDebugPane = false;
@@ -395,6 +400,13 @@ namespace KerbalAlarmClock
                 _WindowEditRect = GUILayout.Window(_WindowEditID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, intPaneWindowWidth, intAlarmEditHeight), FillEditWindow, "Editing Alarm", KACResources.styleWindow);
             }
 
+            if (_ShowBackupFailedMessage)
+            {
+                _WindowBackupFailedRect = GUILayout.Window(_WindowBackupFailedID, _WindowBackupFailedRect, FillBackupFailedWindow, "Save Backup Failed", KACResources.styleWindow);
+                if (DateTime.Now.Subtract(_ShowBackupFailedMessageAt).Seconds > _ShowBackupFailedMessageForSecs)
+                    ResetBackupFailedWindow();
+            }
+
             DrawToolTip();
         }
 
@@ -436,11 +448,25 @@ namespace KerbalAlarmClock
                         {
                             SOITooltip += "-plus catchall";
                         }
+                        if (Settings.AlarmAddSOIAuto_ExcludeEVA)
+                        {
+                            SOITooltip += "-excluding EVA";
+                        }
                         if (Settings.AlarmOnSOIChange_Action > 1) SOITooltip += " (Pause Action)";
                         else if (Settings.AlarmOnSOIChange_Action > 0) SOITooltip += " (Warp Kill Action)";
                     }
                     GUIContent SOIIcon = new GUIContent(KACResources.iconSOI, SOITooltip);
                     GUILayout.Label(SOIIcon, KACResources.styleSOIIndicator);
+                }
+
+                if (Settings.AlarmAddManAuto)
+                {
+                    String strTooltip = "Man Node Auto Add Enabled";
+                    if (Settings.AlarmAddManAuto_andRemove)
+                        strTooltip += " (and Removal)";
+
+                    GUIContent ManIcon = new GUIContent(KACResources.iconMNode, strTooltip);
+                    GUILayout.Label(ManIcon, KACResources.styleFlagIcon);
                 }
             }
 
@@ -651,6 +677,7 @@ namespace KerbalAlarmClock
                     GUILayout.Label(KACResources.iconNone, KACResources.styleAlarmIcon);
                     break;
                 case KACAlarm.AlarmType.Maneuver:
+                case KACAlarm.AlarmType.ManeuverAuto:
                     GUILayout.Label(KACResources.iconMNode, KACResources.styleAlarmIcon);
                     break;
                 case KACAlarm.AlarmType.SOIChange:
@@ -674,7 +701,7 @@ namespace KerbalAlarmClock
                     GUILayout.Label(KACResources.iconDN, KACResources.styleAlarmIcon);
                     break;
                 case KACAlarm.AlarmType.LaunchRendevous:
-                    GUILayout.Label(KACResources.iconlaunchRendezvous, KACResources.styleAlarmIcon);
+                    GUILayout.Label(KACResources.iconLaunchRendezvous, KACResources.styleAlarmIcon);
                     break;
                 case KACAlarm.AlarmType.Closest:
                     GUILayout.Label(KACResources.iconClosest, KACResources.styleAlarmIcon);

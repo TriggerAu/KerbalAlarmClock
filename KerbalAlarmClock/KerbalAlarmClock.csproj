@@ -89,7 +89,7 @@
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeAp.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeApPe.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeClosest.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_ButtonTypeCrew.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeCrew.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeDN.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeMNode.png" />
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypePe.png" />

@@ -51,7 +51,8 @@ namespace KerbalAlarmClock
                                 case KACAlarm.AlarmType.Raw:
                                     strAlarmText+= " - Manual";break;
                                 case KACAlarm.AlarmType.Maneuver:
-                                    strAlarmText+= " - Maneuver Node";break;
+                                case KACAlarm.AlarmType.ManeuverAuto:
+                                    strAlarmText += " - Maneuver Node"; break;
                                 case KACAlarm.AlarmType.SOIChange:
                                 case KACAlarm.AlarmType.SOIChangeAuto:
                                     strAlarmText += " - SOI Change"; break;
@@ -432,11 +433,12 @@ namespace KerbalAlarmClock
                     {
                         Vessel tmpVessel = FindVesselForAlarm(tmpAlarm);
 
-                        JumpToVessel(tmpVessel);
-                       
-                        //Set the Node in memory to restore once the ship change has completed
-                        Settings.LoadManNode = KACAlarm.ManNodeSerializeList(tmpAlarm.ManNodes);
-                        Settings.SaveLoadObjects();
+                        if (JumpToVessel(tmpVessel))
+                        {
+                            //Set the Node in memory to restore once the ship change has completed
+                            Settings.LoadManNode = KACAlarm.ManNodeSerializeList(tmpAlarm.ManNodes);
+                            Settings.SaveLoadObjects();
+                        }
                     }
                 }
 
@@ -449,11 +451,12 @@ namespace KerbalAlarmClock
                     {
                         Vessel tmpVessel = FindVesselForAlarm(tmpAlarm);
 
-                        JumpToVessel(tmpVessel);
-                         
-                        //Set the Target in persistant file to restore once the ship change has completed...
-                        Settings.LoadVesselTarget = KACAlarm.TargetSerialize(tmpAlarm.TargetObject);
-                        Settings.SaveLoadObjects();
+                        if (JumpToVessel(tmpVessel))
+                        {
+                            //Set the Target in persistant file to restore once the ship change has completed...
+                            Settings.LoadVesselTarget = KACAlarm.TargetSerialize(tmpAlarm.TargetObject);
+                            Settings.SaveLoadObjects();
+                        }
                     }
                 }
                 
@@ -473,14 +476,19 @@ namespace KerbalAlarmClock
             return intReturnNoOfButtons;
         }
 
-        private static void JumpToVessel(Vessel vTarget)
+        private static Boolean JumpToVessel(Vessel vTarget)
         {
+            Boolean blnJumped = true;
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
-                if (KACUtils.BackupSaves())
+                if (KACUtils.BackupSaves() || !KerbalAlarmClock.Settings.CancelFlightModeJumpOnBackupFailure)
                     FlightGlobals.SetActiveVessel(vTarget);
                 else 
+                {
                     DebugLogFormatted("Not Switching - unable to backup saves");
+                    KerbalAlarmClock.WorkerObjectInstance.ShowBackupFailedWindow("Not Switching - unable to backup saves");
+                    blnJumped = false;
+                }
             }
             else
             {
@@ -488,6 +496,8 @@ namespace KerbalAlarmClock
                 if (intVesselidx < 0)
                 {
                     DebugLogFormatted("Couldn't find the index for the vessel {0}({1})", vTarget.vesselName, vTarget.id.ToString());
+                    KerbalAlarmClock.WorkerObjectInstance.ShowBackupFailedWindow("Not Switching - unable to find vessel index");
+                    blnJumped = false;
                 }
                 else
                 {
@@ -502,14 +512,19 @@ namespace KerbalAlarmClock
                         else
                         {
                             DebugLogFormatted("Not Switching - unable to backup saves");
+                            KerbalAlarmClock.WorkerObjectInstance.ShowBackupFailedWindow("Not Switching - unable to backup saves");
+                            blnJumped = false;
                         }
                     }
                     catch (Exception ex)
                     {
                         DebugLogFormatted("Unable to save/load for jump to ship: {0}", ex.Message);
+                        KerbalAlarmClock.WorkerObjectInstance.ShowBackupFailedWindow("Not Switching - failed in loading new position");
+                        blnJumped = false;
                     }
                 }
             }
+            return blnJumped;
         }
 
         private static Vessel FindVesselForAlarm(KACAlarm tmpAlarm)
@@ -545,5 +560,69 @@ namespace KerbalAlarmClock
             }
             return -1;
         }
+
+        #region "BackupFailed Message"
+        public void ShowBackupFailedWindow(String Message)
+        {
+            BackupFailedMessage = Message;
+            GUIContent contFailMessage = new GUIContent(BackupFailedMessage);
+            float minwidth = 0; float maxwidth = 0;
+            KACResources.styleAddHeading.CalcMinMaxWidth(contFailMessage, out minwidth, out maxwidth);
+
+            switch (KACWorkerGameState.CurrentGUIScene)
+            {
+                case GameScenes.SPACECENTER: 
+                    _WindowBackupFailedRect = new Rect((Screen.width - maxwidth - 20) , Screen.height - 90 - 37, maxwidth + 20, 90);
+                    break;
+                case GameScenes.TRACKSTATION: 
+                    _WindowBackupFailedRect = new Rect((Screen.width - maxwidth - 20) , Screen.height - 90, maxwidth + 20, 90);
+                    break;
+                default: 
+                    _WindowBackupFailedRect = new Rect((Screen.width - maxwidth - 20) , Screen.height - 90 - 122, maxwidth + 20, 90);
+                    break;
+            }
+
+            _ShowBackupFailedMessageAt=DateTime.Now;
+            _ShowBackupFailedMessage = true;
+        }
+
+
+        #region "Stuff for backupFailed dialog per scene"
+        public Rect ShowBackupFailedWindowPosByActiveScene
+        {
+            get
+            {
+                switch (KACWorkerGameState.CurrentGUIScene)
+                {
+                    case GameScenes.SPACECENTER: return Settings.WindowPos_SpaceCenter;
+                    case GameScenes.TRACKSTATION: return Settings.WindowPos_TrackingStation;
+                    default: return Settings.WindowPos;
+                }
+            }
+        }
+
+        #endregion
+
+        public void ResetBackupFailedWindow()
+        {
+            _ShowBackupFailedMessage = false;
+            BackupFailedMessage = "";
+        }
+
+        String BackupFailedMessage = "";
+        public void FillBackupFailedWindow(int windowID)
+        {
+            GUILayout.BeginVertical();
+
+            GUILayout.Label(new GUIContent(BackupFailedMessage), KACResources.styleAddHeading);
+
+            int SecsToClose = _ShowBackupFailedMessageForSecs - DateTime.Now.Subtract(_ShowBackupFailedMessageAt).Seconds;
+            if (GUILayout.Button(string.Format("Close ({0} secs)", SecsToClose)))
+                ResetBackupFailedWindow();
+
+            GUILayout.EndVertical();
+
+        }
+        #endregion
     }
 }

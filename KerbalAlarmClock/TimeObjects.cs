@@ -363,6 +363,7 @@ namespace KerbalAlarmClock
         {
             Raw,
             Maneuver,
+            ManeuverAuto,
             Apoapsis,
             Periapsis,
             AscendingNode,
@@ -382,6 +383,7 @@ namespace KerbalAlarmClock
         public static Dictionary<AlarmType, int> AlarmTypeToButton = new Dictionary<AlarmType, int>() {
             {AlarmType.Raw, 0},
             {AlarmType.Maneuver , 1},
+            {AlarmType.ManeuverAuto , 1},
             {AlarmType.Apoapsis , 2},
             {AlarmType.Periapsis , 2},
             {AlarmType.AscendingNode , 3},

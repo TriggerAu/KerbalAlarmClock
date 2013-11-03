@@ -16,10 +16,11 @@ namespace KerbalAlarmClock
 
         int intAlarmDefaultsBoxheight = 105;
         int intUpdateBoxheight = 116;
-        int intSOIBoxheight = 166;
+        int intSOIBoxheight = 214; //166;
 
         KACTimeStringArray timeDefaultMargin = new KACTimeStringArray();
         KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray();
+        KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray();
         private void NewSettingsWindow()
         {
             if (Settings.VersionAttentionFlag)
@@ -37,6 +38,7 @@ namespace KerbalAlarmClock
             //work out the correct kerbaltime values
             timeDefaultMargin.BuildFromUT(Settings.AlarmDefaultMargin);
             timeAutoSOIMargin.BuildFromUT(Settings.AlarmAutoSOIMargin);
+            timeAutoManNodeMargin.BuildFromUT(Settings.AlarmAddManAutoMargin);
 
             contChecksPerSecChoices =  new GUIContent[] { 
                                 new GUIContent("10"), 
@@ -75,11 +77,11 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 542;
+                    intSettingsHeight = 572;//542;
                     break;
                 case 1:
                     WindowLayout_SettingsSpecifics();
-                    intSettingsHeight = 374;
+                    intSettingsHeight = 600; //513;// 374;
                     break;
                 case 2:
                     WindowLayout_SettingsIcons();
@@ -141,6 +143,9 @@ namespace KerbalAlarmClock
             GUILayout.Label(Saveheader, KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas,GUILayout.Height(64));
             if (DrawCheckbox(ref Settings.BackupSaves, "Backup Saves on Ship Jump"))
+                Settings.Save();
+
+            if (DrawCheckbox(ref Settings.CancelFlightModeJumpOnBackupFailure, "Cancel Jump if Backup Fails (Flight Mode Only)"))
                 Settings.Save();
 
             GUILayout.BeginHorizontal();
@@ -228,9 +233,15 @@ namespace KerbalAlarmClock
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(20);
+                if (DrawCheckbox(ref Settings.AlarmAddSOIAuto_ExcludeEVA, new GUIContent("Exclude EVA Kerbals from Auto Alarm", "If an EVA'd Kerbal is on an SOI Path dont create an alarm for this scenario")))
+                    Settings.Save();
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(20);
                 if (DrawCheckbox(ref Settings.AlarmCatchSOIChange, new GUIContent("Throw alarm on background SOI Change", "This will throw an alarm whenever the name of the body a ship is orbiting changes.\r\n\r\nIt wont slow time as this approaches, just a big hammer in case we never looked at the flight path before it happened")))
                     Settings.Save();
                 GUILayout.EndHorizontal();
+                GUILayout.Label("SOI Alarm Settings", KACResources.styleAddSectionHeading);
                 if (DrawAlarmActionChoice(ref Settings.AlarmOnSOIChange_Action, "On Alarm:", 90))
                 {
                     Settings.Save();
@@ -272,6 +283,41 @@ namespace KerbalAlarmClock
                 }
             }
             GUILayout.EndVertical();
+
+
+            //Transfer Alarm Stuff
+            GUILayout.Label("Maneuver Alarms", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas,GUILayout.Height(155));
+            if (DrawCheckbox(ref Settings.AlarmAddManAuto, new GUIContent("Detect and Add Alarms for Maneuver Nodes", strAlarmDescMan)))
+            {
+                Settings.Save();
+                //if it was turned on then force a recalc regardless of the gap
+                //if (Settings.AlarmAddManAuto)
+                //{
+                //    //RecalcManNodeAlarms(true);
+                //}
+            }
+            if (Settings.AlarmAddManAuto)
+            {
+                if (DrawCheckbox(ref Settings.AlarmAddManAuto_andRemove, new GUIContent("Remove Auto Alarms if Maneuver Node Removed")))
+                {
+                    Settings.Save();
+                }
+                GUILayout.Label("Man Node Alarm Settings", KACResources.styleAddSectionHeading);
+                if (DrawAlarmActionChoice(ref Settings.AlarmAddManAuto_Action, "On Alarm:", 90))
+                {
+                    Settings.Save();
+                }
+                if (DrawTimeEntry(ref timeAutoManNodeMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Alarm Margin:", 100))
+                {
+                    //convert it and save it in the settings
+                    Settings.AlarmAddManAutoMargin = timeAutoManNodeMargin.UT;
+                    Settings.Save();
+                }
+
+            }
+            GUILayout.EndVertical();
+
         }
 
 

@@ -27,6 +27,7 @@ namespace KerbalAlarmClock
         private String strAlarmDescXfer = "This will check and recalculate the active transfer alarms for the correct phase angle - the math for these is based around circular orbits so the for any elliptical orbit these need to be recalculated over time.\r\n\r\nThe alarm will adjust until it is within {0} seconds of the target phase angle, at which point it just maintains the last captured time of the angle.\r\nI DO NOT RECOMMEND TURNING THIS OFF UNLESS THERE IS A MASSIVE PERFORMANCE GAIN";
         private String strAlarmDescNode = "This will check and recalculate the active orbit node alarms as the flight path changes. The alarm will adjust until it is within {0} seconds of the node.";
 
+        private string strAlarmDescMan = "Will create an alarm whenever a maneuver node is detected on the vessels flight plan";
 
         /// <summary>
         /// Code to reset the settings etc when the new button is hit

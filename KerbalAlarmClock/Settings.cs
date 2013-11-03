@@ -85,6 +85,7 @@ namespace KerbalAlarmClock
 
         public Boolean AllowJumpFromViewOnly = true;
         public Boolean BackupSaves = true;
+        public Boolean CancelFlightModeJumpOnBackupFailure = false;
         public int BackupSavesToKeep = 20;
 
         public String AlarmListMaxAlarms="10";
@@ -128,8 +129,15 @@ namespace KerbalAlarmClock
         public double AlarmAddSOIAutoThreshold = 180;
         public double AlarmAutoSOIMargin = 900;
 
+        public Boolean AlarmAddSOIAuto_ExcludeEVA = true;
+
         public Boolean AlarmSOIRecalc = false;
         public double AlarmSOIRecalcThreshold = 180;
+
+        public Boolean AlarmAddManAuto = false;
+        public Boolean AlarmAddManAuto_andRemove = false;
+        public double AlarmAddManAutoMargin = 180;
+        public int AlarmAddManAuto_Action = 1;
 
         //public double AlarmAddSOIMargin = 120;
         public Boolean AlarmCatchSOIChange = false;
@@ -196,7 +204,8 @@ namespace KerbalAlarmClock
 
                 this.BackupSaves = configfile.GetValue("BackupSaves",true);
                 this.BackupSavesToKeep = configfile.GetValue("BackupSavesToKeep",20);
-
+                this.CancelFlightModeJumpOnBackupFailure = configfile.GetValue("CancelFlightModeJumpOnBackupFailure", false);
+                
                 this.AllowJumpFromViewOnly = configfile.GetValue("AllowJumpFromViewOnly", true);
 
                 this.AlarmListMaxAlarms = configfile.GetValue("AlarmListMaxAlarms", "10");
@@ -233,11 +242,15 @@ namespace KerbalAlarmClock
                 this.AlarmAddSOIAutoThreshold = configfile.GetValue<Double>("AlarmAddSOIAutoThreshold", 180);
                 //this.AlarmAddSOIMargin = configfile.GetValue("AlarmAddSOIMargin", 120);
                 this.AlarmAutoSOIMargin = configfile.GetValue<Double>("AlarmAutoSOIMargin", 900);
+                this.AlarmAddSOIAuto_ExcludeEVA = configfile.GetValue("AlarmAddSOIAuto_ExcludeEVA", true);
                 this.AlarmCatchSOIChange = configfile.GetValue("AlarmOnSOIChange", false);
                 this.AlarmOnSOIChange_Action = configfile.GetValue("AlarmOnSOIChange_Action", 1);
 
                 this.AlarmSOIRecalc = configfile.GetValue("AlarmSOIRecalc", false);
                 this.AlarmSOIRecalcThreshold = configfile.GetValue<Double>("AlarmSOIRecalcThreshold", 180);
+
+                this.AlarmAddManAuto = configfile.GetValue("AlarmAddManAuto", false);
+                this.AlarmAddManAuto_andRemove = configfile.GetValue("AlarmAddManAuto_andRemove", false);
 
                 this.LoadManNode = configfile.GetValue("LoadManNode", "");
                 this.LoadVesselTarget = configfile.GetValue("LoadVesselTarget", "");
@@ -359,7 +372,8 @@ namespace KerbalAlarmClock
 
             configfile.SetValue("BackupSaves", this.BackupSaves);
             configfile.SetValue("BackupSavesToKeep", this.BackupSavesToKeep);
-
+            configfile.SetValue("CancelFlightModeJumpOnBackupFailure", this.CancelFlightModeJumpOnBackupFailure);
+            
             configfile.SetValue("AllowJumpFromViewOnly", this.AllowJumpFromViewOnly);
 
             configfile.SetValue("AlarmListMaxAlarms", this.AlarmListMaxAlarms);
@@ -384,11 +398,18 @@ namespace KerbalAlarmClock
             configfile.SetValue("AlarmAddSOIAutoThreshold", this.AlarmAddSOIAutoThreshold);
             //configfile.SetValue("AlarmAddSOIMargin", this.AlarmAddSOIMargin);
             configfile.SetValue("AlarmAutoSOIMargin", this.AlarmAutoSOIMargin);
+            configfile.SetValue("AlarmAddSOIAuto_ExcludeEVA", this.AlarmAddSOIAuto_ExcludeEVA);
             configfile.SetValue("AlarmOnSOIChange", this.AlarmCatchSOIChange);
             configfile.SetValue("AlarmOnSOIChange_Action", this.AlarmOnSOIChange_Action);
 
             configfile.SetValue("AlarmSOIRecalc", this.AlarmSOIRecalc);
             configfile.SetValue("AlarmSOIRecalcThreshold", this.AlarmSOIRecalcThreshold);
+
+            configfile.SetValue("AlarmAddManAuto", this.AlarmAddManAuto);
+            configfile.SetValue("AlarmAddManAuto_andRemove", this.AlarmAddManAuto_andRemove);
+            configfile.SetValue("AlarmAddManAutoMargin", this.AlarmAddManAutoMargin);
+            configfile.SetValue("AlarmAddManAuto_Action", this.AlarmAddManAuto_Action);
+
             configfile.save();
             KACWorker.DebugLogFormatted("Saved Config");
 

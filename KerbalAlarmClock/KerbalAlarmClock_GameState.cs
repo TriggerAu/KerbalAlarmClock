@@ -86,6 +86,23 @@ namespace KerbalAlarmClock
             }
         }
 
+        public static ManeuverNode ManeuverNodeFuture
+        {
+            get
+            {
+                return FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).FirstOrDefault(x => x.UT > KACWorkerGameState.CurrentTime.UT);
+            }
+        }
+
+        public static List<ManeuverNode> ManeuverNodesFuture
+        {
+            get
+            {
+                return ( FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).SkipWhile(x => x.UT < KACWorkerGameState.CurrentTime.UT).ToList<ManeuverNode>());
+            }
+        }
+
+
         public static Boolean SOIPointExists
         {
             get

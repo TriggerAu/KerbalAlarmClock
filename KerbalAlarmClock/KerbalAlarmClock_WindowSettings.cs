@@ -21,6 +21,7 @@ namespace KerbalAlarmClock
         KACTimeStringArray timeDefaultMargin = new KACTimeStringArray();
         KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray();
         KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray();
+        KACTimeStringArray timeAutoManNodeThreshold = new KACTimeStringArray();
         private void NewSettingsWindow()
         {
             if (Settings.VersionAttentionFlag)
@@ -39,6 +40,7 @@ namespace KerbalAlarmClock
             timeDefaultMargin.BuildFromUT(Settings.AlarmDefaultMargin);
             timeAutoSOIMargin.BuildFromUT(Settings.AlarmAutoSOIMargin);
             timeAutoManNodeMargin.BuildFromUT(Settings.AlarmAddManAutoMargin);
+            timeAutoManNodeThreshold.BuildFromUT(Settings.AlarmAddManAutoThreshold);
 
             contChecksPerSecChoices =  new GUIContent[] { 
                                 new GUIContent("10"), 
@@ -61,13 +63,28 @@ namespace KerbalAlarmClock
         {
             strAlarmDescSOI = String.Format(strAlarmDescSOI, Settings.AlarmAddSOIAutoThreshold.ToString());
             strAlarmDescXfer = String.Format(strAlarmDescXfer, Settings.AlarmXferRecalcThreshold.ToString());
+            strAlarmDescMan = String.Format(strAlarmDescMan, Settings.AlarmAddManAutoThreshold.ToString());
 
             GUILayout.BeginVertical();
 
             //String[] strSettingsTabs = new String[] { "All Alarms", "Specific Types", "Sounds", "About" };
             String[] strSettingsTabs = new String[] { "All Alarms","Specific Types","About" };
-            GUIContent[] contSettingsTabs = new GUIContent[] { new GUIContent("All Alarms"), new GUIContent("Specific Types"), new GUIContent("Visibility"), new GUIContent("About") };
-            GUIContent[] contSettingsTabsNewVersion = new GUIContent[] { new GUIContent("All Alarms"), new GUIContent("Specific Types"), new GUIContent("Visibility"), new GUIContent(" About", KACResources.btnSettingsAttention) };
+            GUIContent[] contSettingsTabs = new GUIContent[] 
+            { 
+                new GUIContent("All Alarms","Global Settings"), 
+                new GUIContent("Specifics-1","SOI, Ap, Pe, AN, DN Specific Settings" ), 
+                new GUIContent("Specifics-2","Man Node Specific Settings"), 
+                new GUIContent("Visibility", "Scene and Icon Settings"), 
+                new GUIContent("About") 
+            };
+            GUIContent[] contSettingsTabsNewVersion = new GUIContent[] 
+            { 
+                new GUIContent("All Alarms","Global Settings"), 
+                new GUIContent("Specifics-1","SOI, Ap, Pe, AN, DN Specific Settings" ), 
+                new GUIContent("Specifics-2","Man Node Specific Settings"), 
+                new GUIContent("Visibility", "Scene and Icon Settings"), 
+                new GUIContent(" About", KACResources.btnSettingsAttention) 
+            };
 
             GUIContent[] conTabstoShow = contSettingsTabs;
             if (Settings.VersionAvailable) conTabstoShow = contSettingsTabsNewVersion;
@@ -80,14 +97,18 @@ namespace KerbalAlarmClock
                     intSettingsHeight = 572;//542;
                     break;
                 case 1:
-                    WindowLayout_SettingsSpecifics();
-                    intSettingsHeight = 600; //513;// 374;
+                    WindowLayout_SettingsSpecifics1();
+                    intSettingsHeight = 422;//600; //513;// 374;
                     break;
                 case 2:
+                    WindowLayout_SettingsSpecifics2();
+                    intSettingsHeight = 354 ;//600; //513;// 374;
+                    break;
+                case 3:
                     WindowLayout_SettingsIcons();
                     intSettingsHeight = 406;
                     break;
-                case 3:
+                case 4:
                     WindowLayout_SettingsAbout();
                     intSettingsHeight = 306;
                     break;
@@ -209,7 +230,7 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
         }
 
-        private void WindowLayout_SettingsSpecifics()
+        private void WindowLayout_SettingsSpecifics1()
         {
             //Sperer of Influence Stuff
             GUILayout.Label("Sphere Of Influence Alarms", KACResources.styleAddSectionHeading);
@@ -283,11 +304,13 @@ namespace KerbalAlarmClock
                 }
             }
             GUILayout.EndVertical();
+        }
 
-
+        private void WindowLayout_SettingsSpecifics2()
+        {
             //Transfer Alarm Stuff
             GUILayout.Label("Maneuver Alarms", KACResources.styleAddSectionHeading);
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas,GUILayout.Height(155));
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas,GUILayout.Height(207)); //155
             if (DrawCheckbox(ref Settings.AlarmAddManAuto, new GUIContent("Detect and Add Alarms for Maneuver Nodes", strAlarmDescMan)))
             {
                 Settings.Save();
@@ -303,6 +326,14 @@ namespace KerbalAlarmClock
                 {
                     Settings.Save();
                 }
+                GUILayout.Label("Dont Add New alarms if Man node is closer than this threshold", KACResources.styleAddHeading);
+                if (DrawTimeEntry(ref timeAutoManNodeThreshold , KACTimeStringArray.TimeEntryPrecision.Hours, "Threshold:", 100))
+                {
+                    //convert it and save it in the settings
+                    Settings.AlarmAddManAutoThreshold= timeAutoManNodeThreshold.UT;
+                    Settings.Save();
+                }
+
                 GUILayout.Label("Man Node Alarm Settings", KACResources.styleAddSectionHeading);
                 if (DrawAlarmActionChoice(ref Settings.AlarmAddManAuto_Action, "On Alarm:", 90))
                 {
@@ -316,6 +347,17 @@ namespace KerbalAlarmClock
                 }
 
             }
+            GUILayout.EndVertical();
+
+            //Crew Alarm Stuff
+            GUILayout.Label("Crew Alarms", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+            if (DrawCheckbox(ref Settings.AlarmCrewDefaultStoreNode, new GUIContent("Store Man Node/Target with Crew Alarm")))
+            {
+                Settings.Save();
+            }
+
             GUILayout.EndVertical();
 
         }

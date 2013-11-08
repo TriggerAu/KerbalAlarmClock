@@ -423,6 +423,7 @@ namespace KerbalAlarmClock
                 if (tmpAlarm.ManNodes != null)
                     {
                     String strRestoretext = "Jump To Ship and Restore Maneuver Node";
+                    if (tmpAlarm.TypeOfAlarm == KACAlarm.AlarmType.Crew) strRestoretext = strRestoretext.Replace("Ship", "Kerbal");
                     if ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) < 0)
                     {
                         strRestoretext += "\r\nWARNING: The stored Nodes are in the past";
@@ -447,7 +448,9 @@ namespace KerbalAlarmClock
                 if (tmpAlarm.TargetObject != null )
                 {
                     intReturnNoOfButtons++;
-                    if (GUILayout.Button("Jump To Ship and Restore Target", KACResources.styleButton))
+                    String strButtonT = "Jump To Ship and Restore Target";
+                    if (tmpAlarm.TypeOfAlarm == KACAlarm.AlarmType.Crew) strButtonT = strButtonT.Replace("Ship", "Kerbal");
+                    if (GUILayout.Button(strButtonT, KACResources.styleButton))
                     {
                         Vessel tmpVessel = FindVesselForAlarm(tmpAlarm);
 

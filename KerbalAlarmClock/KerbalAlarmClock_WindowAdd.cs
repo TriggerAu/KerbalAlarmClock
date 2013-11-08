@@ -27,7 +27,7 @@ namespace KerbalAlarmClock
         private String strAlarmDescXfer = "This will check and recalculate the active transfer alarms for the correct phase angle - the math for these is based around circular orbits so the for any elliptical orbit these need to be recalculated over time.\r\n\r\nThe alarm will adjust until it is within {0} seconds of the target phase angle, at which point it just maintains the last captured time of the angle.\r\nI DO NOT RECOMMEND TURNING THIS OFF UNLESS THERE IS A MASSIVE PERFORMANCE GAIN";
         private String strAlarmDescNode = "This will check and recalculate the active orbit node alarms as the flight path changes. The alarm will adjust until it is within {0} seconds of the node.";
 
-        private string strAlarmDescMan = "Will create an alarm whenever a maneuver node is detected on the vessels flight plan";
+        private string strAlarmDescMan = "Will create an alarm whenever a maneuver node is detected on the vessels flight plan\r\n\r\nIf the Man Node is within {0} seconds of the current time it will not be created";
 
         /// <summary>
         /// Code to reset the settings etc when the new button is hit
@@ -159,6 +159,7 @@ namespace KerbalAlarmClock
                     break;
                 case KACAlarm.AlarmType.Crew:
                     BuildCrewStrings();
+                    CrewAlarmStoreNode = Settings.AlarmCrewDefaultStoreNode;
                     break;
                 default:
                     strAlarmEventName = "Alarm"; 
@@ -494,17 +495,13 @@ namespace KerbalAlarmClock
         String strCrewUT = "0";
         KACTime CrewTime = new KACTime(600);
         KACTime CrewTimeToAlarm = new KACTime();
-        //Boolean blnRawDate = false;
-        //Boolean blnRawInterval = true;
-        ///// <summary>
-        ///// Layout the raw alarm screen inputs
-        ///// </summary>
         int intCrewType = 1;
         KACTimeStringArray CrewEntry = new KACTimeStringArray(600);
-        int intAddCrewHeight = 292;
+        Boolean CrewAlarmStoreNode = false;
+        int intAddCrewHeight = 322;
         private void WindowLayout_AddPane_Crew()
         {
-            intAddCrewHeight = 292;
+            intAddCrewHeight = 322;
             GUILayout.Label("Select Crew...", KACResources.styleAddSectionHeading);
 
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
@@ -539,9 +536,10 @@ namespace KerbalAlarmClock
                             BuildCrewStrings();
                         }
                     }
-
                     GUILayout.EndHorizontal();
                 }
+
+                DrawCheckbox(ref CrewAlarmStoreNode, "Store Man Node/Target with Crew Alarm");
                 
             }
             GUILayout.EndVertical();
@@ -597,8 +595,14 @@ namespace KerbalAlarmClock
                     if (DrawAddAlarm(CrewTime, null, CrewTimeToAlarm))
                     {
                         //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
-                        Settings.Alarms.Add(new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmType.Crew,
-                            (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame)));
+                        KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmType.Crew,
+                            (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame));
+                        if (CrewAlarmStoreNode)
+                        {
+                            if (KACWorkerGameState.ManeuverNodeExists) addAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
+                            if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
+                        }
+                        Settings.Alarms.Add(addAlarm);
                         Settings.Save();
                         _ShowAddPane = false;
                     }

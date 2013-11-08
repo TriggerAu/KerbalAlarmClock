@@ -763,19 +763,13 @@ namespace KerbalAlarmClock
             }
         }
 
-
-        //TODO: DO WE NEED AN ManeuevrAuto alarm type?
         private void MonitorManNodeOnPath()
         {
             //is there an alarm
             KACAlarm tmpAlarm = Settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.ManeuverAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString());
 
             //is there an alarm and no man node?
-            if(Settings.AlarmAddManAuto_andRemove && !KACWorkerGameState.ManeuverNodeExists)
-            {
-                Settings.Alarms.Remove(tmpAlarm);
-            }
-            else if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
+            if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
             {
                 KACTime nodeAutoAlarm;
                 nodeAutoAlarm = new KACTime(KACWorkerGameState.ManeuverNodeFuture.UT - Settings.AlarmAddManAutoMargin);
@@ -791,13 +785,21 @@ namespace KerbalAlarmClock
                     tmpAlarm.AlarmTime.UT = nodeAutoAlarm.UT;
                     tmpAlarm.ManNodes = manNodesToStore;
                 }
-                else
+                else 
                 {
-                    //or are we setting a new one
-                    Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, Settings.AlarmAddManAutoMargin, KACAlarm.AlarmType.ManeuverAuto,
-                        (Settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.KillWarp), (Settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.PauseGame), manNodesToStore));
-                    Settings.Save();
+                    //dont add an alarm if we are within the threshold period
+                    if (nodeAutoAlarm.UT + Settings.AlarmAddManAutoMargin - Settings.AlarmAddManAutoThreshold > KACWorkerGameState.CurrentTime.UT)
+                    {
+                        //or are we setting a new one
+                        Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, Settings.AlarmAddManAutoMargin, KACAlarm.AlarmType.ManeuverAuto,
+                            (Settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.KillWarp), (Settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.PauseGame), manNodesToStore));
+                        Settings.Save();
+                    }
                 }
+            }
+            else if (Settings.AlarmAddManAuto_andRemove && !KACWorkerGameState.ManeuverNodeExists)
+            {
+                Settings.Alarms.Remove(tmpAlarm);
             }
         }
 
@@ -873,22 +875,27 @@ namespace KerbalAlarmClock
                     }
                 }
 
-                //if in the next two updates we would pass the alarm time then slow down the warp
-                if (!tmpAlarm.Actioned && tmpAlarm.Enabled && (tmpAlarm.HaltWarp || tmpAlarm.PauseGame))
-                {
-                    Double TimeNext = KACWorkerGameState.CurrentTime.UT + SecondsTillNextUpdate * 2;
-                    //DebugLogFormatted(CurrentTime.UT.ToString() + "," + TimeNext.ToString());
-                    if (TimeNext > tmpAlarm.AlarmTime.UT)
-                    {
-                        tmpAlarm.WarpInfluence = true;
-                        KACWorkerGameState.CurrentlyUnderWarpInfluence = true;
-                        KACWorkerGameState.CurrentWarpInfluenceStartTime = DateTime.Now;
 
-                        TimeWarp w = TimeWarp.fetch;
-                        if (w.current_rate_index > 0)
+                //skip this if we aren't in flight mode
+                if (!parentBehaviour.ViewAlarmsOnly)
+                {
+                    //if in the next two updates we would pass the alarm time then slow down the warp
+                    if (!tmpAlarm.Actioned && tmpAlarm.Enabled && (tmpAlarm.HaltWarp || tmpAlarm.PauseGame))
+                    {
+                        Double TimeNext = KACWorkerGameState.CurrentTime.UT + SecondsTillNextUpdate * 2;
+                        //DebugLogFormatted(CurrentTime.UT.ToString() + "," + TimeNext.ToString());
+                        if (TimeNext > tmpAlarm.AlarmTime.UT)
                         {
-                            DebugLogFormatted("Reducing Warp");
-                            TimeWarp.SetRate(w.current_rate_index - 1, true);
+                            tmpAlarm.WarpInfluence = true;
+                            KACWorkerGameState.CurrentlyUnderWarpInfluence = true;
+                            KACWorkerGameState.CurrentWarpInfluenceStartTime = DateTime.Now;
+
+                            TimeWarp w = TimeWarp.fetch;
+                            if (w.current_rate_index > 0)
+                            {
+                                DebugLogFormatted("Reducing Warp");
+                                TimeWarp.SetRate(w.current_rate_index - 1, true);
+                            }
                         }
                     }
                 }

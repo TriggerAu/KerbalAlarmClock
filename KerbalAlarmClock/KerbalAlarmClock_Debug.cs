@@ -223,11 +223,11 @@ namespace KerbalAlarmClock
         //    return (origin.period / 360d) * angleToNode;
         //}
 
-        int intTestheight = 560;
-        int intTestheight2 = 100;
-        int intTestheight3 = 20;
+        int intTestheight = 422;
+        int intTestheight2 = 292;
+        int intTestheight3 = 207;
         int intTestheight4 = 400;
-        //int intTestheight3 = 336;
+        
 
         int intTestDistance = 710000;
         public void FillDebugWindow(int WindowID)

@@ -21,6 +21,7 @@ namespace KerbalAlarmClock
         {
             get
             {
+                //todo take this out
                 if (this.VersionWeb == "")
                     return false;
                 else
@@ -137,11 +138,14 @@ namespace KerbalAlarmClock
         public Boolean AlarmAddManAuto = false;
         public Boolean AlarmAddManAuto_andRemove = false;
         public double AlarmAddManAutoMargin = 180;
+        public double AlarmAddManAutoThreshold = 180;
         public int AlarmAddManAuto_Action = 1;
 
         //public double AlarmAddSOIMargin = 120;
         public Boolean AlarmCatchSOIChange = false;
         public int AlarmOnSOIChange_Action = 1;
+
+        public Boolean AlarmCrewDefaultStoreNode = false;
 
         //Strings to store objects to reset after ship switch;
         public String LoadManNode = "";
@@ -251,6 +255,11 @@ namespace KerbalAlarmClock
 
                 this.AlarmAddManAuto = configfile.GetValue("AlarmAddManAuto", false);
                 this.AlarmAddManAuto_andRemove = configfile.GetValue("AlarmAddManAuto_andRemove", false);
+                this.AlarmAddManAutoThreshold = configfile.GetValue("AlarmAddManAutoThreshold", 180);
+                this.AlarmAddManAutoMargin = configfile.GetValue("AlarmAddManAutoMargin", 180);
+                this.AlarmAddManAuto_Action = configfile.GetValue("AlarmAddManAuto_Action", 1);
+
+                this.AlarmCrewDefaultStoreNode = configfile.GetValue("AlarmCrewDefaultStoreNode", false);
 
                 this.LoadManNode = configfile.GetValue("LoadManNode", "");
                 this.LoadVesselTarget = configfile.GetValue("LoadVesselTarget", "");
@@ -407,8 +416,11 @@ namespace KerbalAlarmClock
 
             configfile.SetValue("AlarmAddManAuto", this.AlarmAddManAuto);
             configfile.SetValue("AlarmAddManAuto_andRemove", this.AlarmAddManAuto_andRemove);
+            configfile.SetValue("AlarmAddManAutoThreshold", this.AlarmAddManAutoThreshold);
             configfile.SetValue("AlarmAddManAutoMargin", this.AlarmAddManAutoMargin);
             configfile.SetValue("AlarmAddManAuto_Action", this.AlarmAddManAuto_Action);
+
+            configfile.SetValue("AlarmCrewDefaultStoreNode", this.AlarmCrewDefaultStoreNode);
 
             configfile.save();
             KACWorker.DebugLogFormatted("Saved Config");

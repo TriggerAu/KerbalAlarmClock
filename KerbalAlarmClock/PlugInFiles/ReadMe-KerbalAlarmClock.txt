@@ -28,6 +28,17 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.7.0.0		-	KSP Version: 0.23
+- 0.23 Recompile for new version of Unity
+- Added Option to choose to use Blizzy's excellent toolbar - uses latebinding so no need to include DLL and no hard reference
+- Added link in game so if common toolbar not installed people can jump to forum page
+- Added option so minimal display will show the next or oldest alarm
+- Changed texture loading to use GameDB and this should fix Linux x64 issues with the Unity Texture2D Loader crashing
+- Fixed bug where twitching SOIs on large orbits no longer creates lots of alarms for Auto-SOIs
+- Fixed Bug using wrong path separators for MacOS/Linux re jumping from non-flight scenes
+- Fixed Bug displaying alarms in non-flight screens when KAC not visible
+
+
 Version 2.6.4.0		-	KSP Version: 0.22
 - Added a threshold for Auto adding Maneuver Node alarms, so if you are closer than the threshold it wont make an alarm
 - Added capacity to Kerbal alarms to store and restore targets and maneuvers regardless of vessel

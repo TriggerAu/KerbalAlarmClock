@@ -10,6 +10,12 @@ using KSP;
 
 namespace KerbalAlarmClock
 {
+    public enum MiminalDisplayType
+    {
+        NextAlarm=0,
+        OldestAlarm=1
+    }
+
     /// <summary>
     /// Settings object
     /// </summary>
@@ -78,6 +84,9 @@ namespace KerbalAlarmClock
         public Boolean IconShow_SpaceCenter = true;
         public Rect IconPos_TrackingStation;
         public Boolean IconShow_TrackingStation = true;
+
+        public Boolean UseBlizzyToolbarIfAvailable = true;
+        public MiminalDisplayType WindowMinimizedType = MiminalDisplayType.NextAlarm;
 
         public int BehaviourChecksPerSec = 10;
         public int BehaviourChecksPerSec_Custom = 40;
@@ -202,6 +211,9 @@ namespace KerbalAlarmClock
 
                 this.IconShow_SpaceCenter = configfile.GetValue("IconShow_SpaceCenter", true);
                 this.IconShow_TrackingStation = configfile.GetValue("IconShow_TrackingStation", true);
+
+                this.UseBlizzyToolbarIfAvailable = configfile.GetValue<Boolean>("UseBlizzyToolbarIfAvailable", true);
+                this.WindowMinimizedType = (MiminalDisplayType) configfile.GetValue("WindowMinimizedType", 0);
 
                 this.BehaviourChecksPerSec = configfile.GetValue("BehaviourChecksPerSec", 10);
                 this.BehaviourChecksPerSec_Custom = configfile.GetValue("BehaviourChecksPerSecCustom",40);
@@ -376,6 +388,9 @@ namespace KerbalAlarmClock
             configfile.SetValue("IconShow_SpaceCenter", this.IconShow_SpaceCenter);
             configfile.SetValue("IconPos_TrackingStation", this.IconPos_TrackingStation);
             configfile.SetValue("IconShow_TrackingStation", this.IconShow_TrackingStation);
+
+            configfile.SetValue("UseBlizzyToolbarIfAvailable", this.UseBlizzyToolbarIfAvailable);
+            configfile.SetValue("WindowMinimizedType", (int)this.WindowMinimizedType);
 
             configfile.SetValue("BehaviourChecksPerSec", this.BehaviourChecksPerSec);
 

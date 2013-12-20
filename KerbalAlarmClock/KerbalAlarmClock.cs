@@ -10,20 +10,6 @@ using KSP;
 namespace KerbalAlarmClock
 {
 
- 
-    ///// <summary>
-    ///// Have to do this behaviour or some of the textures are unloaded on first entry into flight mode
-    ///// </summary>
-    //[KSPAddon(KSPAddon.Startup.MainMenu, false)]
-    //public class KerbalAlarmClockTextureLoader : MonoBehaviour
-    //{
-    //     //Awake Event - when the DLL is loaded
-    //    public void Awake()
-    //    {
-    //        KACResources.loadGUIAssets();
-    //    }
-    //}
-
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class KACFlight : KerbalAlarmClock
     {
@@ -46,7 +32,7 @@ namespace KerbalAlarmClock
     /// <summary>
     /// This is the behaviour object that we hook events on to for flight
     /// </summary>
-    public class KerbalAlarmClock : MonoBehaviour
+    public partial class KerbalAlarmClock : MonoBehaviour
     {
         //Global Settings
         public static KACSettings Settings = new KACSettings();
@@ -77,7 +63,7 @@ namespace KerbalAlarmClock
                     break;
             }
             //Set the saves path
-            KACUtils.SavePath=string.Format("{0}saves/{1}",KACUtils.AppPath,HighLogic.SaveFolder);
+            KACUtils.SavePath=string.Format("{0}saves/{1}",KACUtils.PathApp,HighLogic.SaveFolder);
 
         }
 
@@ -99,6 +85,13 @@ namespace KerbalAlarmClock
             if ((KACWorkerGameState.LastGUIScene== GameScenes.FLIGHT) && Settings.XferModelLoadData)
                 Settings.XferModelDataLoaded = KACResources.LoadModelPoints();
 
+            //Common Toolbar Code
+            BlizzyToolbarIsAvailable = HookToolbar();
+
+            if (BlizzyToolbarIsAvailable && Settings.UseBlizzyToolbarIfAvailable)
+            {
+                WorkerObjectInstance.btnToolbarKAC = InitToolbarButton();
+            }
 
             //Set up the updating function - do this 5 times a sec not on every frame.
             KACWorker.DebugLogFormatted("Invoking Worker Function KerbalAlarmClock-{0}", MonoName);
@@ -121,7 +114,7 @@ namespace KerbalAlarmClock
         }
         public void SetupRepeatingFunction(String FunctionName, float SecsInterval)
         {
-            Debug.Log(SecsInterval);
+            //Debug.Log(SecsInterval);
             if (IsInvoking(FunctionName))
             {
                 KACWorker.DebugLogFormatted("Cancelling repeating Behaviour({0}-{1})", FunctionName,MonoName);
@@ -135,6 +128,8 @@ namespace KerbalAlarmClock
         public void OnDestroy()
         {
             KACWorker.DebugLogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
+
+            DestroyToolbarButton(WorkerObjectInstance.btnToolbarKAC);
         }
 
         #region "Update Code"
@@ -293,7 +288,8 @@ namespace KerbalAlarmClock
             if (blnShowInterface)
             {
                 // look for passed alarms to display stuff
-                WorkerObjectInstance.TriggeredAlarms();
+                if (WorkerObjectInstance.IconShowByActiveScene)
+                    WorkerObjectInstance.TriggeredAlarms();
 
                 //If the mainwindow is visible And no pause menu then draw it
                 if (WorkerObjectInstance.WindowVisibleByActiveScene)
@@ -309,6 +305,7 @@ namespace KerbalAlarmClock
             }
         }
 
+#if DEBUG
         public void DebugWriter()
         {
             if (HighLogic.LoadedScene == GameScenes.FLIGHT)
@@ -316,6 +313,7 @@ namespace KerbalAlarmClock
                 WorkerObjectInstance.DebugActionTimed(HighLogic.LoadedScene);
             }
         }
+#endif
 
     }
 
@@ -344,7 +342,6 @@ namespace KerbalAlarmClock
 
         private void InitWorkerVariables()
         {
-            _WindowDebugID = rnd.Next(1000, 2000000);
             _WindowAddID = rnd.Next(1000, 2000000);
             _WindowAddMessagesID = rnd.Next(1000, 2000000);
             _WindowMainID = rnd.Next(1000, 2000000);
@@ -577,8 +574,10 @@ namespace KerbalAlarmClock
                     if (tmpSOIAlarm != null)
                     {
                         //update the time (if more than threshold secs)
-                        if (tmpSOIAlarm.Remaining.UT > Settings.AlarmAddSOIAutoThreshold)
+                        if ((timeSOIAlarm - KACWorkerGameState.CurrentTime.UT) > Settings.AlarmAddSOIAutoThreshold)
+                        {
                             tmpSOIAlarm.AlarmTime.UT = timeSOIAlarm;
+                        }
                     }
                     //Otherwise if its in the future add a new alarm
                     else if (timeSOIAlarm > KACWorkerGameState.CurrentTime.UT)

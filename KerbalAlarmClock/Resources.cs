@@ -15,82 +15,82 @@ namespace KerbalAlarmClock
         #region "Textures"
 
         //Clock Icons
-        public static Texture2D iconNorm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconNormShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconAlarm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconAlarmShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconNorm; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconNormShow; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconAlarm; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconAlarmShow; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpEffect100; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpEffect080; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpEffect060; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpEffect040; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpEffect020; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpEffect000; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseEffect100; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseEffect080; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseEffect060; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseEffect040; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseEffect020; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseEffect000; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
         //Alarm List icons
-        public static Texture2D iconMNode = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconSOI = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconAp = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconPe = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconAN = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconDN = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconXFer = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconClosest = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconLaunchRendezvous = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconCrew = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconMNode; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconSOI; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconAp; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconPe; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconAN; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconDN; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconXFer; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconClosest; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconLaunchRendezvous; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconCrew; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
 
-        public static Texture2D iconNone = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconEdit = new Texture2D(16, 16, TextureFormat.ARGB32, false);
+        public static Texture2D iconNone; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconEdit; //  = new Texture2D(16, 16, TextureFormat.ARGB32, false);
 
-        public static Texture2D iconWarpList100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpList080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpList060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpList040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpList100; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpList080; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpList060; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpList040; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpList020; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconWarpList000; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
-        public static Texture2D iconPauseList100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseList080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseList060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseList040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseList100; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseList080; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseList060; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseList040; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseList020; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        public static Texture2D iconPauseList000; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
-        //public static Texture2D iconstatusSOI = new Texture2D(14, 11, TextureFormat.ARGB32, false);
+        //public static Texture2D iconstatusSOI; //  = new Texture2D(14, 11, TextureFormat.ARGB32, false);
 
 
-        public static Texture2D btnRaw = new Texture2D(20, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnMNode = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnAp = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnPe = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnApPe = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnAN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnDN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnANDN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnSOI = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnXfer = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnClosest = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnCrew = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnRaw; //  = new Texture2D(20, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnMNode; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnAp; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnPe; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnApPe; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnAN; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnDN; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnANDN; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnSOI; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnXfer; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnClosest; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        public static Texture2D btnCrew; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
         
-        public static Texture2D btnChevronUp = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnChevronDown = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnChevLeft = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnChevRight = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnChevronUp; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnChevronDown; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnChevLeft; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnChevRight; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
-        public static Texture2D btnRedCross = new Texture2D(16, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnSettings = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnSettingsAttention = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnAdd = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnRedCross; //  = new Texture2D(16, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnSettings; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnSettingsAttention; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        public static Texture2D btnAdd; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
-        public static Texture2D txtTooltipBackground = new Texture2D(9, 9);//, TextureFormat.ARGB32, false);
-        //public static Texture2D txtRedTint = new Texture2D(16, 16);//, TextureFormat.ARGB32, false);
-        //public static Texture2D txtBlackSquare = new Texture2D(5, 5);//, TextureFormat.ARGB32, false);
-        //public static Texture2D txtWhiteSquare = new Texture2D(5, 5);//, TextureFormat.ARGB32, false);
+        public static Texture2D txtTooltipBackground; //  = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
+        //public static Texture2D txtRedTint; //  = new Texture2D(16, 16); //, TextureFormat.ARGB32, false);
+        //public static Texture2D txtBlackSquare; //  = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
+        //public static Texture2D txtWhiteSquare; //  = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
 
         public static void loadGUIAssets()
         {
@@ -98,83 +98,83 @@ namespace KerbalAlarmClock
 
             try
             {
-                KACUtils.LoadImageIntoTexture(ref iconNorm, "img_iconNorm.png");
-                KACUtils.LoadImageIntoTexture(ref iconNormShow, "img_iconNormShow.png");
-                KACUtils.LoadImageIntoTexture(ref iconAlarm, "img_iconAlarm.png");
-                KACUtils.LoadImageIntoTexture(ref iconAlarmShow, "img_iconAlarmShow.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect100, "img_iconWarpEffect2_100.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect080, "img_iconWarpEffect2_080.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect060, "img_iconWarpEffect2_060.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect040, "img_iconWarpEffect2_040.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect020, "img_iconWarpEffect2_020.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpEffect000, "img_iconWarpEffect2_000.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseEffect100, "img_iconPauseEffect_100.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseEffect080, "img_iconPauseEffect_080.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseEffect060, "img_iconPauseEffect_060.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseEffect040, "img_iconPauseEffect_040.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseEffect020, "img_iconPauseEffect_020.png");
-                KACUtils.LoadImageIntoTexture(ref  iconPauseEffect000, "img_iconPauseEffect_000.png");
+                KACUtils.LoadImageFromGameDB(ref iconNorm, "img_iconNorm.png");
+                KACUtils.LoadImageFromGameDB(ref iconNormShow, "img_iconNormShow.png");
+                KACUtils.LoadImageFromGameDB(ref iconAlarm, "img_iconAlarm.png");
+                KACUtils.LoadImageFromGameDB(ref iconAlarmShow, "img_iconAlarmShow.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect100, "img_iconWarpEffect2_100.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect080, "img_iconWarpEffect2_080.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect060, "img_iconWarpEffect2_060.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect040, "img_iconWarpEffect2_040.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect020, "img_iconWarpEffect2_020.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect000, "img_iconWarpEffect2_000.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect100, "img_iconPauseEffect_100.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect080, "img_iconPauseEffect_080.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect060, "img_iconPauseEffect_060.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect040, "img_iconPauseEffect_040.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect020, "img_iconPauseEffect_020.png");
+                KACUtils.LoadImageFromGameDB(ref  iconPauseEffect000, "img_iconPauseEffect_000.png");
 
 
-                KACUtils.LoadImageIntoTexture(ref iconSOI, "img_listiconSOI.png");
-                KACUtils.LoadImageIntoTexture(ref iconMNode, "img_listiconMNode.png");
-                KACUtils.LoadImageIntoTexture(ref iconAp, "img_listiconAp.png");
-                KACUtils.LoadImageIntoTexture(ref iconPe, "img_listiconPe.png");
-                KACUtils.LoadImageIntoTexture(ref iconAN, "img_listiconAN.png");
-                KACUtils.LoadImageIntoTexture(ref iconDN, "img_listiconDN.png");
-                KACUtils.LoadImageIntoTexture(ref iconXFer, "img_listiconXfer.png");
-                KACUtils.LoadImageIntoTexture(ref iconClosest, "img_listiconClosest.png");
-                KACUtils.LoadImageIntoTexture(ref iconCrew, "img_listiconCrew.png");
-                KACUtils.LoadImageIntoTexture(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList100, "img_listiconWarpList_100.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList080, "img_listiconWarpList_080.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList060, "img_listiconWarpList_060.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList040, "img_listiconWarpList_040.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList020, "img_listiconWarpList_020.png");
-                KACUtils.LoadImageIntoTexture(ref iconWarpList000, "img_listiconWarpList_000.png");
+                KACUtils.LoadImageFromGameDB(ref iconSOI, "img_listiconSOI.png");
+                KACUtils.LoadImageFromGameDB(ref iconMNode, "img_listiconMNode.png");
+                KACUtils.LoadImageFromGameDB(ref iconAp, "img_listiconAp.png");
+                KACUtils.LoadImageFromGameDB(ref iconPe, "img_listiconPe.png");
+                KACUtils.LoadImageFromGameDB(ref iconAN, "img_listiconAN.png");
+                KACUtils.LoadImageFromGameDB(ref iconDN, "img_listiconDN.png");
+                KACUtils.LoadImageFromGameDB(ref iconXFer, "img_listiconXfer.png");
+                KACUtils.LoadImageFromGameDB(ref iconClosest, "img_listiconClosest.png");
+                KACUtils.LoadImageFromGameDB(ref iconCrew, "img_listiconCrew.png");
+                KACUtils.LoadImageFromGameDB(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList100, "img_listiconWarpList_100.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList080, "img_listiconWarpList_080.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList060, "img_listiconWarpList_060.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList040, "img_listiconWarpList_040.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList020, "img_listiconWarpList_020.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList000, "img_listiconWarpList_000.png");
 
-                KACUtils.LoadImageIntoTexture(ref iconPauseList100, "img_listiconPauseList_100.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseList080, "img_listiconPauseList_080.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseList060, "img_listiconPauseList_060.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseList040, "img_listiconPauseList_040.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseList020, "img_listiconPauseList_020.png");
-                KACUtils.LoadImageIntoTexture(ref iconPauseList000, "img_listiconPauseList_000.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList100, "img_listiconPauseList_100.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList080, "img_listiconPauseList_080.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList060, "img_listiconPauseList_060.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList040, "img_listiconPauseList_040.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList020, "img_listiconPauseList_020.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList000, "img_listiconPauseList_000.png");
 
-                KACUtils.LoadImageIntoTexture(ref iconNone, "img_listiconNone.png");
-                KACUtils.LoadImageIntoTexture(ref iconEdit, "img_listiconEdit.png");
+                KACUtils.LoadImageFromGameDB(ref iconNone, "img_listiconNone.png");
+                KACUtils.LoadImageFromGameDB(ref iconEdit, "img_listiconEdit.png");
 
-                //KACUtils.LoadImageIntoTexture(ref iconstatusSOI, "img_statusiconSOI.png");
+                //KACUtils.LoadImageFromGameDB(ref iconstatusSOI, "img_statusiconSOI.png");
 
-                KACUtils.LoadImageIntoTexture(ref btnRaw, "img_buttonTypeRaw.png");
-                KACUtils.LoadImageIntoTexture(ref btnMNode, "img_buttonTypeMNode.png");
-                KACUtils.LoadImageIntoTexture(ref btnAp, "img_buttonTypeAp.png");
-                KACUtils.LoadImageIntoTexture(ref btnPe, "img_buttonTypePe.png");
-                KACUtils.LoadImageIntoTexture(ref btnApPe, "img_buttonTypeApPe.png");
-                KACUtils.LoadImageIntoTexture(ref btnAN, "img_buttonTypeAN.png");
-                KACUtils.LoadImageIntoTexture(ref btnDN, "img_buttonTypeDN.png");
-                KACUtils.LoadImageIntoTexture(ref btnANDN, "img_buttonTypeANDN.png");
-                KACUtils.LoadImageIntoTexture(ref btnSOI, "img_buttonTypeSOI.png");
-                KACUtils.LoadImageIntoTexture(ref btnXfer, "img_buttonTypeXfer.png");
-                KACUtils.LoadImageIntoTexture(ref btnClosest, "img_buttonTypeClosest.png");
-                KACUtils.LoadImageIntoTexture(ref btnCrew, "img_buttonTypeCrew.png");
+                KACUtils.LoadImageFromGameDB(ref btnRaw, "img_buttonTypeRaw.png");
+                KACUtils.LoadImageFromGameDB(ref btnMNode, "img_buttonTypeMNode.png");
+                KACUtils.LoadImageFromGameDB(ref btnAp, "img_buttonTypeAp.png");
+                KACUtils.LoadImageFromGameDB(ref btnPe, "img_buttonTypePe.png");
+                KACUtils.LoadImageFromGameDB(ref btnApPe, "img_buttonTypeApPe.png");
+                KACUtils.LoadImageFromGameDB(ref btnAN, "img_buttonTypeAN.png");
+                KACUtils.LoadImageFromGameDB(ref btnDN, "img_buttonTypeDN.png");
+                KACUtils.LoadImageFromGameDB(ref btnANDN, "img_buttonTypeANDN.png");
+                KACUtils.LoadImageFromGameDB(ref btnSOI, "img_buttonTypeSOI.png");
+                KACUtils.LoadImageFromGameDB(ref btnXfer, "img_buttonTypeXfer.png");
+                KACUtils.LoadImageFromGameDB(ref btnClosest, "img_buttonTypeClosest.png");
+                KACUtils.LoadImageFromGameDB(ref btnCrew, "img_buttonTypeCrew.png");
 
-                KACUtils.LoadImageIntoTexture(ref btnChevronUp, "img_buttonChevronUp.png");
-                KACUtils.LoadImageIntoTexture(ref btnChevronDown, "img_buttonChevronDown.png");
-                KACUtils.LoadImageIntoTexture(ref btnChevLeft, "img_buttonChevronLeft.png");
-                KACUtils.LoadImageIntoTexture(ref btnChevRight, "img_buttonChevronRight.png");
+                KACUtils.LoadImageFromGameDB(ref btnChevronUp, "img_buttonChevronUp.png");
+                KACUtils.LoadImageFromGameDB(ref btnChevronDown, "img_buttonChevronDown.png");
+                KACUtils.LoadImageFromGameDB(ref btnChevLeft, "img_buttonChevronLeft.png");
+                KACUtils.LoadImageFromGameDB(ref btnChevRight, "img_buttonChevronRight.png");
 
-                KACUtils.LoadImageIntoTexture(ref btnRedCross, "img_buttonRedCross.png");
-                KACUtils.LoadImageIntoTexture(ref btnSettings, "img_buttonSettings.png");
-                KACUtils.LoadImageIntoTexture(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
-                KACUtils.LoadImageIntoTexture(ref btnAdd, "img_buttonAdd.png");
+                KACUtils.LoadImageFromGameDB(ref btnRedCross, "img_buttonRedCross.png");
+                KACUtils.LoadImageFromGameDB(ref btnSettings, "img_buttonSettings.png");
+                KACUtils.LoadImageFromGameDB(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
+                KACUtils.LoadImageFromGameDB(ref btnAdd, "img_buttonAdd.png");
 
-                KACUtils.LoadImageIntoTexture(ref txtTooltipBackground, "txt_TooltipBackground.png");
+                KACUtils.LoadImageFromGameDB(ref txtTooltipBackground, "txt_TooltipBackground.png");
 
 
-                //KACUtils.LoadImageIntoTexture(ref txtRedTint, "Textures", "RedOverlay.png");
+                //KACUtils.LoadImageFromGameDB(ref txtRedTint, "Textures", "RedOverlay.png");
 
-                //KACUtils.LoadImageIntoTexture(ref txtBlackSquare, "Textures", "BlackSquare.png");
-                //KACUtils.LoadImageIntoTexture(ref txtWhiteSquare, "Textures", "WhiteSquare.png");
+                //KACUtils.LoadImageFromGameDB(ref txtBlackSquare, "Textures", "BlackSquare.png");
+                //KACUtils.LoadImageFromGameDB(ref txtWhiteSquare, "Textures", "WhiteSquare.png");
 
                 KACWorker.DebugLogFormatted("Loaded Textures");
             }
@@ -266,6 +266,49 @@ namespace KerbalAlarmClock
                 default:
                     textureReturn = KACResources.iconPauseEffect100;
                     break;
+            }
+            return textureReturn;
+        }
+
+        public static String GetWarpIconTexturePath()
+        {
+            String textureReturn = "TriggerTech/ToolbarIcons/KACIcon-WarpEffect2_";
+
+            textureReturn = GetIconPercentageFromTime(textureReturn);
+            return textureReturn;
+        }
+
+        public static String GetPauseIconTexturePath()
+        {
+            String textureReturn = "TriggerTech/ToolbarIcons/KACIcon-PauseEffect_";
+
+            textureReturn = GetIconPercentageFromTime(textureReturn);
+            return textureReturn;
+        }
+
+        private static string GetIconPercentageFromTime(String textureReturn)
+        {
+            Double intHundredth = Math.Truncate(DateTime.Now.Millisecond / 100d);
+            switch (Convert.ToInt64(intHundredth))
+            {
+                case 0:
+                    textureReturn += "100"; break;
+                case 1:
+                case 9:
+                    textureReturn += "080"; break;
+                case 2:
+                case 8:
+                    textureReturn += "060"; break;
+                case 3:
+                case 7:
+                    textureReturn += "040"; break;
+                case 4:
+                case 6:
+                    textureReturn += "020"; break;
+                case 5:
+                    textureReturn += "000"; break;
+                default:
+                    textureReturn += textureReturn += "100"; break;
             }
             return textureReturn;
         }

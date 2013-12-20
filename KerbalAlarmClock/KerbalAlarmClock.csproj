@@ -40,18 +40,19 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="KerbalAlarmClock_GameState.cs" />
+    <Compile Include="KerbalAlarmClock_ToolbarButtons.cs" />
     <Compile Include="KerbalAlarmClock_ViewWorker.cs" />
     <Compile Include="KerbalAlarmClock_WindowAdd_AscDescNodes.cs" />
     <Compile Include="KerbalAlarmClock_WindowAdd_Distance.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Resources.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TimeObjects.cs" />
+    <Compile Include="ToolbarWrapper.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -76,74 +78,91 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\data_TransferModelData.txt" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonAdd.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonChevronDown.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonChevronLeft.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonChevronRight.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonChevronUp.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonRedCross.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonSettings.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonSettingsAttention.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeAN.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeANDN.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeAp.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeApPe.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeClosest.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeCrew.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeDN.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeMNode.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypePe.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeRaw.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeSOI.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_buttonTypeXfer.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconAlarm.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconAlarmShow.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconNorm.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconNormShow.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconPauseEffect_000.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconPauseEffect_020.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconPauseEffect_040.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconPauseEffect_060.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconPauseEffect_080.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconPauseEffect_100.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconWarpEffect2_000.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconWarpEffect2_020.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconWarpEffect2_040.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconWarpEffect2_060.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconWarpEffect2_080.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_iconWarpEffect2_100.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconAN.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconAp.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconClosest.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconCrew.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconDN.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconEdit.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconLaunchRendezvous.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconMNode.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconNone.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconPauseList_000.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconPauseList_020.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconPauseList_040.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconPauseList_060.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconPauseList_080.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconPauseList_100.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconPe.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconSOI.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconWarpList_000.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconWarpList_020.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconWarpList_040.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconWarpList_060.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconWarpList_080.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconWarpList_100.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\img_listiconXfer.png" />
-    <Content Include="PlugInFiles\GameData\TriggerTech\PluginData\KerbalAlarmClock\txt_TooltipBackground.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonAdd.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonChevronDown.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonChevronLeft.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonChevronRight.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonChevronUp.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonRedCross.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonSettings.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonSettingsAttention.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeAN.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeANDN.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeAp.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeApPe.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeClosest.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeCrew.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeDN.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeMNode.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypePe.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeRaw.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeSOI.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_buttonTypeXfer.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconAlarm.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconAlarmShow.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconNorm.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconNormShow.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconPauseEffect_000.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconPauseEffect_020.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconPauseEffect_040.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconPauseEffect_060.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconPauseEffect_080.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconPauseEffect_100.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconWarpEffect2_000.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconWarpEffect2_020.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconWarpEffect2_040.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconWarpEffect2_060.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconWarpEffect2_080.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_iconWarpEffect2_100.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconAN.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconAp.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconClosest.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconCrew.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconDN.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconEdit.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconLaunchRendezvous.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconMNode.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconNone.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconPauseList_000.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconPauseList_020.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconPauseList_040.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconPauseList_060.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconPauseList_080.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconPauseList_100.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconPe.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconSOI.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconWarpList_000.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconWarpList_020.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconWarpList_040.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconWarpList_060.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconWarpList_080.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconWarpList_100.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\img_listiconXfer.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\Textures\KerbalAlarmClock\txt_TooltipBackground.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-Alarm.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-AlarmShow.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-Norm.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-NormShow.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-PauseEffect_000.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-PauseEffect_020.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-PauseEffect_040.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-PauseEffect_060.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-PauseEffect_080.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-PauseEffect_100.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-WarpEffect2_000.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-WarpEffect2_020.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-WarpEffect2_040.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-WarpEffect2_060.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-WarpEffect2_080.png" />
+    <Content Include="PlugInFiles\GameData\TriggerTech\ToolbarIcons\KACIcon-WarpEffect2_100.png" />
     <Content Include="PlugInFiles\info.txt" />
     <Content Include="PlugInFiles\ReadMe-KerbalAlarmClock.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>rem Build deployment versions
+    <PostBuildEvent>if not $(ConfigurationName)==Debug goto END
+rem Build deployment versions
 
 if exist "C:\~Games\KSP_Win_PlugInTest\KSP.exe" (
 	set DestPath="C:\~Games\KSP_Win_PlugInTest\GameData\TriggerTech"
@@ -154,13 +173,15 @@ if exist "C:\~Games\KSP_Win_PlugInTest\KSP.exe" (
 )
 
 rem Need to copy all bits to plugin test game
-rem copy "$(TargetPath)" %25DestPath%25
+copy "$(TargetPath)" %25DestPath%25
 rem and then run the game
-rem %25Binary%25
+%25Binary%25
 
 rem copy "$(TargetPath)" "D:\~Games\KSP_Win_PlugInTest\GameData\TriggerTech"
 rem "D:\~Games\KSP_Win_PlugInTest\KSP.exe"
-</PostBuildEvent>
+
+
+:END</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

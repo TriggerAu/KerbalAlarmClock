@@ -11,6 +11,11 @@ namespace KerbalAlarmClock
 {
     public partial class KACWorker 
     {
+#if DEBUG
+        //Debug Window
+        private Boolean _ShowDebugPane = true;
+        private static int _WindowDebugID = 123456;
+        private static Rect _WindowDebugRect = new Rect(Screen.width - 400, 30, 400, 200);
 
         public void DebugActionTimed(GameScenes loadedscene)
         {
@@ -165,12 +170,12 @@ namespace KerbalAlarmClock
 
             Orbit o=FlightGlobals.ActiveVessel.orbit;
 
-            WriteOrbitFile(o,"Debug\\Orbit.txt");
+            WriteOrbitFile(o,"Debug/Orbit.txt");
             if (o.nextPatch != null)
-                WriteOrbitFile(o.nextPatch, "Debug\\OrbitNext.txt");
+                WriteOrbitFile(o.nextPatch, "Debug/OrbitNext.txt");
 
-            WriteOrbitFile(tgtSelectedDistance.GetOrbit(),"Debug\\OrbitTarget.txt");
-            //WriteManeuverFile(FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes,"Debug\\Nodes.txt");
+            WriteOrbitFile(tgtSelectedDistance.GetOrbit(),"Debug/OrbitTarget.txt");
+            //WriteManeuverFile(FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes,"Debug/Nodes.txt");
         }
 
 
@@ -223,10 +228,10 @@ namespace KerbalAlarmClock
         //    return (origin.period / 360d) * angleToNode;
         //}
 
-        int intTestheight = 422;
-        int intTestheight2 = 292;
-        int intTestheight3 = 207;
-        int intTestheight4 = 400;
+        int intTestheight = 0;
+        int intTestheight2 = 0;
+        int intTestheight3 = 0;
+        int intTestheight4 = 0;
         
 
         int intTestDistance = 710000;
@@ -837,5 +842,6 @@ namespace KerbalAlarmClock
         }
 		
 		
+#endif
     }
 }

@@ -10,7 +10,7 @@ $7ZipPath="c:\Program Files\7-Zip\7z.exe"
 
 if ($VersionString -eq "")
 {
-	$dll = get-item "$SourcePath\bin\Debug\KerbalAlarmClock.dll"
+	$dll = get-item "$SourcePath\bin\Release\KerbalAlarmClock.dll"
 	$VersionString = $dll.VersionInfo.ProductVersion
 }
 
@@ -51,7 +51,7 @@ if($ChoiceRtn -eq 0)
     #Copy the items 
     "Copying Plugin..."
     Copy-Item "$SourcePath\PluginFiles" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)" -Recurse
-    Copy-Item "$SourcePath\bin\Debug\KerbalAlarmClock.dll" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\GameData\TriggerTech" 
+    Copy-Item "$SourcePath\bin\Release\KerbalAlarmClock.dll" "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\GameData\TriggerTech" 
     #Update the Text files with the version String
     (Get-Content "$($DestFullPath)\KerbalAlarmClock_$($VersionString)\info.txt") |
         ForEach-Object {$_ -replace "%VERSIONSTRING%",$VersionString} |

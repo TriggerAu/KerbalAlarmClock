@@ -55,6 +55,8 @@ namespace KerbalAlarmClock
                     KACResources.styleTooltipStyle.CalcMinMaxWidth(contTooltip, out minwidth, out maxwidth); // figure out how wide one line would be
                     rectToolTipPosition.width = Math.Min(intTooltipMaxWidth - KACResources.styleTooltipStyle.padding.horizontal, maxwidth); //then work out the height with a max width
                     rectToolTipPosition.height = KACResources.styleTooltipStyle.CalcHeight(contTooltip, rectToolTipPosition.width); // heers the result
+                    //Make sure its not off the right of the screen
+                    if (rectToolTipPosition.x + rectToolTipPosition.width > Screen.width) rectToolTipPosition.x = Screen.width - rectToolTipPosition.width;
                 }
                 //Draw the Tooltip
                 GUI.Label(rectToolTipPosition, contTooltip, KACResources.styleTooltipStyle);
@@ -201,9 +203,11 @@ namespace KerbalAlarmClock
         /// </summary>
         public void DrawIcons()
         {
+            if (!Settings.UseBlizzyToolbarIfAvailable || btnToolbarKAC == null)
+            {
             Texture2D iconToShow;
             //Replace this with workerstate object that can test for pause and catch errors - is it doing this in flight mode??
-            if (!(KACWorkerGameState.CurrentGUIScene== GameScenes.FLIGHT) || (!KACWorkerGameState.PauseMenuOpen && !KACWorkerGameState.FlightResultsDialogOpen))
+            if (!(KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT) || (!KACWorkerGameState.PauseMenuOpen && !KACWorkerGameState.FlightResultsDialogOpen))
             {
                 if (FlightDriver.Pause)
                 {
@@ -249,6 +253,45 @@ namespace KerbalAlarmClock
                 }
             }
         }
+            else
+            {
+                //Do for Blizzies Toolbar
+                if (btnToolbarKAC != null) { 
+                    String TexturePath = "";
+                    if (!(KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT) || (!KACWorkerGameState.PauseMenuOpen && !KACWorkerGameState.FlightResultsDialogOpen))
+                    {
+                        if (FlightDriver.Pause)
+                        {
+                            TexturePath = KACResources.GetPauseIconTexturePath();
+                        }
+                        else if (KACWorkerGameState.CurrentlyUnderWarpInfluence)
+                        {
+                            TexturePath = KACResources.GetWarpIconTexturePath();
+                        }
+                        else
+                        {
+                            if (Settings.Alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
+                            {
+                                if (WindowVisibleByActiveScene)
+                                    TexturePath = "TriggerTech/ToolbarIcons/KACIcon-AlarmShow";
+                                else
+                                    TexturePath = "TriggerTech/ToolbarIcons/KACIcon-Alarm";
+                            }
+                            else
+                            {
+                                if (WindowVisibleByActiveScene)
+                                    TexturePath = "TriggerTech/ToolbarIcons/KACIcon-NormShow";
+                                else
+                                    TexturePath = "TriggerTech/ToolbarIcons/KACIcon-Norm";
+                            }
+                        }
+
+                        btnToolbarKAC.TexturePath = TexturePath;
+                    }
+                }
+            }
+        }
+
 
 
         //Basic setup of draw stuff
@@ -286,11 +329,6 @@ namespace KerbalAlarmClock
         private static int _WindowBackupFailedID = 0;
         private static Rect _WindowBackupFailedRect;
 
-        //Debug Window
-        private Boolean _ShowDebugPane = false;
-        private static int _WindowDebugID = 0;
-        private static Rect _WindowDebugRect = new Rect(Screen.width-400,30,400,200);
-
         //Window Size Constants
         int intMainWindowWidth = 300;
         int intMainWindowMinHeight = 114;
@@ -308,11 +346,12 @@ namespace KerbalAlarmClock
 
         public void DrawWindows()
         {
+#if DEBUG
             if (_ShowDebugPane)
             {
                 _WindowDebugRect = GUILayout.Window(_WindowDebugID, _WindowDebugRect, FillDebugWindow, "Debug");
             }
-
+#endif
             //set initial values for rect from old ones - ignore old width
             Rect MainWindowPos = new Rect(WindowPosByActiveScene.x, WindowPosByActiveScene.y, intMainWindowWidth, WindowPosByActiveScene.height);
             
@@ -579,27 +618,34 @@ namespace KerbalAlarmClock
         {
             KACAlarm nextAlarm = null;
 
-            //Find the next Alarm
+            //Find the Alarm to display
             if (Settings.Alarms != null)
             {
-                foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
+                if (Settings.WindowMinimizedType == MiminalDisplayType.NextAlarm)
                 {
-                    Boolean blnSwitch = false;
-                    if (tmpAlarm.AlarmTime.UT > KACWorkerGameState.CurrentTime.UT && tmpAlarm.Enabled && !tmpAlarm.Actioned)
+                    foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
                     {
-                        if (nextAlarm == null)
+                        Boolean blnSwitch = false;
+                        if (tmpAlarm.AlarmTime.UT > KACWorkerGameState.CurrentTime.UT && tmpAlarm.Enabled && !tmpAlarm.Actioned)
                         {
-                            blnSwitch = true;
-                        }
-                        else
-                        {
-                            if (tmpAlarm.AlarmTime.UT < nextAlarm.AlarmTime.UT)
+                            if (nextAlarm == null)
+                            {
                                 blnSwitch = true;
-                        }
+                            }
+                            else
+                            {
+                                if (tmpAlarm.AlarmTime.UT < nextAlarm.AlarmTime.UT)
+                                    blnSwitch = true;
+                            }
 
+                        }
+                        if (blnSwitch)
+                            nextAlarm = tmpAlarm;
                     }
-                    if (blnSwitch)
-                        nextAlarm = tmpAlarm;
+                }
+                else
+                {
+                    nextAlarm = Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).OrderBy(a=>a.AlarmTime.UT).FirstOrDefault();
                 }
             }
 

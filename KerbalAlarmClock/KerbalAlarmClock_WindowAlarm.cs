@@ -127,11 +127,12 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
 
             int intNoOfActionButtons = 0;
+            int intNoOfActionButtonsDoubleLine = 0;
             //if the alarm has a vessel ID/Kerbal associated
             if (StoredVesselOrCrewExists(tmpAlarm.VesselID,tmpAlarm.TypeOfAlarm))
                 //option to allow jumping from view only ships
                 if (!parentBehaviour.ViewAlarmsOnly || Settings.AllowJumpFromViewOnly)
-                    intNoOfActionButtons = DrawAlarmActionButtons(tmpAlarm);
+                    intNoOfActionButtons = DrawAlarmActionButtons(tmpAlarm, out intNoOfActionButtonsDoubleLine);
 
             //Work out the text
             String strText = "Close Alarm";
@@ -157,7 +158,9 @@ namespace KerbalAlarmClock
             if (intLines == 0) intLines = 1;
             tmpAlarm.AlarmWindowHeight = 148 +
                  intLines * 16 +
-                intNoOfActionButtons * 32; 
+                intNoOfActionButtons * 32 +
+                intNoOfActionButtonsDoubleLine * 14;
+
             SetTooltipText();
             GUI.DragWindow();
 
@@ -301,11 +304,12 @@ namespace KerbalAlarmClock
                 alarmEdit.PauseGame = (intActionSelected > 1);
 
                 int intNoOfActionButtons = 0;
+                int intNoOfActionButtonsDoubleLine = 0;
                 //if the alarm has a vessel ID/Kerbal associated
                 if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
                     //option to allow jumping from view only ships
                     if (!parentBehaviour.ViewAlarmsOnly || Settings.AllowJumpFromViewOnly)
-                        intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit);
+                        intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit,out intNoOfActionButtonsDoubleLine);
 
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
                 {
@@ -314,7 +318,7 @@ namespace KerbalAlarmClock
                 }
 
                 //TODO: Edit the height of this for when we have big text in restore button
-                intAlarmEditHeight = 197 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32;
+                intAlarmEditHeight = 197 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine*14;
                 if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Crew)
                     intAlarmEditHeight += 28;
             }
@@ -337,26 +341,28 @@ namespace KerbalAlarmClock
                     DrawStoredVesselIDMissing(alarmEdit.VesselID);
                 GUILayout.EndVertical();
 
-                int intNoOfActionButtons=0;
+                int intNoOfActionButtons = 0;
+                int intNoOfActionButtonsDoubleLine = 0;
                 //if the alarm has a vessel ID/Kerbal associated
                 if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
                     //option to allow jumping from view only ships
                     if (!parentBehaviour.ViewAlarmsOnly || Settings.AllowJumpFromViewOnly)
-                        intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit);
+                        intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit, out intNoOfActionButtonsDoubleLine);
 
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
                     _ShowEditPane = false;
 
                 intAlarmEditHeight = 112 +
                     alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 +
-                    intNoOfActionButtons * 32;
+                    intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine * 14;
             }
             SetTooltipText();
         }
         
-        private int DrawAlarmActionButtons(KACAlarm tmpAlarm)
+        private int DrawAlarmActionButtons(KACAlarm tmpAlarm, out int NoOfDoubleLineButtons)
         {
             int intReturnNoOfButtons = 0;
+            NoOfDoubleLineButtons = 0;
             
             ////is it the current vessel?
             if ((!parentBehaviour.ViewAlarmsOnly) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
@@ -379,10 +385,12 @@ namespace KerbalAlarmClock
                             strRestoretext += "\r\nNOTE: There is already a Node on the flight path";
                         else
                             strRestoretext += "\r\nNOTE: These Node's appear to be already set on the flight path";
+                        NoOfDoubleLineButtons++;
                     }
                     if ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) < 0)
                     {
                         strRestoretext += "\r\nWARNING: The stored Nodes are in the past";
+                        NoOfDoubleLineButtons++;
                     }
                     intReturnNoOfButtons++;
                     if (GUILayout.Button(strRestoretext, KACResources.styleButton))
@@ -404,6 +412,7 @@ namespace KerbalAlarmClock
                             strRestoretext += "\r\nNOTE: There is already a target and this will change";
                         else
                             strRestoretext += "\r\nNOTE: This already appears to be the target";
+                        NoOfDoubleLineButtons++;
                     }
                     intReturnNoOfButtons++;
                     if (GUILayout.Button(strRestoretext, KACResources.styleButton))
@@ -427,6 +436,7 @@ namespace KerbalAlarmClock
                     if ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) < 0)
                     {
                         strRestoretext += "\r\nWARNING: The stored Nodes are in the past";
+                        NoOfDoubleLineButtons++;
                     }
                     intReturnNoOfButtons++;
 

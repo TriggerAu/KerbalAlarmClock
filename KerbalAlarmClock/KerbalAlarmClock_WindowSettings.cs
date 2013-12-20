@@ -106,7 +106,7 @@ namespace KerbalAlarmClock
                     break;
                 case 3:
                     WindowLayout_SettingsIcons();
-                    intSettingsHeight = 406;
+                    intSettingsHeight =  518;//466 //406;
                     break;
                 case 4:
                     WindowLayout_SettingsAbout();
@@ -366,7 +366,44 @@ namespace KerbalAlarmClock
         private void WindowLayout_SettingsIcons()
         {
             Boolean blnTemp = false;
-            DrawIconPos("Flight Mode", false, ref blnTemp, ref Settings.IconPos,ref Settings.WindowVisible);
+
+            GUILayout.Label("Common Toolbar Integration (By Blizzy78)", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+            if (parentBehaviour.BlizzyToolbarIsAvailable)
+            {
+                if (DrawCheckbox(ref Settings.UseBlizzyToolbarIfAvailable, "Use Toolbar Button instead of KAC Button"))
+                {
+                    parentBehaviour.DestroyToolbarButton(btnToolbarKAC);
+                    if (Settings.UseBlizzyToolbarIfAvailable) parentBehaviour.InitToolbarButton();
+                    Settings.Save();
+                }
+            }
+            else
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Get the Common Toolbar:", KACResources.styleAddHeading);
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("Click here", KACResources.styleContent))
+                    Application.OpenURL("http://forum.kerbalspaceprogram.com/threads/60863");
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.EndVertical();
+            int MinimalDisplayChoice=(int)Settings.WindowMinimizedType;
+
+            GUILayout.Label("Minimal Mode", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Display What:", KACResources.styleAddHeading, GUILayout.Width(120));
+            if (DrawRadioList(ref MinimalDisplayChoice, "Next Alarm", "Oldest Alarm"))
+            {
+                Settings.WindowMinimizedType = (MiminalDisplayType)MinimalDisplayChoice;
+                Settings.SaveConfig();
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+            DrawIconPos("Flight Mode", false, ref blnTemp, ref Settings.IconPos, ref Settings.WindowVisible);
 
             DrawIconPos("Space Center", true, ref Settings.IconShow_SpaceCenter, ref Settings.IconPos_SpaceCenter, ref Settings.WindowVisible_SpaceCenter);
 
@@ -384,6 +421,8 @@ namespace KerbalAlarmClock
                 if (DrawCheckbox(ref IconShow, new GUIContent("Alarm Clock Visible", "Show the Kerbal Alarm Clock Icon in this Game Mode")))
                 {
                     WindowVisible = IconShow;
+                    parentBehaviour.DestroyToolbarButton(btnToolbarKAC);
+                    if (Settings.UseBlizzyToolbarIfAvailable) parentBehaviour.InitToolbarButton();
                     Settings.Save();
                 }
             }

@@ -14,7 +14,15 @@ namespace KerbalAlarmClock
     {
         //public static String AppPath = KSPUtil.ApplicationRootPath.Replace("\\", "/");
         //public static String PlugInPath = AppPath + "PluginData/KerbalAlarmClock/";
-        public static String AppPath = KSPUtil.ApplicationRootPath.Replace("\\", "/");
+        public static String PathApp = KSPUtil.ApplicationRootPath.Replace("\\", "/");
+        public static String PathTriggerTech = string.Format("{0}GameData/TriggerTech", PathApp);
+        public static String PathPluginData = string.Format("{0}/PluginData/{1}", PathTriggerTech, "KerbalAlarmClock");
+        public static String PathTextures = string.Format("{0}/Textures/{1}", PathTriggerTech, "KerbalAlarmClock");
+
+        public static String DBPathTriggerTech = string.Format("TriggerTech");
+        public static String DBPathTextures = string.Format("{0}/Textures/{1}", DBPathTriggerTech, "KerbalAlarmClock");
+        public static String DBPathSounds = string.Format("{0}/Sounds/{1}", DBPathTriggerTech, "KerbalAlarmClock");
+
         public static String SavePath;
 
         public static Boolean BackupSaves()
@@ -33,26 +41,26 @@ namespace KerbalAlarmClock
             }
             else
             {
-                if (!System.IO.File.Exists(String.Format("{0}\\persistent.sfs", SavePath)))
+                if (!System.IO.File.Exists(String.Format("{0}/persistent.sfs", SavePath)))
                 {
-                    KACWorker.DebugLogFormatted("Persistent.sfs file not found: {0}\\persistent.sfs", SavePath);
+                    KACWorker.DebugLogFormatted("Persistent.sfs file not found: {0}/persistent.sfs", SavePath);
                 }
                 else
                 {
                     try
                     {
-                        System.IO.File.Copy(String.Format("{0}\\persistent.sfs", SavePath),
-                                            String.Format("{0}\\KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now),
+                        System.IO.File.Copy(String.Format("{0}/persistent.sfs", SavePath),
+                                            String.Format("{0}/KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now),
                                             true);
-                        KACWorker.DebugLogFormatted("Backed Up Persistent.sfs as: {0}\\KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now);
+                        KACWorker.DebugLogFormatted("Backed Up Persistent.sfs as: {0}/KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now);
                         
                         //Now go for the quicksave
-                        if (System.IO.File.Exists(String.Format("{0}\\quicksave.sfs", SavePath)))
+                        if (System.IO.File.Exists(String.Format("{0}/quicksave.sfs", SavePath)))
                         {
-                            System.IO.File.Copy(String.Format("{0}\\quicksave.sfs", SavePath),
-                                                String.Format("{0}\\KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now),
+                            System.IO.File.Copy(String.Format("{0}/quicksave.sfs", SavePath),
+                                                String.Format("{0}/KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now),
                                                 true);
-                            KACWorker.DebugLogFormatted("Backed Up quicksave.sfs as: {0}\\KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now);
+                            KACWorker.DebugLogFormatted("Backed Up quicksave.sfs as: {0}/KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now);
                         }                        
                         blnReturn = true;
 
@@ -61,7 +69,7 @@ namespace KerbalAlarmClock
                     }
                     catch (Exception ex)
                     {
-                        KACWorker.DebugLogFormatted("Unable to backup: {0}\\persistent.sfs\r\n\t{1}", SavePath,ex.Message);
+                        KACWorker.DebugLogFormatted("Unable to backup: {0}/persistent.sfs\r\n\t{1}", SavePath,ex.Message);
                     }
                 }
             }
@@ -183,6 +191,25 @@ namespace KerbalAlarmClock
         //    WWW img1 = new WWW(String.Format("file://{0}{1}/{2}", PlugInPath, FolderName,FileName));
         //    img1.LoadImageIntoTexture(tex);
         //}
+        public static Boolean LoadImageFromGameDB(ref Texture2D tex, String FileName, String FolderPath = "")
+        {
+            //DebugLogFormatted("{0},{1}",FileName, FolderPath);
+            Boolean blnReturn = false;
+            try
+            {
+                if (FileName.ToLower().EndsWith(".png")) FileName = FileName.Substring(0, FileName.Length - 4);
+                if (FolderPath == "") FolderPath = DBPathTextures;
+                //KACWorker.DebugLogFormatted("Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
+                tex = GameDatabase.Instance.GetTexture(String.Format("{0}/{1}", FolderPath, FileName), false);
+                blnReturn = true;
+            }
+            catch (Exception)
+            {
+                KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0}/{1}", String.Format("{0}/{1}", FolderPath, FileName));
+            }
+            return blnReturn;
+        }
+
 
         #region "offset building"
         public static RectOffset SetWindowRectOffset(RectOffset tmpRectOffset, int intValue)

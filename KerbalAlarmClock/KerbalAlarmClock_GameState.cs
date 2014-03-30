@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using KSPPluginFramework;
+
 namespace KerbalAlarmClock
 {
     public static class KACWorkerGameState
@@ -90,7 +92,7 @@ namespace KerbalAlarmClock
         {
             get
             {
-                return FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).FirstOrDefault(x => x.UT > KACWorkerGameState.CurrentTime.UT);
+                return FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).FirstOrDefault(x => x.UT >KACWorkerGameState.CurrentTime.UT);
             }
         }
 
@@ -98,7 +100,7 @@ namespace KerbalAlarmClock
         {
             get
             {
-                return ( FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).SkipWhile(x => x.UT < KACWorkerGameState.CurrentTime.UT).ToList<ManeuverNode>());
+                return ( FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).SkipWhile(x => x.UT <KACWorkerGameState.CurrentTime.UT).ToList<ManeuverNode>());
             }
         }
 
@@ -162,46 +164,46 @@ namespace KerbalAlarmClock
         //do null checks on all these!!!!!
         public static void SetCurrentGUIStates()
         {
-            KACWorkerGameState.CurrentGUIScene = HighLogic.LoadedScene;
+           KACWorkerGameState.CurrentGUIScene = HighLogic.LoadedScene;
         }
 
         public static void SetLastGUIStatesToCurrent()
         {
-            KACWorkerGameState.LastGUIScene = KACWorkerGameState.CurrentGUIScene;
+           KACWorkerGameState.LastGUIScene =KACWorkerGameState.CurrentGUIScene;
         }
 
         public static void SetCurrentFlightStates()
         {
             if (HighLogic.CurrentGame != null)
-                KACWorkerGameState.CurrentSaveGameName = HighLogic.CurrentGame.Title;
+               KACWorkerGameState.CurrentSaveGameName = HighLogic.CurrentGame.Title;
             else
-                KACWorkerGameState.CurrentSaveGameName = "";
+               KACWorkerGameState.CurrentSaveGameName = "";
 
-            try { KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime(); }
+            try {KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime(); }
             catch (Exception) { }
-            //if (Planetarium.fetch!=null) KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime();
+            //if (Planetarium.fetch!=null)KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime();
 
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
-                KACWorkerGameState.CurrentVessel = FlightGlobals.ActiveVessel;
-                KACWorkerGameState.CurrentSOIBody = FlightGlobals.ActiveVessel.mainBody;
-                KACWorkerGameState.CurrentVesselTarget = FlightGlobals.fetch.VesselTarget;
+               KACWorkerGameState.CurrentVessel = FlightGlobals.ActiveVessel;
+               KACWorkerGameState.CurrentSOIBody = FlightGlobals.ActiveVessel.mainBody;
+               KACWorkerGameState.CurrentVesselTarget = FlightGlobals.fetch.VesselTarget;
             }
             else
             {
-                KACWorkerGameState.CurrentVessel = null;
-                KACWorkerGameState.CurrentSOIBody = null;
-                KACWorkerGameState.CurrentVesselTarget = null;
+               KACWorkerGameState.CurrentVessel = null;
+               KACWorkerGameState.CurrentSOIBody = null;
+               KACWorkerGameState.CurrentVesselTarget = null;
             }
         }
 
         public static void SetLastFlightStatesToCurrent()
         {
-            KACWorkerGameState.LastSaveGameName = KACWorkerGameState.CurrentSaveGameName;
-            KACWorkerGameState.LastTime = KACWorkerGameState.CurrentTime;
-            KACWorkerGameState.LastVessel = KACWorkerGameState.CurrentVessel;
-            KACWorkerGameState.LastSOIBody = KACWorkerGameState.CurrentSOIBody;
-            KACWorkerGameState.LastVesselTarget = KACWorkerGameState.CurrentVesselTarget;
+           KACWorkerGameState.LastSaveGameName =KACWorkerGameState.CurrentSaveGameName;
+           KACWorkerGameState.LastTime =KACWorkerGameState.CurrentTime;
+           KACWorkerGameState.LastVessel =KACWorkerGameState.CurrentVessel;
+           KACWorkerGameState.LastSOIBody =KACWorkerGameState.CurrentSOIBody;
+           KACWorkerGameState.LastVesselTarget =KACWorkerGameState.CurrentVesselTarget;
         }
     }
 }

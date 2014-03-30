@@ -7,6 +7,7 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
@@ -87,33 +88,44 @@ namespace KerbalAlarmClock
         public static Texture2D btnSettingsAttention; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         public static Texture2D btnAdd; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
-        public static Texture2D txtTooltipBackground; //  = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
+        internal static Texture2D btnDropDown;
+        internal static Texture2D btnPlay;
+        internal static Texture2D btnStop;
+
+        internal static Texture2D texBox;
+        internal static Texture2D texBoxUnity;
+        internal static Texture2D texTooltip;
+
+        internal static Texture2D texSeparatorV;
+        internal static Texture2D texSeparatorH;
+
+        //public static Texture2D txtTooltipBackground; //  = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
         //public static Texture2D txtRedTint; //  = new Texture2D(16, 16); //, TextureFormat.ARGB32, false);
         //public static Texture2D txtBlackSquare; //  = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
         //public static Texture2D txtWhiteSquare; //  = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
 
         public static void loadGUIAssets()
         {
-            KACWorker.DebugLogFormatted("Loading Textures");
+            MonoBehaviourExtended.LogFormatted("Loading Textures");
 
             try
             {
-                KACUtils.LoadImageFromGameDB(ref iconNorm, "img_iconNorm.png");
-                KACUtils.LoadImageFromGameDB(ref iconNormShow, "img_iconNormShow.png");
-                KACUtils.LoadImageFromGameDB(ref iconAlarm, "img_iconAlarm.png");
-                KACUtils.LoadImageFromGameDB(ref iconAlarmShow, "img_iconAlarmShow.png");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect100, "img_iconWarpEffect2_100.png");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect080, "img_iconWarpEffect2_080.png");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect060, "img_iconWarpEffect2_060.png");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect040, "img_iconWarpEffect2_040.png");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect020, "img_iconWarpEffect2_020.png");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect000, "img_iconWarpEffect2_000.png");
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect100, "img_iconPauseEffect_100.png");
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect080, "img_iconPauseEffect_080.png");
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect060, "img_iconPauseEffect_060.png");
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect040, "img_iconPauseEffect_040.png");
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect020, "img_iconPauseEffect_020.png");
-                KACUtils.LoadImageFromGameDB(ref  iconPauseEffect000, "img_iconPauseEffect_000.png");
+                KACUtils.LoadImageFromGameDB(ref iconNorm, "KACIcon-Norm.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconNormShow, "KACIcon-NormShow.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconAlarm, "KACIcon-Alarm.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconAlarmShow, "KACIcon-AlarmShow.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect100, "KACIcon-WarpEffect2_100.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect080, "KACIcon-WarpEffect2_080.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect060, "KACIcon-WarpEffect2_060.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect040, "KACIcon-WarpEffect2_040.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect020, "KACIcon-WarpEffect2_020.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect000, "KACIcon-WarpEffect2_000.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect100, "KACIcon-PauseEffect_100.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect080, "KACIcon-PauseEffect_080.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect060, "KACIcon-PauseEffect_060.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect040, "KACIcon-PauseEffect_040.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect020, "KACIcon-PauseEffect_020.png", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromGameDB(ref  iconPauseEffect000, "KACIcon-PauseEffect_000.png", KACUtils.DBPathToolbarIcons);
 
 
                 KACUtils.LoadImageFromGameDB(ref iconSOI, "img_listiconSOI.png");
@@ -168,7 +180,15 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromGameDB(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
                 KACUtils.LoadImageFromGameDB(ref btnAdd, "img_buttonAdd.png");
 
-                KACUtils.LoadImageFromGameDB(ref txtTooltipBackground, "txt_TooltipBackground.png");
+                KACUtils.LoadImageFromGameDB(ref btnDropDown, "img_DropDown.tga");
+                KACUtils.LoadImageFromGameDB(ref btnPlay, "img_Play.tga");
+                KACUtils.LoadImageFromGameDB(ref btnStop, "img_Stop.tga");
+
+                KACUtils.LoadImageFromGameDB(ref texBox, "tex_Box.tga");
+                KACUtils.LoadImageFromGameDB(ref texBoxUnity, "tex_BoxUnity.tga");
+
+                KACUtils.LoadImageFromGameDB(ref texSeparatorH, "img_SeparatorHorizontal.tga");
+                KACUtils.LoadImageFromGameDB(ref texSeparatorV, "img_SeparatorVertical.tga");
 
 
                 //KACUtils.LoadImageFromGameDB(ref txtRedTint, "Textures", "RedOverlay.png");
@@ -176,11 +196,11 @@ namespace KerbalAlarmClock
                 //KACUtils.LoadImageFromGameDB(ref txtBlackSquare, "Textures", "BlackSquare.png");
                 //KACUtils.LoadImageFromGameDB(ref txtWhiteSquare, "Textures", "WhiteSquare.png");
 
-                KACWorker.DebugLogFormatted("Loaded Textures");
+                MonoBehaviourExtended.LogFormatted("Loaded Textures");
             }
             catch (Exception)
             {
-                KACWorker.DebugLogFormatted("Failed to Load Textures - are you missing a file?");
+                MonoBehaviourExtended.LogFormatted("Failed to Load Textures - are you missing a file?");
             }
 
 
@@ -401,6 +421,122 @@ namespace KerbalAlarmClock
         #endregion
 
 
+        #region Skins
+
+        /// <summary>
+        /// This is a copy of the default Unity skin
+        /// </summary>
+        internal static GUISkin DefUnitySkin { get; private set; }
+        /// <summary>
+        /// This is a copy of the default KSP skin
+        /// </summary>
+        internal static GUISkin DefKSPSkin { get; private set; }
+
+        private static GUISkin _CurrentSkin;
+        /// <summary>
+        /// Will return the current Skin as controlled by the SetSkin() Methods
+        /// </summary>
+        internal static GUISkin CurrentSkin { get { return _CurrentSkin; } }
+
+
+        internal static void InitSkins()
+        {
+            DefUnitySkin = GUI.skin;
+            DefKSPSkin = HighLogic.Skin;
+
+            SetSkin(KerbalAlarmClock.settings.SelectedSkin);
+        }
+
+        internal static void SetSkin(Settings.DisplaySkin SkinToSet)
+        {
+            switch (SkinToSet)
+            {
+                case Settings.DisplaySkin.Default:
+                    _CurrentSkin = DefKSPSkin;
+                    SetStyleDefaults();
+                    SetKSPStyles();
+                    SetKSPButtons();
+                    break;
+                case Settings.DisplaySkin.Unity:
+                    _CurrentSkin = DefUnitySkin;
+                    SetStyleDefaults();
+                    SetUnityStyles();
+                    SetUnityButtons();
+                    break;
+                case Settings.DisplaySkin.UnityWKSPButtons:
+                    _CurrentSkin = DefUnitySkin;
+                    SetStyleDefaults();
+                    SetUnityStyles();
+                    SetKSPButtons();
+                    break;
+                default:
+                    _CurrentSkin = DefKSPSkin;
+                    SetStyleDefaults();
+                    SetKSPStyles();
+                    SetKSPButtons();
+                    break;
+            }
+
+            SetStyles();
+        }
+
+        static GUIStyle styleDefLabel, styleDefTextField, styleDefTextArea, styleDefToggle, styleDefButton;
+        static int intFontSizeDefault;
+        private static void SetStyleDefaults()
+        {
+            Color32 colLabelText = new Color32(220, 220, 220, 255);
+            intFontSizeDefault = 13;
+
+            //Common starting points
+            styleDefLabel = new GUIStyle(CurrentSkin.label);
+            styleDefLabel.fontSize = intFontSizeDefault;
+            styleDefLabel.fontStyle = FontStyle.Normal;
+            styleDefLabel.normal.textColor = colLabelText;
+            styleDefLabel.hover.textColor = Color.blue;
+
+            styleDefTextField = new GUIStyle(CurrentSkin.textField);
+            styleDefTextField.fontSize = intFontSizeDefault;
+            styleDefTextField.fontStyle = FontStyle.Normal;
+            styleDefTextArea = new GUIStyle(CurrentSkin.textArea);
+            styleDefTextArea.fontSize = intFontSizeDefault;
+            styleDefTextArea.fontStyle = FontStyle.Normal;
+            styleDefToggle = new GUIStyle(CurrentSkin.toggle);
+            styleDefToggle.fontSize = intFontSizeDefault;
+            styleDefToggle.fontStyle = FontStyle.Normal;
+
+            styleWindow = new GUIStyle(CurrentSkin.window);
+            styleWindow.padding = KACUtils.SetWindowRectOffset(styleWindow.padding, 4);
+            //styleWindow.normal.background = KACResources.txtWhiteSquare;
+            //styleWindow.normal.textColor = new Color32(183, 254, 0, 255);
+            //styleWindow.normal.textColor = Color.red;
+
+        }
+        private static void SetKSPStyles()
+        {
+            texTooltip = texBox;
+        }
+        private static void SetUnityStyles()
+        {
+            texTooltip = texBoxUnity;
+        }
+        private static void SetKSPButtons()
+        {
+            styleDefButton = new GUIStyle(DefKSPSkin.button);
+            styleDefToggle.fontSize = intFontSizeDefault;
+            styleDefToggle.fontStyle = FontStyle.Normal;
+
+        }
+        private static void SetUnityButtons()
+        {
+            styleDefButton = new GUIStyle(DefUnitySkin.button);
+            styleDefToggle.fontSize = intFontSizeDefault;
+            styleDefToggle.fontStyle = FontStyle.Normal;
+
+        }
+
+
+        #endregion
+
         #region "Styles"
         //Styles for windows - Cant initialize the objects here as the GUIStyle Constructor cannot be called outside of OnGUI
 
@@ -467,44 +603,47 @@ namespace KerbalAlarmClock
         /// </summary>
         public static void SetStyles()
         {
-            Color32 colLabelText = new Color32(220, 220, 220, 255);
-            int intFontSizeDefault = 13;
+            //Color32 colLabelText = new Color32(220, 220, 220, 255);
+            //int intFontSizeDefault = 13;
 
-            //Common starting points
-            GUIStyle styleDefLabel = new GUIStyle(GUI.skin.label);
-            styleDefLabel.fontSize = intFontSizeDefault;
-            styleDefLabel.fontStyle = FontStyle.Normal;
-            styleDefLabel.normal.textColor = colLabelText;
-            styleDefLabel.hover.textColor = Color.blue;
+            ////Common starting points
+            //GUIStyle styleDefLabel = new GUIStyle(CurrentSkin.label);
+            //styleDefLabel.fontSize = intFontSizeDefault;
+            //styleDefLabel.fontStyle = FontStyle.Normal;
+            //styleDefLabel.normal.textColor = colLabelText;
+            //styleDefLabel.hover.textColor = Color.blue;
 
-            GUIStyle styleDefTextField = new GUIStyle(GUI.skin.textField);
-            styleDefTextField.fontSize = intFontSizeDefault;
-            styleDefTextField.fontStyle = FontStyle.Normal;
-            GUIStyle styleDefTextArea = new GUIStyle(GUI.skin.textArea);
-            styleDefTextArea.fontSize = intFontSizeDefault;
-            styleDefTextArea.fontStyle = FontStyle.Normal;
-            GUIStyle styleDefToggle = new GUIStyle(GUI.skin.toggle);
-            styleDefToggle.fontSize = intFontSizeDefault;
-            styleDefToggle.fontStyle = FontStyle.Normal;
-            GUIStyle styleDefButton = new GUIStyle(GUI.skin.button);
-            styleDefToggle.fontSize = intFontSizeDefault;
-            styleDefToggle.fontStyle = FontStyle.Normal;
+            //GUIStyle styleDefTextField = new GUIStyle(CurrentSkin.textField);
+            //styleDefTextField.fontSize = intFontSizeDefault;
+            //styleDefTextField.fontStyle = FontStyle.Normal;
+            //GUIStyle styleDefTextArea = new GUIStyle(CurrentSkin.textArea);
+            //styleDefTextArea.fontSize = intFontSizeDefault;
+            //styleDefTextArea.fontStyle = FontStyle.Normal;
+            //GUIStyle styleDefToggle = new GUIStyle(CurrentSkin.toggle);
+            //styleDefToggle.fontSize = intFontSizeDefault;
+            //styleDefToggle.fontStyle = FontStyle.Normal;
+            //GUIStyle styleDefButton = new GUIStyle(CurrentSkin.button);
+            //styleDefToggle.fontSize = intFontSizeDefault;
+            //styleDefToggle.fontStyle = FontStyle.Normal;
 
             //Set up the used styles
-            styleIconStyle = new GUIStyle();
+            styleIconStyle = new GUIStyle(styleDefButton);
+            styleIconStyle.fixedHeight = 32;
+            styleIconStyle.fixedWidth = 32;
+            styleIconStyle.padding = new RectOffset(0, 0, 0, 0);
 
-            styleWindow = new GUIStyle(GUI.skin.window);
-            styleWindow.padding = KACUtils.SetWindowRectOffset(styleWindow.padding, 4);
-            //styleWindow.normal.background = KACResources.txtWhiteSquare;
-            //styleWindow.normal.textColor = new Color32(183, 254, 0, 255);
-            //styleWindow.normal.textColor = Color.red;
+            //styleWindow = new GUIStyle(CurrentSkin.window);
+            //styleWindow.padding = KACUtils.SetWindowRectOffset(styleWindow.padding, 4);
+            ////styleWindow.normal.background = KACResources.txtWhiteSquare;
+            ////styleWindow.normal.textColor = new Color32(183, 254, 0, 255);
+            ////styleWindow.normal.textColor = Color.red;
 
             styleTooltipStyle = new GUIStyle(styleDefLabel);
             styleTooltipStyle.fontSize = 12;
             styleTooltipStyle.normal.textColor = new Color32(207, 207, 207, 255);
             styleTooltipStyle.stretchHeight = true;
             styleTooltipStyle.wordWrap = true;
-            styleTooltipStyle.normal.background = txtTooltipBackground;
+            styleTooltipStyle.normal.background = texTooltip;
             //Extra border to prevent bleed of color - actual border is only 1 pixel wide
             styleTooltipStyle.border = new RectOffset(3, 3, 3, 3);
             styleTooltipStyle.padding = new RectOffset(4, 4, 6, 4);
@@ -542,12 +681,13 @@ namespace KerbalAlarmClock
             styleCheckboxLabel = new GUIStyle(styleDefLabel);
             //styleCheckboxLabel.hover.textColor = Color.red;
             //styleCheckboxLabel.onHover.textColor = Color.red;
+            styleCheckboxLabel.alignment = TextAnchor.MiddleLeft;
 
             styleButtonList = new GUIStyle(styleDefButton);
             styleButtonList.fixedHeight = 26;
             styleButtonList.padding = KACUtils.SetRectOffset(styleButtonList.padding, 0);
 
-            styleSmallButton = new GUIStyle(GUI.skin.button);
+            styleSmallButton = new GUIStyle(CurrentSkin.button);
             styleSmallButton.alignment = TextAnchor.MiddleCenter;
             styleSmallButton.fixedWidth = 30;
             styleSmallButton.fixedHeight = 20;
@@ -727,7 +867,7 @@ namespace KerbalAlarmClock
 
         public static Boolean LoadModelPoints()
         {
-            KACWorker.DebugLogFormatted("Loading Transfer Modelling Data");
+            MonoBehaviourExtended.LogFormatted("Loading Transfer Modelling Data");
             Boolean blnReturn = false;
             try
             {
@@ -749,11 +889,11 @@ namespace KerbalAlarmClock
                         ));
                 }
                 blnReturn = true;
-                KACWorker.DebugLogFormatted("Transfer Modelling Data Load Complete");
+                MonoBehaviourExtended.LogFormatted("Transfer Modelling Data Load Complete");
             }
             catch (Exception ex)
             {
-                KACWorker.DebugLogFormatted("Transfer Modelling Data Failed - is the data file there and correct\r\n{0}", ex.Message);
+                MonoBehaviourExtended.LogFormatted("Transfer Modelling Data Failed - is the data file there and correct\r\n{0}", ex.Message);
             }
             return blnReturn;
         }

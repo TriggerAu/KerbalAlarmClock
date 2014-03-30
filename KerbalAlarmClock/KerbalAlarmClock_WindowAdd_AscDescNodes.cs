@@ -6,10 +6,11 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker
+    public partial class KerbalAlarmClock
     {
         public void WindowLayout_AddTypeANDN()
         {
@@ -49,8 +50,8 @@ namespace KerbalAlarmClock
             //if (KACWorkerGameState.CurrentVesselTarget is Vessel || KACWorkerGameState.CurrentVesselTarget is CelestialBody)
             //{
             //    GUILayout.BeginHorizontal();
-            //    GUILayout.Label("Target:",KACResources.styleAddHeading, GUILayout.Width(100));
-            //    GUILayout.Label(string.Format("{0} ({1})", KACWorkerGameState.CurrentVesselTarget.GetName(), KACWorkerGameState.CurrentVesselTarget.GetType()),KACResources.styleContent);
+            //    GUILayout.Label("Target:",KACStyles.styleAddHeading, GUILayout.Width(100));
+            //    GUILayout.Label(string.Format("{0} ({1})", KACWorkerGameState.CurrentVesselTarget.GetName(), KACWorkerGameState.CurrentVesselTarget.GetType()),KACStyles.styleContent);
             //    GUILayout.EndHorizontal();
             //}
         }

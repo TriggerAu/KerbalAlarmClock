@@ -6,24 +6,25 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker
+    public partial class KerbalAlarmClock
     {
 
 
         #region "OnGUI Stuff"
         System.Random rnd = new System.Random();
-        public void SetupDrawStuff()
-        {
-            GUI.skin = HighLogic.Skin;
-            if (KACResources.styleWindow == null)
-            {
-                KACResources.SetStyles();
-                //styleWindow = new GUIStyle(GUI.skin.window);
-            }
-        }
+        //public void SetupDrawStuff()
+        //{
+        //    GUI.skin = HighLogic.Skin;
+        //    if (KACResources.styleWindow == null)
+        //    {
+        //        KACResources.SetStyles();
+        //        //styleWindow = new GUIStyle(GUI.skin.window);
+        //    }
+        //}
 
         #region "Tooltip Work"
         //Tooltip variables
@@ -92,8 +93,8 @@ namespace KerbalAlarmClock
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: return Settings.IconShow_SpaceCenter;
-                    case GameScenes.TRACKSTATION: return Settings.IconShow_TrackingStation;
+                    case GameScenes.SPACECENTER: return settings.IconShow_SpaceCenter;
+                    case GameScenes.TRACKSTATION: return settings.IconShow_TrackingStation;
                     default: return true;
                 }
             }
@@ -101,8 +102,8 @@ namespace KerbalAlarmClock
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: Settings.IconShow_SpaceCenter = value; break;
-                    case GameScenes.TRACKSTATION: Settings.IconShow_TrackingStation = value; break;
+                    case GameScenes.SPACECENTER: settings.IconShow_SpaceCenter = value; break;
+                    case GameScenes.TRACKSTATION: settings.IconShow_TrackingStation = value; break;
                     default: 
                         //Settings.WindowVisible = value; 
                         break;
@@ -116,18 +117,18 @@ namespace KerbalAlarmClock
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: return Settings.IconPos_SpaceCenter;
-                    case GameScenes.TRACKSTATION: return Settings.IconPos_TrackingStation;
-                    default: return Settings.IconPos;
+                    case GameScenes.SPACECENTER: return settings.IconPos_SpaceCenter;
+                    case GameScenes.TRACKSTATION: return settings.IconPos_TrackingStation;
+                    default: return settings.IconPos;
                 }
             }
             set
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: Settings.IconPos_SpaceCenter = value; break;
-                    case GameScenes.TRACKSTATION: Settings.IconPos_TrackingStation = value; break;
-                    default: Settings.IconPos = value; break;
+                    case GameScenes.SPACECENTER: settings.IconPos_SpaceCenter = value; break;
+                    case GameScenes.TRACKSTATION: settings.IconPos_TrackingStation = value; break;
+                    default: settings.IconPos = value; break;
                 }
             }
         }
@@ -139,18 +140,18 @@ namespace KerbalAlarmClock
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: return Settings.WindowVisible_SpaceCenter;
-                    case GameScenes.TRACKSTATION: return Settings.WindowVisible_TrackingStation;
-                    default: return Settings.WindowVisible;
+                    case GameScenes.SPACECENTER: return settings.WindowVisible_SpaceCenter;
+                    case GameScenes.TRACKSTATION: return settings.WindowVisible_TrackingStation;
+                    default: return settings.WindowVisible;
                 }
             }
             set
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: Settings.WindowVisible_SpaceCenter = value; break;
-                    case GameScenes.TRACKSTATION: Settings.WindowVisible_TrackingStation = value; break;
-                    default: Settings.WindowVisible = value; break;
+                    case GameScenes.SPACECENTER: settings.WindowVisible_SpaceCenter = value; break;
+                    case GameScenes.TRACKSTATION: settings.WindowVisible_TrackingStation = value; break;
+                    default: settings.WindowVisible = value; break;
                 }
             }
         }
@@ -161,18 +162,18 @@ namespace KerbalAlarmClock
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: return Settings.WindowMinimized_SpaceCenter;
-                    case GameScenes.TRACKSTATION: return Settings.WindowMinimized_TrackingStation;
-                    default: return Settings.WindowMinimized;
+                    case GameScenes.SPACECENTER: return settings.WindowMinimized_SpaceCenter;
+                    case GameScenes.TRACKSTATION: return settings.WindowMinimized_TrackingStation;
+                    default: return settings.WindowMinimized;
                 }
             }
             set
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: Settings.WindowMinimized_SpaceCenter = value; break;
-                    case GameScenes.TRACKSTATION: Settings.WindowMinimized_TrackingStation = value; break;
-                    default: Settings.WindowMinimized = value; break;
+                    case GameScenes.SPACECENTER: settings.WindowMinimized_SpaceCenter = value; break;
+                    case GameScenes.TRACKSTATION: settings.WindowMinimized_TrackingStation = value; break;
+                    default: settings.WindowMinimized = value; break;
                 }
             }
         }
@@ -182,17 +183,17 @@ namespace KerbalAlarmClock
             get {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER:    return Settings.WindowPos_SpaceCenter;
-                    case GameScenes.TRACKSTATION:   return Settings.WindowPos_TrackingStation;
-                    default:                        return Settings.WindowPos;
+                    case GameScenes.SPACECENTER:    return settings.WindowPos_SpaceCenter;
+                    case GameScenes.TRACKSTATION:   return settings.WindowPos_TrackingStation;
+                    default:                        return settings.WindowPos;
                 }
             }
             set {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER:    Settings.WindowPos_SpaceCenter = value;         break;
-                    case GameScenes.TRACKSTATION:   Settings.WindowPos_TrackingStation = value;     break;
-                    default:                        Settings.WindowPos = value;                     break;
+                    case GameScenes.SPACECENTER:    settings.WindowPos_SpaceCenter = value;         break;
+                    case GameScenes.TRACKSTATION:   settings.WindowPos_TrackingStation = value;     break;
+                    default:                        settings.WindowPos = value;                     break;
                 }
             }
         }
@@ -203,7 +204,7 @@ namespace KerbalAlarmClock
         /// </summary>
         public void DrawIcons()
         {
-            if (!Settings.UseBlizzyToolbarIfAvailable || btnToolbarKAC == null)
+            if (!settings.UseBlizzyToolbarIfAvailable || btnToolbarKAC == null)
             {
             Texture2D iconToShow;
             //Replace this with workerstate object that can test for pause and catch errors - is it doing this in flight mode??
@@ -219,7 +220,7 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
-                    if (Settings.Alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
+                    if (settings.Alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
                     {
                         if (WindowVisibleByActiveScene)
                             iconToShow = KACResources.iconAlarmShow;
@@ -247,7 +248,7 @@ namespace KerbalAlarmClock
                         //    default: Settings.WindowVisible = !Settings.WindowVisible;break;
                         //}
                         WindowVisibleByActiveScene = !WindowVisibleByActiveScene;
-                        Settings.Save();
+                        settings.Save();
                     }
                     //GUI.Label(new Rect(152,32,200,20), GUI.tooltip,KACResources.styleTooltipStyle);
                 }
@@ -270,7 +271,7 @@ namespace KerbalAlarmClock
                         }
                         else
                         {
-                            if (Settings.Alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
+                            if (settings.Alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
                             {
                                 if (WindowVisibleByActiveScene)
                                     TexturePath = "TriggerTech/ToolbarIcons/KACIcon-AlarmShow";
@@ -344,6 +345,16 @@ namespace KerbalAlarmClock
 
         long EarthWindowHeight = 216;
 
+        internal void DrawWindowsPre()
+        {
+        
+        }
+
+        internal void DrawWindowsPost()
+        {
+
+        }
+
         public void DrawWindows()
         {
 #if DEBUG
@@ -364,25 +375,25 @@ namespace KerbalAlarmClock
             {
                 MainWindowPos.height = intMainWindowBaseHeight;
                 //Work out the number of alarms and therefore the height of the window
-                if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count > 1)
+                if (settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count > 1)
                 {
-                    if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count<2)
+                    if (settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count<2)
                         MainWindowPos.height = intMainWindowBaseHeight;
-                    else if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count < Settings.AlarmListMaxAlarmsInt)
-                        MainWindowPos.height = intMainWindowBaseHeight + ((Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count - 1) * intMainWindowAlarmListItemHeight);
+                    else if (settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count < settings.AlarmListMaxAlarmsInt)
+                        MainWindowPos.height = intMainWindowBaseHeight + ((settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count - 1) * intMainWindowAlarmListItemHeight);
                     else
                         //this is scrolling
-                        MainWindowPos.height = (intMainWindowBaseHeight -3) + ((Settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) + intMainWindowAlarmListScrollPad;
+                        MainWindowPos.height = (intMainWindowBaseHeight -3) + ((settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) + intMainWindowAlarmListScrollPad;
                 }
                 else MainWindowPos.height = intMainWindowBaseHeight+2;
             }
-            if (Settings.ShowEarthTime)
+            if (settings.ShowEarthTime)
             {
                 MainWindowPos.height += intMainWindowEarthTimeHeight;
             }
 
             //Now show the window
-            WindowPosByActiveScene = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + Settings.Version,KACResources.styleWindow);
+            WindowPosByActiveScene = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + settings.Version,KACResources.styleWindow);
 
             //Do we have anything to show in the right pane
             if (_ShowSettings)
@@ -460,48 +471,48 @@ namespace KerbalAlarmClock
             GUILayout.Label("Alarm List", KACResources.styleHeading, GUILayout.ExpandWidth(true));
 
             //hide this stuff when not in alarm edit mode/flight mode
-            if (!parentBehaviour.ViewAlarmsOnly)
+            if (!ViewAlarmsOnly)
             {
-                if (Settings.AlarmNodeRecalc)
+                if (settings.AlarmNodeRecalc)
                 {
                     GUIContent XferIcon = new GUIContent(KACResources.iconAp, "Orbit Node (Ap,Pe,AN,DN) Recalculation is enabled");
                     GUILayout.Label(XferIcon, KACResources.styleFlagIcon);
                 }
-                if (Settings.AlarmXferRecalc)
+                if (settings.AlarmXferRecalc)
                 {
                     GUIContent XferIcon = new GUIContent(KACResources.iconXFer, "Transfer Recalculation is enabled");
                     GUILayout.Label(XferIcon, KACResources.styleFlagIcon);
                 }
 
                 //SOI AutoAlarm stuff
-                if (Settings.AlarmAddSOIAuto || Settings.AlarmSOIRecalc)
+                if (settings.AlarmAddSOIAuto || settings.AlarmSOIRecalc)
                 {
                     String SOITooltip = "";
-                    if (Settings.AlarmSOIRecalc)
+                    if (settings.AlarmSOIRecalc)
                         SOITooltip = "SOI Recalculation is enabled";
-                    if (Settings.AlarmAddSOIAuto)
+                    if (settings.AlarmAddSOIAuto)
                     {
                         if (SOITooltip != "") SOITooltip += "\r\n";
                         SOITooltip += "SOI Auto Add Enabled";
-                        if (Settings.AlarmCatchSOIChange)
+                        if (settings.AlarmCatchSOIChange)
                         {
                             SOITooltip += "-plus catchall";
                         }
-                        if (Settings.AlarmAddSOIAuto_ExcludeEVA)
+                        if (settings.AlarmAddSOIAuto_ExcludeEVA)
                         {
                             SOITooltip += "-excluding EVA";
                         }
-                        if (Settings.AlarmOnSOIChange_Action > 1) SOITooltip += " (Pause Action)";
-                        else if (Settings.AlarmOnSOIChange_Action > 0) SOITooltip += " (Warp Kill Action)";
+                        if (settings.AlarmOnSOIChange_Action > 1) SOITooltip += " (Pause Action)";
+                        else if (settings.AlarmOnSOIChange_Action > 0) SOITooltip += " (Warp Kill Action)";
                     }
                     GUIContent SOIIcon = new GUIContent(KACResources.iconSOI, SOITooltip);
                     GUILayout.Label(SOIIcon, KACResources.styleSOIIndicator);
                 }
 
-                if (Settings.AlarmAddManAuto)
+                if (settings.AlarmAddManAuto)
                 {
                     String strTooltip = "Man Node Auto Add Enabled";
-                    if (Settings.AlarmAddManAuto_andRemove)
+                    if (settings.AlarmAddManAuto_andRemove)
                         strTooltip += " (and Removal)";
 
                     GUIContent ManIcon = new GUIContent(KACResources.iconMNode, strTooltip);
@@ -520,11 +531,11 @@ namespace KerbalAlarmClock
             if (GUILayout.Button(contMaxMin, KACResources.styleSmallButton))
             {
                 WindowMinimizedByActiveScene = !WindowMinimizedByActiveScene;
-                Settings.Save();
+                settings.Save();
             }
 
-            GUIContent contSettings = new GUIContent(KACResources.GetSettingsButtonIcon(Settings.VersionAttentionFlag), "Settings...");
-            if (Settings.VersionAvailable) contSettings.tooltip = "Updated Version Available - Settings...";
+            GUIContent contSettings = new GUIContent(KACResources.GetSettingsButtonIcon(settings.VersionAttentionFlag), "Settings...");
+            if (settings.VersionAvailable) contSettings.tooltip = "Updated Version Available - Settings...";
             if (DrawToggle(ref _ShowSettings, contSettings, KACResources.styleSmallButton) && _ShowSettings)
             {
                 NewSettingsWindow();
@@ -532,7 +543,7 @@ namespace KerbalAlarmClock
                 _ShowEditPane = false;
                 _ShowEarthAlarm = false;
             }
-            if (!parentBehaviour.ViewAlarmsOnly)
+            if (!ViewAlarmsOnly)
             {
 
                 if (DrawToggle(ref _ShowAddPane, new GUIContent(KACResources.btnAdd, "Add New Alarm..."), KACResources.styleSmallButton) && _ShowAddPane)
@@ -565,32 +576,32 @@ namespace KerbalAlarmClock
 
             if (GUILayout.Button(new GUIContent("Current Time:","Toggle Display of time from an alternate galaxy on a planet called \"Earth\""), KACResources.styleHeading))
             {
-                Settings.ShowEarthTime = !Settings.ShowEarthTime;
+                settings.ShowEarthTime = !settings.ShowEarthTime;
             }
 
             //Work out the right text and tooltip and display the button as a label
             KACTime.PrintTimeFormat MainClockFormat = KACTime.PrintTimeFormat.DateTimeString;
-            if (Settings.TimeFormat == KACTime.PrintTimeFormat.TimeAsUT) MainClockFormat = KACTime.PrintTimeFormat.TimeAsUT;
+            if (settings.TimeFormat == KACTime.PrintTimeFormat.TimeAsUT) MainClockFormat = KACTime.PrintTimeFormat.TimeAsUT;
             GUIContent contCurrentTime = new GUIContent(KACTime.PrintDate(KACWorkerGameState.CurrentTime, MainClockFormat), "Click to toggle through time formats");
             if (GUILayout.Button(contCurrentTime, KACResources.styleContent))
             {
-                switch (Settings.TimeFormat)
+                switch (settings.TimeFormat)
                 {
-                    case KACTime.PrintTimeFormat.TimeAsUT: Settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
-                    case KACTime.PrintTimeFormat.KSPString: Settings.TimeFormat = KACTime.PrintTimeFormat.DateTimeString; break;
-                    case KACTime.PrintTimeFormat.DateTimeString: Settings.TimeFormat = KACTime.PrintTimeFormat.TimeAsUT; break;
-                    default: Settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
+                    case KACTime.PrintTimeFormat.TimeAsUT: settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
+                    case KACTime.PrintTimeFormat.KSPString: settings.TimeFormat = KACTime.PrintTimeFormat.DateTimeString; break;
+                    case KACTime.PrintTimeFormat.DateTimeString: settings.TimeFormat = KACTime.PrintTimeFormat.TimeAsUT; break;
+                    default: settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
                 }
-                Settings.Save();
+                settings.Save();
             }
             GUILayout.EndHorizontal();
 
-            if (Settings.ShowEarthTime)
+            if (settings.ShowEarthTime)
             {
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button(new GUIContent("Earth Time:", "Hide Display of \"Real\" Time"), KACResources.styleHeadingEarth))
                 {
-                    Settings.ShowEarthTime = !Settings.ShowEarthTime;
+                    settings.ShowEarthTime = !settings.ShowEarthTime;
                 }
                 GUILayout.Label(DateTime.Now.ToLongTimeString(), KACResources.styleContentEarth);
                 if (DrawToggle(ref _ShowEarthAlarm, new GUIContent(KACResources.btnAdd, "Add New Alarm..."), KACResources.styleSmallButton) && _ShowEarthAlarm)
@@ -619,11 +630,11 @@ namespace KerbalAlarmClock
             KACAlarm nextAlarm = null;
 
             //Find the Alarm to display
-            if (Settings.Alarms != null)
+            if (settings.Alarms != null)
             {
-                if (Settings.WindowMinimizedType == MiminalDisplayType.NextAlarm)
+                if (settings.WindowMinimizedType == MiminalDisplayType.NextAlarm)
                 {
-                    foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
+                    foreach (KACAlarm tmpAlarm in settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
                     {
                         Boolean blnSwitch = false;
                         if (tmpAlarm.AlarmTime.UT > KACWorkerGameState.CurrentTime.UT && tmpAlarm.Enabled && !tmpAlarm.Actioned)
@@ -645,7 +656,7 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
-                    nextAlarm = Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).OrderBy(a=>a.AlarmTime.UT).FirstOrDefault();
+                    nextAlarm = settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).OrderBy(a=>a.AlarmTime.UT).FirstOrDefault();
                 }
             }
 
@@ -658,7 +669,7 @@ namespace KerbalAlarmClock
                 if (Event.current.type == EventType.repaint)
                     rectScrollview = new Rect(0, 0, 0, 0);
                 if (DrawAlarmLine(nextAlarm))
-                    Settings.Alarms.Remove(nextAlarm);
+                    settings.Alarms.Remove(nextAlarm);
             }
         }
 
@@ -671,14 +682,14 @@ namespace KerbalAlarmClock
 
 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, styleTemp);
-            if (Settings.Alarms.CountInSave(HighLogic.CurrentGame.Title) == 0)
+            if (settings.Alarms.CountInSave(HighLogic.CurrentGame.Title) == 0)
             {
                 GUILayout.Label("No Alarms in the List");
             }
             else
             {
                 List<KACAlarm> AlarmsToRemove = new List<KACAlarm>();
-                List<KACAlarm> AlarmsToSort = Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title);
+                List<KACAlarm> AlarmsToSort = settings.Alarms.BySaveName(HighLogic.CurrentGame.Title);
                 AlarmsToSort.Sort(KACAlarm.SortByUT);
                 foreach (KACAlarm tmpAlarm in AlarmsToSort)
                 {
@@ -691,11 +702,11 @@ namespace KerbalAlarmClock
                 {
                     foreach (KACAlarm tmpAlarm in AlarmsToRemove)
                     {
-                        Settings.Alarms.Remove(tmpAlarm);
-                        Settings.SaveAlarms();
+                        settings.Alarms.Remove(tmpAlarm);
+                        //settings.SaveAlarms();
                     }
                     //is the game paused, yet we deleted any active pause alarms??
-                    if (Settings.Alarms.FirstOrDefault(a => (a.AlarmWindowID != 0 && a.PauseGame == true)) == null)
+                    if (settings.Alarms.FirstOrDefault(a => (a.AlarmWindowID != 0 && a.PauseGame == true)) == null)
                     {
                         if (FlightDriver.Pause)
                             FlightDriver.SetPause(false);
@@ -809,7 +820,7 @@ namespace KerbalAlarmClock
             //float width1 = fOutMin1;
 
             String strLabelText = "";
-            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, KACTime.PrintInterval(tmpAlarm.Remaining, Settings.TimeFormat));
+            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, KACTime.PrintInterval(tmpAlarm.Remaining, settings.TimeFormat));
 
             GUIStyle styleLabel = new GUIStyle( KACResources.styleAlarmText);
             if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))
@@ -823,13 +834,13 @@ namespace KerbalAlarmClock
                     if (alarmEdit == tmpAlarm)
                     {
                         //If there was an alarm open, then save em again
-                        if (_ShowEditPane) Settings.Save();
+                        if (_ShowEditPane) settings.Save();
                         _ShowEditPane = !_ShowEditPane;
                     }
                     else
                     {
                         //If there was an alarm open, then save em again
-                        if (_ShowEditPane) Settings.Save();
+                        if (_ShowEditPane) settings.Save();
                         alarmEdit = tmpAlarm;
                         _ShowEditPane = true;
                         _ShowSettings = false;
@@ -1006,7 +1017,7 @@ namespace KerbalAlarmClock
             if (Old != New)
             {
                 Old = New;
-                DebugLogFormatted("Toggle Changed:" + New.ToString());
+                LogFormatted("Toggle Changed:" + New.ToString());
                 return true;
             }
             return false;
@@ -1020,7 +1031,7 @@ namespace KerbalAlarmClock
             if (strReturn != strVar)
             {
                 strVar = strReturn;
-                DebugLogFormatted("String Changed:" + strVar.ToString());
+                LogFormatted("String Changed:" + strVar.ToString());
                 return true;
             }
             return false;
@@ -1067,7 +1078,7 @@ namespace KerbalAlarmClock
             {
                 //if its clicked then toggle the boolean
                 blnVar = !blnVar;
-                KACWorker.DebugLogFormatted("Toggle Changed:" + blnVar);
+                LogFormatted("Toggle Changed:" + blnVar);
             }
 
             GUILayout.EndHorizontal();
@@ -1115,7 +1126,7 @@ namespace KerbalAlarmClock
                 GUILayout.EndVertical();
 
             if (InitialChoice != Selected)
-                DebugLogFormatted(String.Format("Radio List Changed:{0} to {1}", InitialChoice, Selected));
+                LogFormatted(String.Format("Radio List Changed:{0} to {1}", InitialChoice, Selected));
 
 
             return !(InitialChoice == Selected);
@@ -1273,7 +1284,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             if (InitialChoice != Selected)
-                DebugLogFormatted(String.Format("Button List Changed:{0} to {1}", InitialChoice, Selected));
+                LogFormatted(String.Format("Button List Changed:{0} to {1}", InitialChoice, Selected));
 
 
             return !(InitialChoice == Selected);

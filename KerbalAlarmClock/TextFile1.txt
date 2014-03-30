@@ -1,0 +1,8 @@
+﻿labels appear to be centered
+and a few with overrun/wrapping
+
+not all buttons are getting the right style
+
+Not option to choose nonmodelled data when no file
+
+

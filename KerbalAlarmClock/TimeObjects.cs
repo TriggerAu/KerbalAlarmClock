@@ -5,6 +5,7 @@ using System.Text;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
@@ -460,15 +461,15 @@ namespace KerbalAlarmClock
                         switch (TargetParts[0])
                         {
                             case "Vessel":
-                                if (KACWorker.StoredVesselExists(TargetParts[1]))
-                                    _TargetObject = KACWorker.StoredVessel(TargetParts[1]);
+                                if (KerbalAlarmClock.StoredVesselExists(TargetParts[1]))
+                                    _TargetObject = KerbalAlarmClock.StoredVessel(TargetParts[1]);
                                 break;
                             case "CelestialBody":
-                                if (KACWorker.CelestialBodyExists(TargetParts[1]))
-                                    TargetObject = KACWorker.CelestialBody(TargetParts[1]);
+                                if (KerbalAlarmClock.CelestialBodyExists(TargetParts[1]))
+                                    TargetObject = KerbalAlarmClock.CelestialBody(TargetParts[1]);
                                 break;
                             default:
-                                KACWorker.DebugLogFormatted("No Target Found:{0}", TargetLoader);
+                                MonoBehaviourExtended.LogFormatted("No Target Found:{0}", TargetLoader);
                                 break;
                         }
                     }
@@ -669,8 +670,8 @@ namespace KerbalAlarmClock
                     }
                     catch (Exception ex)
                     {
-                        KACWorker.DebugLogFormatted("Unable to load transfer details for {0}", Name);
-                        KACWorker.DebugLogFormatted(ex.Message);
+                        MonoBehaviourExtended.LogFormatted("Unable to load transfer details for {0}", Name);
+                        MonoBehaviourExtended.LogFormatted(ex.Message);
                     }
                     break;
                 case AlarmType.AscendingNode:
@@ -719,8 +720,8 @@ namespace KerbalAlarmClock
                 }
                 catch (Exception ex)
                 {
-                    KACWorker.DebugLogFormatted("Unable to load transfer details for {0}", Name);
-                    KACWorker.DebugLogFormatted(ex.Message);
+                    MonoBehaviourExtended.LogFormatted("Unable to load transfer details for {0}", Name);
+                    MonoBehaviourExtended.LogFormatted(ex.Message);
                 }
             }
             if (vars[12] != "")
@@ -732,17 +733,17 @@ namespace KerbalAlarmClock
             }
 
             //Now do the work to set Actioned/triggered/etc if needed
-            //KACWorker.DebugLogFormatted("A:{0},T:{1:0},Act:{2:0}", this.Name, CurrentUT, this.ActionedAt);
+            //LogFormatted("A:{0},T:{1:0},Act:{2:0}", this.Name, CurrentUT, this.ActionedAt);
             if (ActionedAt > 0 && CurrentUT > ActionedAt)
             {
-                KACWorker.DebugLogFormatted("Suppressing Alarm on Load:{0}", this.Name);
+                MonoBehaviourExtended.LogFormatted("Suppressing Alarm on Load:{0}", this.Name);
                 this.Triggered = true;
                 this.Actioned = true;
                 this.AlarmWindowClosed = true;
             }
             else if (ActionedAt > CurrentUT)
             {
-                KACWorker.DebugLogFormatted("Reenabling Alarm on Load:{0}", this.Name);
+                MonoBehaviourExtended.LogFormatted("Reenabling Alarm on Load:{0}", this.Name);
                 this.Triggered = false;
                 this.Actioned = false;
                 this.ActionedAt = 0;
@@ -759,12 +760,12 @@ namespace KerbalAlarmClock
             switch (TargetParts[0])
             {
                 case "Vessel":
-                    if (KACWorker.StoredVesselExists(TargetParts[1]))
-                        tReturn = KACWorker.StoredVessel(TargetParts[1]);
+                    if (KerbalAlarmClock.StoredVesselExists(TargetParts[1]))
+                        tReturn = KerbalAlarmClock.StoredVessel(TargetParts[1]);
                     break;
                 case "CelestialBody":
-                    if (KACWorker.CelestialBodyExists(TargetParts[1]))
-                        tReturn = KACWorker.CelestialBody(TargetParts[1]);
+                    if (KerbalAlarmClock.CelestialBodyExists(TargetParts[1]))
+                        tReturn = KerbalAlarmClock.CelestialBody(TargetParts[1]);
                     break;
                 default:
                     break;
@@ -799,7 +800,7 @@ namespace KerbalAlarmClock
             List<ManeuverNode> lstReturn = new List<ManeuverNode>();
 
             String[] strInputParts = strInput.Split(",".ToCharArray());
-            KACWorker.DebugLogFormatted("Found {0} Maneuver Nodes to deserialize", strInputParts.Length / 8);
+            MonoBehaviourExtended.LogFormatted("Found {0} Maneuver Nodes to deserialize", strInputParts.Length / 8);
 
             //There are 8 parts per mannode
             for (int iNode = 0; iNode < strInputParts.Length / 8; iNode++)
@@ -1081,4 +1082,27 @@ namespace KerbalAlarmClock
         } 
     }
 
+
+    public class EarthTime
+    {
+        static DateTime EarthTimeRoot = new DateTime(2013, 1, 1);
+
+        public static Double EarthTimeEncode(DateTime Input)
+        {
+            Double dblReturn;
+
+            dblReturn = (Input - EarthTimeRoot).TotalSeconds;
+
+            return dblReturn;
+        }
+
+        public static DateTime EarthTimeDecode(Double Input)
+        {
+            DateTime dteReturn;
+
+            dteReturn = EarthTimeRoot.AddSeconds(Input);
+
+            return dteReturn;
+        }
+    }
 }

@@ -6,9 +6,22 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
+    /// <summary>
+    /// Have to do this behaviour or some of the textures are unloaded on first entry into flight mode
+    /// </summary>
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    public class KerbalAlarmClockTextureLoader : MonoBehaviour
+    {
+        //Awake Event - when the DLL is loaded
+        public void Awake()
+        {
+            KACResources.loadGUIAssets();
+        }
+    }
 
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class KACFlight : KerbalAlarmClock
@@ -32,10 +45,11 @@ namespace KerbalAlarmClock
     /// <summary>
     /// This is the behaviour object that we hook events on to for flight
     /// </summary>
-    public partial class KerbalAlarmClock : MonoBehaviour
+    public partial class KerbalAlarmClock : MonoBehaviourExtended
     {
         //Global Settings
-        public static KACSettings Settings = new KACSettings();
+        //public static KACSettings Settings = new KACSettings();
+        internal static Settings settings;
         public virtual String MonoName { get; set; }
         public virtual Boolean ViewAlarmsOnly { get; set; }
         
@@ -46,105 +60,80 @@ namespace KerbalAlarmClock
         private Vessel LastGameVessel;
 
         //Worker and Settings objects
-        public static KACWorker WorkerObjectInstance;
         public static float UpdateInterval = 0.1F;
 
         //Constructor to set KACWorker parent object to this and access to the settings
         public KerbalAlarmClock()
         {
-            switch (KACWorkerGameState.CurrentGUIScene)
-            {
-                case GameScenes.SPACECENTER:
-                case GameScenes.TRACKSTATION:
-                    WorkerObjectInstance = new KACWorker_ViewOnly(this);
-                    break;
-                default:
-                    WorkerObjectInstance = new KACWorker(this);
-                    break;
-            }
-            //Set the saves path
+            //switch (KACWorkerGameState.CurrentGUIScene)
+            //{
+            //    case GameScenes.SPACECENTER:
+            //    case GameScenes.TRACKSTATION:
+            //        = new KACWorker_ViewOnly(this);
+            //        break;
+            //    default:
+            //        = new KACWorker(this);
+            //        break;
+            //}
+            ////Set the saves path
             KACUtils.SavePath=string.Format("{0}saves/{1}",KACUtils.PathApp,HighLogic.SaveFolder);
 
         }
 
         //Awake Event - when the DLL is loaded
-        public void Awake()
+        internal override void Awake()
         {
-            KACWorker.DebugLogFormatted("Awakening the KerbalAlarmClock-{0}", MonoName);
+            LogFormatted("Awakening the KerbalAlarmClock-{0}", MonoName);
 
-            //Load Image resources
-            KACResources.loadGUIAssets();
+            InitWorkerVariables();
 
             //Load the Settings values from the file
-            Settings.Load();
+            //Settings.Load();
+            LogFormatted("Loading Settings");
+            settings = new Settings("settings.cfg");
+            if (!settings.Load())
+                LogFormatted("Settings Load Failed");
 
             //Set initial GameState
             KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
 
             //Load Hohmann modelling data - if in flight mode
-            if ((KACWorkerGameState.LastGUIScene== GameScenes.FLIGHT) && Settings.XferModelLoadData)
-                Settings.XferModelDataLoaded = KACResources.LoadModelPoints();
+            if ((KACWorkerGameState.LastGUIScene== GameScenes.FLIGHT) && settings.XferModelLoadData)
+                settings.XferModelDataLoaded = KACResources.LoadModelPoints();
 
             //Common Toolbar Code
             BlizzyToolbarIsAvailable = HookToolbar();
 
-            if (BlizzyToolbarIsAvailable && Settings.UseBlizzyToolbarIfAvailable)
+            if (BlizzyToolbarIsAvailable && settings.UseBlizzyToolbarIfAvailable)
             {
-                WorkerObjectInstance.btnToolbarKAC = InitToolbarButton();
+                btnToolbarKAC = InitToolbarButton();
             }
 
             //Set up the updating function - do this 5 times a sec not on every frame.
-            KACWorker.DebugLogFormatted("Invoking Worker Function KerbalAlarmClock-{0}", MonoName);
-            CancelInvoke();
-
-            SetupRepeatingFunction_BehaviourUpdate(Settings.BehaviourChecksPerSec);
-            
-            //Reenable for during code debug
-            //SetupRepeatingFunction("DebugWriter", 2F);
+            StartRepeatingWorker(settings.BehaviourChecksPerSec);
         }
 
-        public void SetupRepeatingFunction_BehaviourUpdate(int ChecksPerSec)
-        {
-            SetupRepeatingFunction("BehaviourUpdate", ChecksPerSec);
-        }
-        public void SetupRepeatingFunction(String FunctionName, int ChecksPerSec)
-        {
-            float Interval = 1F / ChecksPerSec;
-            SetupRepeatingFunction(FunctionName, Interval);
-        }
-        public void SetupRepeatingFunction(String FunctionName, float SecsInterval)
-        {
-            //Debug.Log(SecsInterval);
-            if (IsInvoking(FunctionName))
-            {
-                KACWorker.DebugLogFormatted("Cancelling repeating Behaviour({0}-{1})", FunctionName,MonoName);
-                CancelInvoke(FunctionName);
-            }
-            KACWorker.DebugLogFormatted("Setting up repeating Behaviour({1}) every {0:0.00} Secs", SecsInterval, FunctionName);
-            InvokeRepeating(FunctionName, SecsInterval, SecsInterval);
-        }
- 
         //Destroy Event - when the DLL is loaded
-        public void OnDestroy()
+        internal override void OnDestroy()
         {
-            KACWorker.DebugLogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
+            LogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
 
-            DestroyToolbarButton(WorkerObjectInstance.btnToolbarKAC);
+            DestroyToolbarButton(btnToolbarKAC);
         }
 
         #region "Update Code"
         //Update Function - Happens on every frame - this is where behavioural stuff is typically done
-        public void Update()
+        internal override void Update()
         {
             KACWorkerGameState.SetCurrentGUIStates();
             //if scene has changed
             if (KACWorkerGameState.ChangedGUIScene)
-                KACWorker.DebugLogFormatted("Scene Change from '{0}' to '{1}'", KACWorkerGameState.LastGUIScene.ToString(), KACWorkerGameState.CurrentGUIScene.ToString());
+                LogFormatted("Scene Change from '{0}' to '{1}'", KACWorkerGameState.LastGUIScene.ToString(), KACWorkerGameState.CurrentGUIScene.ToString());
 
             HandleKeyStrokes();
 
             //Work out if we should be in the gui queue
-            ShouldBeInPostDrawQueue = Settings.DrawScenes.Contains(HighLogic.LoadedScene);
+            ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
 
             //Fix the issues with Flight SCene Stuff
             if (HighLogic.LoadedScene == GameScenes.FLIGHT)
@@ -170,14 +159,14 @@ namespace KerbalAlarmClock
                 //    case GameScenes.TRACKSTATION: Settings.WindowVisible_TrackingStation = !Settings.WindowVisible_TrackingStation; break;
                 //    default: Settings.WindowVisible = !Settings.WindowVisible; break;
                 //}
-                WorkerObjectInstance.WindowVisibleByActiveScene = !WorkerObjectInstance.WindowVisibleByActiveScene;
-                Settings.Save();
+                WindowVisibleByActiveScene = !WindowVisibleByActiveScene;
+                settings.Save();
             }
 
             //TODO:Disable this one
             //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
             //{
-            //    WorkerObjectInstance.DebugActionTriggered(HighLogic.LoadedScene);
+            //    DebugActionTriggered(HighLogic.LoadedScene);
             //}
 
             //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
@@ -197,14 +186,14 @@ namespace KerbalAlarmClock
         {
             if ((LastGameUT != 0) && (LastGameUT > Planetarium.GetUniversalTime()))
             {
-                KACWorker.DebugLogFormatted("Time Went Backwards - Load or restart - resetting inqueue flag");
+                LogFormatted("Time Went Backwards - Load or restart - resetting inqueue flag");
                 ShouldBeInPostDrawQueue = false;
 //                IsInPostDrawQueue = false;
 
                 //Also, untrigger any alarms that we have now gone back past
-                foreach (KACAlarm tmpAlarm in Settings.Alarms.Where(a=>a.Triggered && (a.AlarmTime.UT>Planetarium.GetUniversalTime())))
+                foreach (KACAlarm tmpAlarm in settings.Alarms.Where(a=>a.Triggered && (a.AlarmTime.UT>Planetarium.GetUniversalTime())))
                 {
-                    KACWorker.DebugLogFormatted("Resetting Alarm Trigger for {0}({1})", tmpAlarm.Name, tmpAlarm.AlarmTime.UTString());
+                    LogFormatted("Resetting Alarm Trigger for {0}({1})", tmpAlarm.Name, tmpAlarm.AlarmTime.UTString());
                     tmpAlarm.Triggered = false;
                     tmpAlarm.AlarmWindowID = 0;
                     tmpAlarm.AlarmWindowClosed = false;
@@ -214,20 +203,21 @@ namespace KerbalAlarmClock
             }
             else if (LastGameVessel == null)
             {
-                KACWorker.DebugLogFormatted("Active Vessel unreadable - resetting inqueue flag");
+                LogFormatted("Active Vessel unreadable - resetting inqueue flag");
                 ShouldBeInPostDrawQueue = false;
                 //                IsInPostDrawQueue = false;
             }
             else if (LastGameVessel != FlightGlobals.ActiveVessel)
             {
-                KACWorker.DebugLogFormatted("Active Vessel changed - resetting inqueue flag");
+                LogFormatted("Active Vessel changed - resetting inqueue flag");
                 ShouldBeInPostDrawQueue = false;
                 //                IsInPostDrawQueue = false;
             }
         }
         #endregion
 
-        public void OnGUI()
+        //public void OnGUI()
+        internal override void OnGUIEvery()
         {
             //Do the GUI Stuff - basically get the workers draw stuff into the postrendering queue
             //If the two flags are different are we going in or out of the queue
@@ -235,52 +225,58 @@ namespace KerbalAlarmClock
             {
                 if (ShouldBeInPostDrawQueue && !IsInPostDrawQueue)
                 {
-                    KACWorker.DebugLogFormatted("Adding DrawGUI to PostRender Queue");
+                    LogFormatted("Adding DrawGUI to PostRender Queue");
 
                     //reset any existing pane display
-                    WorkerObjectInstance.ResetPanes();
+                    ResetPanes();
                     
                     //Add to the queue
                     RenderingManager.AddToPostDrawQueue(5, DrawGUI);
                     IsInPostDrawQueue = true;
 
                     //if we are adding the renderer and we are in flight then do the daily version check if required
-                    if (HighLogic.LoadedScene == GameScenes.FLIGHT && Settings.DailyVersionCheck)
-                        Settings.VersionCheck(false);
+                    if (HighLogic.LoadedScene == GameScenes.FLIGHT && settings.DailyVersionCheck)
+                        settings.VersionCheck(false);
 
                 }
                 else
                 {
-                    KACWorker.DebugLogFormatted("Removing DrawGUI from PostRender Queue");
+                    LogFormatted("Removing DrawGUI from PostRender Queue");
                     RenderingManager.RemoveFromPostDrawQueue(5, DrawGUI);
                     IsInPostDrawQueue = false;
                 }
             }
         }
 
-        public void BehaviourUpdate()
+        internal override void RepeatingWorker()
         {
-            //Only Do any of this work if we are in FlightMode - THIS IS NOW HANDLED INSIDE THE UPDATEDETAILS LOOK SO WE CAN DRAW ON OTHER SCREENS
-            //if (Settings.BehaviourScenes.Contains(HighLogic.LoadedScene))
-            //{
-                WorkerObjectInstance.UpdateDetails();
-            //}
+            UpdateDetails();
         }
 
+        internal override void OnGUIOnceOnly()
+        {
+            //Load Image resources
+            KACResources.loadGUIAssets();
+
+            KACResources.InitSkins();
+
+            //Called by SetSkin
+            //KACResources.SetStyles();
+
+        }
         //This is what we do every frame when the object is being drawn 
         //We dont get here unless we are in the postdraw queue
         public void DrawGUI()
         {
-            //one off stuff for styles, etc
-            WorkerObjectInstance.SetupDrawStuff();
+            GUI.skin = KACResources.CurrentSkin;
 
             //Draw the icon that should be there all the time
-            WorkerObjectInstance.DrawIcons();
+            DrawIcons();
 
             Boolean blnShowInterface = true;
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
-                if (Settings.HideOnPause && PauseMenu.isOpen)
+                if (settings.HideOnPause && PauseMenu.isOpen)
                     blnShowInterface = false;
             }
 
@@ -288,20 +284,22 @@ namespace KerbalAlarmClock
             if (blnShowInterface)
             {
                 // look for passed alarms to display stuff
-                if (WorkerObjectInstance.IconShowByActiveScene)
-                    WorkerObjectInstance.TriggeredAlarms();
+                if (IconShowByActiveScene)
+                    TriggeredAlarms();
 
                 //If the mainwindow is visible And no pause menu then draw it
-                if (WorkerObjectInstance.WindowVisibleByActiveScene)
+                if (WindowVisibleByActiveScene)
                 {
-                    WorkerObjectInstance.DrawWindows();
+                    DrawWindowsPre();
+                    DrawWindows();
+                    DrawWindowsPost();
                 }
             }
 
             //If Game is paused then update Earth Alarms for list drawing
-            if (WorkerObjectInstance.WindowVisibleByActiveScene && FlightDriver.Pause)
+            if (WindowVisibleByActiveScene && FlightDriver.Pause)
             {
-                WorkerObjectInstance.UpdateEarthAlarms();
+                UpdateEarthAlarms();
             }
         }
 
@@ -310,47 +308,40 @@ namespace KerbalAlarmClock
         {
             if (HighLogic.LoadedScene == GameScenes.FLIGHT)
             {
-                WorkerObjectInstance.DebugActionTimed(HighLogic.LoadedScene);
+                DebugActionTimed(HighLogic.LoadedScene);
             }
         }
 #endif
 
-    }
 
-    /// <summary>
-    /// Alarm Clock Worker Object
-    /// Contains Update and drawing routines
-    /// </summary>
-    public partial class KACWorker
-    {
         //All persistant stuff is stored in the settings object
         private long SecondsWarpLightIsShown = 3;
 
         //Constructor - link to parent and set up time
-        #region "Constructor"
-        private KerbalAlarmClock parentBehaviour;
-        private KACSettings Settings;
+        //#region "Constructor"
+        //private KerbalAlarmClock 
+        //private KACSettings Settings;
 
 
-        public KACWorker(KerbalAlarmClock parent)
-        {
-            parentBehaviour = parent;
-            Settings = KerbalAlarmClock.Settings;
+        //public KACWorker(KerbalAlarmClock parent)
+        //{
+        //    = parent;
+        //    Settings = KerbalAlarmClock.Settings;
 
-            InitWorkerVariables();
-        }
+        //    InitWorkerVariables();
+        //}
 
         private void InitWorkerVariables()
         {
-            _WindowAddID = rnd.Next(1000, 2000000);
-            _WindowAddMessagesID = rnd.Next(1000, 2000000);
-            _WindowMainID = rnd.Next(1000, 2000000);
-            _WindowSettingsID = rnd.Next(1000, 2000000);
-            _WindowEditID = rnd.Next(1000, 2000000);
-            _WindowEarthAlarmID = rnd.Next(1000, 2000000);
-            _WindowBackupFailedID = rnd.Next(1000, 2000000);
+            _WindowAddID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
+            _WindowAddMessagesID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
+            _WindowMainID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
+            _WindowSettingsID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
+            _WindowEditID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
+            _WindowEarthAlarmID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
+            _WindowBackupFailedID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
         }
-        #endregion
+        //#endregion
 
         //Updates the variables that are used in the drawing - this is not on the OnGUI thread
         private Dictionary<String, KACVesselSOI> lstVessels = new Dictionary<String,KACVesselSOI>();
@@ -359,14 +350,6 @@ namespace KerbalAlarmClock
         {
             KACWorkerGameState.SetCurrentFlightStates();
 
-            //NOT NEEDED NOW THAT IT ONLY LOADS IN FLIGHT MODE 
-            //if (KACWorkerGameState.ChangedSaveGameName)
-            //{
-            //    DebugLogFormatted("SaveGame - {0} - {1}", KACWorkerGameState.LastSaveGameName, KACWorkerGameState.CurrentSaveGameName);
-            //    if (KACWorkerGameState.CurrentSaveGameName != "")
-            //        Settings.Load();
-            //}
-
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
                 //if vessel has changed
@@ -374,39 +357,39 @@ namespace KerbalAlarmClock
                 {
                     String strVesselName = "No Vessel";
                     if (KACWorkerGameState.LastVessel!=null) strVesselName=KACWorkerGameState.LastVessel.vesselName;
-                    DebugLogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
+                    LogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
                 }
 
                 // Do we need to restore a maneuverNode after a ship jump - give it 4 secs of attempts for changes to ship
-                if (Settings.LoadManNode != "" && KACWorkerGameState.IsFlightMode)
+                if (settings.LoadManNode != "" && KACWorkerGameState.IsFlightMode)
                 {
-                    List<ManeuverNode> manNodesToRestore = KACAlarm.ManNodeDeserializeList(Settings.LoadManNode);
+                    List<ManeuverNode> manNodesToRestore = KACAlarm.ManNodeDeserializeList(settings.LoadManNode);
                     manToRestoreAttempts += 1;
-                    DebugLogFormatted("Attempting to restore a maneuver node-Try {0}",manToRestoreAttempts.ToString());
+                    LogFormatted("Attempting to restore a maneuver node-Try {0}",manToRestoreAttempts.ToString());
                     RestoreManeuverNodeList(manNodesToRestore);
                     if (KACWorkerGameState.ManeuverNodeExists)
                     {
-                        Settings.LoadManNode = "";
-                        Settings.SaveLoadObjects();
+                        settings.LoadManNode = "";
+                        settings.Save();
                         manNodesToRestore = null;
                         manToRestoreAttempts = 0;
                     }
                     if (manToRestoreAttempts > (5 / KerbalAlarmClock.UpdateInterval))
                     {
-                        DebugLogFormatted("attempts adding Node failed over 5 secs - giving up");
-                        Settings.LoadManNode = "";
-                        Settings.SaveLoadObjects();
+                        LogFormatted("attempts adding Node failed over 5 secs - giving up");
+                        settings.LoadManNode = "";
+                        settings.Save();
                         manNodesToRestore = null;
                         manToRestoreAttempts = 0;
                     }
                 }
 
                 // Do we need to restore a Target after a ship jump - give it 4 secs of attempts for changes to ship
-                if (Settings.LoadVesselTarget != "" && KACWorkerGameState.IsFlightMode)
+                if (settings.LoadVesselTarget != "" && KACWorkerGameState.IsFlightMode)
                 {
-                    ITargetable targetToRestore = KACAlarm.TargetDeserialize(Settings.LoadVesselTarget);
+                    ITargetable targetToRestore = KACAlarm.TargetDeserialize(settings.LoadVesselTarget);
                     targetToRestoreAttempts += 1;
-                    DebugLogFormatted("Attempting to restore a Target-Try {0}", targetToRestoreAttempts.ToString());
+                    LogFormatted("Attempting to restore a Target-Try {0}", targetToRestoreAttempts.ToString());
 
                     if (targetToRestore is Vessel)
                         FlightGlobals.fetch.SetVesselTarget(targetToRestore as Vessel);
@@ -415,16 +398,16 @@ namespace KerbalAlarmClock
 
                     if (FlightGlobals.fetch.VesselTarget!=null)
                     {
-                        Settings.LoadVesselTarget="";
-                        Settings.SaveLoadObjects();
+                        settings.LoadVesselTarget="";
+                        settings.Save();
                         targetToRestore = null;
                         targetToRestoreAttempts = 0;
                     }
                     if (targetToRestoreAttempts > (5 / KerbalAlarmClock.UpdateInterval))
                     {
-                        DebugLogFormatted("attempts adding target over 5 secs failed - giving up");
-                        Settings.LoadVesselTarget = "";
-                        Settings.SaveLoadObjects();
+                        LogFormatted("attempts adding target over 5 secs failed - giving up");
+                        settings.LoadVesselTarget = "";
+                        settings.Save();
                         targetToRestore = null;
                         targetToRestoreAttempts = 0;
                     }
@@ -440,11 +423,11 @@ namespace KerbalAlarmClock
                         KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
 
                 //Are we adding SOI Alarms
-                if (Settings.AlarmAddSOIAuto)
+                if (settings.AlarmAddSOIAuto)
                 {
                     MonitorSOIOnPath();                 
                     //Are we doing the base catchall
-                    if (Settings.AlarmCatchSOIChange)
+                    if (settings.AlarmCatchSOIChange)
                     {
                         GlobalSOICatchAll(KerbalAlarmClock.UpdateInterval * TimeWarp.CurrentRate);
                     }
@@ -454,19 +437,19 @@ namespace KerbalAlarmClock
                 //Only do these recalcs at 1x or physwarp...
                 if (TimeWarp.CurrentRate==1 || (TimeWarp.WarpMode==TimeWarp.Modes.LOW))
                 {
-                    if (Settings.AlarmSOIRecalc)
+                    if (settings.AlarmSOIRecalc)
                     {
                         //Adjust any transfer window alarms until they hit the threshold
                         RecalcSOIAlarmTimes(false);
                     }
 
-                    if (Settings.AlarmXferRecalc)
+                    if (settings.AlarmXferRecalc)
                     {
                         //Adjust any transfer window alarms until they hit the threshold
                         RecalcTransferAlarmTimes(false);
                     }
 
-                    if (Settings.AlarmNodeRecalc)
+                    if (settings.AlarmNodeRecalc)
                     {
                         //Adjust any Ap,Pe,AN,DNs as flight path changes
                         RecalcNodeAlarmTimes(false);
@@ -474,7 +457,7 @@ namespace KerbalAlarmClock
                 }
 
                 //Are we adding Man Node Alarms
-                if (Settings.AlarmAddManAuto)
+                if (settings.AlarmAddManAuto)
                 {
                     MonitorManNodeOnPath();
                 }
@@ -487,19 +470,19 @@ namespace KerbalAlarmClock
                 {
                     intPeriodicSaveCounter = 0;
                     Boolean blnPeriodicSave = false;
-                    if (Settings.AlarmXferRecalc && Settings.Alarms.FirstOrDefault(a=>a.TypeOfAlarm== KACAlarm.AlarmType.Transfer)!=null)
+                    if (settings.AlarmXferRecalc && settings.Alarms.FirstOrDefault(a=>a.TypeOfAlarm== KACAlarm.AlarmType.Transfer)!=null)
                         blnPeriodicSave=true;
-                    else if (Settings.AlarmAddSOIAuto && Settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChangeAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
+                    else if (settings.AlarmAddSOIAuto && settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChangeAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
                         blnPeriodicSave = true;
-                    else if (Settings.AlarmSOIRecalc && Settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
+                    else if (settings.AlarmSOIRecalc && settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
                         blnPeriodicSave = true;
-                    else if (Settings.AlarmNodeRecalc && Settings.Alarms.FirstOrDefault(a => TypesToRecalc.Contains(a.TypeOfAlarm) && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
+                    else if (settings.AlarmNodeRecalc && settings.Alarms.FirstOrDefault(a => TypesToRecalc.Contains(a.TypeOfAlarm) && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
                         blnPeriodicSave = true;
-                    else if (Settings.AlarmAddManAuto && Settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.ManeuverAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
+                    else if (settings.AlarmAddManAuto && settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.ManeuverAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
                         blnPeriodicSave = true;
 
-                    if (blnPeriodicSave)
-                        Settings.SaveAlarms();
+                    //if (blnPeriodicSave)
+                    //    settings.SaveAlarms();
                 }
 
             }
@@ -532,10 +515,10 @@ namespace KerbalAlarmClock
             String strSOIAlarmNotes = "";
             //double timeSOIAlarm = 0;
 
-            if (Settings.AlarmAddSOIAuto_ExcludeEVA && KACWorkerGameState.CurrentVessel.vesselType == VesselType.EVA)
+            if (settings.AlarmAddSOIAuto_ExcludeEVA && KACWorkerGameState.CurrentVessel.vesselType == VesselType.EVA)
                 return;
 
-            if (Settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
+            if (settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
             {
                 timeSOIChange = KACWorkerGameState.CurrentVessel.orbit.UTsoi;
                 //timeSOIAlarm = timeSOIChange - Settings.AlarmAddSOIMargin;
@@ -551,7 +534,7 @@ namespace KerbalAlarmClock
 
             //is there an SOI alarm for this ship already that has not been triggered
             KACAlarm tmpSOIAlarm =
-            Settings.Alarms.Find(delegate(KACAlarm a)
+            settings.Alarms.Find(delegate(KACAlarm a)
             {
                 return
                     (a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
@@ -569,12 +552,12 @@ namespace KerbalAlarmClock
                 //Is there an SOI point
                 if (timeSOIChange != 0)
                 {
-                    timeSOIAlarm = timeSOIChange - Settings.AlarmAutoSOIMargin;
+                    timeSOIAlarm = timeSOIChange - settings.AlarmAutoSOIMargin;
                     //and an existing alarm
                     if (tmpSOIAlarm != null)
                     {
                         //update the time (if more than threshold secs)
-                        if ((timeSOIAlarm - KACWorkerGameState.CurrentTime.UT) > Settings.AlarmAddSOIAutoThreshold)
+                        if ((timeSOIAlarm - KACWorkerGameState.CurrentTime.UT) > settings.AlarmAddSOIAutoThreshold)
                         {
                             tmpSOIAlarm.AlarmTime.UT = timeSOIAlarm;
                         }
@@ -584,17 +567,17 @@ namespace KerbalAlarmClock
                     {
                         //Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strOldAlarmNameSOI, strOldAlarmMessageSOI, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
                         //    KACAlarm.AlarmType.SOIChange, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
-                        Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strSOIAlarmName, strSOIAlarmNotes, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
-                            KACAlarm.AlarmType.SOIChangeAuto, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
-                        Settings.SaveAlarms();
+                        settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strSOIAlarmName, strSOIAlarmNotes, timeSOIAlarm, settings.AlarmAutoSOIMargin,
+                            KACAlarm.AlarmType.SOIChangeAuto, (settings.AlarmOnSOIChange_Action > 0), (settings.AlarmOnSOIChange_Action > 1)));
+                        //settings.SaveAlarms();
                     }
                 }
                 else
                 {
                     //remove any existing alarm - if less than threshold - this means old alarms not touched
-                    if (tmpSOIAlarm != null && (tmpSOIAlarm.Remaining.UT > Settings.AlarmAddSOIAutoThreshold))
+                    if (tmpSOIAlarm != null && (tmpSOIAlarm.Remaining.UT > settings.AlarmAddSOIAutoThreshold))
                     {
-                        Settings.Alarms.Remove(tmpSOIAlarm);
+                        settings.Alarms.Remove(tmpSOIAlarm);
                     }
                 }
 
@@ -603,12 +586,12 @@ namespace KerbalAlarmClock
 
         private void RecalcSOIAlarmTimes(Boolean OverrideDriftThreshold)
         {
-            foreach (KACAlarm tmpAlarm in Settings.Alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()))
+            foreach (KACAlarm tmpAlarm in settings.Alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()))
             {
-                if (tmpAlarm.Remaining.UT > Settings.AlarmSOIRecalcThreshold)
+                if (tmpAlarm.Remaining.UT > settings.AlarmSOIRecalcThreshold)
                 {
                     //do the check/update on these
-                    if (Settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
+                    if (settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))
                     {
                         double timeSOIChange = 0;
                         timeSOIChange = KACWorkerGameState.CurrentVessel.orbit.UTsoi;
@@ -620,17 +603,17 @@ namespace KerbalAlarmClock
 
         private void RecalcTransferAlarmTimes(Boolean OverrideDriftThreshold)
         {
-            foreach (KACAlarm tmpAlarm in Settings.Alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmType.Transfer))
+            foreach (KACAlarm tmpAlarm in settings.Alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmType.Transfer))
             {
-                if (tmpAlarm.Remaining.UT > Settings.AlarmXferRecalcThreshold)
+                if (tmpAlarm.Remaining.UT > settings.AlarmXferRecalcThreshold)
                 {
                     KACXFerTarget tmpTarget = new KACXFerTarget();
                     tmpTarget.Origin = FlightGlobals.Bodies.Single(b => b.bodyName == tmpAlarm.XferOriginBodyName);
                     tmpTarget.Target = FlightGlobals.Bodies.Single(b => b.bodyName == tmpAlarm.XferTargetBodyName);
 
-                    //DebugLogFormatted("{0}+{1}-{2}", KACWorkerGameState.CurrentTime.UT.ToString(), tmpTarget.AlignmentTime.UT.ToString(), tmpAlarm.AlarmMarginSecs.ToString());
+                    //LogFormatted("{0}+{1}-{2}", KACWorkerGameState.CurrentTime.UT.ToString(), tmpTarget.AlignmentTime.UT.ToString(), tmpAlarm.AlarmMarginSecs.ToString());
                     //recalc the transfer spot, but dont move it if the difference is more than the threshold value
-                    if (Math.Abs(KACWorkerGameState.CurrentTime.UT - tmpTarget.AlignmentTime.UT) < Settings.AlarmXferRecalcThreshold || OverrideDriftThreshold)
+                    if (Math.Abs(KACWorkerGameState.CurrentTime.UT - tmpTarget.AlignmentTime.UT) < settings.AlarmXferRecalcThreshold || OverrideDriftThreshold)
                         tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + tmpTarget.AlignmentTime.UT;
                 }
             }
@@ -641,20 +624,20 @@ namespace KerbalAlarmClock
         private void RecalcNodeAlarmTimes(Boolean OverrideDriftThreshold)
         {
             //only do these recalcs for the current flight plan
-            foreach (KACAlarm tmpAlarm in Settings.Alarms.Where(a => TypesToRecalc.Contains(a.TypeOfAlarm) && a.VesselID==KACWorkerGameState.CurrentVessel.id.ToString()))
+            foreach (KACAlarm tmpAlarm in settings.Alarms.Where(a => TypesToRecalc.Contains(a.TypeOfAlarm) && a.VesselID==KACWorkerGameState.CurrentVessel.id.ToString()))
             {
-                if (tmpAlarm.Remaining.UT > Settings.AlarmNodeRecalcThreshold)
+                if (tmpAlarm.Remaining.UT > settings.AlarmNodeRecalcThreshold)
                 {
                     switch (tmpAlarm.TypeOfAlarm)
 	                {
                         case KACAlarm.AlarmType.Apoapsis:
                             if (KACWorkerGameState.ApPointExists &&
-                                ((Math.Abs(KACWorkerGameState.CurrentVessel.orbit.timeToAp) > Settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
+                                ((Math.Abs(KACWorkerGameState.CurrentVessel.orbit.timeToAp) > settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
                                 tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + KACWorkerGameState.CurrentVessel.orbit.timeToAp;
                             break;
                         case KACAlarm.AlarmType.Periapsis:
                             if (KACWorkerGameState.PePointExists &&
-                                ((Math.Abs(KACWorkerGameState.CurrentVessel.orbit.timeToPe) > Settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
+                                ((Math.Abs(KACWorkerGameState.CurrentVessel.orbit.timeToPe) > settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
                                 tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + KACWorkerGameState.CurrentVessel.orbit.timeToPe;
                             break;
                         case KACAlarm.AlarmType.AscendingNode:
@@ -673,7 +656,7 @@ namespace KerbalAlarmClock
                             }
 
                             if (blnANExists &&
-                                ((Math.Abs(timeToAN) > Settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
+                                ((Math.Abs(timeToAN) > settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
                                 tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + timeToAN;
                             break;
 
@@ -693,7 +676,7 @@ namespace KerbalAlarmClock
                             }
 
                             if (blnDNExists &&
-                                ((Math.Abs(timeToDN) > Settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
+                                ((Math.Abs(timeToDN) > settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
                                 tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + timeToDN;
                             break;
                         default:
@@ -710,11 +693,11 @@ namespace KerbalAlarmClock
                 //only track vessels, not debris, EVA, etc
                 //and not the current vessel
                 //and no SOI alarm for it within the threshold - THIS BIT NEEDS TUNING
-                if (Settings.VesselTypesForSOI.Contains(tmpVessel.vesselType) && (tmpVessel!=KACWorkerGameState.CurrentVessel) &&
-                    (Settings.Alarms.FirstOrDefault(a => 
+                if (settings.VesselTypesForSOI.Contains(tmpVessel.vesselType) && (tmpVessel!=KACWorkerGameState.CurrentVessel) &&
+                    (settings.Alarms.FirstOrDefault(a => 
                         (a.VesselID == tmpVessel.id.ToString() && 
                         (a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange) &&
-                        (Math.Abs(a.Remaining.UT) < SecondsTillNextUpdate + Settings.AlarmAddSOIAutoThreshold)
+                        (Math.Abs(a.Remaining.UT) < SecondsTillNextUpdate + settings.AlarmAddSOIAutoThreshold)
                         )) == null)
                     )
 
@@ -722,7 +705,7 @@ namespace KerbalAlarmClock
                     if (lstVessels.ContainsKey(tmpVessel.id.ToString()) == false)
                     {
                         //Add new Vessels
-                        DebugLogFormatted(String.Format("Adding {0}-{1}-{2}-{3}", tmpVessel.id, tmpVessel.vesselName, tmpVessel.vesselType, tmpVessel.mainBody.bodyName));
+                        LogFormatted(String.Format("Adding {0}-{1}-{2}-{3}", tmpVessel.id, tmpVessel.vesselName, tmpVessel.vesselType, tmpVessel.mainBody.bodyName));
                         lstVessels.Add(tmpVessel.id.ToString(), new KACVesselSOI(tmpVessel.vesselName, tmpVessel.mainBody.bodyName));
                     }
                     else
@@ -736,21 +719,21 @@ namespace KerbalAlarmClock
                                 "     Old SOI: " + lstVessels[tmpVessel.id.ToString()].SOIName + "\r\n" +
                                 "     New SOI: " + tmpVessel.mainBody.bodyName,
                                  KACWorkerGameState.CurrentTime.UT, 0, KACAlarm.AlarmType.SOIChange,
-                                (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1));
-                            Settings.Alarms.Add(newAlarm);
+                                (settings.AlarmOnSOIChange_Action > 0), (settings.AlarmOnSOIChange_Action > 1));
+                            settings.Alarms.Add(newAlarm);
 
-                            DebugLogFormatted("Triggering SOI Alarm - " + newAlarm.Name);
+                            LogFormatted("Triggering SOI Alarm - " + newAlarm.Name);
                             newAlarm.Triggered = true;
                             newAlarm.Actioned = true;
-                            if (Settings.AlarmOnSOIChange_Action > 1)
+                            if (settings.AlarmOnSOIChange_Action > 1)
                             {
-                                DebugLogFormatted(String.Format("{0}-Pausing Game", newAlarm.Name));
+                                LogFormatted(String.Format("{0}-Pausing Game", newAlarm.Name));
                                 TimeWarp.SetRate(0, true);
                                 FlightDriver.SetPause(true);
                             }
-                            else if (Settings.AlarmOnSOIChange_Action > 0)
+                            else if (settings.AlarmOnSOIChange_Action > 0)
                             {
-                                DebugLogFormatted(String.Format("{0}-Halt Warp", newAlarm.Name));
+                                LogFormatted(String.Format("{0}-Halt Warp", newAlarm.Name));
                                 TimeWarp.SetRate(0, true);
                             }
 
@@ -765,13 +748,13 @@ namespace KerbalAlarmClock
         private void MonitorManNodeOnPath()
         {
             //is there an alarm
-            KACAlarm tmpAlarm = Settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.ManeuverAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString());
+            KACAlarm tmpAlarm = settings.Alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.ManeuverAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString());
 
             //is there an alarm and no man node?
             if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
             {
                 KACTime nodeAutoAlarm;
-                nodeAutoAlarm = new KACTime(KACWorkerGameState.ManeuverNodeFuture.UT - Settings.AlarmAddManAutoMargin);
+                nodeAutoAlarm = new KACTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin);
                 
                 List<ManeuverNode> manNodesToStore = KACWorkerGameState.ManeuverNodesFuture;
 
@@ -787,18 +770,18 @@ namespace KerbalAlarmClock
                 else 
                 {
                     //dont add an alarm if we are within the threshold period
-                    if (nodeAutoAlarm.UT + Settings.AlarmAddManAutoMargin - Settings.AlarmAddManAutoThreshold > KACWorkerGameState.CurrentTime.UT)
+                    if (nodeAutoAlarm.UT + settings.AlarmAddManAutoMargin - settings.AlarmAddManAutoThreshold > KACWorkerGameState.CurrentTime.UT)
                     {
                         //or are we setting a new one
-                        Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, Settings.AlarmAddManAutoMargin, KACAlarm.AlarmType.ManeuverAuto,
-                            (Settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.KillWarp), (Settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.PauseGame), manNodesToStore));
-                        Settings.Save();
+                        settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin, KACAlarm.AlarmType.ManeuverAuto,
+                            (settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.KillWarp), (settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.PauseGame), manNodesToStore));
+                        settings.Save();
                     }
                 }
             }
-            else if (Settings.AlarmAddManAuto_andRemove && !KACWorkerGameState.ManeuverNodeExists)
+            else if (settings.AlarmAddManAuto_andRemove && !KACWorkerGameState.ManeuverNodeExists)
             {
-                Settings.Alarms.Remove(tmpAlarm);
+                settings.Alarms.Remove(tmpAlarm);
             }
         }
 
@@ -807,7 +790,7 @@ namespace KerbalAlarmClock
         /// </summary>
         public void UpdateEarthAlarms()
         {
-            foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Where(a=>a.TypeOfAlarm== KACAlarm.AlarmType.EarthTime))
+            foreach (KACAlarm tmpAlarm in settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Where(a=>a.TypeOfAlarm== KACAlarm.AlarmType.EarthTime))
             {
                 tmpAlarm.Remaining.UT = (EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds;
             }
@@ -815,7 +798,7 @@ namespace KerbalAlarmClock
 
         private void ParseAlarmsAndAffectWarpAndPause(double SecondsTillNextUpdate)
         {
-            foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
+            foreach (KACAlarm tmpAlarm in settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
             {
                 //reset each alarms WarpInfluence flag
                 if (KACWorkerGameState.CurrentWarpInfluenceStartTime == null)
@@ -837,7 +820,7 @@ namespace KerbalAlarmClock
                 {
                     if (tmpAlarm.ActionedAt > 0)
                     {
-                        KACWorker.DebugLogFormatted("Suppressing Alarm due to Actioned At being set:{0}", tmpAlarm.Name);
+                        LogFormatted("Suppressing Alarm due to Actioned At being set:{0}", tmpAlarm.Name);
                         tmpAlarm.Triggered = true;
                         tmpAlarm.Actioned = true;
                         tmpAlarm.AlarmWindowClosed = true;
@@ -845,16 +828,16 @@ namespace KerbalAlarmClock
                     else
                     {
 
-                        DebugLogFormatted("Triggering Alarm - " + tmpAlarm.Name);
+                        LogFormatted("Triggering Alarm - " + tmpAlarm.Name);
                         tmpAlarm.Triggered = true;
 
                         //If we are simply past the time make sure we halt the warp
                         //only do this in flight mode
-                        if (!parentBehaviour.ViewAlarmsOnly)
+                        if (!ViewAlarmsOnly)
                         {
                             if (tmpAlarm.PauseGame)
                             {
-                                DebugLogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
+                                LogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
                                 TimeWarp.SetRate(0, true);
                                 FlightDriver.SetPause(true);
                             }
@@ -862,12 +845,12 @@ namespace KerbalAlarmClock
                             {
                                 if (!FlightDriver.Pause)
                                 {
-                                    DebugLogFormatted(String.Format("{0}-Halt Warp", tmpAlarm.Name));
+                                    LogFormatted(String.Format("{0}-Halt Warp", tmpAlarm.Name));
                                     TimeWarp.SetRate(0, true);
                                 }
                                 else
                                 {
-                                    DebugLogFormatted(String.Format("{0}-Game paused, skipping Halt Warp", tmpAlarm.Name));
+                                    LogFormatted(String.Format("{0}-Game paused, skipping Halt Warp", tmpAlarm.Name));
                                 }
                             }
                         }
@@ -876,13 +859,13 @@ namespace KerbalAlarmClock
 
 
                 //skip this if we aren't in flight mode
-                if (!parentBehaviour.ViewAlarmsOnly)
+                if (!ViewAlarmsOnly)
                 {
                     //if in the next two updates we would pass the alarm time then slow down the warp
                     if (!tmpAlarm.Actioned && tmpAlarm.Enabled && (tmpAlarm.HaltWarp || tmpAlarm.PauseGame))
                     {
                         Double TimeNext = KACWorkerGameState.CurrentTime.UT + SecondsTillNextUpdate * 2;
-                        //DebugLogFormatted(CurrentTime.UT.ToString() + "," + TimeNext.ToString());
+                        //LogFormatted(CurrentTime.UT.ToString() + "," + TimeNext.ToString());
                         if (TimeNext > tmpAlarm.AlarmTime.UT)
                         {
                             tmpAlarm.WarpInfluence = true;
@@ -892,7 +875,7 @@ namespace KerbalAlarmClock
                             TimeWarp w = TimeWarp.fetch;
                             if (w.current_rate_index > 0)
                             {
-                                DebugLogFormatted("Reducing Warp");
+                                LogFormatted("Reducing Warp");
                                 TimeWarp.SetRate(w.current_rate_index - 1, true);
                             }
                         }
@@ -921,16 +904,31 @@ namespace KerbalAlarmClock
             FlightGlobals.ActiveVessel.patchedConicSolver.UpdateFlightPlan();
         }
 
-        /// <summary>
-        /// Some Structured logging to the debug file
-        /// </summary>
-        /// <param name="Message"></param>
-        public static void DebugLogFormatted(String Message, params object[] strParams )
-        {
-            Message = String.Format(Message, strParams);
-            String strMessageLine = String.Format("{0},KerbalAlarmClock,{1}", DateTime.Now, Message);
-            Debug.Log(strMessageLine);
-        }
     }
 
+
+#if DEBUG
+    //This will kick us into the save called default and set the first vessel active
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    public class Debug_AutoLoadPersistentSaveOnStartup : MonoBehaviour
+    {
+        //use this variable for first run to avoid the issue with when this is true and multiple addons use it
+        public static bool first = true;
+        public void Start()
+        {
+            //only do it on the first entry to the menu
+            if (first)
+            {
+                first = false;
+                HighLogic.SaveFolder = "default";
+                var game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
+                if (game != null && game.flightState != null && game.compatible)
+                {
+                    FlightDriver.StartAndFocusVessel(game, 0);
+                }
+                //CheatOptions.InfiniteFuel = true;
+            }
+        }
+    }
+#endif
 }

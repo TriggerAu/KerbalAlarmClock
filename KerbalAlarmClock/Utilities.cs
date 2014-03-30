@@ -7,6 +7,7 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
@@ -14,36 +15,39 @@ namespace KerbalAlarmClock
     {
         //public static String AppPath = KSPUtil.ApplicationRootPath.Replace("\\", "/");
         //public static String PlugInPath = AppPath + "PluginData/KerbalAlarmClock/";
-        public static String PathApp = KSPUtil.ApplicationRootPath.Replace("\\", "/");
-        public static String PathTriggerTech = string.Format("{0}GameData/TriggerTech", PathApp);
-        public static String PathPluginData = string.Format("{0}/PluginData/{1}", PathTriggerTech, "KerbalAlarmClock");
-        public static String PathTextures = string.Format("{0}/Textures/{1}", PathTriggerTech, "KerbalAlarmClock");
+        internal static String PathApp = KSPUtil.ApplicationRootPath.Replace("\\", "/");
+        internal static String PathTriggerTech = string.Format("{0}GameData/TriggerTech", PathApp);
+        internal static String PathPlugin = string.Format("{0}/{1}", PathTriggerTech, KerbalAlarmClock._AssemblyName);
+        internal static String PathPluginData = string.Format("{0}/Data", PathPlugin);
+        internal static String PathPluginSounds = string.Format("{0}/Sounds", PathPlugin);
 
         public static String DBPathTriggerTech = string.Format("TriggerTech");
-        public static String DBPathTextures = string.Format("{0}/Textures/{1}", DBPathTriggerTech, "KerbalAlarmClock");
-        public static String DBPathSounds = string.Format("{0}/Sounds/{1}", DBPathTriggerTech, "KerbalAlarmClock");
+        internal static String DBPathPlugin = string.Format("TriggerTech/{0}", KerbalAlarmClock._AssemblyName);
+        internal static String DBPathToolbarIcons = string.Format("{0}/ToolbarIcons", DBPathPlugin);
+        internal static String DBPathTextures = string.Format("{0}/Textures", DBPathPlugin);
+        internal static String DBPathPluginSounds = string.Format("{0}/Sounds", DBPathPlugin);
 
         public static String SavePath;
 
         public static Boolean BackupSaves()
         {
-            if (!KerbalAlarmClock.Settings.BackupSaves)
+            if (!KerbalAlarmClock.settings.BackupSaves)
             {
                 return true;
             }
 
             Boolean blnReturn=false;
-            KACWorker.DebugLogFormatted("Backing up saves");
+            MonoBehaviourExtended.LogFormatted("Backing up saves");
 
             if (!System.IO.Directory.Exists(SavePath))
             {
-                KACWorker.DebugLogFormatted("Saves Path not found: {0}");
+                MonoBehaviourExtended.LogFormatted("Saves Path not found: {0}");
             }
             else
             {
                 if (!System.IO.File.Exists(String.Format("{0}/persistent.sfs", SavePath)))
                 {
-                    KACWorker.DebugLogFormatted("Persistent.sfs file not found: {0}/persistent.sfs", SavePath);
+                    MonoBehaviourExtended.LogFormatted("Persistent.sfs file not found: {0}/persistent.sfs", SavePath);
                 }
                 else
                 {
@@ -52,7 +56,7 @@ namespace KerbalAlarmClock
                         System.IO.File.Copy(String.Format("{0}/persistent.sfs", SavePath),
                                             String.Format("{0}/KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now),
                                             true);
-                        KACWorker.DebugLogFormatted("Backed Up Persistent.sfs as: {0}/KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now);
+                        MonoBehaviourExtended.LogFormatted("Backed Up Persistent.sfs as: {0}/KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now);
                         
                         //Now go for the quicksave
                         if (System.IO.File.Exists(String.Format("{0}/quicksave.sfs", SavePath)))
@@ -60,7 +64,7 @@ namespace KerbalAlarmClock
                             System.IO.File.Copy(String.Format("{0}/quicksave.sfs", SavePath),
                                                 String.Format("{0}/KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now),
                                                 true);
-                            KACWorker.DebugLogFormatted("Backed Up quicksave.sfs as: {0}/KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now);
+                            MonoBehaviourExtended.LogFormatted("Backed Up quicksave.sfs as: {0}/KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now);
                         }                        
                         blnReturn = true;
 
@@ -69,7 +73,7 @@ namespace KerbalAlarmClock
                     }
                     catch (Exception ex)
                     {
-                        KACWorker.DebugLogFormatted("Unable to backup: {0}/persistent.sfs\r\n\t{1}", SavePath,ex.Message);
+                        MonoBehaviourExtended.LogFormatted("Unable to backup: {0}/persistent.sfs\r\n\t{1}", SavePath,ex.Message);
                     }
                 }
             }
@@ -87,13 +91,13 @@ namespace KerbalAlarmClock
         {
             //Now delete any old ones greater than the list to keep
             List<System.IO.FileInfo> SaveBackups = new System.IO.DirectoryInfo(SavePath).GetFiles(string.Format("KACBACKUP*{0}",OriginalName)).ToList<System.IO.FileInfo>();
-            KACWorker.DebugLogFormatted("{0} KACBackup...{1} Saves found", SaveBackups.Count,OriginalName);
+            MonoBehaviourExtended.LogFormatted("{0} KACBackup...{1} Saves found", SaveBackups.Count,OriginalName);
 
-            List<System.IO.FileInfo> SaveBackupsToDelete = SaveBackups.OrderByDescending(fi => fi.CreationTime).Skip(KerbalAlarmClock.Settings.BackupSavesToKeep).ToList<System.IO.FileInfo>();
-            KACWorker.DebugLogFormatted("{0} KACBackup...{1} Saves to purge", SaveBackupsToDelete.Count, OriginalName);
+            List<System.IO.FileInfo> SaveBackupsToDelete = SaveBackups.OrderByDescending(fi => fi.CreationTime).Skip(KerbalAlarmClock.settings.BackupSavesToKeep).ToList<System.IO.FileInfo>();
+            MonoBehaviourExtended.LogFormatted("{0} KACBackup...{1} Saves to purge", SaveBackupsToDelete.Count, OriginalName);
             for (int i = SaveBackupsToDelete.Count - 1; i >= 0; i--)
             {
-                KACWorker.DebugLogFormatted("\tDeleting {0}", SaveBackupsToDelete[i].Name);
+                MonoBehaviourExtended.LogFormatted("\tDeleting {0}", SaveBackupsToDelete[i].Name);
                 SaveBackupsToDelete[i].Delete();
             }
         }
@@ -166,7 +170,7 @@ namespace KerbalAlarmClock
 
             try
             {
-                //KACWorker.DebugLogFormatted("Loading: TriggerTech/Textures/KerbalAlarmClock/{0}", FileName);
+                //MonoBehaviourExtended.LogFormatted("Loading: TriggerTech/Textures/KerbalAlarmClock/{0}", FileName);
                 //tex = GameDatabase.Instance.GetTexture("TriggerTech/Textures/KerbalAlarmClock/" + FileName.Replace(".png", ""), false);
                 //if (tex == null) KACWorker.DebugLogFormat GetTextureted("Textures Empty");
 
@@ -174,7 +178,7 @@ namespace KerbalAlarmClock
             }
             catch (Exception)
             {
-                KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0}", FileName);
+                MonoBehaviourExtended.LogFormatted("Failed to load (are you missing a file):{0}", FileName);
             }
         }
 
@@ -191,21 +195,46 @@ namespace KerbalAlarmClock
         //    WWW img1 = new WWW(String.Format("file://{0}{1}/{2}", PlugInPath, FolderName,FileName));
         //    img1.LoadImageIntoTexture(tex);
         //}
-        public static Boolean LoadImageFromGameDB(ref Texture2D tex, String FileName, String FolderPath = "")
+        //public static Boolean LoadImageFromGameDB(ref Texture2D tex, String FileName, String FolderPath = "")
+        //{
+        //    //DebugLogFormatted("{0},{1}",FileName, FolderPath);
+        //    Boolean blnReturn = false;
+        //    try
+        //    {
+        //        if (FileName.ToLower().EndsWith(".png")) FileName = FileName.Substring(0, FileName.Length - 4);
+        //        if (FolderPath == "") FolderPath = DBPathTextures;
+        //        //MonoBehaviourExtended.LogFormatted("Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
+        //        tex = GameDatabase.Instance.GetTexture(String.Format("{0}/{1}", FolderPath, FileName), false);
+        //        blnReturn = true;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        MonoBehaviourExtended.LogFormatted("Failed to load (are you missing a file):{0}/{1}", String.Format("{0}/{1}", FolderPath, FileName));
+        //    }
+        //    return blnReturn;
+        //}
+        internal static Boolean LoadImageFromGameDB(ref Texture2D tex, String FileName, String FolderPath = "")
         {
-            //DebugLogFormatted("{0},{1}",FileName, FolderPath);
             Boolean blnReturn = false;
             try
             {
+                //trim off the tga and png extensions
                 if (FileName.ToLower().EndsWith(".png")) FileName = FileName.Substring(0, FileName.Length - 4);
+                if (FileName.ToLower().EndsWith(".tga")) FileName = FileName.Substring(0, FileName.Length - 4);
+                //default folder
                 if (FolderPath == "") FolderPath = DBPathTextures;
-                //KACWorker.DebugLogFormatted("Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
+
+                //Look for case mismatches
+                if (!GameDatabase.Instance.ExistsTexture(String.Format("{0}/{1}", FolderPath, FileName)))
+                    throw new Exception();
+
+                //now load it
                 tex = GameDatabase.Instance.GetTexture(String.Format("{0}/{1}", FolderPath, FileName), false);
                 blnReturn = true;
             }
             catch (Exception)
             {
-                KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0}/{1}", String.Format("{0}/{1}", FolderPath, FileName));
+                MonoBehaviourExtended.LogFormatted("Failed to load (are you missing a file - and check case):{0}/{1}", FolderPath, FileName);
             }
             return blnReturn;
         }

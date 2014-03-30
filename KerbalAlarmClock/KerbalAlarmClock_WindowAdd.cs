@@ -6,10 +6,11 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker
+    public partial class KerbalAlarmClock
     {
         KACAlarm.AlarmType AddType = KACAlarm.AlarmType.Raw;
         KACAlarm.AlarmAction AddAction = KACAlarm.AlarmAction.MessageOnly;
@@ -40,20 +41,20 @@ namespace KerbalAlarmClock
             _ShowAddMessages = false;
 
             //option for xfer mode
-            if (Settings.XferUseModelData)
+            if (settings.XferUseModelData)
                 intXferType = 0;
             else
                 intXferType = 1;
 
             //default margin
-            timeMargin.BuildFromUT(Settings.AlarmDefaultMargin);
+            timeMargin.BuildFromUT(settings.AlarmDefaultMargin);
 
             //set default strings
             strAlarmName = FlightGlobals.ActiveVessel.vesselName + "";
             strAlarmNotes = "";
             AddNotesHeight = 100;
 
-            AddAction = (KACAlarm.AlarmAction)Settings.AlarmDefaultAction;
+            AddAction = (KACAlarm.AlarmAction)settings.AlarmDefaultAction;
             //blnHaltWarp = true;
 
             //set initial alarm type based on whats on the flight path
@@ -159,7 +160,7 @@ namespace KerbalAlarmClock
                     break;
                 case KACAlarm.AlarmType.Crew:
                     BuildCrewStrings();
-                    CrewAlarmStoreNode = Settings.AlarmCrewDefaultStoreNode;
+                    CrewAlarmStoreNode = settings.AlarmCrewDefaultStoreNode;
                     break;
                 default:
                     strAlarmEventName = "Alarm"; 
@@ -268,7 +269,7 @@ namespace KerbalAlarmClock
 
             //AddType =  (KACAlarm.AlarmType)GUILayout.Toolbar((int)AddType, strAddTypes,KACResources.styleButton);
             GUIContent[] guiButtons = guiTypes;
-            if (parentBehaviour.ViewAlarmsOnly) guiButtons = guiTypesView;
+            if (ViewAlarmsOnly) guiButtons = guiTypesView;
             if (DrawButtonList(ref AddType,guiButtons))
             {
                 AddTypeChanged();
@@ -478,9 +479,9 @@ namespace KerbalAlarmClock
                     //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
                     String strVesselID = "";
                     if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                    Settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmType.Raw, 
+                    settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmType.Raw, 
                         (AddAction== KACAlarm.AlarmAction.KillWarp), (AddAction== KACAlarm.AlarmAction.PauseGame)));
-                    Settings.Save();
+                    settings.Save();
                     _ShowAddPane = false;
                 }
             }
@@ -520,7 +521,7 @@ namespace KerbalAlarmClock
 
                 for (int intTarget = 0; intTarget < pCM.Count; intTarget++)
                 {
-                    //DebugLogFormatted("{2}", pCM[intTarget].name);
+                    //LogFormatted("{2}", pCM[intTarget].name);
                     GUILayout.BeginHorizontal();
             //        //draw a line and a radio button for selecting Crew
                     GUILayout.Space(20);
@@ -602,14 +603,14 @@ namespace KerbalAlarmClock
                             if (KACWorkerGameState.ManeuverNodeExists) addAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
                             if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                         }
-                        Settings.Alarms.Add(addAlarm);
-                        Settings.Save();
+                        settings.Alarms.Add(addAlarm);
+                        settings.Save();
                         _ShowAddPane = false;
                     }
                 }
                 catch (Exception)
                 {
-                //    DebugLogFormatted(ex.Message);
+                //    LogFormatted(ex.Message);
                     GUILayout.Label("Unable to combine all text fields to date", GUILayout.ExpandWidth(true));
                 }
             }
@@ -625,20 +626,20 @@ namespace KerbalAlarmClock
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Date:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(40), GUILayout.MaxWidth(40));
-            GUILayout.Label(KACTime.PrintDate(AlarmDate, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+            GUILayout.Label(KACTime.PrintDate(AlarmDate, settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
             GUILayout.EndHorizontal();
             if (TimeToEvent != null)
             {
                 GUILayout.BeginHorizontal();
                 //GUILayout.Label("Time to " + strAlarmEventName + ":", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(120), GUILayout.MaxWidth(120));
                 GUILayout.Label("Time to " + strAlarmEventName + ":", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
-                GUILayout.Label(KACTime.PrintInterval(TimeToEvent, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+                GUILayout.Label(KACTime.PrintInterval(TimeToEvent, settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
                 GUILayout.EndHorizontal();
             }
             GUILayout.BeginHorizontal();
             //GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(120), GUILayout.MaxWidth(120));
             GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
-            GUILayout.Label(KACTime.PrintInterval(TimeToAlarm, Settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+            GUILayout.Label(KACTime.PrintInterval(TimeToAlarm, settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
 
@@ -705,9 +706,9 @@ namespace KerbalAlarmClock
                                 //Get a list of all future Maneuver Nodes - thats what the skip does
                                 List<ManeuverNode> manNodesToStore = myVessel.patchedConicSolver.maneuverNodes.Skip(intNode).ToList<ManeuverNode>();
 
-                                Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.Maneuver,
+                                settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.Maneuver,
                                     (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), manNodesToStore));
-                                Settings.Save();
+                                settings.Save();
                                 _ShowAddPane = false;
                             }
                             blnFoundNode = true;
@@ -782,8 +783,8 @@ namespace KerbalAlarmClock
                             if (lstAlarmsWithTarget.Contains(AddType))
                                 newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
 
-                            Settings.Alarms.Add(newAlarm);
-                            Settings.Save();
+                            settings.Alarms.Add(newAlarm);
+                            settings.Save();
                             _ShowAddPane = false;
                         }
                     }
@@ -808,7 +809,7 @@ namespace KerbalAlarmClock
         {
             Double f1 = c1.orbit.semiMajorAxis;
             double f2 = c2.orbit.semiMajorAxis;
-            //DebugLogFormatted("{0}-{1}", f1.ToString(), f2.ToString());
+            //LogFormatted("{0}-{1}", f1.ToString(), f2.ToString());
             return f1.CompareTo(f2);
         }
 
@@ -875,7 +876,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginHorizontal();
             GUILayout.Label("Transfers", KACResources.styleHeading);
             //add something here to select the modelled or formula values for Solar orbiting bodies
-            if (Settings.XferModelDataLoaded)
+            if (settings.XferModelDataLoaded)
             {
                 GUILayout.FlexibleSpace();
                 GUILayout.Label("Calc by:", KACResources.styleAddHeading);
@@ -884,8 +885,8 @@ namespace KerbalAlarmClock
                     //intAddXferHeight += 35;
                     if (DrawRadioList(ref intXferType, "Model", "Formula"))
                     {
-                        Settings.XferUseModelData = (intXferType == 0);
-                        Settings.Save();
+                        settings.XferUseModelData = (intXferType == 0);
+                        settings.Save();
                     }
                 }
                 else
@@ -926,17 +927,17 @@ namespace KerbalAlarmClock
                     BuildTransferStrings();
                     //strAlarmNotesNew = String.Format("{0} Transfer", XferOriginBodies[intXferCurrentOrigin].bodyName);
                 }
-                if (!Settings.AlarmXferDisplayList)
+                if (!settings.AlarmXferDisplayList)
                     GUILayout.Space(34);
                 else
                     if (GUILayout.Button(new GUIContent(KACResources.btnChevronUp, "Hide Full List"), KACResources.styleSmallButton))
                     {
-                        Settings.AlarmXferDisplayList = !Settings.AlarmXferDisplayList;
-                        Settings.Save();
+                        settings.AlarmXferDisplayList = !settings.AlarmXferDisplayList;
+                        settings.Save();
                     }
                 GUILayout.EndHorizontal();
 
-                if (!Settings.AlarmXferDisplayList)
+                if (!settings.AlarmXferDisplayList)
                 {
                     //Simple single chosen target
                     GUILayout.BeginHorizontal();
@@ -952,8 +953,8 @@ namespace KerbalAlarmClock
                     }
                     if (GUILayout.Button(new GUIContent(KACResources.btnChevronDown, "Show Full List"), KACResources.styleSmallButton))
                     {
-                        Settings.AlarmXferDisplayList = !Settings.AlarmXferDisplayList;
-                        Settings.Save();
+                        settings.AlarmXferDisplayList = !settings.AlarmXferDisplayList;
+                        settings.Save();
                     }
                     GUILayout.EndHorizontal();
 
@@ -964,7 +965,7 @@ namespace KerbalAlarmClock
 
                     GUILayout.BeginHorizontal();
                     GUILayout.Label("Phase Angle-Target:", KACResources.styleAddHeading, GUILayout.Width(130));
-                    if (intXferCurrentParent != 0 || (!Settings.XferUseModelData && Settings.XferModelDataLoaded))
+                    if (intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))
                     {
                         //formula based
                         GUILayout.Label(String.Format("{0:0.00}", XferTargetBodies[intXferCurrentTarget].PhaseAngleTarget), KACResources.styleContent, GUILayout.Width(67));
@@ -992,7 +993,7 @@ namespace KerbalAlarmClock
                         catch (Exception ex)
                         {
                             GUILayout.Label("Unable to determine model data", KACResources.styleContent, GUILayout.ExpandWidth(true));
-                            DebugLogFormatted("Error determining model data: {0}", ex.Message);
+                            LogFormatted("Error determining model data: {0}", ex.Message);
                         }
                     }
                     GUILayout.EndHorizontal();
@@ -1011,12 +1012,12 @@ namespace KerbalAlarmClock
                     {
                         GUILayout.BeginHorizontal();
                         GUILayout.Label(XferTargetBodies[intTarget].Target.bodyName, KACResources.styleAddXferName, GUILayout.Width(55), GUILayout.Height(20));
-                        if (intXferCurrentParent != 0 || (!Settings.XferUseModelData && Settings.XferModelDataLoaded))
+                        if (intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))
                         {
                             //formula based
                             String strPhase = String.Format("{0:0.00}({1:0.00})", XferTargetBodies[intTarget].PhaseAngleCurrent, XferTargetBodies[intTarget].PhaseAngleTarget);
                             GUILayout.Label(strPhase, KACResources.styleAddHeading, GUILayout.Width(105), GUILayout.Height(20));
-                            GUILayout.Label(KACTime.PrintInterval(XferTargetBodies[intTarget].AlignmentTime, Settings.TimeFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));
+                            GUILayout.Label(KACTime.PrintInterval(XferTargetBodies[intTarget].AlignmentTime, settings.TimeFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));
                         }
                         else 
                         { 
@@ -1032,7 +1033,7 @@ namespace KerbalAlarmClock
                                     String strPhase = String.Format("{0:0.00}({1:0.00})", XferTargetBodies[intTarget].PhaseAngleCurrent, tmpModelPoint.PhaseAngle);
                                     GUILayout.Label(strPhase, KACResources.styleAddHeading, GUILayout.Width(105), GUILayout.Height(20));
                                     KACTime tmpTime = new KACTime(tmpModelPoint.UT - KACWorkerGameState.CurrentTime.UT);
-                                    GUILayout.Label(KACTime.PrintInterval(tmpTime, Settings.TimeFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));                                
+                                    GUILayout.Label(KACTime.PrintInterval(tmpTime, settings.TimeFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));                                
 
                                     if (intTarget==intXferCurrentTarget)
                                         XferCurrentTargetEventTime = new KACTime(tmpModelPoint.UT);
@@ -1045,7 +1046,7 @@ namespace KerbalAlarmClock
                             catch (Exception ex)
                             {
                                 GUILayout.Label("Unable to determine model data", KACResources.styleContent, GUILayout.ExpandWidth(true));
-                                DebugLogFormatted("Error determining model data: {0}", ex.Message);
+                                LogFormatted("Error determining model data: {0}", ex.Message);
                             }
                         }
                         Boolean blnSelected = (intXferCurrentTarget == intTarget);
@@ -1064,7 +1065,7 @@ namespace KerbalAlarmClock
                     intAddXferHeight += -56 + ( XferTargetBodies.Count * 30);
                 }
 
-                if (intXferCurrentParent != 0 || (!Settings.XferUseModelData && Settings.XferModelDataLoaded))
+                if (intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))
                 {
                     //Formula based - add new alarm
                     if (DrawAddAlarm(new KACTime(KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT),
@@ -1073,10 +1074,10 @@ namespace KerbalAlarmClock
                     {
                         String strVesselID = "";
                         if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                        Settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
+                        settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
                             (KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmType.Transfer,
                             (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), XferTargetBodies[intXferCurrentTarget]));
-                        Settings.Save();
+                        settings.Save();
                         _ShowAddPane = false;
                     }
                 }
@@ -1091,10 +1092,10 @@ namespace KerbalAlarmClock
                         {
                         String strVesselID = "";
                         if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                        Settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
+                        settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
                             (XferCurrentTargetEventTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmType.Transfer,
                             (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), XferTargetBodies[intXferCurrentTarget]));
-                        Settings.Save();
+                        settings.Save();
                         _ShowAddPane = false;
                     }
                     }
@@ -1108,8 +1109,8 @@ namespace KerbalAlarmClock
                 if (intXferCurrentTarget >= XferTargetBodies.Count) 
                     intXferCurrentTarget = 0;
                 GUILayout.Label("Something weird has happened");
-                DebugLogFormatted(ex.Message);
-                DebugLogFormatted(ex.StackTrace);
+                LogFormatted(ex.Message);
+                LogFormatted(ex.StackTrace);
             }
 
             //intAddXferHeight += intTestheight4;

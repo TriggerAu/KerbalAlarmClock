@@ -6,10 +6,11 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker
+    public partial class KerbalAlarmClock
     {
 
         public void WindowLayout_AddTypeDistanceChoice()
@@ -120,8 +121,8 @@ namespace KerbalAlarmClock
                             newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                             newAlarm.ManNodes = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes;
 
-                            Settings.Alarms.Add(newAlarm);
-                            Settings.Save();
+                            settings.Alarms.Add(newAlarm);
+                            settings.Save();
                             _ShowAddPane = false;
                         }
                     }
@@ -179,7 +180,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("Select Target:",KACResources.styleAddXferName);
             if (DrawRadioListVertical(ref intSelectediTarget, iTargets.Select(x => x.GetName()).ToArray()))
             {
-                DebugLogFormatted("Distance Target is:{0}", iTargets[intSelectediTarget].GetName());
+                LogFormatted("Distance Target is:{0}", iTargets[intSelectediTarget].GetName());
             }
             GUILayout.EndHorizontal();
 
@@ -318,8 +319,8 @@ namespace KerbalAlarmClock
                     newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                     newAlarm.ManNodes = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes;
 
-                    Settings.Alarms.Add(newAlarm);
-                    Settings.Save();
+                    settings.Alarms.Add(newAlarm);
+                    settings.Save();
                     _ShowAddPane = false;
                 }
             }

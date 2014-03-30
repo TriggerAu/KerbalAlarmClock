@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using KACToolbarWrapper;
+
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker
-    {
-        internal ToolbarButtonWrapper btnToolbarKAC = null;
-    }
-
     public partial class KerbalAlarmClock
     {
+        internal IButton btnToolbarKAC = null;
         internal Boolean BlizzyToolbarIsAvailable = false;
 
         /// <summary>
@@ -21,8 +19,8 @@ namespace KerbalAlarmClock
         internal Boolean HookToolbar()
         {
             //Is the Dll in memory
-            Boolean blnReturn = ToolbarDLL.Loaded;
-            KACWorker.DebugLogFormatted("Blizzy's Toolbar Loaded:{0}", blnReturn);
+            Boolean blnReturn = ToolbarManager.ToolbarAvailable;
+            LogFormatted("Blizzy's Toolbar Loaded:{0}", blnReturn);
             return blnReturn;
         }
 
@@ -31,25 +29,25 @@ namespace KerbalAlarmClock
         /// initialises a Toolbar Button for this mod
         /// </summary>
         /// <returns>The ToolbarButtonWrapper that was created</returns>
-        internal ToolbarButtonWrapper InitToolbarButton()
+        internal IButton InitToolbarButton()
         {
-            ToolbarButtonWrapper btnReturn=null;
+            IButton btnReturn = null;
             try
             {
-                KACWorker.DebugLogFormatted("Initialising the Toolbar Icon");
-                btnReturn = new ToolbarButtonWrapper("KerbalAlarmClock", "btnToolbarIcon");
+                LogFormatted("Initialising the Toolbar Icon");
+                btnReturn = ToolbarManager.Instance.add("KerbalAlarmClock", "btnToolbarIcon");
                 btnReturn.TexturePath = "TriggerTech/ToolbarIcons/KACIcon-Norm";
                 btnReturn.ToolTip = "Kerbal Alarm Clock";
-                btnReturn.AddButtonClickHandler((e) =>
+                btnReturn.OnClick += (e) =>
                 {
-                    WorkerObjectInstance.WindowVisibleByActiveScene = !WorkerObjectInstance.WindowVisibleByActiveScene;
-                    Settings.Save();
-                });
+                    WindowVisibleByActiveScene = !WindowVisibleByActiveScene;
+                    settings.Save();
+                };
             }
             catch (Exception ex)
             {
                 DestroyToolbarButton(btnReturn);
-                KACWorker.DebugLogFormatted("Error Initialising Toolbar Button: {0}", ex.Message);
+                LogFormatted("Error Initialising Toolbar Button: {0}", ex.Message);
             }
             return btnReturn;
         }
@@ -58,11 +56,11 @@ namespace KerbalAlarmClock
         /// Destroys theToolbarButtonWrapper object
         /// </summary>
         /// <param name="btnToDestroy">Object to Destroy</param>
-        internal void DestroyToolbarButton(ToolbarButtonWrapper btnToDestroy)
+        internal void DestroyToolbarButton(IButton btnToDestroy)
         {
             if (btnToDestroy != null)
             {
-                KACWorker.DebugLogFormatted("Destroying Toolbar Button");
+                LogFormatted("Destroying Toolbar Button");
                 btnToDestroy.Destroy();
             }
             btnToDestroy = null;

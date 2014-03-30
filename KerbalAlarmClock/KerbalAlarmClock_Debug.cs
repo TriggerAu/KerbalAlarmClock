@@ -5,11 +5,13 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
+
 using System.Xml.Serialization;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker 
+    public partial class KerbalAlarmClock 
     {
 #if DEBUG
         //Debug Window
@@ -19,11 +21,11 @@ namespace KerbalAlarmClock
 
         public void DebugActionTimed(GameScenes loadedscene)
         {
-            DebugLogFormatted("Timed Debug Action Initiated");
-            //KACWorker.DebugLogFormatted("Stuff Here");
-            //KACWorker.DebugLogFormatted(FlightGlobals.ActiveVessel.orbit.closestEncounterBody.bodyName);
-            //KACWorker.DebugLogFormatted(FlightGlobals.ActiveVessel.orbit.ClAppr.ToString());
-            //KACWorker.DebugLogFormatted(FlightGlobals.ActiveVessel.orbit.closestEncounterBody.sphereOfInfluence.ToString());
+            LogFormatted("Timed Debug Action Initiated");
+            //LogFormatted("Stuff Here");
+            //LogFormatted(FlightGlobals.ActiveVessel.orbit.closestEncounterBody.bodyName);
+            //LogFormatted(FlightGlobals.ActiveVessel.orbit.ClAppr.ToString());
+            //LogFormatted(FlightGlobals.ActiveVessel.orbit.closestEncounterBody.sphereOfInfluence.ToString());
 
             // how to detect Escape - eg to Solar orbit
 
@@ -31,15 +33,15 @@ namespace KerbalAlarmClock
             //if ((FlightGlobals.ActiveVessel.orbit.closestEncounterBody != null) && (FlightGlobals.ActiveVessel.orbit.ClAppr > 0))
             //{
             //    //Is the closest approach less than the size of the SOI
-            //    KACWorker.DebugLogFormatted(FlightGlobals.ActiveVessel.orbit.referenceBody + "," + FlightGlobals.ActiveVessel.orbit.closestEncounterBody + "," +
+            //    LogFormatted(FlightGlobals.ActiveVessel.orbit.referenceBody + "," + FlightGlobals.ActiveVessel.orbit.closestEncounterBody + "," +
             //         FlightGlobals.ActiveVessel.orbit.nextPatch.referenceBody + "," + FlightGlobals.ActiveVessel.orbit.nextPatch.closestEncounterBody);
             //    if (FlightGlobals.ActiveVessel.orbit.ClAppr < FlightGlobals.ActiveVessel.orbit.closestEncounterBody.sphereOfInfluence)
             //    {
-            //        KACWorker.DebugLogFormatted("SOI Change in :" + (FlightGlobals.ActiveVessel.orbit.nextPatch.StartUT - Planetarium.GetUniversalTime()));
+            //        LogFormatted("SOI Change in :" + (FlightGlobals.ActiveVessel.orbit.nextPatch.StartUT - Planetarium.GetUniversalTime()));
             //    }
             //    else
             //    {
-            //        KACWorker.DebugLogFormatted("Nextpatch in :" + (FlightGlobals.ActiveVessel.orbit.nextPatch.StartUT - Planetarium.GetUniversalTime()));
+            //        LogFormatted("Nextpatch in :" + (FlightGlobals.ActiveVessel.orbit.nextPatch.StartUT - Planetarium.GetUniversalTime()));
             //    }
             //}
 
@@ -67,41 +69,41 @@ namespace KerbalAlarmClock
 
             //if (tmpVessel.orbit.nextPatch == null)
             //{
-            //    DebugLogFormatted(tmpVessel.name + "-No next Patch");
+            //    LogFormatted(tmpVessel.name + "-No next Patch");
             //}
             //else
             //{
-            //    DebugLogFormatted(tmpVessel.name + "-Next patch @ " + (tmpVessel.orbit.nextPatch.StartUT-CurrentTime.UT));
-            //    DebugLogFormatted("Same orbit: " + (tmpVessel.orbit == tmpVessel.orbit.nextPatch));
+            //    LogFormatted(tmpVessel.name + "-Next patch @ " + (tmpVessel.orbit.nextPatch.StartUT-CurrentTime.UT));
+            //    LogFormatted("Same orbit: " + (tmpVessel.orbit == tmpVessel.orbit.nextPatch));
             //}
         }
 
         Boolean blnTriggerFlag = false;
         public void DebugActionTriggered(GameScenes loadedscene)
         {
-            DebugLogFormatted("Manual Debug Action Initiated");
+            LogFormatted("Manual Debug Action Initiated");
 
             blnTriggerFlag = true;
 
             //Kerbal[] KerbalObjects = FlightGlobals.FindObjectsOfType(typeof(Kerbal)) as Kerbal[];
-            //DebugLogFormatted("Kerbal Count: {0}", KerbalObjects.Length);
+            //LogFormatted("Kerbal Count: {0}", KerbalObjects.Length);
             //foreach (Kerbal k in KerbalObjects)
             //{
-            //    DebugLogFormatted("{0}", k.crewMemberName);
+            //    LogFormatted("{0}", k.crewMemberName);
             //}
 
             //KerbalEVA[] KerbalEVAObjects = FlightGlobals.FindObjectsOfType(typeof(KerbalEVA)) as KerbalEVA[];
-            //DebugLogFormatted("Kerbal EVA Count: {0}", KerbalEVAObjects.Length);
+            //LogFormatted("Kerbal EVA Count: {0}", KerbalEVAObjects.Length);
 
 
 
-            //DebugLogFormatted("Vessels Count: {0}", FlightGlobals.Vessels.Count);
+            //LogFormatted("Vessels Count: {0}", FlightGlobals.Vessels.Count);
             //foreach (Vessel v in FlightGlobals.Vessels)
             //{
             //    List<ProtoCrewMember> pCM = v.GetVesselCrew();
             //    foreach (ProtoCrewMember CM in pCM)
             //    {
-            //        DebugLogFormatted("{2}({1})-{0}", CM.name,v.vesselType,v.vesselName);
+            //        LogFormatted("{2}({1})-{0}", CM.name,v.vesselType,v.vesselName);
 
             //    }
             //}
@@ -147,26 +149,26 @@ namespace KerbalAlarmClock
             //    }
             //    catch (Exception) { }
 
-            //    DebugLogFormatted(strLine);
+            //    LogFormatted(strLine);
             //}
 
 
-            //DebugLogFormatted("window textcolor r:{0}", KACResources.styleWindow.normal.textColor.r.ToString());
+            //LogFormatted("window textcolor r:{0}", KACResources.styleWindow.normal.textColor.r.ToString());
             //byte[] b = KSP.IO.IOUtils.SerializeToBinary(FlightGlobals.ActiveVessel.orbit);
             //bw.Write(b);
             //bw.Close();
             //KSP.IO.BinaryWriter bw = KSP.IO.BinaryWriter.CreateForType<KerbalAlarmClock>("testfile.bin");
             
 
-            //DebugLogFormatted(scrollPosition.ToString());
+            //LogFormatted(scrollPosition.ToString());
             //Print each of the vessels UTSOI
             //foreach (Vessel tmpVessel in FlightGlobals.Vessels)
             //{
-            //    DebugLogFormatted("{0}-{1}", tmpVessel.vesselName, tmpVessel.orbit.UTsoi.ToString());            
+            //    LogFormatted("{0}-{1}", tmpVessel.vesselName, tmpVessel.orbit.UTsoi.ToString());            
             //}
 
             
-            //DebugLogFormatted(FlightGlobals.ActiveVessel.id.ToString());
+            //LogFormatted(FlightGlobals.ActiveVessel.id.ToString());
 
             Orbit o=FlightGlobals.ActiveVessel.orbit;
 
@@ -186,7 +188,7 @@ namespace KerbalAlarmClock
             //double ascendingNode = CalcAngleToAscendingNode(activePosition, activeOrbit, targetOrbit);
             //double timeToAN = CalcTimeToNode(activeOrbit, ascendingNode);
 
-            //DebugLogFormatted("AN:{0}", timeToAN.ToString());
+            //LogFormatted("AN:{0}", timeToAN.ToString());
 
 
 
@@ -251,6 +253,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("test3:");
             GUILayout.Label("test4:");
 
+
             GUILayout.EndVertical();
             GUILayout.BeginVertical();
 
@@ -261,6 +264,19 @@ namespace KerbalAlarmClock
 
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
+
+            if (GUILayout.Button("KSP"))
+            {
+                KACResources.SetSkin(Settings.DisplaySkin.Default);
+            }
+            if (GUILayout.Button("Unity"))
+            {
+                KACResources.SetSkin(Settings.DisplaySkin.Unity);
+            }
+            if (GUILayout.Button("Unity w KSP"))
+            {
+                KACResources.SetSkin(Settings.DisplaySkin.UnityWKSPButtons);
+            }
 
 
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)

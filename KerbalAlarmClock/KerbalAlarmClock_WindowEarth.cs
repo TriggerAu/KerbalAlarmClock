@@ -6,10 +6,11 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker
+    public partial class KerbalAlarmClock
     {
         private void NewEarthAlarm()
         {
@@ -85,13 +86,13 @@ namespace KerbalAlarmClock
                 int intButtonHeight = 36;
                 if (GUILayout.Button("Add Alarm", KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(intButtonHeight)))
                 {
-                    Settings.Alarms.Add(
+                    settings.Alarms.Add(
                         new KACAlarm(null,strAlarmName,strAlarmNotes,
                             EarthTimeEncode(DateTime.Now + tmAlarm),
                             0, KACAlarm.AlarmType.EarthTime,
                             (AddAction== KACAlarm.AlarmAction.KillWarp), (AddAction== KACAlarm.AlarmAction.PauseGame))
                         );
-                    Settings.SaveAlarms();
+                    //settings.SaveAlarms();
                     _ShowEarthAlarm = false;
                 }
                 GUILayout.EndHorizontal();

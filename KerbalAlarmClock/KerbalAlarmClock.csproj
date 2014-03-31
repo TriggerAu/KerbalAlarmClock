@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlarmObjects.cs" />
     <Compile Include="Framework\ConfigNodeStorage.cs" />
     <Compile Include="Framework\MonoBehaviourExtended.cs" />
     <Compile Include="Framework\ToolbarWrapper.cs" />

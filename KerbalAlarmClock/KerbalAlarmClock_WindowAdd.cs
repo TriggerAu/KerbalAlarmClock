@@ -13,7 +13,7 @@ namespace KerbalAlarmClock
     public partial class KerbalAlarmClock
     {
         KACAlarm.AlarmType AddType = KACAlarm.AlarmType.Raw;
-        KACAlarm.AlarmAction AddAction = KACAlarm.AlarmAction.MessageOnly;
+        KACAlarm.AlarmActionEnum AddAction = KACAlarm.AlarmActionEnum.MessageOnly;
 
         KACTimeStringArray timeRaw = new KACTimeStringArray(600);
         KACTimeStringArray timeMargin = new KACTimeStringArray();
@@ -54,7 +54,7 @@ namespace KerbalAlarmClock
             strAlarmNotes = "";
             AddNotesHeight = 100;
 
-            AddAction = (KACAlarm.AlarmAction)settings.AlarmDefaultAction;
+            AddAction = (KACAlarm.AlarmActionEnum)settings.AlarmDefaultAction;
             //blnHaltWarp = true;
 
             //set initial alarm type based on whats on the flight path
@@ -479,8 +479,8 @@ namespace KerbalAlarmClock
                     //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
                     String strVesselID = "";
                     if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                    settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmType.Raw, 
-                        (AddAction== KACAlarm.AlarmAction.KillWarp), (AddAction== KACAlarm.AlarmAction.PauseGame)));
+                    alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmType.Raw, 
+                        AddAction));
                     settings.Save();
                     _ShowAddPane = false;
                 }
@@ -597,13 +597,13 @@ namespace KerbalAlarmClock
                     {
                         //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
                         KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmType.Crew,
-                            (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame));
+                            AddAction);
                         if (CrewAlarmStoreNode)
                         {
                             if (KACWorkerGameState.ManeuverNodeExists) addAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
                             if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                         }
-                        settings.Alarms.Add(addAlarm);
+                        alarms.Add(addAlarm);
                         settings.Save();
                         _ShowAddPane = false;
                     }
@@ -706,8 +706,8 @@ namespace KerbalAlarmClock
                                 //Get a list of all future Maneuver Nodes - thats what the skip does
                                 List<ManeuverNode> manNodesToStore = myVessel.patchedConicSolver.maneuverNodes.Skip(intNode).ToList<ManeuverNode>();
 
-                                settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.Maneuver,
-                                    (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), manNodesToStore));
+                                alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.Maneuver,
+                                    AddAction, manNodesToStore));
                                 settings.Save();
                                 _ShowAddPane = false;
                             }
@@ -779,11 +779,11 @@ namespace KerbalAlarmClock
                         if (DrawAddAlarm(eventTime, eventInterval, eventAlarmInterval))
                         {
                             KACAlarm newAlarm = new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, eventAlarm.UT, timeMargin.UT, AddType,
-                                (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame));
+                                AddAction);
                             if (lstAlarmsWithTarget.Contains(AddType))
                                 newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
 
-                            settings.Alarms.Add(newAlarm);
+                            alarms.Add(newAlarm);
                             settings.Save();
                             _ShowAddPane = false;
                         }
@@ -1074,9 +1074,9 @@ namespace KerbalAlarmClock
                     {
                         String strVesselID = "";
                         if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                        settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
+                        alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
                             (KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmType.Transfer,
-                            (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), XferTargetBodies[intXferCurrentTarget]));
+                            AddAction, XferTargetBodies[intXferCurrentTarget]));
                         settings.Save();
                         _ShowAddPane = false;
                     }
@@ -1092,9 +1092,9 @@ namespace KerbalAlarmClock
                         {
                         String strVesselID = "";
                         if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                        settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
+                        alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
                             (XferCurrentTargetEventTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmType.Transfer,
-                            (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), XferTargetBodies[intXferCurrentTarget]));
+                            AddAction, XferTargetBodies[intXferCurrentTarget]));
                         settings.Save();
                         _ShowAddPane = false;
                     }

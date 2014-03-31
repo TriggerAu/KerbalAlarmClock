@@ -24,7 +24,7 @@ namespace KerbalAlarmClock
             strAlarmEarthHour = DateTime.Now.AddHours(2).Hour.ToString();
             strAlarmEarthMin = DateTime.Now.Minute.ToString();
 
-            AddAction= KACAlarm.AlarmAction.PauseGame;
+            AddAction= KACAlarm.AlarmActionEnum.PauseGame;
         }
 
         public void FillEarthAlarmWindow(int WindowID)
@@ -86,11 +86,11 @@ namespace KerbalAlarmClock
                 int intButtonHeight = 36;
                 if (GUILayout.Button("Add Alarm", KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(intButtonHeight)))
                 {
-                    settings.Alarms.Add(
+                    alarms.Add(
                         new KACAlarm(null,strAlarmName,strAlarmNotes,
                             EarthTimeEncode(DateTime.Now + tmAlarm),
                             0, KACAlarm.AlarmType.EarthTime,
-                            (AddAction== KACAlarm.AlarmAction.KillWarp), (AddAction== KACAlarm.AlarmAction.PauseGame))
+                            AddAction)
                         );
                     //settings.SaveAlarms();
                     _ShowEarthAlarm = false;

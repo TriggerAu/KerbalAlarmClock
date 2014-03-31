@@ -15,7 +15,7 @@ namespace KerbalAlarmClock
         //On OnGUI - draw alarms if needed
         public void TriggeredAlarms()
         {
-            foreach (KACAlarm tmpAlarm in settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
+            foreach (KACAlarm tmpAlarm in alarms)
             {
                 if (tmpAlarm.Enabled)
                 {
@@ -89,7 +89,7 @@ namespace KerbalAlarmClock
 
         public void FillAlarmWindow(int windowID)
         {
-            KACAlarm tmpAlarm = settings.Alarms.GetByWindowID(windowID);
+            KACAlarm tmpAlarm = alarms.GetByWindowID(windowID);
 
             GUILayout.BeginVertical();
 
@@ -145,11 +145,11 @@ namespace KerbalAlarmClock
             if (GUILayout.Button(strText, KACResources.styleButton))
             {
                 tmpAlarm.AlarmWindowClosed = true;
-                tmpAlarm.ActionedAt = KACWorkerGameState.CurrentTime.UT;
+                //tmpAlarm.ActionedAt = KACWorkerGameState.CurrentTime.UT;
                 if (tmpAlarm.PauseGame)
                     FlightDriver.SetPause(false);
                 if (tmpAlarm.DeleteOnClose)
-                    settings.Alarms.Remove(tmpAlarm);
+                    alarms.Remove(tmpAlarm);
                 //settings.SaveAlarms();
             }
           
@@ -265,16 +265,12 @@ namespace KerbalAlarmClock
             if (alarmEdit.Remaining.UT > 0)
             {
                 //Edit the Alarm if its not yet passed
-                int intActionSelected = 0;
-                if (alarmEdit.HaltWarp) intActionSelected = 1;
-                if (alarmEdit.PauseGame) intActionSelected = 2;
-
                 Double MarginStarting = alarmEdit.AlarmMarginSecs;
                 int intHeight_EditWindowCommon = 88 +
                     alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16;
                 if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmType.Crew)
                     intHeight_EditWindowCommon += 28;
-                WindowLayout_CommonFields(ref alarmEdit.Name, ref alarmEdit.Notes, ref intActionSelected, ref alarmEdit.AlarmMarginSecs, alarmEdit.TypeOfAlarm, intHeight_EditWindowCommon);
+                WindowLayout_CommonFields(ref alarmEdit.Name, ref alarmEdit.Notes, ref alarmEdit.AlarmAction, ref alarmEdit.AlarmMarginSecs, alarmEdit.TypeOfAlarm, intHeight_EditWindowCommon);
                 //Adjust the UT of the alarm if the margin changed
                 if (alarmEdit.AlarmMarginSecs != MarginStarting)
                 {
@@ -299,10 +295,6 @@ namespace KerbalAlarmClock
                 else
                     GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.Remaining.UT), KACTime.PrintTimeFormat.DateTimeString  ), KACResources.styleAddHeading);
                 GUILayout.EndHorizontal();
-
-                
-                alarmEdit.HaltWarp = (intActionSelected > 0);
-                alarmEdit.PauseGame = (intActionSelected > 1);
 
                 int intNoOfActionButtons = 0;
                 int intNoOfActionButtonsDoubleLine = 0;
@@ -448,7 +440,7 @@ namespace KerbalAlarmClock
                         if (JumpToVessel(tmpVessel))
                         {
                             //Set the Node in memory to restore once the ship change has completed
-                            settings.LoadManNode = KACAlarm.ManNodeSerializeList(tmpAlarm.ManNodes);
+                            settings.LoadManNode.FromManNodeList(tmpAlarm.ManNodes);
                             settings.Save();
                         }
                     }
@@ -576,7 +568,7 @@ namespace KerbalAlarmClock
         }
 
         #region "BackupFailed Message"
-        public static void ShowBackupFailedWindow(String Message)
+        public void ShowBackupFailedWindow(String Message)
         {
             BackupFailedMessage = Message;
             GUIContent contFailMessage = new GUIContent(BackupFailedMessage);

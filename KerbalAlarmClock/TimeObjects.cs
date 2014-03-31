@@ -353,619 +353,619 @@ namespace KerbalAlarmClock
         }
     }
 
-    /// <summary>
-    /// Class to hold an Alarm event
-    /// </summary>
-    public class KACAlarm
-    {
-        //Some Structures
-        //"R","M","A","P","A","D","S","X"
-        public enum AlarmType
-        {
-            Raw,
-            Maneuver,
-            ManeuverAuto,
-            Apoapsis,
-            Periapsis,
-            AscendingNode,
-            DescendingNode,
-            LaunchRendevous,
-            Closest,
-            SOIChange,
-            SOIChangeAuto,
-            Transfer,
-            TransferModelled,
-            Distance,
-            Crew,
-            EarthTime
-        }
+    ///// <summary>
+    ///// Class to hold an Alarm event
+    ///// </summary>
+    //public class KACAlarm
+    //{
+    //    //Some Structures
+    //    //"R","M","A","P","A","D","S","X"
+    //    public enum AlarmType
+    //    {
+    //        Raw,
+    //        Maneuver,
+    //        ManeuverAuto,
+    //        Apoapsis,
+    //        Periapsis,
+    //        AscendingNode,
+    //        DescendingNode,
+    //        LaunchRendevous,
+    //        Closest,
+    //        SOIChange,
+    //        SOIChangeAuto,
+    //        Transfer,
+    //        TransferModelled,
+    //        Distance,
+    //        Crew,
+    //        EarthTime
+    //    }
 
 
-        public static Dictionary<AlarmType, int> AlarmTypeToButton = new Dictionary<AlarmType, int>() {
-            {AlarmType.Raw, 0},
-            {AlarmType.Maneuver , 1},
-            {AlarmType.ManeuverAuto , 1},
-            {AlarmType.Apoapsis , 2},
-            {AlarmType.Periapsis , 2},
-            {AlarmType.AscendingNode , 3},
-            {AlarmType.DescendingNode , 3},
-            {AlarmType.LaunchRendevous , 3},
-            {AlarmType.Closest , 4},
-            {AlarmType.Distance , 4},
-            {AlarmType.SOIChange , 5},
-            {AlarmType.SOIChangeAuto , 5},
-            {AlarmType.Transfer , 6},
-            {AlarmType.TransferModelled , 6},
-            {AlarmType.Crew , 7}
-        };
-        public static Dictionary<int,AlarmType> AlarmTypeFromButton = new Dictionary<int,AlarmType>() {
-            {0,AlarmType.Raw},
-            {1,AlarmType.Maneuver },
-            {2,AlarmType.Apoapsis },
-            {3,AlarmType.AscendingNode },
-            {4,AlarmType.Closest },
-            {5,AlarmType.SOIChange },
-            {6,AlarmType.Transfer },
-            {7,AlarmType.Crew }
-        };
+    //    public static Dictionary<AlarmType, int> AlarmTypeToButton = new Dictionary<AlarmType, int>() {
+    //        {AlarmType.Raw, 0},
+    //        {AlarmType.Maneuver , 1},
+    //        {AlarmType.ManeuverAuto , 1},
+    //        {AlarmType.Apoapsis , 2},
+    //        {AlarmType.Periapsis , 2},
+    //        {AlarmType.AscendingNode , 3},
+    //        {AlarmType.DescendingNode , 3},
+    //        {AlarmType.LaunchRendevous , 3},
+    //        {AlarmType.Closest , 4},
+    //        {AlarmType.Distance , 4},
+    //        {AlarmType.SOIChange , 5},
+    //        {AlarmType.SOIChangeAuto , 5},
+    //        {AlarmType.Transfer , 6},
+    //        {AlarmType.TransferModelled , 6},
+    //        {AlarmType.Crew , 7}
+    //    };
+    //    public static Dictionary<int,AlarmType> AlarmTypeFromButton = new Dictionary<int,AlarmType>() {
+    //        {0,AlarmType.Raw},
+    //        {1,AlarmType.Maneuver },
+    //        {2,AlarmType.Apoapsis },
+    //        {3,AlarmType.AscendingNode },
+    //        {4,AlarmType.Closest },
+    //        {5,AlarmType.SOIChange },
+    //        {6,AlarmType.Transfer },
+    //        {7,AlarmType.Crew }
+    //    };
 
 
 
 
-        public enum AlarmAction
-        {
-            MessageOnly,
-            KillWarp,
-            PauseGame
-        }
+    //    public enum AlarmAction
+    //    {
+    //        MessageOnly,
+    //        KillWarp,
+    //        PauseGame
+    //    }
 
-        public String SaveName = "";                                    //Which Save File
-        public String VesselID = "";                                    //uniqueID of Vessel
-        public String Name = "";                                        //Name of Alarm
-        //public String Message = "";                                     //Some descriptive text
-        public String Notes = "";                                       //Entered extra details
-        public AlarmType TypeOfAlarm=AlarmType.Raw;                     //What Type of Alarm
+    //    public String SaveName = "";                                    //Which Save File
+    //    public String VesselID = "";                                    //uniqueID of Vessel
+    //    public String Name = "";                                        //Name of Alarm
+    //    //public String Message = "";                                     //Some descriptive text
+    //    public String Notes = "";                                       //Entered extra details
+    //    public AlarmType TypeOfAlarm=AlarmType.Raw;                     //What Type of Alarm
 
-        public KACTime AlarmTime = new KACTime();                       //UT of the alarm
-        public Double AlarmMarginSecs = 0;                              //What the margin from the event was
-        public Boolean Enabled = true;                                  //Whether it is enabled - not in use currently
-        public Boolean HaltWarp = true;                                 //Whether the time warp will be halted at this event
-        public Boolean PauseGame = false;                               //Whether the Game will be paused at this event
+    //    public KACTime AlarmTime = new KACTime();                       //UT of the alarm
+    //    public Double AlarmMarginSecs = 0;                              //What the margin from the event was
+    //    public Boolean Enabled = true;                                  //Whether it is enabled - not in use currently
+    //    public Boolean HaltWarp = true;                                 //Whether the time warp will be halted at this event
+    //    public Boolean PauseGame = false;                               //Whether the Game will be paused at this event
 
-        public Double ActionedAt = 0;                                   //At What UT an alarm was actioned at (for use in not refiring fired events on ship change)
+    //    public Double ActionedAt = 0;                                   //At What UT an alarm was actioned at (for use in not refiring fired events on ship change)
 
-        public Boolean DeleteOnClose;                                   //Whether the checkbox is on or off for this
+    //    public Boolean DeleteOnClose;                                   //Whether the checkbox is on or off for this
 
-        //public ManeuverNode ManNode;                                  //Stored ManeuverNode attached to alarm
-        public List<ManeuverNode> ManNodes=null;                        //Stored ManeuverNode's attached to alarm
+    //    //public ManeuverNode ManNode;                                  //Stored ManeuverNode attached to alarm
+    //    public List<ManeuverNode> ManNodes=null;                        //Stored ManeuverNode's attached to alarm
 
-        public String XferOriginBodyName = "";                          //Stored orbital transfer details
-        public String XferTargetBodyName = "";
+    //    public String XferOriginBodyName = "";                          //Stored orbital transfer details
+    //    public String XferTargetBodyName = "";
 
-        //Have to generate these details when the target object is set
-        private ITargetable _TargetObject = null;                       //Stored Target Details
+    //    //Have to generate these details when the target object is set
+    //    private ITargetable _TargetObject = null;                       //Stored Target Details
         
-        //Vessel Target - needs the fancy get routine as the alarms load before the vessels are loaded.
-        //This means that each time the object is accessed if its not yet loaded it trys again
-        public ITargetable TargetObject
-        {
-            get {
-                if (_TargetObject != null)
-                    return _TargetObject;
-                else
-                {
-                    //is there something to load here from the string
-                    if (TargetLoader != "")
-                    {
-                        String[] TargetParts = TargetLoader.Split(",".ToCharArray());
-                        switch (TargetParts[0])
-                        {
-                            case "Vessel":
-                                if (KerbalAlarmClock.StoredVesselExists(TargetParts[1]))
-                                    _TargetObject = KerbalAlarmClock.StoredVessel(TargetParts[1]);
-                                break;
-                            case "CelestialBody":
-                                if (KerbalAlarmClock.CelestialBodyExists(TargetParts[1]))
-                                    TargetObject = KerbalAlarmClock.CelestialBody(TargetParts[1]);
-                                break;
-                            default:
-                                MonoBehaviourExtended.LogFormatted("No Target Found:{0}", TargetLoader);
-                                break;
-                        }
-                    }
-                    return _TargetObject;
-                }
-            }
-            set { _TargetObject = value; }
-        }
-        //Need this one as some vessels arent loaded when the config comes in
-        public String TargetLoader = "";
+    //    //Vessel Target - needs the fancy get routine as the alarms load before the vessels are loaded.
+    //    //This means that each time the object is accessed if its not yet loaded it trys again
+    //    public ITargetable TargetObject
+    //    {
+    //        get {
+    //            if (_TargetObject != null)
+    //                return _TargetObject;
+    //            else
+    //            {
+    //                //is there something to load here from the string
+    //                if (TargetLoader != "")
+    //                {
+    //                    String[] TargetParts = TargetLoader.Split(",".ToCharArray());
+    //                    switch (TargetParts[0])
+    //                    {
+    //                        case "Vessel":
+    //                            if (KerbalAlarmClock.StoredVesselExists(TargetParts[1]))
+    //                                _TargetObject = KerbalAlarmClock.StoredVessel(TargetParts[1]);
+    //                            break;
+    //                        case "CelestialBody":
+    //                            if (KerbalAlarmClock.CelestialBodyExists(TargetParts[1]))
+    //                                TargetObject = KerbalAlarmClock.CelestialBody(TargetParts[1]);
+    //                            break;
+    //                        default:
+    //                            MonoBehaviourExtended.LogFormatted("No Target Found:{0}", TargetLoader);
+    //                            break;
+    //                    }
+    //                }
+    //                return _TargetObject;
+    //            }
+    //        }
+    //        set { _TargetObject = value; }
+    //    }
+    //    //Need this one as some vessels arent loaded when the config comes in
+    //    public String TargetLoader = "";
 
-        //Dynamic props down here
-        public KACTime Remaining = new KACTime();                        //UT value of how long till the alarm fires
-        public Boolean WarpInfluence = false;                           //Whether the Warp setting is being influenced by this alarm
+    //    //Dynamic props down here
+    //    public KACTime Remaining = new KACTime();                        //UT value of how long till the alarm fires
+    //    public Boolean WarpInfluence = false;                           //Whether the Warp setting is being influenced by this alarm
 
-        public Boolean Triggered = false;                               //Has this alarm been triggered
-        public Boolean Actioned = false;                                //Has the code actioned th alarm - ie. displayed its message
+    //    public Boolean Triggered = false;                               //Has this alarm been triggered
+    //    public Boolean Actioned = false;                                //Has the code actioned th alarm - ie. displayed its message
 
-        //Details of the alarm message
-        public Rect AlarmWindow;                                        
-        public int AlarmWindowID=0;
-        public int AlarmWindowHeight = 148;
-        public Boolean AlarmWindowClosed = false;
+    //    //Details of the alarm message
+    //    public Rect AlarmWindow;                                        
+    //    public int AlarmWindowID=0;
+    //    public int AlarmWindowHeight = 148;
+    //    public Boolean AlarmWindowClosed = false;
 
-        //Details of the alarm message
-        public Boolean EditWindowOpen=false;                                        
+    //    //Details of the alarm message
+    //    public Boolean EditWindowOpen=false;                                        
         
-        #region "Constructors"
-        public KACAlarm()
-        {
-            //if (KACWorkerGameState.IsFlightMode)
-            try { SaveName = HighLogic.CurrentGame.Title; }
-            catch (Exception) { }
-        }
-        public KACAlarm(double UT)
-        {
-            //if (KACWorkerGameState.IsFlightMode)
-            try { SaveName = HighLogic.CurrentGame.Title; }
-            catch (Exception) { }
-            AlarmTime.UT = UT;
-        }
+    //    #region "Constructors"
+    //    public KACAlarm()
+    //    {
+    //        //if (KACWorkerGameState.IsFlightMode)
+    //        try { SaveName = HighLogic.CurrentGame.Title; }
+    //        catch (Exception) { }
+    //    }
+    //    public KACAlarm(double UT)
+    //    {
+    //        //if (KACWorkerGameState.IsFlightMode)
+    //        try { SaveName = HighLogic.CurrentGame.Title; }
+    //        catch (Exception) { }
+    //        AlarmTime.UT = UT;
+    //    }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause)
-        {
-            //if (KACWorkerGameState.IsFlightMode)
-            try { SaveName = HighLogic.CurrentGame.Title; }
-            catch (Exception) { }
-            VesselID = vID;
-            Name = NewName;
-            Notes = NewNotes;
-            AlarmTime.UT = UT;
-            AlarmMarginSecs = Margin;
-            TypeOfAlarm = atype;
-            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
-            HaltWarp = NewHaltWarp;
-            PauseGame = NewPause;
-        }
+    //    public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause)
+    //    {
+    //        //if (KACWorkerGameState.IsFlightMode)
+    //        try { SaveName = HighLogic.CurrentGame.Title; }
+    //        catch (Exception) { }
+    //        VesselID = vID;
+    //        Name = NewName;
+    //        Notes = NewNotes;
+    //        AlarmTime.UT = UT;
+    //        AlarmMarginSecs = Margin;
+    //        TypeOfAlarm = atype;
+    //        Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
+    //        HaltWarp = NewHaltWarp;
+    //        PauseGame = NewPause;
+    //    }
 
-        public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, List<ManeuverNode> NewManeuvers)
-            : this(vID, NewName, NewNotes, UT, Margin, atype, NewHaltWarp, NewPause)
-        {
-            //set maneuver node
-            ManNodes = NewManeuvers;
-        }
+    //    public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, List<ManeuverNode> NewManeuvers)
+    //        : this(vID, NewName, NewNotes, UT, Margin, atype, NewHaltWarp, NewPause)
+    //    {
+    //        //set maneuver node
+    //        ManNodes = NewManeuvers;
+    //    }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, KACXFerTarget NewTarget)
-            : this(vID, NewName, NewNotes, UT, Margin, atype, NewHaltWarp, NewPause)
-        {
-            //Set target details
-            XferOriginBodyName = NewTarget.Origin.bodyName;
-            XferTargetBodyName = NewTarget.Target.bodyName;
-        }
+    //    public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, KACXFerTarget NewTarget)
+    //        : this(vID, NewName, NewNotes, UT, Margin, atype, NewHaltWarp, NewPause)
+    //    {
+    //        //Set target details
+    //        XferOriginBodyName = NewTarget.Origin.bodyName;
+    //        XferTargetBodyName = NewTarget.Target.bodyName;
+    //    }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, ITargetable NewTarget)
-            : this(vID,NewName,NewNotes,UT,Margin,atype,NewHaltWarp,NewPause)
-        {
-            //Set the ITargetable proerty
-            TargetObject = NewTarget;
-        }
-        #endregion
+    //    public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, Boolean NewHaltWarp, Boolean NewPause, ITargetable NewTarget)
+    //        : this(vID,NewName,NewNotes,UT,Margin,atype,NewHaltWarp,NewPause)
+    //    {
+    //        //Set the ITargetable proerty
+    //        TargetObject = NewTarget;
+    //    }
+    //    #endregion
 
-        /// <summary>
-        /// Convert properties for the save file to a single String for storage
-        /// </summary>
-        /// <returns>CSV String of persistant properties</returns>
-        public String SerializeString()
-        {
-            return KACUtils.PipeSepVariables(SaveName, Name, Enabled, AlarmTime.UT, HaltWarp, PauseGame, Notes);
-        }
+    //    /// <summary>
+    //    /// Convert properties for the save file to a single String for storage
+    //    /// </summary>
+    //    /// <returns>CSV String of persistant properties</returns>
+    //    public String SerializeString()
+    //    {
+    //        return KACUtils.PipeSepVariables(SaveName, Name, Enabled, AlarmTime.UT, HaltWarp, PauseGame, Notes);
+    //    }
 
-        public String SerializeString2()
-        {
-            //"VesselID, Name, Notes, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Manuever/Xfer"
-            String strReturn = "";
-            strReturn += VesselID + "|";
-            strReturn += KACUtils.PipeSepVariables(Name, Notes, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame);
-            strReturn += "|";
+    //    public String SerializeString2()
+    //    {
+    //        //"VesselID, Name, Notes, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Manuever/Xfer"
+    //        String strReturn = "";
+    //        strReturn += VesselID + "|";
+    //        strReturn += KACUtils.PipeSepVariables(Name, Notes, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame);
+    //        strReturn += "|";
 
-            if (ManNodes != null)
-            {
-                strReturn += ManNodeSerializeList(ManNodes);
-            } 
-            else if (XferTargetBodyName!=null && XferTargetBodyName!="")
-            {
-                strReturn += "" + XferOriginBodyName;
-                strReturn += "," + XferTargetBodyName;
-            }
-            else if (TargetObject != null)
-            {
-                strReturn += KACAlarm.TargetSerialize(TargetObject);
-            }
-            return strReturn;
-        }
+    //        if (ManNodes != null)
+    //        {
+    //            strReturn += ManNodeSerializeList(ManNodes);
+    //        } 
+    //        else if (XferTargetBodyName!=null && XferTargetBodyName!="")
+    //        {
+    //            strReturn += "" + XferOriginBodyName;
+    //            strReturn += "," + XferTargetBodyName;
+    //        }
+    //        else if (TargetObject != null)
+    //        {
+    //            strReturn += KACAlarm.TargetSerialize(TargetObject);
+    //        }
+    //        return strReturn;
+    //    }
 
-        //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Manuever|Xfer|Target|Options|<ENDLINE>");
-        public String SerializeString3()
-        {
-            //"VesselID, Name, Notes, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Manuever/Xfer"
-            String strReturn = "";
-            strReturn += VesselID + "|";
-            strReturn += KACUtils.PipeSepVariables(Name, Notes, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame,ActionedAt);
-            strReturn += "|";
+    //    //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Manuever|Xfer|Target|Options|<ENDLINE>");
+    //    public String SerializeString3()
+    //    {
+    //        //"VesselID, Name, Notes, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Manuever/Xfer"
+    //        String strReturn = "";
+    //        strReturn += VesselID + "|";
+    //        strReturn += KACUtils.PipeSepVariables(Name, Notes, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame,ActionedAt);
+    //        strReturn += "|";
 
-            if (ManNodes != null)
-            {
-                strReturn += ManNodeSerializeList(ManNodes);
-            }
-            strReturn += "|";
+    //        if (ManNodes != null)
+    //        {
+    //            strReturn += ManNodeSerializeList(ManNodes);
+    //        }
+    //        strReturn += "|";
 
-            if (XferTargetBodyName != null && XferTargetBodyName != "")
-            {
-                strReturn += "" + XferOriginBodyName;
-                strReturn += "," + XferTargetBodyName;
-            }
-            strReturn += "|";
+    //        if (XferTargetBodyName != null && XferTargetBodyName != "")
+    //        {
+    //            strReturn += "" + XferOriginBodyName;
+    //            strReturn += "," + XferTargetBodyName;
+    //        }
+    //        strReturn += "|";
             
-            if (TargetObject != null)
-            {
-                strReturn += KACAlarm.TargetSerialize(TargetObject);
-            }
-            strReturn += "|";
+    //        if (TargetObject != null)
+    //        {
+    //            strReturn += KACAlarm.TargetSerialize(TargetObject);
+    //        }
+    //        strReturn += "|";
 
-            //Extra Options go here if we need it later
-            strReturn += "|";
-            return strReturn;
-        }
-
-
-         /// <summary>
-        /// Basically deserializing the alarm
-        /// </summary>
-        /// <param name="AlarmDetails"></param>
-        public void LoadFromString(String AlarmDetails)
-        {
-            String[] vars = AlarmDetails.Split("|".ToCharArray());
-            VesselID = "";
-            SaveName = vars[0];
-            Name = vars[1];
-            Enabled = Convert.ToBoolean(vars[2]);
-            AlarmTime.UT = Convert.ToDouble(vars[3]);
-            HaltWarp = Convert.ToBoolean(vars[4]);
-            if (vars.Length == 6)
-                Notes = vars[5];
-            else
-            {
-                PauseGame = Convert.ToBoolean(vars[5]);
-                Notes = vars[6];
-            }
-        }
-
-        public void LoadFromString2(String AlarmDetails)
-        {
-            String[] vars = AlarmDetails.Split("|".ToCharArray(), StringSplitOptions.None);
-            SaveName = HighLogic.CurrentGame.Title;
-            VesselID = vars[0];
-            Name = vars[1];
-            Notes = vars[2];
-            AlarmTime.UT = Convert.ToDouble(vars[3]);
-            AlarmMarginSecs = Convert.ToDouble(vars[4]);
-            TypeOfAlarm = (KACAlarm.AlarmType)Enum.Parse(typeof(KACAlarm.AlarmType), vars[5]);
-            Enabled = Convert.ToBoolean(vars[6]);
-            HaltWarp = Convert.ToBoolean(vars[7]);
-            PauseGame = Convert.ToBoolean(vars[8]);
-
-            String strOptions = vars[9];
-            switch (TypeOfAlarm)
-            {
-                case AlarmType.Maneuver:
-                    //Generate the Nodes List from the string
-                    ManNodes = ManNodeDeserializeList(strOptions);
-                    break;
-                case AlarmType.Transfer:
-                    try
-                    {
-                        String[] XferParts = strOptions.Split(",".ToCharArray());
-                        XferOriginBodyName = XferParts[0];
-                        XferTargetBodyName = XferParts[1];
-                    }
-                    catch (Exception ex)
-                    {
-                        MonoBehaviourExtended.LogFormatted("Unable to load transfer details for {0}", Name);
-                        MonoBehaviourExtended.LogFormatted(ex.Message);
-                    }
-                    break;
-                case AlarmType.AscendingNode:
-                case AlarmType.DescendingNode:
-                case AlarmType.LaunchRendevous:
-                    if (strOptions != "")
-                    {
-                        //find the targetable object and set it
-                        TargetObject = TargetDeserialize(strOptions);               
-                        if (TargetObject==null && strOptions.StartsWith("Vessel,"))
-                            TargetLoader = strOptions;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public void LoadFromString3(String AlarmDetails,Double CurrentUT)
-        {
-            //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Manuever|Xfer|Target|Options|<ENDLINE>");
-
-            String[] vars = AlarmDetails.Split("|".ToCharArray(), StringSplitOptions.None);
-            this.SaveName = HighLogic.CurrentGame.Title;
-            this.VesselID = vars[0];
-            this.Name = KACUtils.DecodeVarStrings(vars[1]);
-            this.Notes = KACUtils.DecodeVarStrings(vars[2]);
-            this.AlarmTime.UT = Convert.ToDouble(vars[3]);
-            this.AlarmMarginSecs = Convert.ToDouble(vars[4]);
-            this.TypeOfAlarm = (KACAlarm.AlarmType)Enum.Parse(typeof(KACAlarm.AlarmType), vars[5]);
-            this.Enabled = Convert.ToBoolean(vars[6]);
-            this.HaltWarp = Convert.ToBoolean(vars[7]);
-            this.PauseGame = Convert.ToBoolean(vars[8]);
-            this.ActionedAt = Convert.ToDouble(vars[9]);
-
-            if (vars[10] != "")
-                this.ManNodes = ManNodeDeserializeList(vars[10]);
-
-            if (vars[11] != "")
-            {
-                try
-                {
-                    String[] XferParts = vars[11].Split(",".ToCharArray());
-                    this.XferOriginBodyName = XferParts[0];
-                    this.XferTargetBodyName = XferParts[1];
-                }
-                catch (Exception ex)
-                {
-                    MonoBehaviourExtended.LogFormatted("Unable to load transfer details for {0}", Name);
-                    MonoBehaviourExtended.LogFormatted(ex.Message);
-                }
-            }
-            if (vars[12] != "")
-            {
-                //find the targetable object and set it
-                this.TargetObject = TargetDeserialize(vars[12]);
-                if (this.TargetObject == null && vars[12].StartsWith("Vessel,"))
-                    this.TargetLoader = vars[12];
-            }
-
-            //Now do the work to set Actioned/triggered/etc if needed
-            //LogFormatted("A:{0},T:{1:0},Act:{2:0}", this.Name, CurrentUT, this.ActionedAt);
-            if (ActionedAt > 0 && CurrentUT > ActionedAt)
-            {
-                MonoBehaviourExtended.LogFormatted("Suppressing Alarm on Load:{0}", this.Name);
-                this.Triggered = true;
-                this.Actioned = true;
-                this.AlarmWindowClosed = true;
-            }
-            else if (ActionedAt > CurrentUT)
-            {
-                MonoBehaviourExtended.LogFormatted("Reenabling Alarm on Load:{0}", this.Name);
-                this.Triggered = false;
-                this.Actioned = false;
-                this.ActionedAt = 0;
-                this.AlarmWindowClosed = false;
-            }
-
-        }
+    //        //Extra Options go here if we need it later
+    //        strReturn += "|";
+    //        return strReturn;
+    //    }
 
 
-        public static ITargetable TargetDeserialize(String strInput)
-        {
-            ITargetable tReturn = null;
-            String[] TargetParts = strInput.Split(",".ToCharArray());
-            switch (TargetParts[0])
-            {
-                case "Vessel":
-                    if (KerbalAlarmClock.StoredVesselExists(TargetParts[1]))
-                        tReturn = KerbalAlarmClock.StoredVessel(TargetParts[1]);
-                    break;
-                case "CelestialBody":
-                    if (KerbalAlarmClock.CelestialBodyExists(TargetParts[1]))
-                        tReturn = KerbalAlarmClock.CelestialBody(TargetParts[1]);
-                    break;
-                default:
-                    break;
-            }
-            return tReturn;
-        }
+    //     /// <summary>
+    //    /// Basically deserializing the alarm
+    //    /// </summary>
+    //    /// <param name="AlarmDetails"></param>
+    //    public void LoadFromString(String AlarmDetails)
+    //    {
+    //        String[] vars = AlarmDetails.Split("|".ToCharArray());
+    //        VesselID = "";
+    //        SaveName = vars[0];
+    //        Name = vars[1];
+    //        Enabled = Convert.ToBoolean(vars[2]);
+    //        AlarmTime.UT = Convert.ToDouble(vars[3]);
+    //        HaltWarp = Convert.ToBoolean(vars[4]);
+    //        if (vars.Length == 6)
+    //            Notes = vars[5];
+    //        else
+    //        {
+    //            PauseGame = Convert.ToBoolean(vars[5]);
+    //            Notes = vars[6];
+    //        }
+    //    }
 
-        public static String TargetSerialize(ITargetable tInput)
-        {
-            string strReturn = "";
+    //    public void LoadFromString2(String AlarmDetails)
+    //    {
+    //        String[] vars = AlarmDetails.Split("|".ToCharArray(), StringSplitOptions.None);
+    //        SaveName = HighLogic.CurrentGame.Title;
+    //        VesselID = vars[0];
+    //        Name = vars[1];
+    //        Notes = vars[2];
+    //        AlarmTime.UT = Convert.ToDouble(vars[3]);
+    //        AlarmMarginSecs = Convert.ToDouble(vars[4]);
+    //        TypeOfAlarm = (KACAlarm.AlarmType)Enum.Parse(typeof(KACAlarm.AlarmType), vars[5]);
+    //        Enabled = Convert.ToBoolean(vars[6]);
+    //        HaltWarp = Convert.ToBoolean(vars[7]);
+    //        PauseGame = Convert.ToBoolean(vars[8]);
 
-            strReturn += tInput.GetType();
-            strReturn += ",";
+    //        String strOptions = vars[9];
+    //        switch (TypeOfAlarm)
+    //        {
+    //            case AlarmType.Maneuver:
+    //                //Generate the Nodes List from the string
+    //                ManNodes = ManNodeDeserializeList(strOptions);
+    //                break;
+    //            case AlarmType.Transfer:
+    //                try
+    //                {
+    //                    String[] XferParts = strOptions.Split(",".ToCharArray());
+    //                    XferOriginBodyName = XferParts[0];
+    //                    XferTargetBodyName = XferParts[1];
+    //                }
+    //                catch (Exception ex)
+    //                {
+    //                    MonoBehaviourExtended.LogFormatted("Unable to load transfer details for {0}", Name);
+    //                    MonoBehaviourExtended.LogFormatted(ex.Message);
+    //                }
+    //                break;
+    //            case AlarmType.AscendingNode:
+    //            case AlarmType.DescendingNode:
+    //            case AlarmType.LaunchRendevous:
+    //                if (strOptions != "")
+    //                {
+    //                    //find the targetable object and set it
+    //                    TargetObject = TargetDeserialize(strOptions);               
+    //                    if (TargetObject==null && strOptions.StartsWith("Vessel,"))
+    //                        TargetLoader = strOptions;
+    //                }
+    //                break;
+    //            default:
+    //                break;
+    //        }
+    //    }
 
-            if (tInput is Vessel)
-            {
-                Vessel tmpVessel = tInput as Vessel;
-                strReturn += tmpVessel.id.ToString();
-            }
-            else if (tInput is CelestialBody)
-            {
-                CelestialBody tmpBody = tInput as CelestialBody;
-                strReturn += tmpBody.bodyName;
-            }
+    //    public void LoadFromString3(String AlarmDetails,Double CurrentUT)
+    //    {
+    //        //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Manuever|Xfer|Target|Options|<ENDLINE>");
 
-            return strReturn;
+    //        String[] vars = AlarmDetails.Split("|".ToCharArray(), StringSplitOptions.None);
+    //        this.SaveName = HighLogic.CurrentGame.Title;
+    //        this.VesselID = vars[0];
+    //        this.Name = KACUtils.DecodeVarStrings(vars[1]);
+    //        this.Notes = KACUtils.DecodeVarStrings(vars[2]);
+    //        this.AlarmTime.UT = Convert.ToDouble(vars[3]);
+    //        this.AlarmMarginSecs = Convert.ToDouble(vars[4]);
+    //        this.TypeOfAlarm = (KACAlarm.AlarmType)Enum.Parse(typeof(KACAlarm.AlarmType), vars[5]);
+    //        this.Enabled = Convert.ToBoolean(vars[6]);
+    //        this.HaltWarp = Convert.ToBoolean(vars[7]);
+    //        this.PauseGame = Convert.ToBoolean(vars[8]);
+    //        this.ActionedAt = Convert.ToDouble(vars[9]);
 
-        }
+    //        if (vars[10] != "")
+    //            this.ManNodes = ManNodeDeserializeList(vars[10]);
 
-        public static List<ManeuverNode> ManNodeDeserializeList(String strInput)
-        {
-            List<ManeuverNode> lstReturn = new List<ManeuverNode>();
+    //        if (vars[11] != "")
+    //        {
+    //            try
+    //            {
+    //                String[] XferParts = vars[11].Split(",".ToCharArray());
+    //                this.XferOriginBodyName = XferParts[0];
+    //                this.XferTargetBodyName = XferParts[1];
+    //            }
+    //            catch (Exception ex)
+    //            {
+    //                MonoBehaviourExtended.LogFormatted("Unable to load transfer details for {0}", Name);
+    //                MonoBehaviourExtended.LogFormatted(ex.Message);
+    //            }
+    //        }
+    //        if (vars[12] != "")
+    //        {
+    //            //find the targetable object and set it
+    //            this.TargetObject = TargetDeserialize(vars[12]);
+    //            if (this.TargetObject == null && vars[12].StartsWith("Vessel,"))
+    //                this.TargetLoader = vars[12];
+    //        }
 
-            String[] strInputParts = strInput.Split(",".ToCharArray());
-            MonoBehaviourExtended.LogFormatted("Found {0} Maneuver Nodes to deserialize", strInputParts.Length / 8);
+    //        //Now do the work to set Actioned/triggered/etc if needed
+    //        //LogFormatted("A:{0},T:{1:0},Act:{2:0}", this.Name, CurrentUT, this.ActionedAt);
+    //        if (ActionedAt > 0 && CurrentUT > ActionedAt)
+    //        {
+    //            MonoBehaviourExtended.LogFormatted("Suppressing Alarm on Load:{0}", this.Name);
+    //            this.Triggered = true;
+    //            this.Actioned = true;
+    //            this.AlarmWindowClosed = true;
+    //        }
+    //        else if (ActionedAt > CurrentUT)
+    //        {
+    //            MonoBehaviourExtended.LogFormatted("Reenabling Alarm on Load:{0}", this.Name);
+    //            this.Triggered = false;
+    //            this.Actioned = false;
+    //            this.ActionedAt = 0;
+    //            this.AlarmWindowClosed = false;
+    //        }
 
-            //There are 8 parts per mannode
-            for (int iNode = 0; iNode < strInputParts.Length / 8; iNode++)
-            {
-                String strTempNode = String.Join(",", strInputParts.Skip(iNode * 8).Take(8).ToArray());
-                lstReturn.Add(ManNodeDeserialize(strTempNode));
-            }
-
-            return lstReturn;
-        }
-
-        public static ManeuverNode ManNodeDeserialize(String strInput)
-        {
-            ManeuverNode mReturn =  new ManeuverNode();
-            String[] manparts = strInput.Split(",".ToCharArray());
-            mReturn.UT = Convert.ToDouble(manparts[0]);
-            mReturn.DeltaV = new Vector3d(Convert.ToDouble(manparts[1]),
-                                        Convert.ToDouble(manparts[2]),
-                                        Convert.ToDouble(manparts[3])
-                    );
-            mReturn.nodeRotation = new Quaternion(Convert.ToSingle(manparts[4]),
-                                                Convert.ToSingle(manparts[5]),
-                                                Convert.ToSingle(manparts[6]),
-                                                Convert.ToSingle(manparts[7])
-                    );
-            return mReturn;
-        }
-
-        public static string ManNodeSerializeList(List<ManeuverNode> mInput)
-        {
-            String strReturn = "";
-            foreach (ManeuverNode tmpMNode in mInput)
-            {
-                strReturn += ManNodeSerialize(tmpMNode);
-                strReturn += ",";
-            }
-            strReturn = strReturn.TrimEnd(",".ToCharArray());
-            return strReturn;
-        }
-
-        public static string ManNodeSerialize(ManeuverNode mInput)
-        {
-            String strReturn = mInput.UT.ToString();
-            strReturn += "," + KACUtils.CommaSepVariables(mInput.DeltaV.x, mInput.DeltaV.y, mInput.DeltaV.z);
-            strReturn += "," + KACUtils.CommaSepVariables(mInput.nodeRotation.x, mInput.nodeRotation.y, mInput.nodeRotation.z, mInput.nodeRotation.w);
-            return strReturn;
-        }
-
-        public static Boolean CompareManNodeListSimple(List<ManeuverNode> l1, List<ManeuverNode> l2)
-        {
-            Boolean blnReturn = true;
-
-            if (l1.Count != l2.Count)
-                blnReturn=false;
-            else
-            {
-                for (int i = 0; i < l1.Count; i++)
-                {
-                    if (l1[i].UT != l2[i].UT)
-                        blnReturn = false;
-                    else if (l1[i].DeltaV != l2[i].DeltaV)
-                        blnReturn = false;
-                }
-            }
-
-            return blnReturn;
-        }
+    //    }
 
 
+    //    public static ITargetable TargetDeserialize(String strInput)
+    //    {
+    //        ITargetable tReturn = null;
+    //        String[] TargetParts = strInput.Split(",".ToCharArray());
+    //        switch (TargetParts[0])
+    //        {
+    //            case "Vessel":
+    //                if (KerbalAlarmClock.StoredVesselExists(TargetParts[1]))
+    //                    tReturn = KerbalAlarmClock.StoredVessel(TargetParts[1]);
+    //                break;
+    //            case "CelestialBody":
+    //                if (KerbalAlarmClock.CelestialBodyExists(TargetParts[1]))
+    //                    tReturn = KerbalAlarmClock.CelestialBody(TargetParts[1]);
+    //                break;
+    //            default:
+    //                break;
+    //        }
+    //        return tReturn;
+    //    }
 
-        public static int SortByUT(KACAlarm c1, KACAlarm c2)
-        {
-            return c1.Remaining.UT.CompareTo(c2.Remaining.UT);
-        }
-    }
+    //    public static String TargetSerialize(ITargetable tInput)
+    //    {
+    //        string strReturn = "";
 
-    /// <summary>
-    /// Extended List class to deal with multiple save files"/>
-    /// </summary>
-    public class KACAlarmList : List<KACAlarm>
-    {
-        /// <summary>
-        /// How many alarms in the supplied save file
-        /// </summary>
-        /// <param name="SaveName"></param>
-        /// <returns></returns>
-        public Int64 CountInSave(String SaveName)
-        {
-            long lngReturn=0;
+    //        strReturn += tInput.GetType();
+    //        strReturn += ",";
 
-            foreach (KACAlarm tmpAlarm in this)
-            {
-                if (tmpAlarm.SaveName.ToLower() == SaveName.ToLower())
-                    lngReturn++;
-            }
+    //        if (tInput is Vessel)
+    //        {
+    //            Vessel tmpVessel = tInput as Vessel;
+    //            strReturn += tmpVessel.id.ToString();
+    //        }
+    //        else if (tInput is CelestialBody)
+    //        {
+    //            CelestialBody tmpBody = tInput as CelestialBody;
+    //            strReturn += tmpBody.bodyName;
+    //        }
 
-            return lngReturn;
-        }
+    //        return strReturn;
 
-        /// <summary>
-        /// Are there any alarms for this save file that are in the future and not already actioned
-        /// </summary>
-        /// <param name="SaveName"></param>
-        /// <returns></returns>
-        public Boolean ActiveEnabledFutureAlarms(String SaveName)
-        {
-            Boolean blnReturn = false;
-            foreach (KACAlarm tmpAlarm in this)
-            {
-                if (tmpAlarm.AlarmTime.UT > Planetarium.GetUniversalTime() && tmpAlarm.Enabled && !tmpAlarm.Actioned && (tmpAlarm.SaveName.ToLower() == SaveName.ToLower()))
-                {
-                    blnReturn = true;
-                }
-            }
-            return blnReturn;
-        }
+    //    }
 
-        /// <summary>
-        /// Get a filtered list of alarms for a specirfic save file
-        /// </summary>
-        /// <param name="SaveName"></param>
-        /// <returns></returns>
-        public KACAlarmList BySaveName(String SaveName)
-        {
-            KACAlarmList lstreturn = new KACAlarmList();
+    //    public static List<ManeuverNode> ManNodeDeserializeList(String strInput)
+    //    {
+    //        List<ManeuverNode> lstReturn = new List<ManeuverNode>();
 
-            foreach (KACAlarm tmpAlarm in this)
-            {
-                if (tmpAlarm.SaveName.ToLower() == SaveName.ToLower())
-                    lstreturn.Add(tmpAlarm);
-            }
+    //        String[] strInputParts = strInput.Split(",".ToCharArray());
+    //        MonoBehaviourExtended.LogFormatted("Found {0} Maneuver Nodes to deserialize", strInputParts.Length / 8);
 
-            return lstreturn;
-        }
+    //        //There are 8 parts per mannode
+    //        for (int iNode = 0; iNode < strInputParts.Length / 8; iNode++)
+    //        {
+    //            String strTempNode = String.Join(",", strInputParts.Skip(iNode * 8).Take(8).ToArray());
+    //            lstReturn.Add(ManNodeDeserialize(strTempNode));
+    //        }
 
-        /// <summary>
-        /// Get the Alarm object from the Unity Window ID
-        /// </summary>
-        /// <param name="windowID"></param>
-        /// <returns></returns>
-        public KACAlarm GetByWindowID(Int32 windowID)
-        {
-            KACAlarm alarmReturn=null;
-            foreach (KACAlarm tmpAlarm in this)
-            {
-                if (tmpAlarm.AlarmWindowID == windowID)
-                    alarmReturn=tmpAlarm;
-            }
-            return alarmReturn;
-        }
+    //        return lstReturn;
+    //    }
 
-        public Boolean PauseAlarmOnScreen(String SaveName)
-        {
-            Boolean blnReturn = false;
-            foreach (KACAlarm tmpAlarm in this)
-            {
-                if ((tmpAlarm.SaveName.ToLower() == SaveName.ToLower()) && tmpAlarm.AlarmWindowID!=0 && !tmpAlarm.AlarmWindowClosed )
-                {
-                    blnReturn = true;
-                    break;
-                }
-            }
-            return blnReturn;
-        }
-    }
+    //    public static ManeuverNode ManNodeDeserialize(String strInput)
+    //    {
+    //        ManeuverNode mReturn =  new ManeuverNode();
+    //        String[] manparts = strInput.Split(",".ToCharArray());
+    //        mReturn.UT = Convert.ToDouble(manparts[0]);
+    //        mReturn.DeltaV = new Vector3d(Convert.ToDouble(manparts[1]),
+    //                                    Convert.ToDouble(manparts[2]),
+    //                                    Convert.ToDouble(manparts[3])
+    //                );
+    //        mReturn.nodeRotation = new Quaternion(Convert.ToSingle(manparts[4]),
+    //                                            Convert.ToSingle(manparts[5]),
+    //                                            Convert.ToSingle(manparts[6]),
+    //                                            Convert.ToSingle(manparts[7])
+    //                );
+    //        return mReturn;
+    //    }
+
+    //    public static string ManNodeSerializeList(List<ManeuverNode> mInput)
+    //    {
+    //        String strReturn = "";
+    //        foreach (ManeuverNode tmpMNode in mInput)
+    //        {
+    //            strReturn += ManNodeSerialize(tmpMNode);
+    //            strReturn += ",";
+    //        }
+    //        strReturn = strReturn.TrimEnd(",".ToCharArray());
+    //        return strReturn;
+    //    }
+
+    //    public static string ManNodeSerialize(ManeuverNode mInput)
+    //    {
+    //        String strReturn = mInput.UT.ToString();
+    //        strReturn += "," + KACUtils.CommaSepVariables(mInput.DeltaV.x, mInput.DeltaV.y, mInput.DeltaV.z);
+    //        strReturn += "," + KACUtils.CommaSepVariables(mInput.nodeRotation.x, mInput.nodeRotation.y, mInput.nodeRotation.z, mInput.nodeRotation.w);
+    //        return strReturn;
+    //    }
+
+    //    public static Boolean CompareManNodeListSimple(List<ManeuverNode> l1, List<ManeuverNode> l2)
+    //    {
+    //        Boolean blnReturn = true;
+
+    //        if (l1.Count != l2.Count)
+    //            blnReturn=false;
+    //        else
+    //        {
+    //            for (int i = 0; i < l1.Count; i++)
+    //            {
+    //                if (l1[i].UT != l2[i].UT)
+    //                    blnReturn = false;
+    //                else if (l1[i].DeltaV != l2[i].DeltaV)
+    //                    blnReturn = false;
+    //            }
+    //        }
+
+    //        return blnReturn;
+    //    }
+
+
+
+    //    public static int SortByUT(KACAlarm c1, KACAlarm c2)
+    //    {
+    //        return c1.Remaining.UT.CompareTo(c2.Remaining.UT);
+    //    }
+    //}
+
+    ///// <summary>
+    ///// Extended List class to deal with multiple save files"/>
+    ///// </summary>
+    //public class KACAlarmList : List<KACAlarm>
+    //{
+    //    /// <summary>
+    //    /// How many alarms in the supplied save file
+    //    /// </summary>
+    //    /// <param name="SaveName"></param>
+    //    /// <returns></returns>
+    //    public Int64 CountInSave(String SaveName)
+    //    {
+    //        long lngReturn=0;
+
+    //        foreach (KACAlarm tmpAlarm in this)
+    //        {
+    //            if (tmpAlarm.SaveName.ToLower() == SaveName.ToLower())
+    //                lngReturn++;
+    //        }
+
+    //        return lngReturn;
+    //    }
+
+    //    /// <summary>
+    //    /// Are there any alarms for this save file that are in the future and not already actioned
+    //    /// </summary>
+    //    /// <param name="SaveName"></param>
+    //    /// <returns></returns>
+    //    public Boolean ActiveEnabledFutureAlarms(String SaveName)
+    //    {
+    //        Boolean blnReturn = false;
+    //        foreach (KACAlarm tmpAlarm in this)
+    //        {
+    //            if (tmpAlarm.AlarmTime.UT > Planetarium.GetUniversalTime() && tmpAlarm.Enabled && !tmpAlarm.Actioned && (tmpAlarm.SaveName.ToLower() == SaveName.ToLower()))
+    //            {
+    //                blnReturn = true;
+    //            }
+    //        }
+    //        return blnReturn;
+    //    }
+
+    //    /// <summary>
+    //    /// Get a filtered list of alarms for a specirfic save file
+    //    /// </summary>
+    //    /// <param name="SaveName"></param>
+    //    /// <returns></returns>
+    //    public KACAlarmList BySaveName(String SaveName)
+    //    {
+    //        KACAlarmList lstreturn = new KACAlarmList();
+
+    //        foreach (KACAlarm tmpAlarm in this)
+    //        {
+    //            if (tmpAlarm.SaveName.ToLower() == SaveName.ToLower())
+    //                lstreturn.Add(tmpAlarm);
+    //        }
+
+    //        return lstreturn;
+    //    }
+
+    //    /// <summary>
+    //    /// Get the Alarm object from the Unity Window ID
+    //    /// </summary>
+    //    /// <param name="windowID"></param>
+    //    /// <returns></returns>
+    //    public KACAlarm GetByWindowID(Int32 windowID)
+    //    {
+    //        KACAlarm alarmReturn=null;
+    //        foreach (KACAlarm tmpAlarm in this)
+    //        {
+    //            if (tmpAlarm.AlarmWindowID == windowID)
+    //                alarmReturn=tmpAlarm;
+    //        }
+    //        return alarmReturn;
+    //    }
+
+    //    public Boolean PauseAlarmOnScreen(String SaveName)
+    //    {
+    //        Boolean blnReturn = false;
+    //        foreach (KACAlarm tmpAlarm in this)
+    //        {
+    //            if ((tmpAlarm.SaveName.ToLower() == SaveName.ToLower()) && tmpAlarm.AlarmWindowID!=0 && !tmpAlarm.AlarmWindowClosed )
+    //            {
+    //                blnReturn = true;
+    //                break;
+    //            }
+    //        }
+    //        return blnReturn;
+    //    }
+    //}
 
     public class KACVesselSOI
     {

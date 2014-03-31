@@ -79,7 +79,8 @@ namespace KerbalAlarmClock
             }
         }
 
-        [Persistent] internal Int32 AlarmDefaultAction = 1;
+        [Persistent]
+        internal KACAlarm.AlarmActionEnum AlarmDefaultAction = KACAlarm.AlarmActionEnum.KillWarp;
         [Persistent] internal Double AlarmDefaultMargin = 60;
         [Persistent] internal Int32 AlarmPosition = 1;
         [Persistent] internal Boolean AlarmDeleteOnClose = false;
@@ -112,19 +113,19 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean AlarmAddManAuto_andRemove = false;
         [Persistent] internal Double AlarmAddManAutoMargin = 180;
         [Persistent] internal Double AlarmAddManAutoThreshold = 180;
-        [Persistent] internal Int32 AlarmAddManAuto_Action = 1;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManAuto_Action = KACAlarm.AlarmActionEnum.KillWarp;
 
         //public double AlarmAddSOIMargin = 120;
         [Persistent] internal Boolean AlarmCatchSOIChange = false;
-        [Persistent] internal Int32 AlarmOnSOIChange_Action = 1;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnSOIChange_Action = KACAlarm.AlarmActionEnum.KillWarp;
 
         [Persistent] internal Boolean AlarmCrewDefaultStoreNode = false;
 
         //Strings to store objects to reset after ship switch;
-        [Persistent] internal String LoadManNode = "";
+        [Persistent] internal ManeuverNodeStorageList LoadManNode=null;
         [Persistent] internal String LoadVesselTarget = "";
 
-        public KACAlarmList Alarms = new KACAlarmList();
+        //public KACAlarmList Alarms = new KACAlarmList();
         
         public List<GameScenes> DrawScenes = new List<GameScenes> { GameScenes.FLIGHT, GameScenes.SPACECENTER, GameScenes.TRACKSTATION };
         public List<GameScenes> BehaviourScenes = new List<GameScenes> { GameScenes.FLIGHT };
@@ -163,7 +164,6 @@ namespace KerbalAlarmClock
             DateTime.TryParseExact(VersionCheckDate_AttemptStored, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out VersionCheckDate_Attempt);
             DateTime.TryParseExact(VersionCheckDate_SuccessStored, "yyyy-MM-dd", null ,System.Globalization.DateTimeStyles.None, out VersionCheckDate_Success);
         }
-
 
         internal enum DisplaySkin
         {

@@ -279,16 +279,18 @@ namespace KerbalAlarmClock
             }
 
 
+            if (GUILayout.Button("Save"))
+            {
+                alarms.Save();
+            }
+
+
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
                 GUILayout.Label (KACWorkerGameState.ManeuverNodeExists.ToString());
                 GUILayout.Label((KACWorkerGameState.ManeuverNodeFuture != null).ToString());
 
-
-
-
-
-
+                
                 //FlightState fs = new FlightState();
                 //GUILayout.Label (fs.activeVesselIdx.ToString());
 

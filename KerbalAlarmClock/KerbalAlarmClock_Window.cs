@@ -220,7 +220,7 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
-                    if (settings.Alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
+                    if (alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
                     {
                         if (WindowVisibleByActiveScene)
                             iconToShow = KACResources.iconAlarmShow;
@@ -271,7 +271,7 @@ namespace KerbalAlarmClock
                         }
                         else
                         {
-                            if (settings.Alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
+                            if (alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
                             {
                                 if (WindowVisibleByActiveScene)
                                     TexturePath = "TriggerTech/ToolbarIcons/KACIcon-AlarmShow";
@@ -375,12 +375,12 @@ namespace KerbalAlarmClock
             {
                 MainWindowPos.height = intMainWindowBaseHeight;
                 //Work out the number of alarms and therefore the height of the window
-                if (settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count > 1)
+                if (alarms.Count > 1)
                 {
-                    if (settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count<2)
+                    if (alarms.Count<2)
                         MainWindowPos.height = intMainWindowBaseHeight;
-                    else if (settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count < settings.AlarmListMaxAlarmsInt)
-                        MainWindowPos.height = intMainWindowBaseHeight + ((settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count - 1) * intMainWindowAlarmListItemHeight);
+                    else if (alarms.Count < settings.AlarmListMaxAlarmsInt)
+                        MainWindowPos.height = intMainWindowBaseHeight + ((alarms.Count - 1) * intMainWindowAlarmListItemHeight);
                     else
                         //this is scrolling
                         MainWindowPos.height = (intMainWindowBaseHeight -3) + ((settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) + intMainWindowAlarmListScrollPad;
@@ -502,8 +502,8 @@ namespace KerbalAlarmClock
                         {
                             SOITooltip += "-excluding EVA";
                         }
-                        if (settings.AlarmOnSOIChange_Action > 1) SOITooltip += " (Pause Action)";
-                        else if (settings.AlarmOnSOIChange_Action > 0) SOITooltip += " (Warp Kill Action)";
+                        if (settings.AlarmOnSOIChange_Action == KACAlarm.AlarmActionEnum.PauseGame) SOITooltip += " (Pause Action)";
+                        else if (settings.AlarmOnSOIChange_Action != KACAlarm.AlarmActionEnum.MessageOnly) SOITooltip += " (Warp Kill Action)";
                     }
                     GUIContent SOIIcon = new GUIContent(KACResources.iconSOI, SOITooltip);
                     GUILayout.Label(SOIIcon, KACResources.styleSOIIndicator);
@@ -630,11 +630,11 @@ namespace KerbalAlarmClock
             KACAlarm nextAlarm = null;
 
             //Find the Alarm to display
-            if (settings.Alarms != null)
+            if (alarms != null)
             {
                 if (settings.WindowMinimizedType == MiminalDisplayType.NextAlarm)
                 {
-                    foreach (KACAlarm tmpAlarm in settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
+                    foreach (KACAlarm tmpAlarm in alarms)
                     {
                         Boolean blnSwitch = false;
                         if (tmpAlarm.AlarmTime.UT > KACWorkerGameState.CurrentTime.UT && tmpAlarm.Enabled && !tmpAlarm.Actioned)
@@ -656,7 +656,7 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
-                    nextAlarm = settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).OrderBy(a=>a.AlarmTime.UT).FirstOrDefault();
+                    nextAlarm = alarms.OrderBy(a=>a.AlarmTime.UT).FirstOrDefault();
                 }
             }
 
@@ -669,7 +669,7 @@ namespace KerbalAlarmClock
                 if (Event.current.type == EventType.repaint)
                     rectScrollview = new Rect(0, 0, 0, 0);
                 if (DrawAlarmLine(nextAlarm))
-                    settings.Alarms.Remove(nextAlarm);
+                    alarms.Remove(nextAlarm);
             }
         }
 
@@ -682,14 +682,14 @@ namespace KerbalAlarmClock
 
 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, styleTemp);
-            if (settings.Alarms.CountInSave(HighLogic.CurrentGame.Title) == 0)
+            if (alarms.Count == 0)
             {
                 GUILayout.Label("No Alarms in the List");
             }
             else
             {
                 List<KACAlarm> AlarmsToRemove = new List<KACAlarm>();
-                List<KACAlarm> AlarmsToSort = settings.Alarms.BySaveName(HighLogic.CurrentGame.Title);
+                List<KACAlarm> AlarmsToSort = alarms;
                 AlarmsToSort.Sort(KACAlarm.SortByUT);
                 foreach (KACAlarm tmpAlarm in AlarmsToSort)
                 {
@@ -702,11 +702,11 @@ namespace KerbalAlarmClock
                 {
                     foreach (KACAlarm tmpAlarm in AlarmsToRemove)
                     {
-                        settings.Alarms.Remove(tmpAlarm);
+                        alarms.Remove(tmpAlarm);
                         //settings.SaveAlarms();
                     }
                     //is the game paused, yet we deleted any active pause alarms??
-                    if (settings.Alarms.FirstOrDefault(a => (a.AlarmWindowID != 0 && a.PauseGame == true)) == null)
+                    if (alarms.FirstOrDefault(a => (a.AlarmWindowID != 0 && a.PauseGame == true)) == null)
                     {
                         if (FlightDriver.Pause)
                             FlightDriver.SetPause(false);
@@ -883,7 +883,7 @@ namespace KerbalAlarmClock
         
         #endregion
 
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref int Action, ref Double Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref Double Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
         {
             KACTimeStringArray tmpTime = new KACTimeStringArray(Margin);
             WindowLayout_CommonFields(ref strName, ref strMessage, ref Action, ref tmpTime, TypeOfAlarm, WindowHeight);
@@ -893,7 +893,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref int Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
         {
             //Two Columns
             GUILayout.Label("Common Alarm Properties", KACResources.styleAddSectionHeading);
@@ -914,7 +914,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice(ref Action, "On Alarm:", 90);
+            DrawAlarmActionChoice2(ref Action, "On Alarm:", 90);
 
             if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime && TypeOfAlarm != KACAlarm.AlarmType.Crew)
             {
@@ -928,7 +928,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmAction Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
         {
             //Two Columns
             String strTitle = "";
@@ -1132,23 +1132,23 @@ namespace KerbalAlarmClock
             return !(InitialChoice == Selected);
         }
 
-        public Boolean DrawAlarmActionChoice(ref int intChoice, String LabelText, int LabelWidth)
-        {
-            Boolean blnReturn = false;
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth));
-            blnReturn = DrawRadioList(ref intChoice, "Message Only", "Kill Time Warp", "Pause Game");
-            GUILayout.EndHorizontal();
-            return blnReturn;
-        }
-        public Boolean DrawAlarmActionChoice2(ref KACAlarm.AlarmAction Choice, String LabelText, int LabelWidth)
+        //public Boolean DrawAlarmActionChoice(ref int intChoice, String LabelText, int LabelWidth)
+        //{
+        //    Boolean blnReturn = false;
+        //    GUILayout.BeginHorizontal();
+        //    GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth));
+        //    blnReturn = DrawRadioList(ref intChoice, "Message Only", "Kill Time Warp", "Pause Game");
+        //    GUILayout.EndHorizontal();
+        //    return blnReturn;
+        //}
+        public Boolean DrawAlarmActionChoice2(ref KACAlarm.AlarmActionEnum Choice, String LabelText, int LabelWidth)
         {
             Boolean blnReturn = false;
             GUILayout.BeginHorizontal();
             GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth-10));
             int intChoice = (int)Choice;
             blnReturn = DrawRadioList(ref intChoice, "Message", "Kill Warp", "Pause");
-            Choice = (KACAlarm.AlarmAction)intChoice;
+            Choice = (KACAlarm.AlarmActionEnum)intChoice;
             GUILayout.EndHorizontal();
             return blnReturn;
         }

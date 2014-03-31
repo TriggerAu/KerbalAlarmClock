@@ -10,7 +10,7 @@ using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public class Alarm:ConfigNodeStorage
+    public class KACAlarm:ConfigNodeStorage
     {
         public enum AlarmType
         {
@@ -73,15 +73,15 @@ namespace KerbalAlarmClock
 
 
                 #region "Constructors"
-        public Alarm()
+        public KACAlarm()
         {
         }
-        public Alarm(double UT)
+        public KACAlarm(double UT)
         {
             AlarmTime.UT = UT;
         }
 
-        public Alarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction)
         {
             VesselID = vID;
             Name = NewName;
@@ -93,14 +93,14 @@ namespace KerbalAlarmClock
             AlarmAction = aAction;
         }
 
-        public Alarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction, List<ManeuverNode> NewManeuvers)
+        public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction, List<ManeuverNode> NewManeuvers)
             : this(vID, NewName, NewNotes, UT, Margin, atype, aAction)
         {
             //set maneuver node
             ManNodes = NewManeuvers;
         }
 
-        public Alarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction, KACXFerTarget NewTarget)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction, KACXFerTarget NewTarget)
             : this(vID, NewName, NewNotes, UT, Margin, atype, aAction)
         {
             //Set target details
@@ -108,7 +108,7 @@ namespace KerbalAlarmClock
             XferTargetBodyName = NewTarget.Target.bodyName;
         }
 
-        public Alarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction, ITargetable NewTarget)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction, ITargetable NewTarget)
             : this(vID,NewName,NewNotes,UT,Margin,atype,aAction)
         {
             //Set the ITargetable proerty
@@ -133,7 +133,8 @@ namespace KerbalAlarmClock
         [Persistent] public AlarmActionEnum AlarmAction= AlarmActionEnum.KillWarp;
         
         //public ManeuverNode ManNode;                                              //Stored ManeuverNode attached to alarm
-        public List<ManeuverNode> ManNodes = null;                                  //Stored ManeuverNode's attached to alarm
+        public List<ManeuverNode> ManNodes = new List<ManeuverNode>();                                  //Stored ManeuverNode's attached to alarm
+        [Persistent] ManeuverNodeStorageList ManNodesStorage = new ManeuverNodeStorageList();
 
         [Persistent] public String XferOriginBodyName = "";                         //Stored orbital transfer details
         [Persistent] public String XferTargetBodyName = "";
@@ -193,30 +194,29 @@ namespace KerbalAlarmClock
         public Rect AlarmWindow;
         public int AlarmWindowID = 0;
         public int AlarmWindowHeight = 148;
+        public Boolean AlarmWindowClosed = false;
 
         //Details of the alarm message
-        public Boolean EditWindowOpen = false;                                        
+        public Boolean EditWindowOpen = false;
 
-        /// <summary>
-        /// NEED YTP DO SOME MAN NODE SERIALISE STUFF HERE
-        /// </summary>
 
+        public Boolean PauseGame { get { return AlarmAction == AlarmActionEnum.PauseGame; } }
+        public Boolean HaltWarp { get { return (AlarmAction == AlarmActionEnum.KillWarp || AlarmAction == AlarmActionEnum.KillWarpOnly); } }
+                
         public override void OnEncodeToConfigNode()
         {
             AlarmTimeStorage = AlarmTime.UT;
-            TargetObjectStorage = TargetSerialize(TargetObject);
+            //TargetObjectStorage = TargetSerialize(TargetObject);
+            ManNodesStorage.FromManNodeList(ManNodes);
         }
         public override void OnDecodeFromConfigNode()
         {
             AlarmTime=new KACTime(AlarmTimeStorage);
             _TargetObject = TargetDeserialize(TargetObjectStorage);
+            ManNodes = ManNodesStorage.ToManNodeList();
         }
-
-
-
-
-
-        private static ITargetable TargetDeserialize(String strInput)
+        
+        internal static ITargetable TargetDeserialize(String strInput)
         {
             ITargetable tReturn = null;
             String[] TargetParts = strInput.Split(",".ToCharArray());
@@ -236,7 +236,7 @@ namespace KerbalAlarmClock
             return tReturn;
         }
 
-        private static String TargetSerialize(ITargetable tInput)
+        internal static String TargetSerialize(ITargetable tInput)
         {
             string strReturn = "";
 
@@ -259,10 +259,134 @@ namespace KerbalAlarmClock
         }
 
 
+        public static Boolean CompareManNodeListSimple(List<ManeuverNode> l1, List<ManeuverNode> l2)
+        {
+            Boolean blnReturn = true;
+
+            if (l1.Count != l2.Count)
+                blnReturn = false;
+            else
+            {
+                for (int i = 0; i < l1.Count; i++)
+                {
+                    if (l1[i].UT != l2[i].UT)
+                        blnReturn = false;
+                    else if (l1[i].DeltaV != l2[i].DeltaV)
+                        blnReturn = false;
+                }
+            }
+
+            return blnReturn;
+        }
+        public static int SortByUT(KACAlarm c1, KACAlarm c2)
+        {
+            return c1.Remaining.UT.CompareTo(c2.Remaining.UT);
+        }
+
     }
 
-    public class AlarmList: List<Alarm>
+    public class ManeuverNodeStorageList:List<ManeuverNodeStorage>
+    {
+        public List<ManeuverNode> ToManNodeList()
+        {
+            List<ManeuverNode> lstReturn = new List<ManeuverNode>();
+            foreach (ManeuverNodeStorage item in this)
+            {
+                lstReturn.Add(item.ToManeuverNode());
+            }
+            return lstReturn;
+        }
+
+        public ManeuverNodeStorageList FromManNodeList(List<ManeuverNode> ManNodesToStore)
+        {
+            this.Clear();
+            foreach (ManeuverNode item in ManNodesToStore)
+            {
+                this.Add(new ManeuverNodeStorage(item));
+            }
+            return this;
+        }
+    }
+
+    public class ManeuverNodeStorage
+    {
+        public ManeuverNodeStorage() { }
+        public ManeuverNodeStorage(ManeuverNode newManNode) 
+        {
+            FromManeuverNode(newManNode);
+        }
+
+        [Persistent] Vector3 DeltaV;
+        [Persistent] Quaternion NodeRotation;
+        [Persistent] Double UT;
+
+        public ManeuverNode ToManeuverNode()
+        {
+            ManeuverNode retManNode = new ManeuverNode();
+            retManNode.DeltaV = DeltaV;
+            retManNode.nodeRotation = NodeRotation;
+            retManNode.UT = UT;
+            return retManNode;
+        }
+        public ManeuverNodeStorage FromManeuverNode(ManeuverNode ManNodeToStore)
+        {
+            this.DeltaV = ManNodeToStore.DeltaV;
+            this.NodeRotation = ManNodeToStore.nodeRotation;
+            this.UT = ManNodeToStore.UT;
+            return this;
+        }
+    }
+
+    public class KACAlarmList: List<KACAlarm>
     {
 
+
+        public void Save()
+        {
+            KACAlarmListStorage lstTemp = new KACAlarmListStorage();
+            lstTemp.list = this;
+            MonoBehaviourExtended.LogFormatted("{0}", lstTemp.list.Count);
+            foreach (KACAlarm item in lstTemp.list)
+            {
+                MonoBehaviourExtended.LogFormatted("{0}", item.AsConfigNode);
+            }
+            ConfigNode cnReturn = lstTemp.AsConfigNode;
+            MonoBehaviourExtended.LogFormatted("{0}", cnReturn);
+        }
+
+        /// <summary>
+        /// Get the Alarm object from the Unity Window ID
+        /// </summary>
+        /// <param name="windowID"></param>
+        /// <returns></returns>
+        public KACAlarm GetByWindowID(Int32 windowID)
+        {
+            return this.FirstOrDefault(x => x.AlarmWindowID == windowID);
+        }
+
+        /// <summary>
+        /// Are there any alarms for this save file that are in the future and not already actioned
+        /// </summary>
+        /// <param name="SaveName"></param>
+        /// <returns></returns>
+        public Boolean ActiveEnabledFutureAlarms(String SaveName)
+        {
+            Boolean blnReturn = false;
+
+            foreach (KACAlarm tmpAlarm in this)
+            {
+                if (tmpAlarm.AlarmTime.UT > Planetarium.GetUniversalTime() && tmpAlarm.Enabled && !tmpAlarm.Actioned )
+                {
+                    blnReturn = true;
+                }
+            }
+            return blnReturn;
+        }
+    }
+
+    public class KACAlarmListStorage : ConfigNodeStorage
+    {
+        [Persistent]
+        public List<KACAlarm> list;
     }
 }

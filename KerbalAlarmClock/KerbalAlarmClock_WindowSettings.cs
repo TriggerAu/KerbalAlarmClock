@@ -216,7 +216,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Default Alarm Action
-            if (DrawAlarmActionChoice(ref settings.AlarmDefaultAction, "Default Action:", 90))
+            if (DrawAlarmActionChoice2(ref settings.AlarmDefaultAction, "Default Action:", 90))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeDefaultMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Default Margin:", 100))
@@ -264,7 +264,7 @@ namespace KerbalAlarmClock
                     settings.Save();
                 GUILayout.EndHorizontal();
                 GUILayout.Label("SOI Alarm Settings", KACResources.styleAddSectionHeading);
-                if (DrawAlarmActionChoice(ref settings.AlarmOnSOIChange_Action, "On Alarm:", 90))
+                if (DrawAlarmActionChoice2(ref settings.AlarmOnSOIChange_Action, "On Alarm:", 90))
                 {
                     settings.Save();
                 }
@@ -336,7 +336,7 @@ namespace KerbalAlarmClock
                 }
 
                 GUILayout.Label("Man Node Alarm Settings", KACResources.styleAddSectionHeading);
-                if (DrawAlarmActionChoice(ref settings.AlarmAddManAuto_Action, "On Alarm:", 90))
+                if (DrawAlarmActionChoice2(ref settings.AlarmAddManAuto_Action, "On Alarm:", 90))
                 {
                     settings.Save();
                 }

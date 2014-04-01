@@ -110,10 +110,22 @@ namespace KerbalAlarmClock
                 btnToolbarKAC = InitToolbarButton();
             }
 
+            GameEvents.onGameStateSaved.Add(OnSave);
+            GameEvents.onGameStateCreated.Add(OnLoad);
+                
+
             //Set up the updating function - do this 5 times a sec not on every frame.
             StartRepeatingWorker(settings.BehaviourChecksPerSec);
         }
 
+        private void OnSave(Game data)
+        {
+            MonoBehaviourExtended.LogFormatted_DebugOnly("StateSaved");
+        }
+        private void OnLoad(Game data)
+        {
+            MonoBehaviourExtended.LogFormatted_DebugOnly("StateLoaded");
+        }
         //Destroy Event - when the DLL is loaded
         internal override void OnDestroy()
         {
@@ -364,7 +376,7 @@ namespace KerbalAlarmClock
                 // Do we need to restore a maneuverNode after a ship jump - give it 4 secs of attempts for changes to ship
                 if (settings.LoadManNode != null && KACWorkerGameState.IsFlightMode)
                 {
-                    List<ManeuverNode> manNodesToRestore = settings.LoadManNode.ToManNodeList();
+                    List<ManeuverNode> manNodesToRestore = KACAlarm.ManNodeDeserializeList(settings.LoadManNode);
                     manToRestoreAttempts += 1;
                     LogFormatted("Attempting to restore a maneuver node-Try {0}",manToRestoreAttempts.ToString());
                     RestoreManeuverNodeList(manNodesToRestore);

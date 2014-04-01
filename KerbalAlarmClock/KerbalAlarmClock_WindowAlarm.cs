@@ -440,7 +440,7 @@ namespace KerbalAlarmClock
                         if (JumpToVessel(tmpVessel))
                         {
                             //Set the Node in memory to restore once the ship change has completed
-                            settings.LoadManNode.FromManNodeList(tmpAlarm.ManNodes);
+                            settings.LoadManNode = KACAlarm.ManNodeSerializeList(tmpAlarm.ManNodes);
                             settings.Save();
                         }
                     }

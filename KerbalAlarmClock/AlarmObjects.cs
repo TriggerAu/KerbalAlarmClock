@@ -121,7 +121,8 @@ namespace KerbalAlarmClock
 
         [Persistent] public String VesselID="";
         [Persistent] public String Name = "";                                       //Name of Alarm
-        [Persistent] public String Notes = "";                                      //Entered extra details
+        public String Notes = "";                                      //Entered extra details
+        [Persistent] private String NotesStorage = "";                                      //Entered extra details
         
         [Persistent] public AlarmType TypeOfAlarm = AlarmType.Raw;                  //What Type of Alarm
 
@@ -134,7 +135,7 @@ namespace KerbalAlarmClock
         
         //public ManeuverNode ManNode;                                              //Stored ManeuverNode attached to alarm
         public List<ManeuverNode> ManNodes = new List<ManeuverNode>();                                  //Stored ManeuverNode's attached to alarm
-        [Persistent] ManeuverNodeStorageList ManNodesStorage = new ManeuverNodeStorageList();
+        [Persistent] String ManNodesStorage = "";
 
         [Persistent] public String XferOriginBodyName = "";                         //Stored orbital transfer details
         [Persistent] public String XferTargetBodyName = "";
@@ -194,7 +195,7 @@ namespace KerbalAlarmClock
         public Rect AlarmWindow;
         public int AlarmWindowID = 0;
         public int AlarmWindowHeight = 148;
-        public Boolean AlarmWindowClosed = false;
+        [Persistent] internal Boolean AlarmWindowClosed = false;
 
         //Details of the alarm message
         public Boolean EditWindowOpen = false;
@@ -205,20 +206,24 @@ namespace KerbalAlarmClock
                 
         public override void OnEncodeToConfigNode()
         {
+            NotesStorage = KACUtils.EncodeVarStrings(Notes);
             AlarmTimeStorage = AlarmTime.UT;
-            //TargetObjectStorage = TargetSerialize(TargetObject);
-            ManNodesStorage.FromManNodeList(ManNodes);
+            TargetObjectStorage = TargetSerialize(TargetObject);
+            ManNodesStorage = ManNodeSerializeList(ManNodes);
         }
         public override void OnDecodeFromConfigNode()
         {
+            Notes = KACUtils.DecodeVarStrings(NotesStorage);
             AlarmTime=new KACTime(AlarmTimeStorage);
             _TargetObject = TargetDeserialize(TargetObjectStorage);
-            ManNodes = ManNodesStorage.ToManNodeList();
+            ManNodes = ManNodeDeserializeList( ManNodesStorage);
         }
         
         internal static ITargetable TargetDeserialize(String strInput)
         {
             ITargetable tReturn = null;
+            if (strInput == "") return null;
+
             String[] TargetParts = strInput.Split(",".ToCharArray());
             switch (TargetParts[0])
             {
@@ -240,6 +245,7 @@ namespace KerbalAlarmClock
         {
             string strReturn = "";
 
+            if (tInput == null) return "";
             strReturn += tInput.GetType();
             strReturn += ",";
 
@@ -258,6 +264,59 @@ namespace KerbalAlarmClock
 
         }
 
+        public static List<ManeuverNode> ManNodeDeserializeList(String strInput)
+        {
+            List<ManeuverNode> lstReturn = new List<ManeuverNode>();
+
+            String[] strInputParts = strInput.Split(",".ToCharArray());
+            MonoBehaviourExtended.LogFormatted("Found {0} Maneuver Nodes to deserialize", strInputParts.Length / 8);
+
+            //There are 8 parts per mannode
+            for (int iNode = 0; iNode < strInputParts.Length / 8; iNode++)
+            {
+                String strTempNode = String.Join(",", strInputParts.Skip(iNode * 8).Take(8).ToArray());
+                lstReturn.Add(ManNodeDeserialize(strTempNode));
+            }
+
+            return lstReturn;
+        }
+
+        public static ManeuverNode ManNodeDeserialize(String strInput)
+        {
+            ManeuverNode mReturn = new ManeuverNode();
+            String[] manparts = strInput.Split(",".ToCharArray());
+            mReturn.UT = Convert.ToDouble(manparts[0]);
+            mReturn.DeltaV = new Vector3d(Convert.ToDouble(manparts[1]),
+                                        Convert.ToDouble(manparts[2]),
+                                        Convert.ToDouble(manparts[3])
+                    );
+            mReturn.nodeRotation = new Quaternion(Convert.ToSingle(manparts[4]),
+                                                Convert.ToSingle(manparts[5]),
+                                                Convert.ToSingle(manparts[6]),
+                                                Convert.ToSingle(manparts[7])
+                    );
+            return mReturn;
+        }
+
+        public static string ManNodeSerializeList(List<ManeuverNode> mInput)
+        {
+            String strReturn = "";
+            foreach (ManeuverNode tmpMNode in mInput)
+            {
+                strReturn += ManNodeSerialize(tmpMNode);
+                strReturn += ",";
+            }
+            strReturn = strReturn.TrimEnd(",".ToCharArray());
+            return strReturn;
+        }
+
+        public static string ManNodeSerialize(ManeuverNode mInput)
+        {
+            String strReturn = mInput.UT.ToString();
+            strReturn += "," + KACUtils.CommaSepVariables(mInput.DeltaV.x, mInput.DeltaV.y, mInput.DeltaV.z);
+            strReturn += "," + KACUtils.CommaSepVariables(mInput.nodeRotation.x, mInput.nodeRotation.y, mInput.nodeRotation.z, mInput.nodeRotation.w);
+            return strReturn;
+        }
 
         public static Boolean CompareManNodeListSimple(List<ManeuverNode> l1, List<ManeuverNode> l2)
         {
@@ -285,57 +344,59 @@ namespace KerbalAlarmClock
 
     }
 
-    public class ManeuverNodeStorageList:List<ManeuverNodeStorage>
-    {
-        public List<ManeuverNode> ToManNodeList()
-        {
-            List<ManeuverNode> lstReturn = new List<ManeuverNode>();
-            foreach (ManeuverNodeStorage item in this)
-            {
-                lstReturn.Add(item.ToManeuverNode());
-            }
-            return lstReturn;
-        }
+    //public class ManeuverNodeStorageList:List<ManeuverNodeStorage>
+    //{
+    //    public List<ManeuverNode> ToManNodeList()
+    //    {
+    //        List<ManeuverNode> lstReturn = new List<ManeuverNode>();
+    //        foreach (ManeuverNodeStorage item in this)
+    //        {
+    //            lstReturn.Add(item.ToManeuverNode());
+    //        }
+    //        return lstReturn;
+    //    }
 
-        public ManeuverNodeStorageList FromManNodeList(List<ManeuverNode> ManNodesToStore)
-        {
-            this.Clear();
-            foreach (ManeuverNode item in ManNodesToStore)
-            {
-                this.Add(new ManeuverNodeStorage(item));
-            }
-            return this;
-        }
-    }
+    //    public ManeuverNodeStorageList FromManNodeList(List<ManeuverNode> ManNodesToStore)
+    //    {
+    //        this.Clear();
+    //        MonoBehaviourExtended.LogFormatted("{0}", ManNodesToStore.Count);
+    //        if (ManNodesToStore == null) return this;
+    //        foreach (ManeuverNode item in ManNodesToStore)
+    //        {
+    //            this.Add(new ManeuverNodeStorage(item));
+    //        }
+    //        return this;
+    //    }
+    //}
 
-    public class ManeuverNodeStorage
-    {
-        public ManeuverNodeStorage() { }
-        public ManeuverNodeStorage(ManeuverNode newManNode) 
-        {
-            FromManeuverNode(newManNode);
-        }
+    //public class ManeuverNodeStorage
+    //{
+    //    public ManeuverNodeStorage() { }
+    //    public ManeuverNodeStorage(ManeuverNode newManNode) 
+    //    {
+    //        FromManeuverNode(newManNode);
+    //    }
 
-        [Persistent] Vector3 DeltaV;
-        [Persistent] Quaternion NodeRotation;
-        [Persistent] Double UT;
+    //    [Persistent] Vector3 DeltaV;
+    //    [Persistent] Quaternion NodeRotation;
+    //    [Persistent] Double UT;
 
-        public ManeuverNode ToManeuverNode()
-        {
-            ManeuverNode retManNode = new ManeuverNode();
-            retManNode.DeltaV = DeltaV;
-            retManNode.nodeRotation = NodeRotation;
-            retManNode.UT = UT;
-            return retManNode;
-        }
-        public ManeuverNodeStorage FromManeuverNode(ManeuverNode ManNodeToStore)
-        {
-            this.DeltaV = ManNodeToStore.DeltaV;
-            this.NodeRotation = ManNodeToStore.nodeRotation;
-            this.UT = ManNodeToStore.UT;
-            return this;
-        }
-    }
+    //    public ManeuverNode ToManeuverNode()
+    //    {
+    //        ManeuverNode retManNode = new ManeuverNode();
+    //        retManNode.DeltaV = DeltaV;
+    //        retManNode.nodeRotation = NodeRotation;
+    //        retManNode.UT = UT;
+    //        return retManNode;
+    //    }
+    //    public ManeuverNodeStorage FromManeuverNode(ManeuverNode ManNodeToStore)
+    //    {
+    //        this.DeltaV = ManNodeToStore.DeltaV;
+    //        this.NodeRotation = ManNodeToStore.nodeRotation;
+    //        this.UT = ManNodeToStore.UT;
+    //        return this;
+    //    }
+    //}
 
     public class KACAlarmList: List<KACAlarm>
     {

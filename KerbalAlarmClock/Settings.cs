@@ -122,7 +122,7 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean AlarmCrewDefaultStoreNode = false;
 
         //Strings to store objects to reset after ship switch;
-        [Persistent] internal ManeuverNodeStorageList LoadManNode=null;
+        [Persistent] internal String LoadManNode="";
         [Persistent] internal String LoadVesselTarget = "";
 
         //public KACAlarmList Alarms = new KACAlarmList();

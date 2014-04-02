@@ -114,7 +114,7 @@ namespace KerbalAlarmClock
         }
         public void SetupRepeatingFunction(String FunctionName, float SecsInterval)
         {
-            //Debug.Log(SecsInterval);
+            Debug.Log(SecsInterval);
             if (IsInvoking(FunctionName))
             {
                 KACWorker.DebugLogFormatted("Cancelling repeating Behaviour({0}-{1})", FunctionName,MonoName);

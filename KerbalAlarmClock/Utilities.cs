@@ -199,7 +199,7 @@ namespace KerbalAlarmClock
             {
                 if (FileName.ToLower().EndsWith(".png")) FileName = FileName.Substring(0, FileName.Length - 4);
                 if (FolderPath == "") FolderPath = DBPathTextures;
-                //KACWorker.DebugLogFormatted("Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
+                KACWorker.DebugLogFormatted("Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
                 tex = GameDatabase.Instance.GetTexture(String.Format("{0}/{1}", FolderPath, FileName), false);
                 blnReturn = true;
             }

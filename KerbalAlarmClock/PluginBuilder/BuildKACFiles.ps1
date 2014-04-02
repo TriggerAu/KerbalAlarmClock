@@ -4,7 +4,7 @@
 #Run by powershell BuildKACFiles.ps1 -VersionString "X.X.X.X"
 #  or it will try and read the dll version
 
-$SourcePath= "D:\Programming\KSP\KerbalAlarmClock\DevBranch\Source"
+$SourcePath= "D:\Programming\KSP\KerbalAlarmClock\DevBranch-23.5Interim\Source"
 $DestRootPath="D:\Programming\KSP\KerbalAlarmClockUpload"
 $7ZipPath="c:\Program Files\7-Zip\7z.exe" 
 

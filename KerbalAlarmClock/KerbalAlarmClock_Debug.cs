@@ -262,6 +262,8 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
+            GUILayout.Label("Time:" + GameSettings.KERBIN_TIME.ToString());
+
 
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {

@@ -17,7 +17,11 @@ namespace KerbalAlarmClock
         //really there are 31,446,925.9936 seconds in a year, use 365*24 so the reciprocal math 
         //  to go to years and get back to full days isnt confusing - have to sort this out some day though.
         //NOTE: KSP Dates appear to all be 365 * 24 as well - no fractions - woohoo
-        const double HoursPerYearEarth = 365 * 24;
+        const double HoursPerDayEarth = 24;
+        const double HoursPerYearEarth = 365 * HoursPerDayEarth;
+
+        const double HoursPerDayKerbin = 6;
+        const double HoursPerYearKerbin = 426 * HoursPerDayKerbin;
 
         #region "Constructors"
         public KACTime()
@@ -66,20 +70,53 @@ namespace KerbalAlarmClock
         }
 
         private double HourRaw { get { return UT / 60 / 60; } }
-        public long HourEarth
+
+        public long Hour
         {
-            get { return Convert.ToInt64(Math.Truncate(HourRaw % 24)); }
+            get {
+                if (GameSettings.KERBIN_TIME) {
+                    return Convert.ToInt64(Math.Truncate(HourRaw % HoursPerDayKerbin));
+                } else {
+                    return Convert.ToInt64(Math.Truncate(HourRaw % HoursPerDayEarth));
+                }
+            }
         }
 
-        public long DayEarth
+        public long Day
         {
-            get { return Convert.ToInt64(Math.Truncate(((HourRaw % HoursPerYearEarth) / 24))); }
+            get {
+                if (GameSettings.KERBIN_TIME) {
+                    return Convert.ToInt64(Math.Truncate(((HourRaw % HoursPerYearKerbin) / HoursPerDayKerbin)));
+                } else {
+                    return Convert.ToInt64(Math.Truncate(((HourRaw % HoursPerYearEarth) / HoursPerDayEarth)));
+                }
+            }
         }
 
-        public long YearEarth
+        public long Year
         {
-            get { return Convert.ToInt64(Math.Truncate((HourRaw / HoursPerYearEarth))); }
+            get {
+                if (GameSettings.KERBIN_TIME) {
+                    return Convert.ToInt64(Math.Truncate((HourRaw / HoursPerYearKerbin)));
+                } else {
+                    return Convert.ToInt64(Math.Truncate((HourRaw / HoursPerYearEarth)));
+                }
+            }
         }
+        //public long HourKerbin
+        //{
+        //    get { return Convert.ToInt64(Math.Truncate(HourRaw % HoursPerDayKerbin)); }
+        //}
+
+        //public long DayKerbin
+        //{
+        //    get { return Convert.ToInt64(Math.Truncate(((HourRaw % HoursPerYearKerbin) / HoursPerDayKerbin))); }
+        //}
+
+        //public long YearKerbin
+        //{
+        //    get { return Convert.ToInt64(Math.Truncate((HourRaw / HoursPerYearKerbin))); }
+        //}        
         #endregion
 
         #region "String Formatting"
@@ -95,23 +132,23 @@ namespace KerbalAlarmClock
 
             int intUsed = 0;
 
-            if (intUsed < segments && YearEarth != 0)
+            if (intUsed < segments && Year != 0)
             {
-                strReturn += String.Format("{0}y", Math.Abs(YearEarth));
+                strReturn += String.Format("{0}y", Math.Abs(Year));
                 intUsed++;
             }
 
-            if (intUsed < segments && (DayEarth != 0 || intUsed > 0))
+            if (intUsed < segments && (Day != 0 || intUsed > 0))
             {
                 if (intUsed > 0) strReturn += ", ";
-                strReturn += String.Format("{0}d", Math.Abs(DayEarth));
+                strReturn += String.Format("{0}d", Math.Abs(Day));
                 intUsed++;
             }
 
-            if (intUsed < segments && (HourEarth != 0 || intUsed > 0))
+            if (intUsed < segments && (Hour != 0 || intUsed > 0))
             {
                 if (intUsed > 0) strReturn += ", ";
-                strReturn += String.Format("{0}h", Math.Abs(HourEarth));
+                strReturn += String.Format("{0}h", Math.Abs(Hour));
                 intUsed++;
             }
             if (intUsed < segments && (Minute != 0 || intUsed > 0))
@@ -143,23 +180,23 @@ namespace KerbalAlarmClock
 
             int intUsed = 0;
 
-            if (intUsed < segments && YearEarth != 0)
+            if (intUsed < segments && Year != 0)
             {
-                strReturn += String.Format("{0}y", Math.Abs(YearEarth));
+                strReturn += String.Format("{0}y", Math.Abs(Year));
                 intUsed++;
             }
 
-            if (intUsed < segments && (DayEarth != 0 || intUsed > 0))
+            if (intUsed < segments && (Day != 0 || intUsed > 0))
             {
                 if (intUsed > 0) strReturn += ", ";
-                strReturn += String.Format("{0}d", Math.Abs(DayEarth));
+                strReturn += String.Format("{0}d", Math.Abs(Day));
                 intUsed++;
             }
 
-            if (intUsed < segments && (HourEarth != 0 || intUsed > 0))
+            if (intUsed < segments && (Hour != 0 || intUsed > 0))
             {
                 if (intUsed > 0) strReturn += ", ";
-                strReturn += String.Format("{0:00}", Math.Abs(HourEarth));
+                strReturn += String.Format("{0:00}", Math.Abs(Hour));
                 intUsed++;
             }
             if (intUsed < segments && (Minute != 0 || intUsed > 0))
@@ -181,19 +218,19 @@ namespace KerbalAlarmClock
 
         public String DateString()
         {
-            return String.Format("Year {0},Day {1}, {2}h, {3}m, {4}s", YearEarth + 1, DayEarth + 1, HourEarth, Minute, Second);
+            return String.Format("Year {0},Day {1}, {2}h, {3}m, {4}s", Year + 1, Day + 1, Hour, Minute, Second);
         }
 
         public String DateTimeString()
         {
-            return String.Format("Year {0},Day {1}, {2:00}:{3:00}:{4:00}", YearEarth + 1, DayEarth + 1, HourEarth, Minute, Second);
+            return String.Format("Year {0},Day {1}, {2:00}:{3:00}:{4:00}", Year + 1, Day + 1, Hour, Minute, Second);
         }
 
         public String IntervalStringLong()
         {
             String strReturn = "";
             if (UT < 0) strReturn += "+ ";
-            strReturn += String.Format("{0} Years, {1} Days, {2:00}:{3:00}:{4:00}", Math.Abs(YearEarth), Math.Abs(DayEarth), Math.Abs(HourEarth), Math.Abs(Minute), Math.Abs(Second));
+            strReturn += String.Format("{0} Years, {1} Days, {2:00}:{3:00}:{4:00}", Math.Abs(Year), Math.Abs(Day), Math.Abs(Hour), Math.Abs(Minute), Math.Abs(Second));
             return strReturn;
         }
 
@@ -221,11 +258,22 @@ namespace KerbalAlarmClock
         }
         public static Double BuildUTFromRaw(double Years, double Days, double Hours, double Minutes, double Seconds)
         {
-         return Seconds +
-            Minutes * 60 +
-            Hours * 60 * 60 +
-            Days * 24 * 60 * 60 +
-            Years * HoursPerYearEarth * 60 * 60;
+            if (GameSettings.KERBIN_TIME)
+            {
+                return Seconds +
+                   Minutes * 60 +
+                   Hours * 60 * 60 +
+                   Days * HoursPerDayKerbin * 60 * 60 +
+                   Years * HoursPerYearKerbin * 60 * 60;
+            }
+            else
+            {
+                return Seconds +
+                   Minutes * 60 +
+                   Hours * 60 * 60 +
+                   Days * HoursPerDayEarth * 60 * 60 +
+                   Years * HoursPerYearEarth * 60 * 60;
+            }
         }
 
         public static String PrintInterval(KACTime timeTemp,  KACTime.PrintTimeFormat TimeFormat)
@@ -322,9 +370,9 @@ namespace KerbalAlarmClock
         public void BuildFromUT(Double UT)
         {
             KACTime timeTemp = new KACTime(UT);
-            Years = timeTemp.YearEarth.ToString();
-            Days = timeTemp.DayEarth.ToString();
-            Hours = timeTemp.HourEarth.ToString();
+            Years = timeTemp.Year.ToString();
+            Days = timeTemp.Day.ToString();
+            Hours = timeTemp.Hour.ToString();
             Minutes = timeTemp.Minute.ToString();
             Seconds = timeTemp.Second.ToString();
         }

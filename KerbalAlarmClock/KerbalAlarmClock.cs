@@ -9,6 +9,18 @@ using KSP;
 
 namespace KerbalAlarmClock
 {
+    /// <summary>
+    /// Have to do this behaviour or some of the textures are unloaded on first entry into flight mode
+    /// </summary>
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    public class KerbalAlarmClockTextureLoader : MonoBehaviour
+    {
+        //Awake Event - when the DLL is loaded
+        public void Awake()
+        {
+            KACResources.loadGUIAssets();
+        }
+    }
 
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class KACFlight : KerbalAlarmClock
@@ -430,15 +442,6 @@ namespace KerbalAlarmClock
                     }
                 }
 
-
-                //Do we need to turn off the global warp light
-                if (KACWorkerGameState.CurrentWarpInfluenceStartTime == null)
-                    KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
-                else
-                    //has it been on long enough?
-                    if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(SecondsWarpLightIsShown) < DateTime.Now)
-                        KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
-
                 //Are we adding SOI Alarms
                 if (Settings.AlarmAddSOIAuto)
                 {
@@ -503,6 +506,15 @@ namespace KerbalAlarmClock
                 }
 
             }
+
+            //Do we need to turn off the global warp light
+            if (KACWorkerGameState.CurrentWarpInfluenceStartTime == null)
+                KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
+            else
+                //has it been on long enough?
+                if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(SecondsWarpLightIsShown) < DateTime.Now)
+                    KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
+
             //Work out how many game seconds will pass till this runs again
             double SecondsTillNextUpdate;
             double dWarpRate = TimeWarp.CurrentRate;
@@ -850,8 +862,8 @@ namespace KerbalAlarmClock
 
                         //If we are simply past the time make sure we halt the warp
                         //only do this in flight mode
-                        if (!parentBehaviour.ViewAlarmsOnly)
-                        {
+                        //if (!parentBehaviour.ViewAlarmsOnly)
+                        //{
                             if (tmpAlarm.PauseGame)
                             {
                                 DebugLogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
@@ -870,14 +882,14 @@ namespace KerbalAlarmClock
                                     DebugLogFormatted(String.Format("{0}-Game paused, skipping Halt Warp", tmpAlarm.Name));
                                 }
                             }
-                        }
+                        //}
                     }
                 }
 
 
                 //skip this if we aren't in flight mode
-                if (!parentBehaviour.ViewAlarmsOnly)
-                {
+                //if (!parentBehaviour.ViewAlarmsOnly)
+                //{
                     //if in the next two updates we would pass the alarm time then slow down the warp
                     if (!tmpAlarm.Actioned && tmpAlarm.Enabled && (tmpAlarm.HaltWarp || tmpAlarm.PauseGame))
                     {
@@ -897,7 +909,7 @@ namespace KerbalAlarmClock
                             }
                         }
                     }
-                }
+                //}
             }
         }
 

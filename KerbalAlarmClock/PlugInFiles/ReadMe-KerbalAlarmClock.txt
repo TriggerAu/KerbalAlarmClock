@@ -28,6 +28,10 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.7.2.0		-	KSP Version: 0.23.5
+- Adding Warp halting code to TS and SC
+- Added extra code for guiload when texture loads fail
+
 Version 2.7.1.0		-	KSP Version: 0.23.5
 - 0.23.5 Recompile for new version of Unity/KSP
 - Added functionality to detect time display type and match KAC times accordingly

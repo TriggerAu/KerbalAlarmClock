@@ -267,8 +267,8 @@ namespace KerbalAlarmClock
 
                 this.AlarmAddManAuto = configfile.GetValue("AlarmAddManAuto", false);
                 this.AlarmAddManAuto_andRemove = configfile.GetValue("AlarmAddManAuto_andRemove", false);
-                this.AlarmAddManAutoThreshold = configfile.GetValue("AlarmAddManAutoThreshold", 180);
-                this.AlarmAddManAutoMargin = configfile.GetValue("AlarmAddManAutoMargin", 180);
+                this.AlarmAddManAutoThreshold = configfile.GetValue<Double>("AlarmAddManAutoThreshold", 180);
+                this.AlarmAddManAutoMargin = configfile.GetValue<Double>("AlarmAddManAutoMargin", 180);
                 this.AlarmAddManAuto_Action = configfile.GetValue("AlarmAddManAuto_Action", 1);
 
                 this.AlarmCrewDefaultStoreNode = configfile.GetValue("AlarmCrewDefaultStoreNode", false);
@@ -433,6 +433,7 @@ namespace KerbalAlarmClock
             configfile.SetValue("AlarmAddManAuto_andRemove", this.AlarmAddManAuto_andRemove);
             configfile.SetValue("AlarmAddManAutoThreshold", this.AlarmAddManAutoThreshold);
             configfile.SetValue("AlarmAddManAutoMargin", this.AlarmAddManAutoMargin);
+            configfile.SetValue("AddManAutoMargin", this.AlarmAddManAutoMargin.ToString());
             configfile.SetValue("AlarmAddManAuto_Action", this.AlarmAddManAuto_Action);
 
             configfile.SetValue("AlarmCrewDefaultStoreNode", this.AlarmCrewDefaultStoreNode);

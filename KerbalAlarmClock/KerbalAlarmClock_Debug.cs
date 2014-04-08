@@ -263,7 +263,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             GUILayout.Label("Time:" + GameSettings.KERBIN_TIME.ToString());
-
+            GUILayout.Label("ManMargin:" + KerbalAlarmClock.Settings.AlarmAddManAutoMargin.ToString());
 
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {

@@ -28,6 +28,9 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.7.3.0		-	KSP Version: 0.23.5
+- Fixed the pesky bug with the auto alarm periods not saving
+
 Version 2.7.2.0		-	KSP Version: 0.23.5
 - Adding Warp halting code to TS and SC
 - Added extra code for guiload when texture loads fail
@@ -45,7 +48,6 @@ Version 2.7.0.0		-	KSP Version: 0.23
 - Fixed bug where twitching SOIs on large orbits no longer creates lots of alarms for Auto-SOIs
 - Fixed Bug using wrong path separators for MacOS/Linux re jumping from non-flight scenes
 - Fixed Bug displaying alarms in non-flight screens when KAC not visible
-
 
 Version 2.6.4.0		-	KSP Version: 0.22
 - Added a threshold for Auto adding Maneuver Node alarms, so if you are closer than the threshold it wont make an alarm
@@ -185,9 +187,9 @@ Version 1.2.0.0		-	KSP Version: 0.18.4
 - Added View/Edit capability to existing Alarms
 
 Version 1.0.1.0		-	KSP Version: 0.18.4
--Resolved some GUI Issues
+- Resolved some GUI Issues
 
 Version 1.0.0.0		-	KSP Version: 0.18.4
--Initial Release
--Allows for creating Raw Alarms
--Allows for creating Alarms based on Manuever Nodes
+- Initial Release
+- Allows for creating Raw Alarms
+- Allows for creating Alarms based on Manuever Nodes

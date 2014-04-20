@@ -914,7 +914,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice2(ref Action, "On Alarm:", 90);
+            DrawAlarmActionChoice3(ref Action, "On Alarm:", 100,62);
 
             if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime && TypeOfAlarm != KACAlarm.AlarmType.Crew)
             {
@@ -972,7 +972,7 @@ namespace KerbalAlarmClock
             }
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice2(ref Action, "Action:", 60);
+            DrawAlarmActionChoice3(ref Action, "Action:", 70 ,56);
 
             if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime && TypeOfAlarm != KACAlarm.AlarmType.Crew)
             {
@@ -1153,6 +1153,20 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
+        public Boolean DrawAlarmActionChoice3(ref KACAlarm.AlarmActionEnum Choice, String LabelText, int LabelWidth,int ButtonWidth)
+        {
+            Boolean blnReturn = false;
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth - 10));
+            int intChoice = (int)Choice;
+            GUIStyle styleButton = new GUIStyle(KACResources.styleButtonListAlarmActions) { fixedWidth = ButtonWidth };
+            blnReturn = DrawButtonList(ref intChoice, styleButton, KACResources.lstAlarmChoices.ToArray());
+            //blnReturn = DrawRadioList(ref intChoice, "Message", "Kill Warp", "Pause");
+            Choice = (KACAlarm.AlarmActionEnum)intChoice;
+            GUILayout.EndHorizontal();
+            return blnReturn;
+        }
+
 
 
         public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, params GUILayoutOption[] options)
@@ -1267,6 +1281,10 @@ namespace KerbalAlarmClock
 
         public Boolean DrawButtonList(ref int Selected, params GUIContent[] Choices)
         {
+            return DrawButtonList(ref Selected, KACResources.styleButtonList, Choices);
+        }
+        public Boolean DrawButtonList(ref int Selected,GUIStyle ButtonStyle, params GUIContent[] Choices)
+        {
             int InitialChoice = Selected;
 
             GUILayout.BeginHorizontal();
@@ -1275,7 +1293,7 @@ namespace KerbalAlarmClock
             {
                 //button
                 Boolean blnResult=(Selected==intChoice);
-                if (DrawToggle(ref blnResult,Choices[intChoice], KACResources.styleButtonList))
+                if (DrawToggle(ref blnResult,Choices[intChoice],ButtonStyle))
                 {
                     if (blnResult)
                         Selected=intChoice;

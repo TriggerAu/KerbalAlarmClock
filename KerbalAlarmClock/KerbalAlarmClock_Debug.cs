@@ -170,13 +170,13 @@ namespace KerbalAlarmClock
             
             //LogFormatted(FlightGlobals.ActiveVessel.id.ToString());
 
-            Orbit o=FlightGlobals.ActiveVessel.orbit;
+            //Orbit o=FlightGlobals.ActiveVessel.orbit;
 
-            WriteOrbitFile(o,"Debug/Orbit.txt");
-            if (o.nextPatch != null)
-                WriteOrbitFile(o.nextPatch, "Debug/OrbitNext.txt");
+            //WriteOrbitFile(o,"Debug/Orbit.txt");
+            //if (o.nextPatch != null)
+            //    WriteOrbitFile(o.nextPatch, "Debug/OrbitNext.txt");
 
-            WriteOrbitFile(tgtSelectedDistance.GetOrbit(),"Debug/OrbitTarget.txt");
+            //WriteOrbitFile(tgtSelectedDistance.GetOrbit(),"Debug/OrbitTarget.txt");
             //WriteManeuverFile(FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes,"Debug/Nodes.txt");
         }
 
@@ -230,8 +230,8 @@ namespace KerbalAlarmClock
         //    return (origin.period / 360d) * angleToNode;
         //}
 
-        int intTestheight = 0;
-        int intTestheight2 = 0;
+        int intTestheight = 90;
+        int intTestheight2 = 40;
         int intTestheight3 = 0;
         int intTestheight4 = 0;
         
@@ -262,6 +262,8 @@ namespace KerbalAlarmClock
             intTestheight3 = Convert.ToInt32(GUILayout.TextField(intTestheight3.ToString()));
             intTestheight4 = Convert.ToInt32(GUILayout.TextField(intTestheight4.ToString()));
 
+            KACResources.styleButtonListAlarmActions.fixedWidth = intTestheight2;
+
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
@@ -285,10 +287,48 @@ namespace KerbalAlarmClock
             }
 
 
+            foreach (KACAlarm item in alarms)
+            {
+                GUILayout.Label(String.Format("{0}:{1}", item.Name, item.AlarmAction));
+            }
+
+            
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
-                GUILayout.Label (KACWorkerGameState.ManeuverNodeExists.ToString());
-                GUILayout.Label((KACWorkerGameState.ManeuverNodeFuture != null).ToString());
+                //List<Double> LFs = new List<double>();
+                //List<String> Ships=new List<string>();
+                //Double LF = 0;
+                //foreach (Part item in FlightGlobals.ActiveVessel.Parts)
+                //{
+                //    foreach (PartResource pr in item.Resources)
+                //    {
+                //        if (pr.info.name == "ElectricCharge")
+                //            LF += pr.amount;
+                //    }
+                //}
+
+                //foreach (Vessel v in FlightGlobals.Vessels.Where(x=>x.vesselType==VesselType.Ship))
+                //{
+                //    Double LFtemp = 0;
+                //    foreach (Part item in v.Parts)
+                //    {
+                //        foreach (PartResource pr in item.Resources)
+                //        {
+                //            if (pr.info.name == "ElectricCharge")
+                //                LFtemp += pr.amount;
+                //        }
+                //    }
+                //    Ships.Add(v.vesselName);
+                //    LFs.Add(LFtemp);
+                //    GUILayout.Label(String.Format("{0}-{1:0.0}", v.vesselName, LFtemp));
+                //}
+
+                                
+                
+                //GUILayout.Label (KACWorkerGameState.ManeuverNodeExists.ToString());
+                //GUILayout.Label((KACWorkerGameState.ManeuverNodeFuture != null).ToString());
+
+
 
                 
                 //FlightState fs = new FlightState();
@@ -803,61 +843,61 @@ namespace KerbalAlarmClock
         //    return strInfo;
         //}
 
-        public void WriteOrbitFile(Orbit o, String FileName)
-        {
+        //public void WriteOrbitFile(Orbit o, String FileName)
+        //{
 
-            KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(FileName);
-            tw.WriteLine("ClAppr:" + o.ClAppr);
-            tw.WriteLine("ClEctr1:" + o.ClEctr1);
-            tw.WriteLine("ClEctr2:" + o.ClEctr2);
-            tw.WriteLine("closestEncounterBody:" + o.closestEncounterBody);
-            tw.WriteLine("closestEncounterLevel:" + o.closestEncounterLevel);
-            tw.WriteLine("closestEncounterPatch:" + o.closestEncounterPatch);
-            tw.WriteLine("closestTgtApprUT:" + o.closestTgtApprUT);
-            tw.WriteLine("CrAppr:" + o.CrAppr);
+        //    KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(FileName);
+        //    tw.WriteLine("ClAppr:" + o.ClAppr);
+        //    tw.WriteLine("ClEctr1:" + o.ClEctr1);
+        //    tw.WriteLine("ClEctr2:" + o.ClEctr2);
+        //    tw.WriteLine("closestEncounterBody:" + o.closestEncounterBody);
+        //    tw.WriteLine("closestEncounterLevel:" + o.closestEncounterLevel);
+        //    tw.WriteLine("closestEncounterPatch:" + o.closestEncounterPatch);
+        //    tw.WriteLine("closestTgtApprUT:" + o.closestTgtApprUT);
+        //    tw.WriteLine("CrAppr:" + o.CrAppr);
 
-            tw.WriteLine("EndUT:" + o.EndUT);
-            tw.WriteLine("epoch:" + o.epoch);
-            tw.WriteLine("FEVp:" + o.FEVp);
-            tw.WriteLine("FEVs:" + o.FEVs);
-            tw.WriteLine("fromE:" + o.fromE);
-            tw.WriteLine("fromV:" + o.fromV);
-            tw.WriteLine("h:" + o.h);
-            tw.WriteLine("inclination:" + o.inclination);
-            tw.WriteLine("LAN:" + o.LAN);
-            tw.WriteLine("mag:" + o.mag);
-            tw.WriteLine("meanAnomaly:" + o.meanAnomaly);
-            tw.WriteLine("meanAnomalyAtEpoch:" + o.meanAnomalyAtEpoch);
-            tw.WriteLine("nearestTT:" + o.nearestTT);
-            tw.WriteLine("nextPatch:" + o.nextPatch);
-            tw.WriteLine("nextTT:" + o.nextTT);
-            tw.WriteLine("nextPatch:" + o.nextPatch);
-            tw.WriteLine("ObT:" + o.ObT);
-            tw.WriteLine("ObTAtEpoch:" + o.ObTAtEpoch);
-            tw.WriteLine("orbitalEnergy:" + o.orbitalEnergy);
-            tw.WriteLine("orbitalSpeed:" + o.orbitalSpeed);
-            tw.WriteLine("orbitPercent:" + o.orbitPercent);
-            tw.WriteLine("patchEndTransition:" + o.patchEndTransition);
-            tw.WriteLine("patchStartTransition:" + o.patchStartTransition);
-            tw.WriteLine("period:" + o.period);
-            tw.WriteLine("pos:" + o.pos);
-            tw.WriteLine("previousPatch:" + o.previousPatch);
-            tw.WriteLine("radius:" + o.radius);
-            tw.WriteLine("referenceBody:" + o.referenceBody);
-            tw.WriteLine("SEVp:" + o.SEVp);
-            tw.WriteLine("SEVs:" + o.SEVs);
-            tw.WriteLine("StartUT:" + o.StartUT);
-            tw.WriteLine("timeToTransition1:" + o.timeToTransition1);
-            tw.WriteLine("timeToTransition2:" + o.timeToTransition2);
-            tw.WriteLine("toE:" + o.toE);
-            tw.WriteLine("toV:" + o.toV);
-            tw.WriteLine("trueAnomaly:" + o.trueAnomaly);
-            tw.WriteLine("UTappr:" + o.UTappr);
-            tw.WriteLine("UTsoi:" + o.UTsoi);
-            tw.WriteLine("V:" + o.V);
-            tw.WriteLine("vel:" + o.vel);
-            tw.Close();
-        }
+        //    tw.WriteLine("EndUT:" + o.EndUT);
+        //    tw.WriteLine("epoch:" + o.epoch);
+        //    tw.WriteLine("FEVp:" + o.FEVp);
+        //    tw.WriteLine("FEVs:" + o.FEVs);
+        //    tw.WriteLine("fromE:" + o.fromE);
+        //    tw.WriteLine("fromV:" + o.fromV);
+        //    tw.WriteLine("h:" + o.h);
+        //    tw.WriteLine("inclination:" + o.inclination);
+        //    tw.WriteLine("LAN:" + o.LAN);
+        //    tw.WriteLine("mag:" + o.mag);
+        //    tw.WriteLine("meanAnomaly:" + o.meanAnomaly);
+        //    tw.WriteLine("meanAnomalyAtEpoch:" + o.meanAnomalyAtEpoch);
+        //    tw.WriteLine("nearestTT:" + o.nearestTT);
+        //    tw.WriteLine("nextPatch:" + o.nextPatch);
+        //    tw.WriteLine("nextTT:" + o.nextTT);
+        //    tw.WriteLine("nextPatch:" + o.nextPatch);
+        //    tw.WriteLine("ObT:" + o.ObT);
+        //    tw.WriteLine("ObTAtEpoch:" + o.ObTAtEpoch);
+        //    tw.WriteLine("orbitalEnergy:" + o.orbitalEnergy);
+        //    tw.WriteLine("orbitalSpeed:" + o.orbitalSpeed);
+        //    tw.WriteLine("orbitPercent:" + o.orbitPercent);
+        //    tw.WriteLine("patchEndTransition:" + o.patchEndTransition);
+        //    tw.WriteLine("patchStartTransition:" + o.patchStartTransition);
+        //    tw.WriteLine("period:" + o.period);
+        //    tw.WriteLine("pos:" + o.pos);
+        //    tw.WriteLine("previousPatch:" + o.previousPatch);
+        //    tw.WriteLine("radius:" + o.radius);
+        //    tw.WriteLine("referenceBody:" + o.referenceBody);
+        //    tw.WriteLine("SEVp:" + o.SEVp);
+        //    tw.WriteLine("SEVs:" + o.SEVs);
+        //    tw.WriteLine("StartUT:" + o.StartUT);
+        //    tw.WriteLine("timeToTransition1:" + o.timeToTransition1);
+        //    tw.WriteLine("timeToTransition2:" + o.timeToTransition2);
+        //    tw.WriteLine("toE:" + o.toE);
+        //    tw.WriteLine("toV:" + o.toV);
+        //    tw.WriteLine("trueAnomaly:" + o.trueAnomaly);
+        //    tw.WriteLine("UTappr:" + o.UTappr);
+        //    tw.WriteLine("UTsoi:" + o.UTsoi);
+        //    tw.WriteLine("V:" + o.V);
+        //    tw.WriteLine("vel:" + o.vel);
+        //    tw.Close();
+        //}
 		
 		
 #endif

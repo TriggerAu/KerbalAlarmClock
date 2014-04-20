@@ -1,5 +1,4 @@
-﻿labels appear to be centered
-and a few with overrun/wrapping
+﻿and a few with overrun/wrapping
 
 not all buttons are getting the right style
 

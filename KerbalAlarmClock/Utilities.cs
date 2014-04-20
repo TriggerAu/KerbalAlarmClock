@@ -150,37 +150,37 @@ namespace KerbalAlarmClock
             return strReturn;
         }
 
-        public static Byte[] LoadFileToArray(String Filename)
-        {
-            Byte[] arrBytes;
+        //public static Byte[] LoadFileToArray(String Filename)
+        //{
+        //    Byte[] arrBytes;
 
-            arrBytes = KSP.IO.File.ReadAllBytes<KerbalAlarmClock>(Filename);
+        //    arrBytes = KSP.IO.File.ReadAllBytes<KerbalAlarmClock>(Filename);
 
-            return arrBytes;
-        }
+        //    return arrBytes;
+        //}
 
-        public static void SaveFileFromArray(Byte[] data, String Filename)
-        {
-            KSP.IO.File.WriteAllBytes<KerbalAlarmClock>(data, Filename);
-        }
+        //public static void SaveFileFromArray(Byte[] data, String Filename)
+        //{
+        //    KSP.IO.File.WriteAllBytes<KerbalAlarmClock>(data, Filename);
+        //}
 
 
-        public static void LoadImageIntoTexture(ref Texture2D tex, String FileName)
-        {
+        //public static void LoadImageIntoTexture(ref Texture2D tex, String FileName)
+        //{
 
-            try
-            {
-                //MonoBehaviourExtended.LogFormatted("Loading: TriggerTech/Textures/KerbalAlarmClock/{0}", FileName);
-                //tex = GameDatabase.Instance.GetTexture("TriggerTech/Textures/KerbalAlarmClock/" + FileName.Replace(".png", ""), false);
-                //if (tex == null) KACWorker.DebugLogFormat GetTextureted("Textures Empty");
+        //    try
+        //    {
+        //        //MonoBehaviourExtended.LogFormatted("Loading: TriggerTech/Textures/KerbalAlarmClock/{0}", FileName);
+        //        //tex = GameDatabase.Instance.GetTexture("TriggerTech/Textures/KerbalAlarmClock/" + FileName.Replace(".png", ""), false);
+        //        //if (tex == null) KACWorker.DebugLogFormat GetTextureted("Textures Empty");
 
-                tex.LoadImage(LoadFileToArray(FileName));
-            }
-            catch (Exception)
-            {
-                MonoBehaviourExtended.LogFormatted("Failed to load (are you missing a file):{0}", FileName);
-            }
-        }
+        //        tex.LoadImage(LoadFileToArray(FileName));
+        //    }
+        //    catch (Exception)
+        //    {
+        //        MonoBehaviourExtended.LogFormatted("Failed to load (are you missing a file):{0}", FileName);
+        //    }
+        //}
 
         //stop using unity www object as some clients get timeouts searching via the url address
 

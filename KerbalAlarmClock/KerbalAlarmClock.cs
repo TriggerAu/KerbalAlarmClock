@@ -86,7 +86,7 @@ namespace KerbalAlarmClock
         {
             LogFormatted("Awakening the KerbalAlarmClock-{0}", MonoName);
 
-            InitWorkerVariables();
+            InitVariables();
 
             //Load the Settings values from the file
             //Settings.Load();
@@ -344,7 +344,7 @@ namespace KerbalAlarmClock
         //    InitWorkerVariables();
         //}
 
-        private void InitWorkerVariables()
+        private void InitVariables()
         {
             _WindowAddID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
             _WindowAddMessagesID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
@@ -426,15 +426,6 @@ namespace KerbalAlarmClock
                     }
                 }
 
-
-                //Do we need to turn off the global warp light
-                if (KACWorkerGameState.CurrentWarpInfluenceStartTime == null)
-                    KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
-                else
-                    //has it been on long enough?
-                    if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(SecondsWarpLightIsShown) < DateTime.Now)
-                        KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
-
                 //Are we adding SOI Alarms
                 if (settings.AlarmAddSOIAuto)
                 {
@@ -499,6 +490,15 @@ namespace KerbalAlarmClock
                 }
 
             }
+
+            //Do we need to turn off the global warp light
+            if (KACWorkerGameState.CurrentWarpInfluenceStartTime == null)
+                KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
+            else
+                //has it been on long enough?
+                if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(SecondsWarpLightIsShown) < DateTime.Now)
+                    KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
+
             //Work out how many game seconds will pass till this runs again
             double SecondsTillNextUpdate;
             double dWarpRate = TimeWarp.CurrentRate;
@@ -846,8 +846,8 @@ namespace KerbalAlarmClock
 
                         //If we are simply past the time make sure we halt the warp
                         //only do this in flight mode
-                        if (!ViewAlarmsOnly)
-                        {
+                        //if (!ViewAlarmsOnly)
+                        //{
                             if (tmpAlarm.PauseGame)
                             {
                                 LogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
@@ -866,14 +866,14 @@ namespace KerbalAlarmClock
                                     LogFormatted(String.Format("{0}-Game paused, skipping Halt Warp", tmpAlarm.Name));
                                 }
                             }
-                        }
+                        //}
                     //}
                 }
 
 
                 //skip this if we aren't in flight mode
-                if (!ViewAlarmsOnly)
-                {
+                //if (!ViewAlarmsOnly)
+                //{
                     //if in the next two updates we would pass the alarm time then slow down the warp
                     if (!tmpAlarm.Actioned && tmpAlarm.Enabled && (tmpAlarm.HaltWarp || tmpAlarm.PauseGame))
                     {
@@ -893,7 +893,7 @@ namespace KerbalAlarmClock
                             }
                         }
                     }
-                }
+                //}
             }
         }
 
@@ -920,6 +920,7 @@ namespace KerbalAlarmClock
     }
 
 
+
 #if DEBUG
     //This will kick us into the save called default and set the first vessel active
     [KSPAddon(KSPAddon.Startup.MainMenu, false)]
@@ -934,11 +935,26 @@ namespace KerbalAlarmClock
             {
                 first = false;
                 HighLogic.SaveFolder = "default";
-                var game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
+                Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
+
                 if (game != null && game.flightState != null && game.compatible)
                 {
-                    FlightDriver.StartAndFocusVessel(game, 0);
+                    Int32 FirstVessel;
+                    Boolean blnFoundVessel=false;
+                    for (FirstVessel = 0; FirstVessel < game.flightState.protoVessels.Count; FirstVessel++)
+                    {
+                        if (game.flightState.protoVessels[FirstVessel].vesselType != VesselType.SpaceObject &&
+                            game.flightState.protoVessels[FirstVessel].vesselType != VesselType.Unknown)
+                        {
+                            blnFoundVessel = true;
+                            break;
+                        }
+                    }
+                    if (!blnFoundVessel)
+                        FirstVessel = 0;
+                    FlightDriver.StartAndFocusVessel(game, FirstVessel);
                 }
+
                 //CheatOptions.InfiniteFuel = true;
             }
         }

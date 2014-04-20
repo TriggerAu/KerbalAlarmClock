@@ -88,6 +88,11 @@ namespace KerbalAlarmClock
         public static Texture2D btnSettingsAttention; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         public static Texture2D btnAdd; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
+        public static Texture2D btnActionMsg;
+        public static Texture2D btnActionWarp;
+        public static Texture2D btnActionWarpMsg;
+        public static Texture2D btnActionPause;
+
         internal static Texture2D btnDropDown;
         internal static Texture2D btnPlay;
         internal static Texture2D btnStop;
@@ -179,6 +184,11 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromGameDB(ref btnSettings, "img_buttonSettings.png");
                 KACUtils.LoadImageFromGameDB(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
                 KACUtils.LoadImageFromGameDB(ref btnAdd, "img_buttonAdd.png");
+
+                KACUtils.LoadImageFromGameDB(ref btnActionMsg, "img_buttonActionMsg.tga");
+                KACUtils.LoadImageFromGameDB(ref btnActionWarp, "img_buttonActionWarp.tga");
+                KACUtils.LoadImageFromGameDB(ref btnActionWarpMsg, "img_buttonActionWarpMsg.tga");
+                KACUtils.LoadImageFromGameDB(ref btnActionPause, "img_buttonActionPause.tga");
 
                 KACUtils.LoadImageFromGameDB(ref btnDropDown, "img_DropDown.tga");
                 KACUtils.LoadImageFromGameDB(ref btnPlay, "img_Play.tga");
@@ -444,6 +454,9 @@ namespace KerbalAlarmClock
             DefUnitySkin = GUI.skin;
             DefKSPSkin = HighLogic.Skin;
 
+            MonoBehaviourExtended.LogFormatted(DefUnitySkin.label.fontSize.ToString());
+            MonoBehaviourExtended.LogFormatted(DefKSPSkin.label.fontSize.ToString());
+
             SetSkin(KerbalAlarmClock.settings.SelectedSkin);
         }
 
@@ -459,13 +472,13 @@ namespace KerbalAlarmClock
                     break;
                 case Settings.DisplaySkin.Unity:
                     _CurrentSkin = DefUnitySkin;
-                    SetStyleDefaults();
+                    SetStyleDefaults(12);
                     SetUnityStyles();
                     SetUnityButtons();
                     break;
                 case Settings.DisplaySkin.UnityWKSPButtons:
                     _CurrentSkin = DefUnitySkin;
-                    SetStyleDefaults();
+                    SetStyleDefaults(12);
                     SetUnityStyles();
                     SetKSPButtons();
                     break;
@@ -482,10 +495,10 @@ namespace KerbalAlarmClock
 
         static GUIStyle styleDefLabel, styleDefTextField, styleDefTextArea, styleDefToggle, styleDefButton;
         static int intFontSizeDefault;
-        private static void SetStyleDefaults()
+        private static void SetStyleDefaults(Int32 FontSize=13)
         {
             Color32 colLabelText = new Color32(220, 220, 220, 255);
-            intFontSizeDefault = 13;
+            intFontSizeDefault = FontSize;
 
             //Common starting points
             styleDefLabel = new GUIStyle(CurrentSkin.label);
@@ -503,6 +516,7 @@ namespace KerbalAlarmClock
             styleDefToggle = new GUIStyle(CurrentSkin.toggle);
             styleDefToggle.fontSize = intFontSizeDefault;
             styleDefToggle.fontStyle = FontStyle.Normal;
+            styleDefToggle.stretchWidth = false;
 
             styleWindow = new GUIStyle(CurrentSkin.window);
             styleWindow.padding = KACUtils.SetWindowRectOffset(styleWindow.padding, 4);
@@ -560,6 +574,7 @@ namespace KerbalAlarmClock
         public static GUIStyle styleCheckboxLabel;
 
         public static GUIStyle styleButtonList;
+        public static GUIStyle styleButtonListAlarmActions;
 
         public static GUIStyle styleSmallButton;
 
@@ -596,6 +611,8 @@ namespace KerbalAlarmClock
         public static GUIStyle styleAlarmMessageActionPause;
 
         public static GUIStyle styleVersionHighlight;
+
+        public static List<GUIContent> lstAlarmChoices;
 
         /// <summary>
         /// Sets up the styles for the different parts of the drawing
@@ -681,11 +698,17 @@ namespace KerbalAlarmClock
             styleCheckboxLabel = new GUIStyle(styleDefLabel);
             //styleCheckboxLabel.hover.textColor = Color.red;
             //styleCheckboxLabel.onHover.textColor = Color.red;
+            styleCheckboxLabel.stretchWidth=false;
             styleCheckboxLabel.alignment = TextAnchor.MiddleLeft;
 
             styleButtonList = new GUIStyle(styleDefButton);
             styleButtonList.fixedHeight = 26;
             styleButtonList.padding = KACUtils.SetRectOffset(styleButtonList.padding, 0);
+
+            styleButtonListAlarmActions = new GUIStyle(styleDefButton);
+            styleButtonListAlarmActions.fixedHeight = 22;
+            styleButtonListAlarmActions.fixedWidth = 40;
+            styleButtonListAlarmActions.padding = KACUtils.SetRectOffset(styleButtonList.padding, 0);
 
             styleSmallButton = new GUIStyle(CurrentSkin.button);
             styleSmallButton.alignment = TextAnchor.MiddleCenter;
@@ -813,6 +836,12 @@ namespace KerbalAlarmClock
             styleVersionHighlight.fontStyle = FontStyle.Bold;
             styleVersionHighlight.alignment = TextAnchor.MiddleRight;
             styleVersionHighlight.stretchWidth = true;
+
+            lstAlarmChoices = new List<GUIContent>();
+            lstAlarmChoices.Add(new GUIContent(btnActionMsg, KACAlarm.AlarmActionEnum.MessageOnly.Description()));
+            lstAlarmChoices.Add(new GUIContent(btnActionWarp, KACAlarm.AlarmActionEnum.KillWarpOnly.Description()));
+            lstAlarmChoices.Add(new GUIContent(btnActionWarpMsg, KACAlarm.AlarmActionEnum.KillWarp.Description()));
+            lstAlarmChoices.Add(new GUIContent(btnActionPause, KACAlarm.AlarmActionEnum.PauseGame.Description()));
         }
         #endregion
 
@@ -874,7 +903,8 @@ namespace KerbalAlarmClock
                 lstXferModelPoints = new List<KACXFerModelPoint>();
 
                 //read in the data file
-                String strData = KSP.IO.File.ReadAllText<KerbalAlarmClock>("data_TransferModelData.csv");
+                //String strData = KSP.IO.File.ReadAllText<KerbalAlarmClock>("data_TransferModelData.csv");
+                String strData = System.IO.File.ReadAllText(KACUtils.PathPluginData + "/data_TransferModelData.csv");
                 //split to lines
                 String[] strLines = strData.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                 String[] strFields;

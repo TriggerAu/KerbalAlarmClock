@@ -57,6 +57,7 @@
     <Compile Include="Framework\MonoBehaviourExtended.cs" />
     <Compile Include="Framework\ToolbarWrapper.cs" />
     <Compile Include="KerbalAlarmClock_GameState.cs" />
+    <Compile Include="KerbalAlarmClock_ScenarioModule.cs" />
     <Compile Include="KerbalAlarmClock_ToolbarButtons.cs" />
     <Compile Include="KerbalAlarmClock_WindowAdd_AscDescNodes.cs" />
     <Compile Include="KerbalAlarmClock_WindowAdd_Distance.cs" />

@@ -185,7 +185,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginHorizontal();
 
             GUILayout.Label("Checks per Sec:", KACResources.styleAddHeading, GUILayout.Width(100));
-            if (DrawButtonList(ref intChecksPerSecChoice,contChecksPerSecChoices))
+            if (DrawButtonList(ref intChecksPerSecChoice, contChecksPerSecChoices))
             {
                 switch (intChecksPerSecChoice)
                 {

@@ -1141,17 +1141,17 @@ namespace KerbalAlarmClock
         //    GUILayout.EndHorizontal();
         //    return blnReturn;
         //}
-        public Boolean DrawAlarmActionChoice2(ref KACAlarm.AlarmActionEnum Choice, String LabelText, int LabelWidth)
-        {
-            Boolean blnReturn = false;
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth-10));
-            int intChoice = (int)Choice;
-            blnReturn = DrawRadioList(ref intChoice, "Message", "Kill Warp", "Pause");
-            Choice = (KACAlarm.AlarmActionEnum)intChoice;
-            GUILayout.EndHorizontal();
-            return blnReturn;
-        }
+        //public Boolean DrawAlarmActionChoice2(ref KACAlarm.AlarmActionEnum Choice, String LabelText, int LabelWidth)
+        //{
+        //    Boolean blnReturn = false;
+        //    GUILayout.BeginHorizontal();
+        //    GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth-10));
+        //    int intChoice = (int)Choice;
+        //    blnReturn = DrawRadioList(ref intChoice, "Message", "Kill Warp", "Pause");
+        //    Choice = (KACAlarm.AlarmActionEnum)intChoice;
+        //    GUILayout.EndHorizontal();
+        //    return blnReturn;
+        //}
 
         public Boolean DrawAlarmActionChoice3(ref KACAlarm.AlarmActionEnum Choice, String LabelText, int LabelWidth,int ButtonWidth)
         {

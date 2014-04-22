@@ -454,9 +454,6 @@ namespace KerbalAlarmClock
             DefUnitySkin = GUI.skin;
             DefKSPSkin = HighLogic.Skin;
 
-            MonoBehaviourExtended.LogFormatted(DefUnitySkin.label.fontSize.ToString());
-            MonoBehaviourExtended.LogFormatted(DefKSPSkin.label.fontSize.ToString());
-
             SetSkin(KerbalAlarmClock.settings.SelectedSkin);
         }
 
@@ -704,19 +701,22 @@ namespace KerbalAlarmClock
             styleButtonList = new GUIStyle(styleDefButton);
             styleButtonList.fixedHeight = 26;
             styleButtonList.padding = KACUtils.SetRectOffset(styleButtonList.padding, 0);
+            styleButtonList.onNormal.background = styleButtonList.active.background;
 
             styleButtonListAlarmActions = new GUIStyle(styleDefButton);
             styleButtonListAlarmActions.fixedHeight = 22;
             styleButtonListAlarmActions.fixedWidth = 40;
             styleButtonListAlarmActions.padding = KACUtils.SetRectOffset(styleButtonList.padding, 0);
+            styleButtonListAlarmActions.onNormal.background = styleButtonListAlarmActions.active.background;
 
-            styleSmallButton = new GUIStyle(CurrentSkin.button);
+            styleSmallButton = new GUIStyle(styleDefButton);
             styleSmallButton.alignment = TextAnchor.MiddleCenter;
             styleSmallButton.fixedWidth = 30;
             styleSmallButton.fixedHeight = 20;
             styleSmallButton.fontSize = intFontSizeDefault;
             styleSmallButton.fontStyle = FontStyle.Normal;
             styleSmallButton.padding = KACUtils.SetRectOffset(styleSmallButton.padding, 0);
+            styleSmallButton.onNormal.background = styleSmallButton.active.background;
 
             styleFlagIcon = new GUIStyle(styleDefLabel);
             styleFlagIcon.padding = KACUtils.SetRectOffset(styleFlagIcon.padding, 0);

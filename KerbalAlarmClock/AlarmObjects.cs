@@ -402,17 +402,20 @@ namespace KerbalAlarmClock
     {
 
 
-        public void Save()
+        public ConfigNode EncodeToCN()
         {
             KACAlarmListStorage lstTemp = new KACAlarmListStorage();
             lstTemp.list = this;
-            MonoBehaviourExtended.LogFormatted("{0}", lstTemp.list.Count);
-            foreach (KACAlarm item in lstTemp.list)
-            {
-                MonoBehaviourExtended.LogFormatted("{0}", item.AsConfigNode);
-            }
+            //MonoBehaviourExtended.LogFormatted("{0}", lstTemp.list.Count);
+            //foreach (KACAlarm item in lstTemp.list)
+            //{
+            //    MonoBehaviourExtended.LogFormatted("{0}", item.AsConfigNode);
+            //}
             ConfigNode cnReturn = lstTemp.AsConfigNode;
             MonoBehaviourExtended.LogFormatted("{0}", cnReturn);
+            MonoBehaviourExtended.LogFormatted("CC", cnReturn);
+            //MonoBehaviourExtended.LogFormatted("{0}", cnReturn.GetNode("list"));
+            return cnReturn;
         }
 
         /// <summary>

@@ -283,7 +283,7 @@ namespace KerbalAlarmClock
 
             if (GUILayout.Button("Save"))
             {
-                alarms.Save();
+                //alarms.Save();
             }
 
 

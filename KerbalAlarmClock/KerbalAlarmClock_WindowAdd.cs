@@ -646,7 +646,7 @@ namespace KerbalAlarmClock
             GUILayout.Space(10);
             int intButtonHeight = 36;
             if (TimeToEvent != null) intButtonHeight += 22;
-            if (GUILayout.Button("Add Alarm", KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(intButtonHeight)))
+            if (GUILayout.Button("Add Alarm", KACResources.styleButton, GUILayout.Width(80), GUILayout.Height(intButtonHeight)))
             {
                 blnReturn = true;
             }

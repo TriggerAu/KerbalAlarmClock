@@ -110,22 +110,21 @@ namespace KerbalAlarmClock
                 btnToolbarKAC = InitToolbarButton();
             }
 
-            GameEvents.onGameStateSaved.Add(OnSave);
-            GameEvents.onGameStateCreated.Add(OnLoad);
-                
-
             //Set up the updating function - do this 5 times a sec not on every frame.
             StartRepeatingWorker(settings.BehaviourChecksPerSec);
         }
 
-        private void OnSave(Game data)
+        internal override void Start()
         {
-            MonoBehaviourExtended.LogFormatted_DebugOnly("StateSaved");
+            ProtoScenarioModule psm = HighLogic.CurrentGame.scenarios.FirstOrDefault(x => x.moduleName == typeof(KerbalAlarmClockScenario).Name);
+            if (psm==null) {
+                HighLogic.CurrentGame.AddProtoScenarioModule(typeof(KerbalAlarmClockScenario), HighLogic.LoadedScene);
+            } else {
+                if (!psm.targetScenes.Any(x=>x==HighLogic.LoadedScene))
+                    psm.targetScenes.Add(HighLogic.LoadedScene);
+            }
         }
-        private void OnLoad(Game data)
-        {
-            MonoBehaviourExtended.LogFormatted_DebugOnly("StateLoaded");
-        }
+
         //Destroy Event - when the DLL is loaded
         internal override void OnDestroy()
         {

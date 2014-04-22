@@ -1,7 +1,8 @@
-﻿and a few with overrun/wrapping
-
-not all buttons are getting the right style
-
-Not option to choose nonmodelled data when no file
+﻿Not option to choose nonmodelled data when no file
 
 
+Checks per sec as a drop down
+
+
+
+Remove peridoic save stuff

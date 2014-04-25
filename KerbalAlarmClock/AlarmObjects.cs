@@ -412,10 +412,27 @@ namespace KerbalAlarmClock
             //    MonoBehaviourExtended.LogFormatted("{0}", item.AsConfigNode);
             //}
             ConfigNode cnReturn = lstTemp.AsConfigNode;
-            MonoBehaviourExtended.LogFormatted("{0}", cnReturn);
-            MonoBehaviourExtended.LogFormatted("CC", cnReturn);
+            MonoBehaviourExtended.LogFormatted_DebugOnly("Encoding:{0}", cnReturn);
             //MonoBehaviourExtended.LogFormatted("{0}", cnReturn.GetNode("list"));
             return cnReturn;
+        }
+
+        public void DecodeFromCN(ConfigNode AlarmListNode)
+        {
+            try
+            {
+                MonoBehaviourExtended.LogFormatted_DebugOnly("Decoding:{0}", AlarmListNode);
+                KACAlarmListStorage lstTemp = new KACAlarmListStorage();
+                ConfigNode.LoadObjectFromConfig(lstTemp, AlarmListNode);
+                this.Clear();
+                this.AddRange(lstTemp.list);
+
+            }
+            catch (Exception ex)
+            {
+                MonoBehaviourExtended.LogFormatted("Failed to Load Alarms from Save File");
+                MonoBehaviourExtended.LogFormatted_DebugOnly(ex.Message);
+            }
         }
 
         /// <summary>

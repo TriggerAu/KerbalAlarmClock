@@ -373,11 +373,11 @@ namespace KerbalAlarmClock
                 }
 
                 // Do we need to restore a maneuverNode after a ship jump - give it 4 secs of attempts for changes to ship
-                if (settings.LoadManNode != null && KACWorkerGameState.IsFlightMode)
+                if (settings.LoadManNode != null && settings.LoadManNode != "" && KACWorkerGameState.IsFlightMode)
                 {
                     List<ManeuverNode> manNodesToRestore = KACAlarm.ManNodeDeserializeList(settings.LoadManNode);
                     manToRestoreAttempts += 1;
-                    LogFormatted("Attempting to restore a maneuver node-Try {0}",manToRestoreAttempts.ToString());
+                    LogFormatted("Attempting to restore a maneuver node-Try {0}-{1}", manToRestoreAttempts.ToString(), manNodesToRestore.Count);
                     RestoreManeuverNodeList(manNodesToRestore);
                     if (KACWorkerGameState.ManeuverNodeExists)
                     {

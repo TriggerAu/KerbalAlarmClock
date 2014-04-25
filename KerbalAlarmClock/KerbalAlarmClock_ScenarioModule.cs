@@ -17,7 +17,13 @@ namespace KerbalAlarmClock
             base.OnLoad(gameNode);
             MonoBehaviourExtended.LogFormatted_DebugOnly("OnLoad: ");
             MonoBehaviourExtended.LogFormatted_DebugOnly("{0}",gameNode);
-            //if(gameNode.HasNodeID("KACAlarmListStorage"))
+
+            if (gameNode.HasNode("KerbalAlarmClockScenario")) MonoBehaviourExtended.LogFormatted_DebugOnly("Found {0}","KerbalAlarmClockScenario");
+            if (gameNode.HasNode("KACAlarmListStorage")) MonoBehaviourExtended.LogFormatted_DebugOnly("Found {0}", "KACAlarmListStorage");
+            if(gameNode.HasNode("KACAlarmListStorage"))
+            {
+                KerbalAlarmClock.alarms.DecodeFromCN(gameNode.GetNode("KACAlarmListStorage"));
+            }
             //{MonoBehaviourExtended.LogFormatted_DebugOnly("A");} else {MonoBehaviourExtended.LogFormatted_DebugOnly("B");}
             //KerbalAlarmClock.alarms.DecodeFromCN(gameNode.GetNode(this.GetType().Name));
         }

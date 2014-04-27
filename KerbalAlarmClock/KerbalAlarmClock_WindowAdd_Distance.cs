@@ -13,7 +13,7 @@ namespace KerbalAlarmClock
     public partial class KerbalAlarmClock
     {
 
-        public void WindowLayout_AddTypeDistanceChoice()
+        internal void WindowLayout_AddTypeDistanceChoice()
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label("Distance Type:", KACResources.styleAddHeading);
@@ -30,8 +30,8 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
         }
 
-        int intOrbits;
-        float fltOrbits = 6;
+        private Int32 intOrbits;
+        private Single fltOrbits = 6;
         private void WindowLayout_AddPane_ClosestApproach()
         {
             GUILayout.BeginVertical();
@@ -145,13 +145,13 @@ namespace KerbalAlarmClock
 
 
 
-        int intOrbits_Distance;
-        float fltOrbits_Distance = 6;
-        int intSelectediTarget = 0;
-        ITargetable tgtSelectedDistance = null;
-        double dblTargetDistance = 100000;
-        
-        int intAddDistanceHeight=272;
+        private Int32 intOrbits_Distance;
+        private Single fltOrbits_Distance = 6;
+        private Int32 intSelectediTarget = 0;
+        private ITargetable tgtSelectedDistance = null;
+        private Double dblTargetDistance = 100000;
+
+        private Int32 intAddDistanceHeight = 272;
         private void WindowLayout_AddPane_TargetDistance()
         {
             intAddDistanceHeight = 272;

@@ -13,7 +13,7 @@ namespace KerbalAlarmClock
     public partial class KerbalAlarmClock
     {
         //On OnGUI - draw alarms if needed
-        public void TriggeredAlarms()
+        internal void TriggeredAlarms()
         {
             foreach (KACAlarm tmpAlarm in alarms)
             {
@@ -89,7 +89,7 @@ namespace KerbalAlarmClock
 
         }
 
-        public void FillAlarmWindow(int windowID)
+        internal void FillAlarmWindow(int windowID)
         {
             KACAlarm tmpAlarm = alarms.GetByWindowID(windowID);
 
@@ -194,17 +194,17 @@ namespace KerbalAlarmClock
                 GUILayout.Label("Stored VesselID no longer exists",KACResources.styleLabelWarning);
             }
         }
-        public static Boolean StoredVesselExists(String VesselID)
+        internal static Boolean StoredVesselExists(String VesselID)
         {
             return (VesselID != null) && (VesselID != "") && (FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID) != null);
         }
-        public static Vessel StoredVessel(String VesselID)
+        internal static Vessel StoredVessel(String VesselID)
         {
             return FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID);
         }
 
         //Stuff to do with Stored Kerbal Crew
-        public static List<ProtoCrewMember> AllAssignedCrew()
+        internal static List<ProtoCrewMember> AllAssignedCrew()
         {
             List<ProtoCrewMember> lstReturn = new List<ProtoCrewMember>();
             foreach (Vessel v in FlightGlobals.Vessels)
@@ -224,16 +224,16 @@ namespace KerbalAlarmClock
                 GUILayout.Label("Cannot find the stored Kerbal - perhaps he's lost :(", KACResources.styleLabelWarning);
             }
         }
-        public static Boolean StoredCrewExists(String KerbalName)
+        internal static Boolean StoredCrewExists(String KerbalName)
         {
             return (KerbalName != null) && (KerbalName != "") && (AllAssignedCrew().FirstOrDefault(cm=>cm.name==KerbalName) != null);
         }
 
-        public static ProtoCrewMember StoredCrew(String KerbalName)
+        internal static ProtoCrewMember StoredCrew(String KerbalName)
         {
             return AllAssignedCrew().FirstOrDefault(cm => cm.name == KerbalName);
         }
-        public static Vessel StoredCrewVessel(String KerbalName)
+        internal static Vessel StoredCrewVessel(String KerbalName)
         {
             foreach (Vessel v in FlightGlobals.Vessels)
             {
@@ -250,18 +250,18 @@ namespace KerbalAlarmClock
         }
 
         //Stuff to do with Celestial Bodies
-        public static Boolean CelestialBodyExists(String BodyName)
+        internal static Boolean CelestialBodyExists(String BodyName)
         {
             return (BodyName != "") && (FlightGlobals.Bodies.FirstOrDefault(b => b.bodyName == BodyName) != null);
         }
-        public static CelestialBody CelestialBody(String BodyName)
+        internal static CelestialBody CelestialBody(String BodyName)
         {
             return FlightGlobals.Bodies.FirstOrDefault(a => a.bodyName == BodyName);
         }
 
         private KACAlarm alarmEdit;
         //track the height as we add/remove stuff
-        private int intAlarmEditHeight;
+        private Int32 intAlarmEditHeight;
         public void FillEditWindow(int WindowID)
         {
             if (alarmEdit.Remaining.UT > 0)
@@ -570,7 +570,7 @@ namespace KerbalAlarmClock
         }
 
         #region "BackupFailed Message"
-        public void ShowBackupFailedWindow(String Message)
+        internal void ShowBackupFailedWindow(String Message)
         {
             BackupFailedMessage = Message;
             GUIContent contFailMessage = new GUIContent(BackupFailedMessage);
@@ -596,7 +596,7 @@ namespace KerbalAlarmClock
 
 
         #region "Stuff for backupFailed dialog per scene"
-        public Rect ShowBackupFailedWindowPosByActiveScene
+        internal Rect ShowBackupFailedWindowPosByActiveScene
         {
             get
             {
@@ -611,14 +611,14 @@ namespace KerbalAlarmClock
 
         #endregion
 
-        public void ResetBackupFailedWindow()
+        internal void ResetBackupFailedWindow()
         {
             _ShowBackupFailedMessage = false;
             BackupFailedMessage = "";
         }
 
-        static String BackupFailedMessage = "";
-        public void FillBackupFailedWindow(int windowID)
+        private static String BackupFailedMessage = "";
+        internal void FillBackupFailedWindow(int windowID)
         {
             GUILayout.BeginVertical();
 

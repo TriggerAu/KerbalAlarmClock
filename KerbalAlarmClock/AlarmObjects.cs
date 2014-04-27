@@ -31,7 +31,7 @@ namespace KerbalAlarmClock
             Crew,
             EarthTime
         }
-        public static Dictionary<AlarmType, int> AlarmTypeToButton = new Dictionary<AlarmType, int>() {
+        internal static Dictionary<AlarmType, int> AlarmTypeToButton = new Dictionary<AlarmType, int>() {
             {AlarmType.Raw, 0},
             {AlarmType.Maneuver , 1},
             {AlarmType.ManeuverAuto , 1},
@@ -48,7 +48,7 @@ namespace KerbalAlarmClock
             {AlarmType.TransferModelled , 6},
             {AlarmType.Crew , 7}
         };
-        public static Dictionary<int, AlarmType> AlarmTypeFromButton = new Dictionary<int, AlarmType>() {
+        internal static Dictionary<int, AlarmType> AlarmTypeFromButton = new Dictionary<int, AlarmType>() {
             {0,AlarmType.Raw},
             {1,AlarmType.Maneuver },
             {2,AlarmType.Apoapsis },
@@ -203,7 +203,7 @@ namespace KerbalAlarmClock
 
         public Boolean PauseGame { get { return AlarmAction == AlarmActionEnum.PauseGame; } }
         public Boolean HaltWarp { get { return (AlarmAction == AlarmActionEnum.KillWarp || AlarmAction == AlarmActionEnum.KillWarpOnly); } }
-                
+
         public override void OnEncodeToConfigNode()
         {
             NotesStorage = KACUtils.EncodeVarStrings(Notes);
@@ -264,7 +264,7 @@ namespace KerbalAlarmClock
 
         }
 
-        public static List<ManeuverNode> ManNodeDeserializeList(String strInput)
+        internal static List<ManeuverNode> ManNodeDeserializeList(String strInput)
         {
             List<ManeuverNode> lstReturn = new List<ManeuverNode>();
 
@@ -281,7 +281,7 @@ namespace KerbalAlarmClock
             return lstReturn;
         }
 
-        public static ManeuverNode ManNodeDeserialize(String strInput)
+        internal static ManeuverNode ManNodeDeserialize(String strInput)
         {
             ManeuverNode mReturn = new ManeuverNode();
             String[] manparts = strInput.Split(",".ToCharArray());
@@ -298,7 +298,7 @@ namespace KerbalAlarmClock
             return mReturn;
         }
 
-        public static string ManNodeSerializeList(List<ManeuverNode> mInput)
+        internal static string ManNodeSerializeList(List<ManeuverNode> mInput)
         {
             String strReturn = "";
             foreach (ManeuverNode tmpMNode in mInput)
@@ -310,7 +310,7 @@ namespace KerbalAlarmClock
             return strReturn;
         }
 
-        public static string ManNodeSerialize(ManeuverNode mInput)
+        internal static string ManNodeSerialize(ManeuverNode mInput)
         {
             String strReturn = mInput.UT.ToString();
             strReturn += "," + KACUtils.CommaSepVariables(mInput.DeltaV.x, mInput.DeltaV.y, mInput.DeltaV.z);
@@ -318,7 +318,7 @@ namespace KerbalAlarmClock
             return strReturn;
         }
 
-        public static Boolean CompareManNodeListSimple(List<ManeuverNode> l1, List<ManeuverNode> l2)
+        internal static Boolean CompareManNodeListSimple(List<ManeuverNode> l1, List<ManeuverNode> l2)
         {
             Boolean blnReturn = true;
 
@@ -337,7 +337,7 @@ namespace KerbalAlarmClock
 
             return blnReturn;
         }
-        public static int SortByUT(KACAlarm c1, KACAlarm c2)
+        internal static int SortByUT(KACAlarm c1, KACAlarm c2)
         {
             return c1.Remaining.UT.CompareTo(c2.Remaining.UT);
         }
@@ -402,7 +402,7 @@ namespace KerbalAlarmClock
     {
 
 
-        public ConfigNode EncodeToCN()
+        internal ConfigNode EncodeToCN()
         {
             KACAlarmListStorage lstTemp = new KACAlarmListStorage();
             lstTemp.list = this;
@@ -417,7 +417,7 @@ namespace KerbalAlarmClock
             return cnReturn;
         }
 
-        public void DecodeFromCN(ConfigNode AlarmListNode)
+        internal void DecodeFromCN(ConfigNode AlarmListNode)
         {
             try
             {
@@ -440,7 +440,7 @@ namespace KerbalAlarmClock
         /// </summary>
         /// <param name="windowID"></param>
         /// <returns></returns>
-        public KACAlarm GetByWindowID(Int32 windowID)
+        internal KACAlarm GetByWindowID(Int32 windowID)
         {
             return this.FirstOrDefault(x => x.AlarmWindowID == windowID);
         }
@@ -450,7 +450,7 @@ namespace KerbalAlarmClock
         /// </summary>
         /// <param name="SaveName"></param>
         /// <returns></returns>
-        public Boolean ActiveEnabledFutureAlarms(String SaveName)
+        internal Boolean ActiveEnabledFutureAlarms(String SaveName)
         {
             Boolean blnReturn = false;
 
@@ -465,7 +465,7 @@ namespace KerbalAlarmClock
         }
     }
 
-    public class KACAlarmListStorage : ConfigNodeStorage
+    internal class KACAlarmListStorage : ConfigNodeStorage
     {
         [Persistent]
         public List<KACAlarm> list;

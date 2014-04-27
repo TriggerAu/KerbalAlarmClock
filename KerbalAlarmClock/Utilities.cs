@@ -11,7 +11,7 @@ using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public static class KACUtils
+    internal static class KACUtils
     {
         //public static String AppPath = KSPUtil.ApplicationRootPath.Replace("\\", "/");
         //public static String PlugInPath = AppPath + "PluginData/KerbalAlarmClock/";
@@ -21,15 +21,15 @@ namespace KerbalAlarmClock
         internal static String PathPluginData = string.Format("{0}/Data", PathPlugin);
         internal static String PathPluginSounds = string.Format("{0}/Sounds", PathPlugin);
 
-        public static String DBPathTriggerTech = string.Format("TriggerTech");
+        internal static String DBPathTriggerTech = string.Format("TriggerTech");
         internal static String DBPathPlugin = string.Format("TriggerTech/{0}", KerbalAlarmClock._AssemblyName);
         internal static String DBPathToolbarIcons = string.Format("{0}/ToolbarIcons", DBPathPlugin);
         internal static String DBPathTextures = string.Format("{0}/Textures", DBPathPlugin);
         internal static String DBPathPluginSounds = string.Format("{0}/Sounds", DBPathPlugin);
 
-        public static String SavePath;
+        internal static String SavePath;
 
-        public static Boolean BackupSaves()
+        internal static Boolean BackupSaves()
         {
             if (!KerbalAlarmClock.settings.BackupSaves)
             {
@@ -103,17 +103,17 @@ namespace KerbalAlarmClock
         }
 
         //generic function
-        public static String PipeSepVariables(params object[] vars)
+        internal static String PipeSepVariables(params object[] vars)
         {
             return SepVariables("|", vars);
         }
 
-        public static String CommaSepVariables(params object[] vars)
+        internal static String CommaSepVariables(params object[] vars)
         {
             return SepVariables(",", vars);
         }
 
-        public static String SepVariables(String separator, params object[] vars)
+        internal static String SepVariables(String separator, params object[] vars)
         {
             String strReturn = "";
             foreach (object tmpVar in vars)
@@ -130,7 +130,7 @@ namespace KerbalAlarmClock
             return strReturn;
         }
 
-        public static String EncodeVarStrings(String Input)
+        internal static String EncodeVarStrings(String Input)
         {
             String strReturn = Input;
             //encode \r\t\n
@@ -140,7 +140,7 @@ namespace KerbalAlarmClock
             return strReturn;
         }
 
-        public static String DecodeVarStrings(String Input)
+        internal static String DecodeVarStrings(String Input)
         {
             String strReturn = Input;
             //encode \r\t\n
@@ -241,7 +241,7 @@ namespace KerbalAlarmClock
 
 
         #region "offset building"
-        public static RectOffset SetWindowRectOffset(RectOffset tmpRectOffset, int intValue)
+        internal static RectOffset SetWindowRectOffset(RectOffset tmpRectOffset, int intValue)
         {
             tmpRectOffset.left = intValue;
             //tmpRectOffset.top = Top;
@@ -250,12 +250,12 @@ namespace KerbalAlarmClock
             return tmpRectOffset;
         }
 
-        public static RectOffset SetRectOffset(RectOffset tmpRectOffset, int intValue)
+        internal static RectOffset SetRectOffset(RectOffset tmpRectOffset, int intValue)
         {
             return SetRectOffset(tmpRectOffset, intValue, intValue, intValue, intValue);
         }
 
-        public static RectOffset SetRectOffset(RectOffset tmpRectOffset, int Left, int Right, int Top, int Bottom)
+        internal static RectOffset SetRectOffset(RectOffset tmpRectOffset, int Left, int Right, int Top, int Bottom)
         {
             tmpRectOffset.left = Left;
             tmpRectOffset.top = Top;
@@ -266,13 +266,13 @@ namespace KerbalAlarmClock
         #endregion
 
         #region "Math Stuff"
-        public static double Clamp(double x, double min, double max)
+        internal static double Clamp(double x, double min, double max)
         {
             return Math.Min(Math.Max(x, min), max);
         }
 
         //keeps angles in the range -180 to 180
-        public static double clampDegrees(double angle)
+        internal static double clampDegrees(double angle)
         {
             angle = angle + ((int)(2 + Math.Abs(angle) / 360)) * 360.0; //should be positive
             angle = angle % 360.0;
@@ -281,7 +281,7 @@ namespace KerbalAlarmClock
         }
 
         //keeps angles in the range 0 to 360
-        public static double clampDegrees360(double angle)
+        internal static double clampDegrees360(double angle)
         {
             angle = angle % 360.0;
             if (angle < 0) return angle + 360.0;
@@ -404,25 +404,25 @@ namespace KerbalAlarmClock
         //#endregion
 
         #region "timeOfClosestApproach Code - "
-        public static Vector3d getAbsolutePositionAtUT(Orbit orbit, double UT)
+        internal static Vector3d getAbsolutePositionAtUT(Orbit orbit, double UT)
         {
             Vector3d pos = orbit.getRelativePositionAtUT(UT);
             pos += orbit.referenceBody.position;
             return pos;
         }
 
-        public static double timeOfClosestApproach(Orbit oOrig, Orbit oTgt, double timeStart, out double closestdistance)
+        internal static double timeOfClosestApproach(Orbit oOrig, Orbit oTgt, double timeStart, out double closestdistance)
         {
             return timeOfClosestApproach(oOrig, oTgt, timeStart, oOrig.period, 20, out closestdistance);
         }
 
-        public static double timeOfClosestApproach(Orbit oOrig, Orbit oTgt, double timeStart, int orbit, out double closestdistance)
+        internal static double timeOfClosestApproach(Orbit oOrig, Orbit oTgt, double timeStart, int orbit, out double closestdistance)
         {
             //return timeOfClosestApproach(a, b, time + ((orbit - 1) * a.period), (orbit * a.period), 20, out closestdistance);
             return timeOfClosestApproach(oOrig, oTgt, timeStart + ((orbit - 1) * oOrig.period), oOrig.period, 20, out closestdistance);
         }
 
-        public static double timeOfClosestApproach(Orbit oOrig, Orbit oTgt, double timeStart, double periodtoscan, double numDivisions, out double closestdistance)
+        internal static double timeOfClosestApproach(Orbit oOrig, Orbit oTgt, double timeStart, double periodtoscan, double numDivisions, out double closestdistance)
         {
             double closestApproachTime = timeStart;
             double closestApproachDistance = Double.MaxValue;
@@ -453,13 +453,13 @@ namespace KerbalAlarmClock
             return closestApproachTime;
         }
 
-        public static double timeOfTargetDistance(Orbit oOrig, Orbit oTgt, double timeStart, int orbit, out double closestdistance,double targetDistance)
+        internal static double timeOfTargetDistance(Orbit oOrig, Orbit oTgt, double timeStart, int orbit, out double closestdistance, double targetDistance)
         {
             //return timeOfClosestApproach(a, b, time + ((orbit - 1) * a.period), (orbit * a.period), 20, out closestdistance);
             return timeOfTargetDistance(oOrig, oTgt, timeStart + ((orbit - 1) * oOrig.period), oOrig.period, 20, out closestdistance,targetDistance);
         }
 
-        public static double timeOfTargetDistance(Orbit oOrig, Orbit oTgt, double timeStart, double periodtoscan, double numDivisions, out double closestdistance, double targetDistance)
+        internal static double timeOfTargetDistance(Orbit oOrig, Orbit oTgt, double timeStart, double periodtoscan, double numDivisions, out double closestdistance, double targetDistance)
         {
             double closestApproachTime = timeStart;
             double closestApproachDistance = Double.MaxValue;
@@ -491,7 +491,7 @@ namespace KerbalAlarmClock
         }
 
 
-        public static double timeOfTargetAltitude(Orbit oOrig, double timeStart, out double closestdistance, double targetDistance)
+        internal static double timeOfTargetAltitude(Orbit oOrig, double timeStart, out double closestdistance, double targetDistance)
         {
             //return timeOfClosestApproach(a, b, time + ((orbit - 1) * a.period), (orbit * a.period), 20, out closestdistance);
             return timeOfTargetAltitude(oOrig,  timeStart , 20, out closestdistance, targetDistance);
@@ -503,7 +503,7 @@ namespace KerbalAlarmClock
         //    Descending=2
         //}
 
-        public static double timeOfTargetAltitude(Orbit oOrig, double timeStart, double numDivisions, out double closestdistance, double targetAltitude)
+        internal static double timeOfTargetAltitude(Orbit oOrig, double timeStart, double numDivisions, out double closestdistance, double targetAltitude)
         {
             double closestApproachTime = timeStart;
             double closestApproachAltitude = Double.MaxValue;

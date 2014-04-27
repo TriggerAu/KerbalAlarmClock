@@ -12,11 +12,11 @@ namespace KerbalAlarmClock
 {
     public partial class KerbalAlarmClock
     {
-        KACAlarm.AlarmType AddType = KACAlarm.AlarmType.Raw;
-        KACAlarm.AlarmActionEnum AddAction = KACAlarm.AlarmActionEnum.MessageOnly;
+        private KACAlarm.AlarmType AddType = KACAlarm.AlarmType.Raw;
+        private KACAlarm.AlarmActionEnum AddAction = KACAlarm.AlarmActionEnum.MessageOnly;
 
-        KACTimeStringArray timeRaw = new KACTimeStringArray(600);
-        KACTimeStringArray timeMargin = new KACTimeStringArray();
+        private KACTimeStringArray timeRaw = new KACTimeStringArray(600);
+        private KACTimeStringArray timeMargin = new KACTimeStringArray();
 
         private String strAlarmName = "";
         private String strAlarmNotes = "";
@@ -91,8 +91,8 @@ namespace KerbalAlarmClock
             strCrewUT = "";
         }
 
-        String strAlarmEventName = "Alarm";
-        public void AddTypeChanged()
+        private String strAlarmEventName = "Alarm";
+        internal void AddTypeChanged()
         {
             if (AddType == KACAlarm.AlarmType.Transfer || AddType == KACAlarm.AlarmType.TransferModelled)
                 blnAlarmAttachToVessel = false;
@@ -221,9 +221,9 @@ namespace KerbalAlarmClock
         }
 
         //String[] strAddTypes = new String[] { "Raw", "Maneuver","SOI","Transfer" };
-        String[] strAddTypes = new String[] { "R", "M", "A", "P", "A", "D", "S", "X" };
+        private String[] strAddTypes = new String[] { "R", "M", "A", "P", "A", "D", "S", "X" };
 
-        GUIContent[] guiTypes = new GUIContent[]
+        private GUIContent[] guiTypes = new GUIContent[]
             {
                 new GUIContent(KACResources.btnRaw,"Raw Time Alarm"),
                 new GUIContent(KACResources.btnMNode,"Maneuver Node"),
@@ -239,31 +239,31 @@ namespace KerbalAlarmClock
                 new GUIContent(KACResources.btnCrew,"Kerbal Crew")
             };
 
-        GUIContent[] guiTypesView = new GUIContent[]
+        private GUIContent[] guiTypesView = new GUIContent[]
             {
                 new GUIContent(KACResources.btnRaw,"Raw Time Alarm")
             };
 
-        KACAlarm.AlarmType[] TypesForAttachOption = new KACAlarm.AlarmType[] 
+        private KACAlarm.AlarmType[] TypesForAttachOption = new KACAlarm.AlarmType[] 
             { 
                 KACAlarm.AlarmType.Raw, 
                 KACAlarm.AlarmType.Transfer, 
                 KACAlarm.AlarmType.TransferModelled 
             };
 
-        KACAlarm.AlarmType[] TypesWithNoEvent = new KACAlarm.AlarmType[] 
+        private KACAlarm.AlarmType[] TypesWithNoEvent = new KACAlarm.AlarmType[] 
             { 
                 KACAlarm.AlarmType.Raw, 
                 KACAlarm.AlarmType.Transfer, 
                 KACAlarm.AlarmType.TransferModelled 
             };
 
-        int intHeight_AddWindowCommon;
+        private int intHeight_AddWindowCommon;
         /// <summary>
         /// Draw the Add Window contents
         /// </summary>
         /// <param name="WindowID"></param>
-        public void FillAddWindow(int WindowID)
+        internal void FillAddWindow(int WindowID)
         {
             GUILayout.BeginVertical();
 
@@ -389,7 +389,7 @@ namespace KerbalAlarmClock
             SetTooltipText();
         }
 
-        public void WindowLayout_AddTypeApPe()
+        internal void WindowLayout_AddTypeApPe()
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label("apsis Type:", KACResources.styleAddHeading);
@@ -412,16 +412,16 @@ namespace KerbalAlarmClock
 
         ////Variabled for Raw Alarm screen
         //String strYears = "0", strDays = "0", strHours = "0", strMinutes = "0",
-        String strRawUT="0";
-        KACTime rawTime = new KACTime(600);
-        KACTime rawTimeToAlarm = new KACTime();
+        private String strRawUT="0";
+        private KACTime rawTime = new KACTime(600);
+        private KACTime rawTimeToAlarm = new KACTime();
         //Boolean blnRawDate = false;
         //Boolean blnRawInterval = true;
         ///// <summary>
         ///// Layout the raw alarm screen inputs
         ///// </summary>
-        int intRawType = 1;
-        KACTimeStringArray rawEntry = new KACTimeStringArray(600);
+        private Int32 intRawType = 1;
+        private KACTimeStringArray rawEntry = new KACTimeStringArray(600);
         private void WindowLayout_AddPane_Raw()
         {
             GUILayout.Label("Enter Raw Time Values...", KACResources.styleAddSectionHeading);
@@ -493,13 +493,13 @@ namespace KerbalAlarmClock
 
         private int intSelectedCrew = 0;
         //Do we do this in with the Raw alarm as we are gonna ask for almost the same stuff
-        String strCrewUT = "0";
-        KACTime CrewTime = new KACTime(600);
-        KACTime CrewTimeToAlarm = new KACTime();
-        int intCrewType = 1;
-        KACTimeStringArray CrewEntry = new KACTimeStringArray(600);
-        Boolean CrewAlarmStoreNode = false;
-        int intAddCrewHeight = 322;
+        private String strCrewUT = "0";
+        private KACTime CrewTime = new KACTime(600);
+        private KACTime CrewTimeToAlarm = new KACTime();
+        private Int32 intCrewType = 1;
+        private KACTimeStringArray CrewEntry = new KACTimeStringArray(600);
+        private Boolean CrewAlarmStoreNode = false;
+        private  Int32 intAddCrewHeight = 322;
         private void WindowLayout_AddPane_Crew()
         {
             intAddCrewHeight = 322;
@@ -616,7 +616,7 @@ namespace KerbalAlarmClock
             }
         }
 
-                private Boolean DrawAddAlarm(KACTime AlarmDate, KACTime TimeToEvent, KACTime TimeToAlarm)
+        private Boolean DrawAddAlarm(KACTime AlarmDate, KACTime TimeToEvent, KACTime TimeToAlarm)
         {
             Boolean blnReturn = false;
             int intLineHeight = 18;
@@ -726,7 +726,7 @@ namespace KerbalAlarmClock
         }
 
 
-        List<KACAlarm.AlarmType> lstAlarmsWithTarget = new List<KACAlarm.AlarmType> { KACAlarm.AlarmType.AscendingNode, KACAlarm.AlarmType.DescendingNode, KACAlarm.AlarmType.LaunchRendevous };
+        private List<KACAlarm.AlarmType> lstAlarmsWithTarget = new List<KACAlarm.AlarmType> { KACAlarm.AlarmType.AscendingNode, KACAlarm.AlarmType.DescendingNode, KACAlarm.AlarmType.LaunchRendevous };
         private void WindowLayout_AddPane_NodeEvent(Boolean PointFound,Double timeToPoint)
         {
             GUILayout.BeginVertical();
@@ -866,8 +866,8 @@ namespace KerbalAlarmClock
             if (AddType == KACAlarm.AlarmType.Transfer || AddType == KACAlarm.AlarmType.TransferModelled) BuildTransferStrings();
         }
 
-        int intAddXferHeight=317;
-        int intXferType = 1;
+        private int intAddXferHeight = 317;
+        private int intXferType = 1;
         private void WindowLayout_AddPane_Transfer()
         {
             intAddXferHeight = 317;
@@ -1119,8 +1119,8 @@ namespace KerbalAlarmClock
 
 
 
-        int AddNotesHeight = 100;
-        public void FillAddMessagesWindow(int WindowID)
+        private Int32 AddNotesHeight = 100;
+        internal void FillAddMessagesWindow(int WindowID)
         {
             GUILayout.BeginVertical();
             GUILayout.Label("Vessel:", KACResources.styleAddHeading);

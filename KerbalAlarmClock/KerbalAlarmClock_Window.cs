@@ -34,8 +34,8 @@ namespace KerbalAlarmClock
         //is it displayed and where
         Boolean blnToolTipDisplayed = false;
         Rect rectToolTipPosition;
-        int intTooltipVertOffset = 12;
-        int intTooltipMaxWidth = 250;
+        Int32 intTooltipVertOffset = 12;
+        Int32 intTooltipMaxWidth = 250;
         //timer so it only displays for a preriod of time
         float fltTooltipTime = 0f;
         float fltMaxToolTipTime = 15f;
@@ -77,7 +77,7 @@ namespace KerbalAlarmClock
             strLastTooltipText = strToolTipText;
         }
 
-        public void SetTooltipText()
+        internal void SetTooltipText()
         {
             if (Event.current.type == EventType.Repaint)
             {
@@ -202,7 +202,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Draw the icon on the screen
         /// </summary>
-        public void DrawIcons()
+        internal void DrawIcons()
         {
             if (!settings.UseBlizzyToolbarIfAvailable || btnToolbarKAC == null)
             {
@@ -296,56 +296,56 @@ namespace KerbalAlarmClock
 
 
         //Basic setup of draw stuff
-        private static int _WindowMainID = 0;
+        internal static Int32 _WindowMainID = 0;
 
         //is the add pane visible
         private Boolean _ShowAddPane = false;
-        private static int _WindowAddID = 0;
-        static Rect _WindowAddRect;
+        private static Int32 _WindowAddID = 0;
+        private static Rect _WindowAddRect;
 
         //is the add pane messages pane visible
         private Boolean _ShowAddMessages = false;
-        private static int _WindowAddMessagesID = 0;
-        static Rect _WindowAddMessagesRect;
+        private static Int32 _WindowAddMessagesID = 0;
+        private static Rect _WindowAddMessagesRect;
 
         //Settings Window
         private Boolean _ShowSettings = false;
-        private static int _WindowSettingsID = 0;
+        private static Int32 _WindowSettingsID = 0;
         private static Rect _WindowSettingsRect;
 
         //Edit Window
         private Boolean _ShowEditPane = false;
-        private static int _WindowEditID = 0;
+        private static Int32 _WindowEditID = 0;
         private static Rect _WindowEditRect;
 
         //Earth Alarm Window
         private Boolean _ShowEarthAlarm = false;
-        private static int _WindowEarthAlarmID = 0;
+        private static Int32 _WindowEarthAlarmID = 0;
         private static Rect _WindowEarthAlarmRect;
 
         //Earth Alarm Window
         private Boolean _ShowBackupFailedMessage = false;
         private DateTime _ShowBackupFailedMessageAt = DateTime.Now;
-        private int _ShowBackupFailedMessageForSecs=10;
-        private static int _WindowBackupFailedID = 0;
+        private Int32 _ShowBackupFailedMessageForSecs=10;
+        private static Int32 _WindowBackupFailedID = 0;
         private static Rect _WindowBackupFailedRect;
 
         //Window Size Constants
-        int intMainWindowWidth = 300;
-        int intMainWindowMinHeight = 114;
-        int intMainWindowBaseHeight = 114;
+        private Int32 intMainWindowWidth = 300;
+        private Int32 intMainWindowMinHeight = 114;
+        private Int32 intMainWindowBaseHeight = 114;
 
-        int intMainWindowAlarmListItemHeight = 26;
-        int intMainWindowAlarmListScrollPad = 3;
-        int intMainWindowEarthTimeHeight = 26;
+        private Int32 intMainWindowAlarmListItemHeight = 26;
+        private Int32 intMainWindowAlarmListScrollPad = 3;
+        private Int32 intMainWindowEarthTimeHeight = 26;
 
-        int intPaneWindowWidth = 380;
-        int intAddPaneWindowWidth = 320;
-        long AddWindowHeight;
+        private Int32 intPaneWindowWidth = 380;
+        private Int32 intAddPaneWindowWidth = 320;
+        private Int32 AddWindowHeight;
 
-        long EarthWindowHeight = 216;
+        private Int32 EarthWindowHeight = 216;
 
-        public void DrawWindows()
+        internal void DrawWindows()
         {
 #if DEBUG
             if (_ShowDebugPane)
@@ -457,7 +457,7 @@ namespace KerbalAlarmClock
 
 
         //Now the layout
-        public void FillWindow(int intWindowID)
+        internal void FillWindow(Int32 intWindowID)
         {
             GUILayout.BeginVertical();
 
@@ -669,8 +669,8 @@ namespace KerbalAlarmClock
         }
 
         //Display Full alarm list 
-        public static Rect rectScrollview;
-        Vector2 scrollPosition = Vector2.zero;
+        internal static Rect rectScrollview;
+        internal Vector2 scrollPosition = Vector2.zero;
         private void WindowLayout_AlarmList()
         {
             GUIStyle styleTemp = new GUIStyle();
@@ -771,7 +771,7 @@ namespace KerbalAlarmClock
             }
 
             //Set the Content up
-            //int intMaxWidth = intTestheight;
+            //Int32 intMaxWidth = intTestheight;
             //String strTimeToAlarm = String.Format(" ({0})",KerbalTime.PrintInterval(tmpAlarm.Remaining, Settings.TimeFormat));
             //float fTimeToAlarmWidth;
             //KACResources.styleAlarmText.CalcMinMaxWidth(new GUIContent(strTimeToAlarm),out fOutMin1,out fOutMax1);
@@ -803,7 +803,7 @@ namespace KerbalAlarmClock
             //KACResources.styleAlarmText.CalcMinMaxWidth(contAlarmTime, out fOutMin, out fOutMax);
             //styleLabel.CalcMinMaxWidth(contAlarmLabel, out fOutMin1, out fOutMax1);
 
-            //int intMaxWidth = intTestheight;
+            //Int32 intMaxWidth = intTestheight;
             //if (fOutMax1 + fOutMax > intMaxWidth)
             //    fOutMax1 = intMaxWidth - fOutMax;
 
@@ -872,7 +872,7 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        public void ResetPanes()
+        internal void ResetPanes()
         {
             _ShowAddPane = false;
             _ShowEditPane = false;
@@ -881,7 +881,7 @@ namespace KerbalAlarmClock
         
         #endregion
 
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref Double Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref Double Margin, KACAlarm.AlarmType TypeOfAlarm, Int32 WindowHeight)
         {
             KACTimeStringArray tmpTime = new KACTimeStringArray(Margin);
             WindowLayout_CommonFields(ref strName, ref strMessage, ref Action, ref tmpTime, TypeOfAlarm, WindowHeight);
@@ -891,7 +891,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, Int32 WindowHeight)
         {
             //Two Columns
             GUILayout.Label("Common Alarm Properties", KACResources.styleAddSectionHeading);
@@ -926,7 +926,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, Int32 WindowHeight)
         {
             //Two Columns
             String strTitle = "";
@@ -989,21 +989,21 @@ namespace KerbalAlarmClock
         /// <param name="style"></param>
         /// <param name="options"></param>
         /// <returns>True when the button state has changed</returns>
-        public Boolean DrawToggle(ref Boolean blnVar, String ButtonText, GUIStyle style, params GUILayoutOption[] options)
+        internal Boolean DrawToggle(ref Boolean blnVar, String ButtonText, GUIStyle style, params GUILayoutOption[] options)
         {
             Boolean blnReturn = GUILayout.Toggle(blnVar, ButtonText, style, options);
 
             return ToggleResult(ref blnVar, ref  blnReturn);
         }
 
-        public Boolean DrawToggle(ref Boolean blnVar, Texture image, GUIStyle style, params GUILayoutOption[] options)
+        internal Boolean DrawToggle(ref Boolean blnVar, Texture image, GUIStyle style, params GUILayoutOption[] options)
         {
             Boolean blnReturn = GUILayout.Toggle(blnVar, image, style, options);
 
             return ToggleResult(ref blnVar, ref blnReturn);
         }
 
-        public Boolean DrawToggle(ref Boolean blnVar, GUIContent content, GUIStyle style, params GUILayoutOption[] options)
+        internal Boolean DrawToggle(ref Boolean blnVar, GUIContent content, GUIStyle style, params GUILayoutOption[] options)
         {
             Boolean blnReturn = GUILayout.Toggle(blnVar, content, style, options);
 
@@ -1023,7 +1023,7 @@ namespace KerbalAlarmClock
 
 
 
-        public Boolean DrawTextBox(ref String strVar, GUIStyle style, params GUILayoutOption[] options)
+        internal Boolean DrawTextBox(ref String strVar, GUIStyle style, params GUILayoutOption[] options)
         {
             String strReturn = GUILayout.TextField(strVar, style, options);
             if (strReturn != strVar)
@@ -1041,15 +1041,15 @@ namespace KerbalAlarmClock
         /// </summary>
         /// <param name="blnVar"></param>
         /// <returns>True when check state has changed</returns>
-        public Boolean DrawCheckbox(ref Boolean blnVar, String strText, params GUILayoutOption[] options)
+        internal Boolean DrawCheckbox(ref Boolean blnVar, String strText, params GUILayoutOption[] options)
         {
             return DrawCheckbox(ref blnVar, new GUIContent(strText),15, options);
         }
-        public Boolean DrawCheckbox(ref Boolean blnVar, GUIContent content, params GUILayoutOption[] options)
+        internal Boolean DrawCheckbox(ref Boolean blnVar, GUIContent content, params GUILayoutOption[] options)
         {
             return DrawCheckbox(ref blnVar, content , 15, options);
         }
-        public Boolean DrawCheckbox(ref Boolean blnVar, String strText, int CheckboxSpace, params GUILayoutOption[] options)
+        internal Boolean DrawCheckbox(ref Boolean blnVar, String strText, Int32 CheckboxSpace, params GUILayoutOption[] options)
         {
             return DrawCheckbox(ref blnVar, new GUIContent(strText), CheckboxSpace, options);
         }
@@ -1059,7 +1059,7 @@ namespace KerbalAlarmClock
         /// </summary>
         /// <param name="blnVar"></param>
         /// <returns>True when check state has changed</returns>
-        public Boolean DrawCheckbox(ref Boolean blnVar,  GUIContent content, int CheckboxSpace , params GUILayoutOption[] options)
+        internal Boolean DrawCheckbox(ref Boolean blnVar, GUIContent content, Int32 CheckboxSpace, params GUILayoutOption[] options)
         {
             // return DrawToggle(ref blnVar, strText, KACResources.styleCheckbox, options);
             Boolean blnReturn = false;
@@ -1090,24 +1090,24 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        public Boolean DrawRadioListVertical(ref int Selected, params String[] Choices)
+        internal Boolean DrawRadioListVertical(ref Int32 Selected, params String[] Choices)
         {
             return DrawRadioList(false, ref Selected, Choices);
         }
-        public Boolean DrawRadioList(ref int Selected, params String[] Choices)
+        internal Boolean DrawRadioList(ref Int32 Selected, params String[] Choices)
         {
             return DrawRadioList(true, ref Selected, Choices);
         }
-        public Boolean DrawRadioList(Boolean Horizontal, ref int Selected, params String[] Choices)
+        internal Boolean DrawRadioList(Boolean Horizontal, ref Int32 Selected, params String[] Choices)
         {
-            int InitialChoice = Selected;
+            Int32 InitialChoice = Selected;
 
             if (Horizontal)
                 GUILayout.BeginHorizontal();
             else
                 GUILayout.BeginVertical();
 
-            for (int intChoice = 0; intChoice < Choices.Length; intChoice++)
+            for (Int32 intChoice = 0; intChoice < Choices.Length; intChoice++)
             {
                 //checkbox
                 GUILayout.BeginHorizontal();
@@ -1130,7 +1130,7 @@ namespace KerbalAlarmClock
             return !(InitialChoice == Selected);
         }
 
-        //public Boolean DrawAlarmActionChoice(ref int intChoice, String LabelText, int LabelWidth)
+        //public Boolean DrawAlarmActionChoice(ref Int32 intChoice, String LabelText, Int32 LabelWidth)
         //{
         //    Boolean blnReturn = false;
         //    GUILayout.BeginHorizontal();
@@ -1139,24 +1139,24 @@ namespace KerbalAlarmClock
         //    GUILayout.EndHorizontal();
         //    return blnReturn;
         //}
-        //public Boolean DrawAlarmActionChoice2(ref KACAlarm.AlarmActionEnum Choice, String LabelText, int LabelWidth)
+        //public Boolean DrawAlarmActionChoice2(ref KACAlarm.AlarmActionEnum Choice, String LabelText, Int32 LabelWidth)
         //{
         //    Boolean blnReturn = false;
         //    GUILayout.BeginHorizontal();
         //    GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth-10));
-        //    int intChoice = (int)Choice;
+        //    Int32 intChoice = (Int32)Choice;
         //    blnReturn = DrawRadioList(ref intChoice, "Message", "Kill Warp", "Pause");
         //    Choice = (KACAlarm.AlarmActionEnum)intChoice;
         //    GUILayout.EndHorizontal();
         //    return blnReturn;
         //}
 
-        public Boolean DrawAlarmActionChoice3(ref KACAlarm.AlarmActionEnum Choice, String LabelText, int LabelWidth,int ButtonWidth)
+        internal Boolean DrawAlarmActionChoice3(ref KACAlarm.AlarmActionEnum Choice, String LabelText, Int32 LabelWidth, Int32 ButtonWidth)
         {
             Boolean blnReturn = false;
             GUILayout.BeginHorizontal();
             GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth - 10));
-            int intChoice = (int)Choice;
+            Int32 intChoice = (Int32)Choice;
             GUIStyle styleButton = new GUIStyle(KACResources.styleButtonListAlarmActions) { fixedWidth = ButtonWidth };
             blnReturn = DrawButtonList(ref intChoice, styleButton, KACResources.lstAlarmChoices.ToArray());
             //blnReturn = DrawRadioList(ref intChoice, "Message", "Kill Warp", "Pause");
@@ -1167,17 +1167,17 @@ namespace KerbalAlarmClock
 
 
 
-        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, params GUILayoutOption[] options)
+        internal Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, params GUILayoutOption[] options)
         {
             return DrawTimeEntry(ref time, Prec, "", 0, 40,20);
         }
 
-        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, String LabelText, int LabelWidth, params GUILayoutOption[] options)
+        internal Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, String LabelText, Int32 LabelWidth, params GUILayoutOption[] options)
         {
             return DrawTimeEntry(ref time, Prec, LabelText, LabelWidth, 40,20);
         }
 
-        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, String LabelText, int LabelWidth, int FieldWidth, int SuffixWidth, params GUILayoutOption[] options)
+        internal Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, String LabelText, Int32 LabelWidth, Int32 FieldWidth, Int32 SuffixWidth, params GUILayoutOption[] options)
         {
             Boolean blnReturn = false;
 
@@ -1241,7 +1241,7 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        public Boolean DrawTimeField(ref String Value, String LabelText, int FieldWidth,int SuffixWidth)
+        internal Boolean DrawTimeField(ref String Value, String LabelText, Int32 FieldWidth, Int32 SuffixWidth)
         {
             Boolean blnReturn = false;
             Int32 intParse;
@@ -1268,26 +1268,26 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        public Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params GUIContent[] Choices)
+        internal Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params GUIContent[] Choices)
         {
-            int Selection = KACAlarm.AlarmTypeToButton[selType];
+            Int32 Selection = KACAlarm.AlarmTypeToButton[selType];
             Boolean blnReturn = DrawButtonList(ref Selection, Choices);
             if (blnReturn)
                 selType = KACAlarm.AlarmTypeFromButton[Selection];
             return blnReturn;
         }
 
-        public Boolean DrawButtonList(ref int Selected, params GUIContent[] Choices)
+        internal Boolean DrawButtonList(ref Int32 Selected, params GUIContent[] Choices)
         {
             return DrawButtonList(ref Selected, KACResources.styleButtonList, Choices);
         }
-        public Boolean DrawButtonList(ref int Selected,GUIStyle ButtonStyle, params GUIContent[] Choices)
+        internal Boolean DrawButtonList(ref Int32 Selected, GUIStyle ButtonStyle, params GUIContent[] Choices)
         {
-            int InitialChoice = Selected;
+            Int32 InitialChoice = Selected;
 
             GUILayout.BeginHorizontal();
 
-            for (int intChoice = 0; intChoice < Choices.Length; intChoice++)
+            for (Int32 intChoice = 0; intChoice < Choices.Length; intChoice++)
             {
                 //button
                 Boolean blnResult=(Selected==intChoice);

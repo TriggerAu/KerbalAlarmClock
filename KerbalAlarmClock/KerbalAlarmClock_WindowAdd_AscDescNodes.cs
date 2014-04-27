@@ -12,7 +12,7 @@ namespace KerbalAlarmClock
 {
     public partial class KerbalAlarmClock
     {
-        public void WindowLayout_AddTypeANDN()
+        internal void WindowLayout_AddTypeANDN()
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label("Node Type:", KACResources.styleAddHeading);

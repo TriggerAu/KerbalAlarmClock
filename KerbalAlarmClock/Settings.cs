@@ -11,7 +11,7 @@ using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    class Settings : ConfigNodeStorage
+    internal class Settings : ConfigNodeStorage
     {
         internal Settings(String FilePath) : base(FilePath) {
             Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();

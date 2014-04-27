@@ -114,6 +114,8 @@ namespace KerbalAlarmClock
             StartRepeatingWorker(settings.BehaviourChecksPerSec);
 
             InitDropDowns();
+
+            APIAwake();
         }
 
         internal override void Start()
@@ -135,6 +137,8 @@ namespace KerbalAlarmClock
             DestroyDropDowns();
 
             DestroyToolbarButton(btnToolbarKAC);
+
+            APIDestroy();
         }
 
         #region "Update Code"

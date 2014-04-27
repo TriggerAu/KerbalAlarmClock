@@ -27,7 +27,7 @@ namespace KerbalAlarmClock
             AddAction= KACAlarm.AlarmActionEnum.PauseGame;
         }
 
-        public void FillEarthAlarmWindow(int WindowID)
+        internal void FillEarthAlarmWindow(int WindowID)
         {
             GUILayout.BeginVertical();
 
@@ -109,9 +109,9 @@ namespace KerbalAlarmClock
         }
 
 
-        DateTime EarthTimeRoot = new DateTime(2013, 1, 1);
+        private DateTime EarthTimeRoot = new DateTime(2013, 1, 1);
 
-        public Double EarthTimeEncode(DateTime Input)
+        internal Double EarthTimeEncode(DateTime Input)
         {
             Double dblReturn;
 
@@ -120,7 +120,7 @@ namespace KerbalAlarmClock
             return dblReturn;
         }
 
-        public DateTime EarthTimeDecode(Double Input)
+        internal DateTime EarthTimeDecode(Double Input)
         {
             DateTime dteReturn;
 

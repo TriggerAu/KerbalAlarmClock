@@ -12,17 +12,17 @@ namespace KerbalAlarmClock
 {
     public partial class KerbalAlarmClock
     {
-        int intSettingsTab = 0;
-        int intSettingsHeight = 334;
+        private Int32 intSettingsTab = 0;
+        private Int32 intSettingsHeight = 334;
 
-        int intAlarmDefaultsBoxheight = 105;
-        int intUpdateBoxheight = 116;
-        int intSOIBoxheight = 178; //166;
+        private Int32 intAlarmDefaultsBoxheight = 105;
+        private Int32 intUpdateBoxheight = 116;
+        private Int32 intSOIBoxheight = 178; //166;
 
-        KACTimeStringArray timeDefaultMargin = new KACTimeStringArray();
-        KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray();
-        KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray();
-        KACTimeStringArray timeAutoManNodeThreshold = new KACTimeStringArray();
+        private KACTimeStringArray timeDefaultMargin = new KACTimeStringArray();
+        private KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray();
+        private KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray();
+        private KACTimeStringArray timeAutoManNodeThreshold = new KACTimeStringArray();
         private void NewSettingsWindow()
         {
             if (settings.VersionAttentionFlag)
@@ -45,7 +45,7 @@ namespace KerbalAlarmClock
 
         }
 
-        public void FillSettingsWindow(int WindowID)
+        internal void FillSettingsWindow(int WindowID)
         {
             strAlarmDescSOI = String.Format(strAlarmDescSOI, settings.AlarmAddSOIAutoThreshold.ToString());
             strAlarmDescXfer = String.Format(strAlarmDescXfer, settings.AlarmXferRecalcThreshold.ToString());

@@ -469,13 +469,13 @@ namespace KerbalAlarmClock
                     break;
                 case Settings.DisplaySkin.Unity:
                     _CurrentSkin = DefUnitySkin;
-                    SetStyleDefaults(12);
+                    SetStyleDefaults(); //was 12
                     SetUnityStyles();
                     SetUnityButtons();
                     break;
                 case Settings.DisplaySkin.UnityWKSPButtons:
                     _CurrentSkin = DefUnitySkin;
-                    SetStyleDefaults(12);
+                    SetStyleDefaults();
                     SetUnityStyles();
                     SetKSPButtons();
                     break;
@@ -488,7 +488,14 @@ namespace KerbalAlarmClock
             }
 
             SetStyles();
+
+            //this throws an error
+            if (OnSkinChanged!=null)
+                OnSkinChanged();
         }
+
+        public delegate void SkinChangedEvent();
+        public static event SkinChangedEvent OnSkinChanged;
 
         static GUIStyle styleDefLabel, styleDefTextField, styleDefTextArea, styleDefToggle, styleDefButton;
         static int intFontSizeDefault;
@@ -525,16 +532,36 @@ namespace KerbalAlarmClock
         private static void SetKSPStyles()
         {
             texTooltip = texBox;
+
+            styleDropDownListBox = new GUIStyle();
+            styleDropDownListBox.normal.background = texBox;
+            //Extra border to prevent bleed of color - actual border is only 1 pixel wide
+            styleDropDownListBox.border = new RectOffset(3, 3, 3, 3);
+
         }
         private static void SetUnityStyles()
         {
             texTooltip = texBoxUnity;
+
+            styleDropDownListBox = new GUIStyle();
+            styleDropDownListBox.normal.background = texBoxUnity;
+            //Extra border to prevent bleed of color - actual border is only 1 pixel wide
+            styleDropDownListBox.border = new RectOffset(3, 3, 3, 3);
         }
         private static void SetKSPButtons()
         {
             styleDefButton = new GUIStyle(DefKSPSkin.button);
             styleDefToggle.fontSize = intFontSizeDefault;
             styleDefToggle.fontStyle = FontStyle.Normal;
+
+            styleDropDownButton = new GUIStyle(styleDefButton);
+            styleDropDownButton.fontSize = intFontSizeDefault;
+            styleDropDownButton.fixedHeight = 20;
+            if (KerbalAlarmClock.settings.SelectedSkin== Settings.DisplaySkin.UnityWKSPButtons)
+                styleDropDownButton.padding.top = 4;
+            else
+                styleDropDownButton.padding.top = 8;
+            styleDropDownButton.padding.right = 20;
 
         }
         private static void SetUnityButtons()
@@ -543,6 +570,11 @@ namespace KerbalAlarmClock
             styleDefToggle.fontSize = intFontSizeDefault;
             styleDefToggle.fontStyle = FontStyle.Normal;
 
+            styleDropDownButton = new GUIStyle(styleDefButton);
+            styleDropDownButton.fontSize = intFontSizeDefault;
+            styleDropDownButton.fixedHeight = 20;
+            styleDropDownButton.padding.top = 4;
+            styleDropDownButton.padding.right = 20;
         }
 
 
@@ -608,6 +640,17 @@ namespace KerbalAlarmClock
         public static GUIStyle styleAlarmMessageActionPause;
 
         public static GUIStyle styleVersionHighlight;
+
+        #region DropdownStuff
+        internal static GUIStyle styleDropDownButton;
+        internal static GUIStyle styleDropDownListBox;
+        internal static GUIStyle styleDropDownListItem;
+
+        internal static GUIStyle styleDropDownGlyph;
+
+        internal static GUIStyle styleSeparatorV;
+        internal static GUIStyle styleSeparatorH;
+        #endregion
 
         public static List<GUIContent> lstAlarmChoices;
 
@@ -837,12 +880,48 @@ namespace KerbalAlarmClock
             styleVersionHighlight.alignment = TextAnchor.MiddleRight;
             styleVersionHighlight.stretchWidth = true;
 
+            styleDropDownListItem = new GUIStyle();
+            styleDropDownListItem.normal.textColor = new Color(207, 207, 207);
+            Texture2D texBack = CreateColorPixel(new Color(207, 207, 207));
+            styleDropDownListItem.hover.background = texBack;
+            styleDropDownListItem.onHover.background = texBack;
+            styleDropDownListItem.hover.textColor = Color.black;
+            styleDropDownListItem.onHover.textColor = Color.black;
+            styleDropDownListItem.padding = new RectOffset(4, 4, 3, 4);
+
+            styleDropDownGlyph = new GUIStyle();
+            styleDropDownGlyph.alignment = TextAnchor.MiddleCenter;
+
+            styleSeparatorV = new GUIStyle();
+            styleSeparatorV.normal.background = texSeparatorV;
+            styleSeparatorV.border = new RectOffset(0, 0, 6, 6);
+            styleSeparatorV.fixedWidth = 2;
+
+            styleSeparatorH = new GUIStyle();
+            styleSeparatorH.normal.background = texSeparatorH;
+            styleSeparatorH.border = new RectOffset(6, 6, 0, 0);
+            styleSeparatorH.fixedHeight = 2;
+
             lstAlarmChoices = new List<GUIContent>();
             lstAlarmChoices.Add(new GUIContent(btnActionMsg, KACAlarm.AlarmActionEnum.MessageOnly.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionWarp, KACAlarm.AlarmActionEnum.KillWarpOnly.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionWarpMsg, KACAlarm.AlarmActionEnum.KillWarp.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionPause, KACAlarm.AlarmActionEnum.PauseGame.Description()));
         }
+
+        /// <summary>
+        /// Creates a 1x1 texture
+        /// </summary>
+        /// <param name="Background">Color of the texture</param>
+        /// <returns></returns>
+        internal static Texture2D CreateColorPixel(Color32 Background)
+        {
+            Texture2D retTex = new Texture2D(1, 1);
+            retTex.SetPixel(0, 0, Background);
+            retTex.Apply();
+            return retTex;
+        }
+
         #endregion
 
 

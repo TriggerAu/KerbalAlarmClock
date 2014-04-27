@@ -230,11 +230,12 @@ namespace KerbalAlarmClock
         //    return (origin.period / 360d) * angleToNode;
         //}
 
-        int intTestheight = 90;
-        int intTestheight2 = 40;
+        int intTestheight = 0;
+        int intTestheight2 = 0;
         int intTestheight3 = 0;
         int intTestheight4 = 0;
-        
+
+        double dblTest = 12;
 
         int intTestDistance = 710000;
         public void FillDebugWindow(int WindowID)
@@ -254,6 +255,8 @@ namespace KerbalAlarmClock
             GUILayout.Label("test4:");
 
 
+            GUILayout.Label("dblTest:");
+
             GUILayout.EndVertical();
             GUILayout.BeginVertical();
 
@@ -262,7 +265,8 @@ namespace KerbalAlarmClock
             intTestheight3 = Convert.ToInt32(GUILayout.TextField(intTestheight3.ToString()));
             intTestheight4 = Convert.ToInt32(GUILayout.TextField(intTestheight4.ToString()));
 
-            KACResources.styleButtonListAlarmActions.fixedWidth = intTestheight2;
+            dblTest = Convert.ToDouble(GUILayout.TextField(dblTest.ToString()));
+
 
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
@@ -281,11 +285,9 @@ namespace KerbalAlarmClock
             }
 
 
-            if (GUILayout.Button("Save"))
-            {
-                //alarms.Save();
-            }
-
+            GUILayout.Label("window: " + ddlSettingsSkin.WindowRect.ToString());
+            GUILayout.Label("button: " + ddlSettingsSkin.rectButton.ToString());
+            GUILayout.Label("list: " + ddlSettingsSkin.rectListBox.ToString());
 
             foreach (KACAlarm item in alarms)
             {

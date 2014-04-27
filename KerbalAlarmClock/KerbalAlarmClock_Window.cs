@@ -345,16 +345,6 @@ namespace KerbalAlarmClock
 
         long EarthWindowHeight = 216;
 
-        internal void DrawWindowsPre()
-        {
-        
-        }
-
-        internal void DrawWindowsPost()
-        {
-
-        }
-
         public void DrawWindows()
         {
 #if DEBUG
@@ -391,6 +381,7 @@ namespace KerbalAlarmClock
             {
                 MainWindowPos.height += intMainWindowEarthTimeHeight;
             }
+            MainWindowPos = MainWindowPos.ClampToScreen();
 
             //Now show the window
             WindowPosByActiveScene = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + settings.Version,KACResources.styleWindow);
@@ -457,7 +448,11 @@ namespace KerbalAlarmClock
                     ResetBackupFailedWindow();
             }
 
-            DrawToolTip();
+            //Set DDL Window Positions
+            SetDDLWindowPositions();
+
+            if (settings.ShowTooltips)
+                DrawToolTip();
         }
 
 
@@ -494,10 +489,10 @@ namespace KerbalAlarmClock
                     {
                         if (SOITooltip != "") SOITooltip += "\r\n";
                         SOITooltip += "SOI Auto Add Enabled";
-                        if (settings.AlarmCatchSOIChange)
-                        {
-                            SOITooltip += "-plus catchall";
-                        }
+                        //if (settings.AlarmCatchSOIChange)
+                        //{
+                        //    SOITooltip += "-plus catchall";
+                        //}
                         if (settings.AlarmAddSOIAuto_ExcludeEVA)
                         {
                             SOITooltip += "-excluding EVA";
@@ -859,7 +854,10 @@ namespace KerbalAlarmClock
             }
             else if (tmpAlarm.HaltWarp)
             {
-                GUILayout.Label(new GUIContent(KACResources.GetWarpListIcon(tmpAlarm.WarpInfluence), "Kill Warp"), KACResources.styleLabelWarp);
+                if (tmpAlarm.AlarmAction== KACAlarm.AlarmActionEnum.KillWarp)
+                    GUILayout.Label(new GUIContent(KACResources.GetWarpListIcon(tmpAlarm.WarpInfluence), "Kill Warp and Message"), KACResources.styleLabelWarp);
+                else
+                    GUILayout.Label(new GUIContent(KACResources.GetWarpListIcon(tmpAlarm.WarpInfluence), "Kill Warp Only"), KACResources.styleLabelWarp);
             }
             else
             {

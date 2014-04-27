@@ -17,7 +17,7 @@ namespace KerbalAlarmClock
 
         int intAlarmDefaultsBoxheight = 105;
         int intUpdateBoxheight = 116;
-        int intSOIBoxheight = 214; //166;
+        int intSOIBoxheight = 178; //166;
 
         KACTimeStringArray timeDefaultMargin = new KACTimeStringArray();
         KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray();
@@ -43,21 +43,6 @@ namespace KerbalAlarmClock
             timeAutoManNodeMargin.BuildFromUT(settings.AlarmAddManAutoMargin);
             timeAutoManNodeThreshold.BuildFromUT(settings.AlarmAddManAutoThreshold);
 
-            contChecksPerSecChoices =  new GUIContent[] { 
-                                new GUIContent("10"), 
-                                new GUIContent("20"), 
-                                new GUIContent("50"), 
-                                new GUIContent("100"), 
-                                new GUIContent("Custom (" + settings.BehaviourChecksPerSec_Custom.ToString() + ")")
-                            };
-            switch (settings.BehaviourChecksPerSec)
-            {
-                case 10: intChecksPerSecChoice = 0; break;
-                case 20: intChecksPerSecChoice = 1; break;
-                case 50: intChecksPerSecChoice = 2; break;
-                case 100: intChecksPerSecChoice = 3; break;
-                default: intChecksPerSecChoice = 4; break;
-            }
         }
 
         public void FillSettingsWindow(int WindowID)
@@ -73,16 +58,18 @@ namespace KerbalAlarmClock
             GUIContent[] contSettingsTabs = new GUIContent[] 
             { 
                 new GUIContent("All Alarms","Global Settings"), 
-                new GUIContent("Specifics-1","SOI, Ap, Pe, AN, DN Specific Settings" ), 
-                new GUIContent("Specifics-2","Man Node Specific Settings"), 
+                //new GUIContent("Specifics-1","SOI, Ap, Pe, AN, DN Specific Settings" ), 
+                //new GUIContent("Specifics-2","Man Node Specific Settings"), 
+                new GUIContent("Alarm Specifics","Specific Settings for Alarm Types"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
                 new GUIContent("About") 
             };
             GUIContent[] contSettingsTabsNewVersion = new GUIContent[] 
             { 
                 new GUIContent("All Alarms","Global Settings"), 
-                new GUIContent("Specifics-1","SOI, Ap, Pe, AN, DN Specific Settings" ), 
-                new GUIContent("Specifics-2","Man Node Specific Settings"), 
+                //new GUIContent("Specifics-1","SOI, Ap, Pe, AN, DN Specific Settings" ), 
+                //new GUIContent("Specifics-2","Man Node Specific Settings"), 
+                new GUIContent("Alarm Specifics","Specific Settings for Alarm Types"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
                 new GUIContent(" About", KACResources.btnSettingsAttention) 
             };
@@ -95,35 +82,61 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 572;//542;
+                    intSettingsHeight = 434;// 572;//542;
                     break;
+                //case 1:
+                //    WindowLayout_SettingsSpecifics1();
+                //    intSettingsHeight = 422;//600; //513;// 374;
+                //    break;
+                //case 2:
+                //    WindowLayout_SettingsSpecifics2();
+                //    intSettingsHeight = 354 ;//600; //513;// 374;
+                //    break;
                 case 1:
-                    WindowLayout_SettingsSpecifics1();
-                    intSettingsHeight = 422;//600; //513;// 374;
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("Select Alarm Type:",KACResources.styleAddHeading,GUILayout.Width(120));
+                    ddlSettingsAlarmSpecs.DrawButton();
+                    GUILayout.EndHorizontal();
+                    switch (SettingsAlarmSpecSelected)
+	                {
+                        case SettingsAlarmSpecsEnum.Default:
+                            WindowLayout_SettingsSpecifics_Default();
+                            intSettingsHeight = 234;
+                            break;
+                        case SettingsAlarmSpecsEnum.ManNode:
+                            WindowLayout_SettingsSpecifics_ManNode();
+                            intSettingsHeight = 318;
+                            break;
+                        case SettingsAlarmSpecsEnum.SOI:
+                            WindowLayout_SettingsSpecifics_SOI();
+                            intSettingsHeight = 288;
+                            break;
+                        case SettingsAlarmSpecsEnum.Other:
+                            WindowLayout_SettingsSpecifics_Other();
+                            intSettingsHeight = 270;
+                            break;
+                        default:
+                            WindowLayout_SettingsSpecifics_Default();
+                            intSettingsHeight = intTestheight;
+                            break;
+	                }
                     break;
                 case 2:
-                    WindowLayout_SettingsSpecifics2();
-                    intSettingsHeight = 354 ;//600; //513;// 374;
-                    break;
-                case 3:
                     WindowLayout_SettingsIcons();
                     intSettingsHeight =  518;//466 //406;
                     break;
-                case 4:
+                case 3:
                     WindowLayout_SettingsAbout();
                     intSettingsHeight = 306;
                     break;
                 default:
                     break;
             }
-
             GUILayout.EndVertical();
 
             SetTooltipText();
         }
 
-        int intChecksPerSecChoice = 0;
-        GUIContent[] contChecksPerSecChoices;
         private void WindowLayout_SettingsGlobal()
         {
             //Preferences
@@ -131,6 +144,11 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
             //two columns
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Styling:", KACResources.styleAddHeading, GUILayout.Width(90));
+            ddlSettingsSkin.DrawButton();
+            GUILayout.EndVertical();
+
             GUILayout.BeginHorizontal();
             if (DrawTextBox(ref settings.AlarmListMaxAlarms, KACResources.styleAddField,GUILayout.Width(45)))
                 settings.Save();
@@ -185,24 +203,17 @@ namespace KerbalAlarmClock
             GUILayout.BeginHorizontal();
 
             GUILayout.Label("Checks per Sec:", KACResources.styleAddHeading, GUILayout.Width(100));
-            if (DrawButtonList(ref intChecksPerSecChoice, contChecksPerSecChoices))
-            {
-                switch (intChecksPerSecChoice)
-                {
-                    case 0: settings.BehaviourChecksPerSec = 10; break;
-                    case 1: settings.BehaviourChecksPerSec = 20; break;
-                    case 2: settings.BehaviourChecksPerSec = 50; break;
-                    case 3: settings.BehaviourChecksPerSec = 100; break;
-                    default: settings.BehaviourChecksPerSec = settings.BehaviourChecksPerSec_Custom; break;
-                }
-                StartRepeatingWorker( settings.BehaviourChecksPerSec);
-                settings.Save();
-            }
-
+            ddlChecksPerSec.DrawButton();
             GUILayout.EndHorizontal();
+
 
             GUILayout.EndVertical();
 
+        }
+
+
+        private void WindowLayout_SettingsSpecifics_Default()
+        {
             GUILayout.Label("Alarm Defaults", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(intAlarmDefaultsBoxheight));
 
@@ -216,7 +227,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Default Alarm Action
-            if (DrawAlarmActionChoice3(ref settings.AlarmDefaultAction, "Default Action:", 108,61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmDefaultAction, "Default Action:", 108, 61))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeDefaultMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Default Margin:", 100))
@@ -230,88 +241,10 @@ namespace KerbalAlarmClock
 
             GUILayout.EndVertical();
         }
-
-        private void WindowLayout_SettingsSpecifics1()
+        private void WindowLayout_SettingsSpecifics_ManNode()
         {
-            //Sperer of Influence Stuff
-            GUILayout.Label("Sphere Of Influence Alarms", KACResources.styleAddSectionHeading);
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(intSOIBoxheight));
-
-            if (DrawCheckbox(ref settings.AlarmSOIRecalc, new GUIContent("Auto Recalc of Manual SOI Alarms", strAlarmDescXfer)))
-            {
-                settings.Save();
-                //if it was turned on then force a recalc regardless of the gap
-                if (settings.AlarmSOIRecalc)
-                {
-                    RecalcSOIAlarmTimes(true);
-                }
-            }
-
-            if (DrawCheckbox(ref settings.AlarmAddSOIAuto, new GUIContent("Detect and Add Alarms for SOI Changes", strAlarmDescSOI)))
-                settings.Save();
-            if (!settings.AlarmAddSOIAuto)
-                settings.AlarmCatchSOIChange = false;
-            if (settings.AlarmAddSOIAuto)
-            {
-                GUILayout.BeginHorizontal();
-                GUILayout.Space(20);
-                if (DrawCheckbox(ref settings.AlarmAddSOIAuto_ExcludeEVA, new GUIContent("Exclude EVA Kerbals from Auto Alarm", "If an EVA'd Kerbal is on an SOI Path dont create an alarm for this scenario")))
-                    settings.Save();
-                GUILayout.EndHorizontal();
-                GUILayout.BeginHorizontal();
-                GUILayout.Space(20);
-                if (DrawCheckbox(ref settings.AlarmCatchSOIChange, new GUIContent("Throw alarm on background SOI Change", "This will throw an alarm whenever the name of the body a ship is orbiting changes.\r\n\r\nIt wont slow time as this approaches, just a big hammer in case we never looked at the flight path before it happened")))
-                    settings.Save();
-                GUILayout.EndHorizontal();
-                GUILayout.Label("SOI Alarm Settings", KACResources.styleAddSectionHeading);
-                if (DrawAlarmActionChoice3(ref settings.AlarmOnSOIChange_Action, "On Alarm:", 108,61))
-                {
-                    settings.Save();
-                }
-                if (DrawTimeEntry(ref timeAutoSOIMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Alarm Margin:", 100))
-                {
-                    //convert it and save it in the settings
-                    settings.AlarmAutoSOIMargin = timeAutoSOIMargin.UT;
-                    settings.Save();
-                }
-
-            }
-            GUILayout.EndVertical();
-
-            //Transfer Alarm Stuff
-            GUILayout.Label("Transfer Alarms", KACResources.styleAddSectionHeading);
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawCheckbox(ref settings.AlarmXferRecalc, new GUIContent("Auto Recalc of Transfer points", strAlarmDescXfer)))
-            {
-                settings.Save();
-                //if it was turned on then force a recalc regardless of the gap
-                if (settings.AlarmXferRecalc)
-                {
-                    RecalcTransferAlarmTimes(true);
-                }
-            }
-            GUILayout.EndVertical();
-
-            //Node Alarm Stuff
-            GUILayout.Label("Orbital Node Alarms (Ap, Pe, AN, DN)", KACResources.styleAddSectionHeading);
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawCheckbox(ref settings.AlarmNodeRecalc, new GUIContent("Auto Recalc of Node points", strAlarmDescNode)))
-            {
-                settings.Save();
-                //if it was turned on then force a recalc regardless of the gap
-                if (settings.AlarmNodeRecalc)
-                {
-                    RecalcNodeAlarmTimes(true);
-                }
-            }
-            GUILayout.EndVertical();
-        }
-
-        private void WindowLayout_SettingsSpecifics2()
-        {
-            //Transfer Alarm Stuff
             GUILayout.Label("Maneuver Alarms", KACResources.styleAddSectionHeading);
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas,GUILayout.Height(207)); //155
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(207)); //155
             if (DrawCheckbox(ref settings.AlarmAddManAuto, new GUIContent("Detect and Add Alarms for Maneuver Nodes", strAlarmDescMan)))
             {
                 settings.Save();
@@ -328,15 +261,15 @@ namespace KerbalAlarmClock
                     settings.Save();
                 }
                 GUILayout.Label("Dont Add New alarms if Man node is closer than this threshold", KACResources.styleAddHeading);
-                if (DrawTimeEntry(ref timeAutoManNodeThreshold , KACTimeStringArray.TimeEntryPrecision.Hours, "Threshold:", 100))
+                if (DrawTimeEntry(ref timeAutoManNodeThreshold, KACTimeStringArray.TimeEntryPrecision.Hours, "Threshold:", 100))
                 {
                     //convert it and save it in the settings
-                    settings.AlarmAddManAutoThreshold= timeAutoManNodeThreshold.UT;
+                    settings.AlarmAddManAutoThreshold = timeAutoManNodeThreshold.UT;
                     settings.Save();
                 }
 
                 GUILayout.Label("Man Node Alarm Settings", KACResources.styleAddSectionHeading);
-                if (DrawAlarmActionChoice3(ref settings.AlarmAddManAuto_Action, "On Alarm:", 108,61))
+                if (DrawAlarmActionChoice3(ref settings.AlarmAddManAuto_Action, "On Alarm:", 108, 61))
                 {
                     settings.Save();
                 }
@@ -349,7 +282,56 @@ namespace KerbalAlarmClock
 
             }
             GUILayout.EndVertical();
+        }
+        private void WindowLayout_SettingsSpecifics_SOI()
+        {
+            //Sphere of Influence Stuff
+            GUILayout.Label("Sphere Of Influence Alarms", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(intSOIBoxheight));
 
+            if (DrawCheckbox(ref settings.AlarmSOIRecalc, new GUIContent("Auto Recalc of Manual SOI Alarms", strAlarmDescXfer)))
+            {
+                settings.Save();
+                //if it was turned on then force a recalc regardless of the gap
+                if (settings.AlarmSOIRecalc)
+                {
+                    RecalcSOIAlarmTimes(true);
+                }
+            }
+
+            if (DrawCheckbox(ref settings.AlarmAddSOIAuto, new GUIContent("Detect and Add Alarms for SOI Changes", strAlarmDescSOI)))
+                settings.Save();
+            //if (!settings.AlarmAddSOIAuto)
+            //    settings.AlarmCatchSOIChange = false;
+            if (settings.AlarmAddSOIAuto)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(20);
+                if (DrawCheckbox(ref settings.AlarmAddSOIAuto_ExcludeEVA, new GUIContent("Exclude EVA Kerbals from Auto Alarm", "If an EVA'd Kerbal is on an SOI Path dont create an alarm for this scenario")))
+                    settings.Save();
+                GUILayout.EndHorizontal();
+                //GUILayout.BeginHorizontal();
+                //GUILayout.Space(20);
+                //if (DrawCheckbox(ref settings.AlarmCatchSOIChange, new GUIContent("Throw alarm on background SOI Change", "This will throw an alarm whenever the name of the body a ship is orbiting changes.\r\n\r\nIt wont slow time as this approaches, just a big hammer in case we never looked at the flight path before it happened")))
+                //    settings.Save();
+                //GUILayout.EndHorizontal();
+                GUILayout.Label("SOI Alarm Settings", KACResources.styleAddSectionHeading);
+                if (DrawAlarmActionChoice3(ref settings.AlarmOnSOIChange_Action, "On Alarm:", 108, 61))
+                {
+                    settings.Save();
+                }
+                if (DrawTimeEntry(ref timeAutoSOIMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Alarm Margin:", 100))
+                {
+                    //convert it and save it in the settings
+                    settings.AlarmAutoSOIMargin = timeAutoSOIMargin.UT;
+                    settings.Save();
+                }
+
+            }
+            GUILayout.EndVertical();
+        }
+        private void WindowLayout_SettingsSpecifics_Other()
+        {
             //Crew Alarm Stuff
             GUILayout.Label("Crew Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
@@ -361,8 +343,34 @@ namespace KerbalAlarmClock
 
             GUILayout.EndVertical();
 
-        }
+            //Node Alarm Stuff
+            GUILayout.Label("Orbital Node Alarms (Ap, Pe, AN, DN)", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            if (DrawCheckbox(ref settings.AlarmNodeRecalc, new GUIContent("Auto Recalc of Node points", strAlarmDescNode)))
+            {
+                settings.Save();
+                //if it was turned on then force a recalc regardless of the gap
+                if (settings.AlarmNodeRecalc)
+                {
+                    RecalcNodeAlarmTimes(true);
+                }
+            }
+            GUILayout.EndVertical();
 
+            //Transfer Alarm Stuff
+            GUILayout.Label("Transfer Alarms", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            if (DrawCheckbox(ref settings.AlarmXferRecalc, new GUIContent("Auto Recalc of Transfer points", strAlarmDescXfer)))
+            {
+                settings.Save();
+                //if it was turned on then force a recalc regardless of the gap
+                if (settings.AlarmXferRecalc)
+                {
+                    RecalcTransferAlarmTimes(true);
+                }
+            }
+            GUILayout.EndVertical();
+        }
 
         private void WindowLayout_SettingsIcons()
         {

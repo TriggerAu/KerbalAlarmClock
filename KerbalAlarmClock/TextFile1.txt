@@ -1,8 +1,6 @@
 ﻿Not option to choose nonmodelled data when no file
 
 
-Checks per sec as a drop down
+Remove code around AlarmCatchSOIChange - already commented
 
 
-
-Remove peridoic save stuff

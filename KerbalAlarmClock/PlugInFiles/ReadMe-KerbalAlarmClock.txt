@@ -32,9 +32,12 @@ Version 3.0.0.0
 - New Toolbar Wrapper - official one
 - Restructure plugin folders
 - Restructure settings
-- Skins - part done
-- Alarm Saving
+- Skins and selector
+- Alarm Saving - now in the games save file
 - Added Kill Warp with No Message action and restructured buttons/code behind
+- Removed periodic save of alarms file now that alarms are in the save files
+- Adjusted settings tabs to better layout options
+- Screen clamping on main window
 
 Restructure Alamrs list and storage into save file scenario
 alarmlist.add/remove should save as it goes

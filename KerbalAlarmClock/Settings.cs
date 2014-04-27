@@ -116,7 +116,7 @@ namespace KerbalAlarmClock
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManAuto_Action = KACAlarm.AlarmActionEnum.KillWarp;
 
         //public double AlarmAddSOIMargin = 120;
-        [Persistent] internal Boolean AlarmCatchSOIChange = false;
+        //[Persistent] internal Boolean AlarmCatchSOIChange = false;
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnSOIChange_Action = KACAlarm.AlarmActionEnum.KillWarp;
 
         [Persistent] internal Boolean AlarmCrewDefaultStoreNode = false;

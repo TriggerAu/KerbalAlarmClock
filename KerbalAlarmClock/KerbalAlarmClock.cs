@@ -112,6 +112,8 @@ namespace KerbalAlarmClock
 
             //Set up the updating function - do this 5 times a sec not on every frame.
             StartRepeatingWorker(settings.BehaviourChecksPerSec);
+
+            InitDropDowns();
         }
 
         internal override void Start()
@@ -129,6 +131,8 @@ namespace KerbalAlarmClock
         internal override void OnDestroy()
         {
             LogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
+
+            DestroyDropDowns();
 
             DestroyToolbarButton(btnToolbarKAC);
         }
@@ -272,6 +276,7 @@ namespace KerbalAlarmClock
 
             KACResources.InitSkins();
 
+            InitDDLStyles();
             //Called by SetSkin
             //KACResources.SetStyles();
 
@@ -357,7 +362,6 @@ namespace KerbalAlarmClock
 
         //Updates the variables that are used in the drawing - this is not on the OnGUI thread
         private Dictionary<String, KACVesselSOI> lstVessels = new Dictionary<String,KACVesselSOI>();
-        int intPeriodicSaveCounter=0;
         public void UpdateDetails()
         {
             KACWorkerGameState.SetCurrentFlightStates();
@@ -430,10 +434,10 @@ namespace KerbalAlarmClock
                 {
                     MonitorSOIOnPath();                 
                     //Are we doing the base catchall
-                    if (settings.AlarmCatchSOIChange)
-                    {
-                        GlobalSOICatchAll(KerbalAlarmClock.UpdateInterval * TimeWarp.CurrentRate);
-                    }
+                    //if (settings.AlarmCatchSOIChange)
+                    //{
+                    //    GlobalSOICatchAll(KerbalAlarmClock.UpdateInterval * TimeWarp.CurrentRate);
+                    //}
                 }
 
 
@@ -464,30 +468,6 @@ namespace KerbalAlarmClock
                 {
                     MonitorManNodeOnPath();
                 }
-
-
-                //Periodically save the alarms list if any of the recalcs are on and the current vessel has alarms of that type
-                //if its one in twenty then resave - every 5 secs
-                intPeriodicSaveCounter++;
-                if (intPeriodicSaveCounter > (5/KerbalAlarmClock.UpdateInterval))
-                {
-                    intPeriodicSaveCounter = 0;
-                    Boolean blnPeriodicSave = false;
-                    if (settings.AlarmXferRecalc && alarms.FirstOrDefault(a=>a.TypeOfAlarm== KACAlarm.AlarmType.Transfer)!=null)
-                        blnPeriodicSave=true;
-                    else if (settings.AlarmAddSOIAuto && alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChangeAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
-                        blnPeriodicSave = true;
-                    else if (settings.AlarmSOIRecalc && alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
-                        blnPeriodicSave = true;
-                    else if (settings.AlarmNodeRecalc && alarms.FirstOrDefault(a => TypesToRecalc.Contains(a.TypeOfAlarm) && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
-                        blnPeriodicSave = true;
-                    else if (settings.AlarmAddManAuto && alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.ManeuverAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()) != null)
-                        blnPeriodicSave = true;
-
-                    //if (blnPeriodicSave)
-                    //    alarms.Save();
-                }
-
             }
 
             //Do we need to turn off the global warp light
@@ -698,64 +678,64 @@ namespace KerbalAlarmClock
             }
         }
 
-        private void GlobalSOICatchAll(double SecondsTillNextUpdate)
-        {
-            foreach (Vessel tmpVessel in FlightGlobals.Vessels)
-            {
-                //only track vessels, not debris, EVA, etc
-                //and not the current vessel
-                //and no SOI alarm for it within the threshold - THIS BIT NEEDS TUNING
-                if (settings.VesselTypesForSOI.Contains(tmpVessel.vesselType) && (tmpVessel!=KACWorkerGameState.CurrentVessel) &&
-                    (alarms.FirstOrDefault(a => 
-                        (a.VesselID == tmpVessel.id.ToString() && 
-                        (a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange) &&
-                        (Math.Abs(a.Remaining.UT) < SecondsTillNextUpdate + settings.AlarmAddSOIAutoThreshold)
-                        )) == null)
-                    )
+        //private void GlobalSOICatchAll(double SecondsTillNextUpdate)
+        //{
+        //    foreach (Vessel tmpVessel in FlightGlobals.Vessels)
+        //    {
+        //        //only track vessels, not debris, EVA, etc
+        //        //and not the current vessel
+        //        //and no SOI alarm for it within the threshold - THIS BIT NEEDS TUNING
+        //        if (settings.VesselTypesForSOI.Contains(tmpVessel.vesselType) && (tmpVessel!=KACWorkerGameState.CurrentVessel) &&
+        //            (alarms.FirstOrDefault(a => 
+        //                (a.VesselID == tmpVessel.id.ToString() && 
+        //                (a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange) &&
+        //                (Math.Abs(a.Remaining.UT) < SecondsTillNextUpdate + settings.AlarmAddSOIAutoThreshold)
+        //                )) == null)
+        //            )
 
-                {
-                    if (lstVessels.ContainsKey(tmpVessel.id.ToString()) == false)
-                    {
-                        //Add new Vessels
-                        LogFormatted(String.Format("Adding {0}-{1}-{2}-{3}", tmpVessel.id, tmpVessel.vesselName, tmpVessel.vesselType, tmpVessel.mainBody.bodyName));
-                        lstVessels.Add(tmpVessel.id.ToString(), new KACVesselSOI(tmpVessel.vesselName, tmpVessel.mainBody.bodyName));
-                    }
-                    else
-                    {
-                        //get this vessel from the memory array we are keeping and compare to its SOI
-                        if (lstVessels[tmpVessel.id.ToString()].SOIName != tmpVessel.mainBody.bodyName)
-                        {
-                            //Set a new alarm to display now
-                            KACAlarm newAlarm = new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), tmpVessel.vesselName + "- SOI Catch",
-                                tmpVessel.vesselName + " Has entered a new Sphere of Influence\r\n" +
-                                "     Old SOI: " + lstVessels[tmpVessel.id.ToString()].SOIName + "\r\n" +
-                                "     New SOI: " + tmpVessel.mainBody.bodyName,
-                                 KACWorkerGameState.CurrentTime.UT, 0, KACAlarm.AlarmType.SOIChange,
-                                settings.AlarmOnSOIChange_Action );
-                            alarms.Add(newAlarm);
+        //        {
+        //            if (lstVessels.ContainsKey(tmpVessel.id.ToString()) == false)
+        //            {
+        //                //Add new Vessels
+        //                LogFormatted(String.Format("Adding {0}-{1}-{2}-{3}", tmpVessel.id, tmpVessel.vesselName, tmpVessel.vesselType, tmpVessel.mainBody.bodyName));
+        //                lstVessels.Add(tmpVessel.id.ToString(), new KACVesselSOI(tmpVessel.vesselName, tmpVessel.mainBody.bodyName));
+        //            }
+        //            else
+        //            {
+        //                //get this vessel from the memory array we are keeping and compare to its SOI
+        //                if (lstVessels[tmpVessel.id.ToString()].SOIName != tmpVessel.mainBody.bodyName)
+        //                {
+        //                    //Set a new alarm to display now
+        //                    KACAlarm newAlarm = new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), tmpVessel.vesselName + "- SOI Catch",
+        //                        tmpVessel.vesselName + " Has entered a new Sphere of Influence\r\n" +
+        //                        "     Old SOI: " + lstVessels[tmpVessel.id.ToString()].SOIName + "\r\n" +
+        //                        "     New SOI: " + tmpVessel.mainBody.bodyName,
+        //                         KACWorkerGameState.CurrentTime.UT, 0, KACAlarm.AlarmType.SOIChange,
+        //                        settings.AlarmOnSOIChange_Action );
+        //                    alarms.Add(newAlarm);
 
-                            LogFormatted("Triggering SOI Alarm - " + newAlarm.Name);
-                            newAlarm.Triggered = true;
-                            newAlarm.Actioned = true;
-                            if (settings.AlarmOnSOIChange_Action == KACAlarm.AlarmActionEnum.PauseGame)
-                            {
-                                LogFormatted(String.Format("{0}-Pausing Game", newAlarm.Name));
-                                TimeWarp.SetRate(0, true);
-                                FlightDriver.SetPause(true);
-                            }
-                            else if (settings.AlarmOnSOIChange_Action != KACAlarm.AlarmActionEnum.MessageOnly)
-                            {
-                                LogFormatted(String.Format("{0}-Halt Warp", newAlarm.Name));
-                                TimeWarp.SetRate(0, true);
-                            }
+        //                    LogFormatted("Triggering SOI Alarm - " + newAlarm.Name);
+        //                    newAlarm.Triggered = true;
+        //                    newAlarm.Actioned = true;
+        //                    if (settings.AlarmOnSOIChange_Action == KACAlarm.AlarmActionEnum.PauseGame)
+        //                    {
+        //                        LogFormatted(String.Format("{0}-Pausing Game", newAlarm.Name));
+        //                        TimeWarp.SetRate(0, true);
+        //                        FlightDriver.SetPause(true);
+        //                    }
+        //                    else if (settings.AlarmOnSOIChange_Action != KACAlarm.AlarmActionEnum.MessageOnly)
+        //                    {
+        //                        LogFormatted(String.Format("{0}-Halt Warp", newAlarm.Name));
+        //                        TimeWarp.SetRate(0, true);
+        //                    }
 
-                            //reset the name String for next check
-                            lstVessels[tmpVessel.id.ToString()].SOIName = tmpVessel.mainBody.bodyName;
-                        }
-                    }
-                }
-            }
-        }
+        //                    //reset the name String for next check
+        //                    lstVessels[tmpVessel.id.ToString()].SOIName = tmpVessel.mainBody.bodyName;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         private void MonitorManNodeOnPath()
         {

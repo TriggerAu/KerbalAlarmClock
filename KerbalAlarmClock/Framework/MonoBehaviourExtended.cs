@@ -390,7 +390,7 @@ namespace KSPPluginFramework
         [System.Diagnostics.Conditional("DEBUG")]
         internal static void LogFormatted_DebugOnly(String Message, params object[] strParams)
         {
-            LogFormatted(Message, strParams);
+            LogFormatted("DEBUG: " + Message, strParams);
         }
 
         /// <summary>

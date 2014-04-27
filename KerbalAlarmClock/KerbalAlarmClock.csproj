@@ -54,8 +54,10 @@
     <Compile Include="AlarmObjects.cs" />
     <Compile Include="FrameworkExt\Extensions.cs" />
     <Compile Include="Framework\ConfigNodeStorage.cs" />
+    <Compile Include="Framework\ExtensionsUnity.cs" />
     <Compile Include="Framework\MonoBehaviourExtended.cs" />
     <Compile Include="Framework\ToolbarWrapper.cs" />
+    <Compile Include="KerbalAlarmClock_WindowDropDowns.cs" />
     <Compile Include="KerbalAlarmClock_GameState.cs" />
     <Compile Include="KerbalAlarmClock_ScenarioModule.cs" />
     <Compile Include="KerbalAlarmClock_ToolbarButtons.cs" />

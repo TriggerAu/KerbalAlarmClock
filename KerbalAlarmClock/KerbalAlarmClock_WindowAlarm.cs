@@ -26,6 +26,8 @@ namespace KerbalAlarmClock
                         if (tmpAlarm.Triggered && !tmpAlarm.Actioned)
                         {
                             tmpAlarm.Actioned = true;
+                            if (tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.KillWarpOnly)
+                                tmpAlarm.AlarmWindowClosed = true;
                             LogFormatted("Actioning Alarm");
                         }
                         if (tmpAlarm.Actioned && !tmpAlarm.AlarmWindowClosed)

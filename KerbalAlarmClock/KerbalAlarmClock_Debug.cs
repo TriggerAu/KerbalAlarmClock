@@ -262,6 +262,15 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
+
+            GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count));
+            GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.AlarmListMaxAlarmsInt));
+            foreach (KACAlarm item in KerbalAlarmClock.Settings.Alarms)
+            {
+                GUILayout.Label(String.Format("{0} ({1},{2})", item.Name, item.AlarmLineWidth, item.AlarmLineHeight));
+            }
+
+
             GUILayout.Label("Time:" + GameSettings.KERBIN_TIME.ToString());
             GUILayout.Label("ManMargin:" + KerbalAlarmClock.Settings.AlarmAddManAutoMargin.ToString());
 

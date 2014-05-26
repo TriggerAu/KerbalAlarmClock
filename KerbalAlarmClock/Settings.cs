@@ -471,9 +471,10 @@ namespace KerbalAlarmClock
             KACWorker.DebugLogFormatted("Saved Alarms");
         }
 
-        public void SaveAlarms()
+        public void SaveAlarms(Boolean BypassLogging=false)
         {
-            KACWorker.DebugLogFormatted("Saving Alarms-v3");
+            if (!BypassLogging)
+                KACWorker.DebugLogFormatted("Saving Alarms-v3");
 
             KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title));
             //Write the header

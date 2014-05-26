@@ -502,7 +502,7 @@ namespace KerbalAlarmClock
                         blnPeriodicSave = true;
 
                     if (blnPeriodicSave)
-                        Settings.SaveAlarms();
+                        Settings.SaveAlarms(true);
                 }
 
             }

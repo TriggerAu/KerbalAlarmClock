@@ -331,14 +331,18 @@ namespace KerbalAlarmClock
                 //    GUILayout.Label("Equatorial Nodes (No Vessel Target)", KACResources.styleAddXferName, GUILayout.Height(18));
                 //else
                 //{
-                //    if (KACWorkerGameState.CurrentVessel.orbit.referenceBody ==KACWorkerGameState.CurrentVesselTarget.GetOrbit().referenceBody)
+                //    if (KACWorkerGameState.CurrentVessel.orbit.referenceBody == KACWorkerGameState.CurrentVesselTarget.GetOrbit().referenceBody)
                 //    {
                 //        if (KACWorkerGameState.CurrentVesselTarget is Vessel)
                 //            GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName, GUILayout.Height(18));
                 //        else if (KACWorkerGameState.CurrentVesselTarget is CelestialBody)
                 //            GUILayout.Label("Target Body: " + ((CelestialBody)KACWorkerGameState.CurrentVesselTarget).bodyName, KACResources.styleAddXferName, GUILayout.Height(18));
                 //        else
+                //        {
                 //            GUILayout.Label("Object Targeted", KACResources.styleAddXferName, GUILayout.Height(18));
+                //            GUILayout.Label(String.Format("{0}", KACWorkerGameState.CurrentVesselTarget.GetType().Name));
+                //        }
+
                 //        //GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName, GUILayout.Height(18));
                 //    }
                 //    else

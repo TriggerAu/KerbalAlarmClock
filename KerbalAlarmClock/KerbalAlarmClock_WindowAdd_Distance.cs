@@ -41,7 +41,7 @@ namespace KerbalAlarmClock
                 GUILayout.Label("No Active Vessel");
             else
             {
-                if (!(KACWorkerGameState.CurrentVesselTarget is Vessel))
+                if (!(KACWorkerGameState.CurrentVesselTarget is Vessel) && !(KACWorkerGameState.CurrentVesselTarget is ModuleDockingNode))
                 {
                     GUILayout.Label("No valid Vessel Target Selected", GUILayout.ExpandWidth(true));
                 }

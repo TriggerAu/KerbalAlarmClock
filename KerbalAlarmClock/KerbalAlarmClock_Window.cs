@@ -370,10 +370,15 @@ namespace KerbalAlarmClock
                     if (alarms.Count<2)
                         MainWindowPos.height = intMainWindowBaseHeight;
                     else if (alarms.Count < settings.AlarmListMaxAlarmsInt)
-                        MainWindowPos.height = intMainWindowBaseHeight + ((alarms.Count - 1) * intMainWindowAlarmListItemHeight);
+                        MainWindowPos.height = intMainWindowBaseHeight + 
+                            ((alarms.Count - 1) * intMainWindowAlarmListItemHeight) +
+                            alarms.Sum(x=>x.AlarmLineHeightExtra);
                     else
                         //this is scrolling
-                        MainWindowPos.height = (intMainWindowBaseHeight -3) + ((settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) + intMainWindowAlarmListScrollPad;
+                        MainWindowPos.height = (intMainWindowBaseHeight -3) + 
+                            ((settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) + 
+                            alarms.Take(settings.AlarmListMaxAlarmsInt).Sum(x=>x.AlarmLineHeightExtra) +
+                            intMainWindowAlarmListScrollPad;
                 }
                 else MainWindowPos.height = intMainWindowBaseHeight+2;
             }
@@ -821,6 +826,15 @@ namespace KerbalAlarmClock
             if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))
                 styleLabel.normal.textColor=Color.gray;
             GUIContent contAlarmLabel = new GUIContent(strLabelText, tmpAlarm.Notes);
+
+            //Calc the line height
+            Single sOutMin1, sOutMax1;
+            styleLabel.CalcMinMaxWidth(contAlarmLabel, out sOutMin1, out sOutMax1);
+            tmpAlarm.AlarmLineWidth = Convert.ToInt32(sOutMax1);
+            Int32 intMaxwidth = 220;// 228;
+            if (_ShowEditPane && (alarmEdit == tmpAlarm)) intMaxwidth = 198;// 216;
+            tmpAlarm.AlarmLineHeight = Convert.ToInt32(styleLabel.CalcHeight(contAlarmLabel, intMaxwidth));
+
             //Draw a button that looks like a label.
             if (GUILayout.Button(contAlarmLabel, styleLabel, GUILayout.MaxWidth(218)))
             {

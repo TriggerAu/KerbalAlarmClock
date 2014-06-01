@@ -38,6 +38,7 @@ Version 3.0.0.0
 - Removed periodic save of alarms file now that alarms are in the save files
 - Adjusted settings tabs to better layout options
 - Screen clamping on main window
+- Sorted the multiline alarm display stuff
 
 Restructure Alamrs list and storage into save file scenario
 alarmlist.add/remove should save as it goes

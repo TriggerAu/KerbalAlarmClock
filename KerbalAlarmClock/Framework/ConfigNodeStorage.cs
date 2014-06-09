@@ -1,4 +1,11 @@
-﻿using System;
+﻿/* Part of KSPPluginFramework
+Version 1.2
+
+Forum Thread:http://forum.kerbalspaceprogram.com/threads/66503-KSP-Plugin-Framework
+Author: TriggerAu, 2014
+License: The MIT License (MIT)
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -104,7 +111,7 @@ namespace KSPPluginFramework
             Boolean blnReturn = false;
             try
             {
-                LogFormatted_DebugOnly("Loading Settings");
+                LogFormatted_DebugOnly("Loading ConfigNode");
                 if (FileExists)
                 {
                     //Load the file into a config node
@@ -223,7 +230,7 @@ namespace KSPPluginFramework
         [System.Diagnostics.Conditional("DEBUG")]
         internal static void LogFormatted_DebugOnly(String Message, params object[] strParams)
         {
-            LogFormatted(Message, strParams);
+            LogFormatted("DEBUG: " + Message, strParams);
         }
 
         /// <summary>

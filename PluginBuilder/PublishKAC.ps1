@@ -12,7 +12,7 @@ if ($Version -eq "")
 }
 else
 {
-    $Path = "$UploadDir\v$($Version)\$($PluginName)_$($Version)\GameData\TriggerTech\$($PluginName)\$($PluginName).dll"
+    $Path = "$UploadDir\v$($Version)\$($PluginName)_$($Version)\GameData\TriggerTech\$($PluginName).dll"
     "DLL Path:`t$($Path)"
     if (Test-Path $Path)
     {

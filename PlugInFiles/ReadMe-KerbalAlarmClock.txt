@@ -28,6 +28,13 @@ LICENSE
 Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.7.4.0		-	KSP Version: 0.23.5
+- Removed log message on periodic saves (Issue #25)
+- Window height now adjusts for Multiline Alarms (Issue #15)
+- Closest Approach Alarms now allow target of Docking Port (Issue #1)
+- Fixed duplication of Manuever Nodes on Ship Jump (Issue #23)
+- Changed latest version file source to be Google site (smaller file)
+
 Version 2.7.3.0		-	KSP Version: 0.23.5
 - Fixed the pesky bug with the auto alarm periods not saving
 

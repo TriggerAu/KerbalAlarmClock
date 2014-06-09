@@ -500,7 +500,8 @@ namespace KerbalAlarmClock
 
                 KACWorker.DebugLogFormatted("Reading version from Web");
                 //Page content FormatException is |LATESTVERSION|1.2.0.0|LATESTVERSION|
-                WWW www = new WWW("http://kerbalalarmclock.codeplex.com/wikipage?title=LatestVersion");
+                //WWW www = new WWW("http://kerbalalarmclock.codeplex.com/wikipage?title=LatestVersion");
+                WWW www = new WWW("https://sites.google.com/site/kerbalalarmclock/latestversion");
                 while (!www.isDone) { }
 
                 //Parse it for the version String

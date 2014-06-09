@@ -368,11 +368,16 @@ namespace KerbalAlarmClock
                 {
                     if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count<2)
                         MainWindowPos.height = intMainWindowBaseHeight;
-                    else if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count < Settings.AlarmListMaxAlarmsInt)
-                        MainWindowPos.height = intMainWindowBaseHeight + ((Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count - 1) * intMainWindowAlarmListItemHeight);
+                    else if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count <= Settings.AlarmListMaxAlarmsInt)
+                        MainWindowPos.height = intMainWindowBaseHeight + 
+                            ((Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count - 1) * intMainWindowAlarmListItemHeight) +
+                            Settings.Alarms.Sum(x=>x.AlarmLineHeightExtra);
                     else
                         //this is scrolling
-                        MainWindowPos.height = (intMainWindowBaseHeight -3) + ((Settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) + intMainWindowAlarmListScrollPad;
+                        MainWindowPos.height = (intMainWindowBaseHeight -3) + 
+                            ((Settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) +
+                            Settings.Alarms.Take(Settings.AlarmListMaxAlarmsInt).Sum(x => x.AlarmLineHeightExtra) +
+                            intMainWindowAlarmListScrollPad;
                 }
                 else MainWindowPos.height = intMainWindowBaseHeight+2;
             }
@@ -815,6 +820,19 @@ namespace KerbalAlarmClock
             if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))
                 styleLabel.normal.textColor=Color.gray;
             GUIContent contAlarmLabel = new GUIContent(strLabelText, tmpAlarm.Notes);
+
+            //Calc the line height
+            ////////////////////////////////////////////////////
+            //Currently the max width doesnt work out when an alarm is in edit mode correctly in edit mode
+            //Also need to test max list length and when the scrollbar kicks in
+            ///////////////////////////////////////////////////
+            Single sOutMin1,sOutMax1;
+            styleLabel.CalcMinMaxWidth(contAlarmLabel,out sOutMin1, out sOutMax1);
+            tmpAlarm.AlarmLineWidth  = Convert.ToInt32(sOutMax1);
+            Int32 intMaxwidth = 220;// 228;
+            if (_ShowEditPane && (alarmEdit == tmpAlarm)) intMaxwidth = 198;// 216;
+            tmpAlarm.AlarmLineHeight = Convert.ToInt32(styleLabel.CalcHeight(contAlarmLabel, intMaxwidth));
+
             //Draw a button that looks like a label.
             if (GUILayout.Button(contAlarmLabel, styleLabel, GUILayout.MaxWidth(218)))
             {

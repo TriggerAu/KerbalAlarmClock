@@ -395,6 +395,7 @@ namespace KerbalAlarmClock
                     List<ManeuverNode> manNodesToRestore = KACAlarm.ManNodeDeserializeList(Settings.LoadManNode);
                     manToRestoreAttempts += 1;
                     DebugLogFormatted("Attempting to restore a maneuver node-Try {0}",manToRestoreAttempts.ToString());
+                    FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.Clear();
                     RestoreManeuverNodeList(manNodesToRestore);
                     if (KACWorkerGameState.ManeuverNodeExists)
                     {
@@ -502,7 +503,7 @@ namespace KerbalAlarmClock
                         blnPeriodicSave = true;
 
                     if (blnPeriodicSave)
-                        Settings.SaveAlarms();
+                        Settings.SaveAlarms(true);
                 }
 
             }

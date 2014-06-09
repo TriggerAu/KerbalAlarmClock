@@ -262,6 +262,15 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
+
+            GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count));
+            GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.AlarmListMaxAlarmsInt));
+            foreach (KACAlarm item in KerbalAlarmClock.Settings.Alarms)
+            {
+                GUILayout.Label(String.Format("{0} ({1},{2})", item.Name, item.AlarmLineWidth, item.AlarmLineHeight));
+            }
+
+
             GUILayout.Label("Time:" + GameSettings.KERBIN_TIME.ToString());
             GUILayout.Label("ManMargin:" + KerbalAlarmClock.Settings.AlarmAddManAutoMargin.ToString());
 
@@ -322,14 +331,18 @@ namespace KerbalAlarmClock
                 //    GUILayout.Label("Equatorial Nodes (No Vessel Target)", KACResources.styleAddXferName, GUILayout.Height(18));
                 //else
                 //{
-                //    if (KACWorkerGameState.CurrentVessel.orbit.referenceBody ==KACWorkerGameState.CurrentVesselTarget.GetOrbit().referenceBody)
+                //    if (KACWorkerGameState.CurrentVessel.orbit.referenceBody == KACWorkerGameState.CurrentVesselTarget.GetOrbit().referenceBody)
                 //    {
                 //        if (KACWorkerGameState.CurrentVesselTarget is Vessel)
                 //            GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName, GUILayout.Height(18));
                 //        else if (KACWorkerGameState.CurrentVesselTarget is CelestialBody)
                 //            GUILayout.Label("Target Body: " + ((CelestialBody)KACWorkerGameState.CurrentVesselTarget).bodyName, KACResources.styleAddXferName, GUILayout.Height(18));
                 //        else
+                //        {
                 //            GUILayout.Label("Object Targeted", KACResources.styleAddXferName, GUILayout.Height(18));
+                //            GUILayout.Label(String.Format("{0}", KACWorkerGameState.CurrentVesselTarget.GetType().Name));
+                //        }
+
                 //        //GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName, GUILayout.Height(18));
                 //    }
                 //    else

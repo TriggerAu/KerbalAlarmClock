@@ -471,9 +471,10 @@ namespace KerbalAlarmClock
             KACWorker.DebugLogFormatted("Saved Alarms");
         }
 
-        public void SaveAlarms()
+        public void SaveAlarms(Boolean BypassLogging=false)
         {
-            KACWorker.DebugLogFormatted("Saving Alarms-v3");
+            if (!BypassLogging)
+                KACWorker.DebugLogFormatted("Saving Alarms-v3");
 
             KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title));
             //Write the header
@@ -499,7 +500,8 @@ namespace KerbalAlarmClock
 
                 KACWorker.DebugLogFormatted("Reading version from Web");
                 //Page content FormatException is |LATESTVERSION|1.2.0.0|LATESTVERSION|
-                WWW www = new WWW("http://kerbalalarmclock.codeplex.com/wikipage?title=LatestVersion");
+                //WWW www = new WWW("http://kerbalalarmclock.codeplex.com/wikipage?title=LatestVersion");
+                WWW www = new WWW("https://sites.google.com/site/kerbalalarmclock/latestversion");
                 while (!www.isDone) { }
 
                 //Parse it for the version String

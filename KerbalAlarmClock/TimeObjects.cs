@@ -542,7 +542,10 @@ namespace KerbalAlarmClock
         public Boolean AlarmWindowClosed = false;
 
         //Details of the alarm message
-        public Boolean EditWindowOpen=false;                                        
+        public Boolean EditWindowOpen=false;
+        public Int32 AlarmLineWidth = 0;
+        public Int32 AlarmLineHeight = 0;
+        public Int32 AlarmLineHeightExtra { get { return (AlarmLineHeight>22)?AlarmLineHeight-22:0; } }
         
         #region "Constructors"
         public KACAlarm()

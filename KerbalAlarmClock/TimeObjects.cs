@@ -455,6 +455,13 @@ namespace KerbalAlarmClock
             {6,AlarmType.Transfer },
             {7,AlarmType.Crew }
         };
+        public static Dictionary<int, AlarmType> AlarmTypeFromButtonTS = new Dictionary<int, AlarmType>() {
+            {0,AlarmType.Raw},
+            {1,AlarmType.Maneuver },
+            {2,AlarmType.SOIChange },
+            {3,AlarmType.Transfer },
+            {7,AlarmType.Crew }
+        };
 
 
 

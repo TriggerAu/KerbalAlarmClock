@@ -243,6 +243,19 @@ namespace KerbalAlarmClock
                 new GUIContent(KACResources.btnRaw,"Raw Time Alarm")
             };
 
+        GUIContent[] guiTypesSpaceCenter = new GUIContent[]
+            {
+                new GUIContent(KACResources.btnRaw,"Raw Time Alarm"),
+                //new GUIContent(KACResources.btnXfer,"Transfer Window")
+            };
+        GUIContent[] guiTypesTrackingStation = new GUIContent[]
+            {
+                new GUIContent(KACResources.btnRaw,"Raw Time Alarm"),
+                new GUIContent(KACResources.btnMNode,"Maneuver Node"),
+                new GUIContent(KACResources.btnSOI,"SOI Change"),
+                new GUIContent(KACResources.btnXfer,"Transfer Window")
+            };
+
         KACAlarm.AlarmType[] TypesForAttachOption = new KACAlarm.AlarmType[] 
             { 
                 KACAlarm.AlarmType.Raw, 
@@ -268,7 +281,16 @@ namespace KerbalAlarmClock
 
             //AddType =  (KACAlarm.AlarmType)GUILayout.Toolbar((int)AddType, strAddTypes,KACResources.styleButton);
             GUIContent[] guiButtons = guiTypes;
-            if (parentBehaviour.ViewAlarmsOnly) guiButtons = guiTypesView;
+            switch (parentBehaviour.MonoName)
+            {
+                case "KACSpaceCenter":
+                    guiButtons = guiTypesSpaceCenter; break;
+                case "KACTrackingStation":
+                    guiButtons = guiTypesTrackingStation; break;
+                default:
+                    break;
+            }
+            //if (parentBehaviour.ViewAlarmsOnly) guiButtons = guiTypesView;
             if (DrawButtonList(ref AddType,guiButtons))
             {
                 AddTypeChanged();

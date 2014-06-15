@@ -390,7 +390,7 @@ namespace KerbalAlarmClock
                 }
 
                 // Do we need to restore a maneuverNode after a ship jump - give it 4 secs of attempts for changes to ship
-                if (Settings.LoadManNode != "" && KACWorkerGameState.IsFlightMode)
+                if (Settings.LoadManNode != "" && KACWorkerGameState.IsVesselActive)
                 {
                     List<ManeuverNode> manNodesToRestore = KACAlarm.ManNodeDeserializeList(Settings.LoadManNode);
                     manToRestoreAttempts += 1;
@@ -415,7 +415,7 @@ namespace KerbalAlarmClock
                 }
 
                 // Do we need to restore a Target after a ship jump - give it 4 secs of attempts for changes to ship
-                if (Settings.LoadVesselTarget != "" && KACWorkerGameState.IsFlightMode)
+                if (Settings.LoadVesselTarget != "" && KACWorkerGameState.IsVesselActive)
                 {
                     ITargetable targetToRestore = KACAlarm.TargetDeserialize(Settings.LoadVesselTarget);
                     targetToRestoreAttempts += 1;
@@ -744,7 +744,7 @@ namespace KerbalAlarmClock
                         if (lstVessels[tmpVessel.id.ToString()].SOIName != tmpVessel.mainBody.bodyName)
                         {
                             //Set a new alarm to display now
-                            KACAlarm newAlarm = new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), tmpVessel.vesselName + "- SOI Catch",
+                            KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), tmpVessel.vesselName + "- SOI Catch",
                                 tmpVessel.vesselName + " Has entered a new Sphere of Influence\r\n" +
                                 "     Old SOI: " + lstVessels[tmpVessel.id.ToString()].SOIName + "\r\n" +
                                 "     New SOI: " + tmpVessel.mainBody.bodyName,
@@ -803,7 +803,7 @@ namespace KerbalAlarmClock
                     if (nodeAutoAlarm.UT + Settings.AlarmAddManAutoMargin - Settings.AlarmAddManAutoThreshold > KACWorkerGameState.CurrentTime.UT)
                     {
                         //or are we setting a new one
-                        Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, Settings.AlarmAddManAutoMargin, KACAlarm.AlarmType.ManeuverAuto,
+                        Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, Settings.AlarmAddManAutoMargin, KACAlarm.AlarmType.ManeuverAuto,
                             (Settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.KillWarp), (Settings.AlarmAddManAuto_Action == (int)KACAlarm.AlarmAction.PauseGame), manNodesToStore));
                         Settings.Save();
                     }

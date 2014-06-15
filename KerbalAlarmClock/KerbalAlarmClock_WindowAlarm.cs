@@ -377,11 +377,11 @@ namespace KerbalAlarmClock
                     //Add a jump to ship button if not the active ship
                     //As well as to the 
                     String strRestoretext = "Restore Maneuver Node(s)";
-                    if (FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.Count > 0)
+                    if (KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Count > 0)
                     {
                         strRestoretext = "Replace Maneuver Node(s)";
                         //if the count and UT's are the same then go from there
-                        if (!KACAlarm.CompareManNodeListSimple(FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes,tmpAlarm.ManNodes))
+                        if (!KACAlarm.CompareManNodeListSimple(KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes, tmpAlarm.ManNodes))
                             strRestoretext += "\r\nNOTE: There is already a Node on the flight path";
                         else
                             strRestoretext += "\r\nNOTE: These Node's appear to be already set on the flight path";
@@ -396,7 +396,7 @@ namespace KerbalAlarmClock
                     if (GUILayout.Button(strRestoretext, KACResources.styleButton))
                     {
                         DebugLogFormatted("Attempting to add Node");
-                        FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.Clear();
+                        KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Clear();
                         RestoreManeuverNodeList(tmpAlarm.ManNodes);
                     }
                 }

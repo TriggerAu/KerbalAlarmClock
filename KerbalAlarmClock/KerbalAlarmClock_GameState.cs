@@ -33,9 +33,9 @@ namespace KerbalAlarmClock
         public static DateTime CurrentWarpInfluenceStartTime;
 
         //Are we flying any ship?
-        public static Boolean IsFlightMode
+        public static Boolean IsVesselActive
         {
-            get { return FlightGlobals.fetch != null && FlightGlobals.ActiveVessel != null; }
+            get { return FlightGlobals.fetch != null && CurrentVessel != null; }
         }
 
         public static Boolean PauseMenuOpen
@@ -69,13 +69,13 @@ namespace KerbalAlarmClock
             get
             {
                 Boolean blnReturn = false;
-                if (IsFlightMode)
+                if (IsVesselActive)
                 {
-                    if (FlightGlobals.ActiveVessel.patchedConicSolver != null)
+                    if (CurrentVessel.patchedConicSolver != null)
                     {
-                        if (FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes != null)
+                        if (CurrentVessel.patchedConicSolver.maneuverNodes != null)
                         {
-                            if (FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.Count > 0)
+                            if (CurrentVessel.patchedConicSolver.maneuverNodes.Count > 0)
                             {
                                 blnReturn = true;
                             }
@@ -90,7 +90,7 @@ namespace KerbalAlarmClock
         {
             get
             {
-                return FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).FirstOrDefault(x => x.UT > KACWorkerGameState.CurrentTime.UT);
+                return CurrentVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).FirstOrDefault(x => x.UT > KACWorkerGameState.CurrentTime.UT);
             }
         }
 
@@ -98,7 +98,7 @@ namespace KerbalAlarmClock
         {
             get
             {
-                return ( FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).SkipWhile(x => x.UT < KACWorkerGameState.CurrentTime.UT).ToList<ManeuverNode>());
+                return ( CurrentVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).SkipWhile(x => x.UT < KACWorkerGameState.CurrentTime.UT).ToList<ManeuverNode>());
             }
         }
 
@@ -109,12 +109,12 @@ namespace KerbalAlarmClock
             {
                 Boolean blnReturn = false;
 
-                if (FlightGlobals.ActiveVessel != null)
+                if (CurrentVessel != null)
                 {
-                    if (FlightGlobals.ActiveVessel.orbit != null)
+                    if (CurrentVessel.orbit != null)
                     {
                         List<Orbit.PatchTransitionType> SOITransitions = new List<Orbit.PatchTransitionType> { Orbit.PatchTransitionType.ENCOUNTER, Orbit.PatchTransitionType.ESCAPE };
-                        blnReturn = SOITransitions.Contains(FlightGlobals.ActiveVessel.orbit.patchEndTransition);
+                        blnReturn = SOITransitions.Contains(CurrentVessel.orbit.patchEndTransition);
                     }
                 }
 
@@ -128,12 +128,12 @@ namespace KerbalAlarmClock
             {
                 Boolean blnReturn = false;
 
-                if (FlightGlobals.ActiveVessel != null)
+                if (CurrentVessel != null)
                 {
-                    if (FlightGlobals.ActiveVessel.orbit != null)
+                    if (CurrentVessel.orbit != null)
                     {
-                        if (FlightGlobals.ActiveVessel.orbit.timeToAp > 0
-                            && ((CurrentTime.UT + FlightGlobals.ActiveVessel.orbit.timeToAp) < FlightGlobals.ActiveVessel.orbit.EndUT))
+                        if (CurrentVessel.orbit.timeToAp > 0
+                            && ((CurrentTime.UT + CurrentVessel.orbit.timeToAp) < CurrentVessel.orbit.EndUT))
                             blnReturn = true;
                     }
                 }
@@ -146,12 +146,12 @@ namespace KerbalAlarmClock
             {
                 Boolean blnReturn = false;
 
-                if (FlightGlobals.ActiveVessel != null)
+                if (CurrentVessel != null)
                 {
-                    if (FlightGlobals.ActiveVessel.orbit != null)
+                    if (CurrentVessel.orbit != null)
                     {
-                        if (FlightGlobals.ActiveVessel.orbit.timeToPe > 0
-                            && ((CurrentTime.UT + FlightGlobals.ActiveVessel.orbit.timeToPe) < FlightGlobals.ActiveVessel.orbit.EndUT))
+                        if (CurrentVessel.orbit.timeToPe > 0
+                            && ((CurrentTime.UT + CurrentVessel.orbit.timeToPe) < CurrentVessel.orbit.EndUT))
                             blnReturn = true;
                     }
                 }
@@ -184,8 +184,15 @@ namespace KerbalAlarmClock
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
                 KACWorkerGameState.CurrentVessel = FlightGlobals.ActiveVessel;
-                KACWorkerGameState.CurrentSOIBody = FlightGlobals.ActiveVessel.mainBody;
-                KACWorkerGameState.CurrentVesselTarget = FlightGlobals.fetch.VesselTarget;
+                KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
+                KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
+            }
+            else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && 
+                    MapView.MapCamera.target.type== MapObject.MapObjectType.VESSEL)
+            {
+                KACWorkerGameState.CurrentVessel = MapView.MapCamera.target.vessel;
+                KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
+                KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
             }
             else
             {

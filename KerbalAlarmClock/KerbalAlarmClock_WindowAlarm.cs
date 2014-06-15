@@ -365,7 +365,7 @@ namespace KerbalAlarmClock
             NoOfDoubleLineButtons = 0;
             
             ////is it the current vessel?
-            if ((!parentBehaviour.ViewAlarmsOnly) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
+            if ((!parentBehaviour.ViewAlarmsOnly) && (KACWorkerGameState.CurrentVessel!=null) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
             {
                 //There is a node and the alarm + Margin is not expired
                 if ((tmpAlarm.ManNodes != null))

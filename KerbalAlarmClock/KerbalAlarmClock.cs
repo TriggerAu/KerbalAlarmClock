@@ -32,13 +32,13 @@ namespace KerbalAlarmClock
     public class KACSpaceCenter : KerbalAlarmClock
     {
         public override string MonoName { get { return this.name; } }
-        public override bool ViewAlarmsOnly { get { return true; } }
+        public override bool ViewAlarmsOnly { get { return false; } }
     }
     [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
     public class KACTrackingStation : KerbalAlarmClock
     {
         public override string MonoName { get { return this.name; } }
-        public override bool ViewAlarmsOnly { get { return true; } }
+        public override bool ViewAlarmsOnly { get { return false; } }
     }
 
     /// <summary>
@@ -350,6 +350,9 @@ namespace KerbalAlarmClock
             Settings = KerbalAlarmClock.Settings;
 
             InitWorkerVariables();
+
+            //Event for when the vessel changes (within a scene).
+            KACWorkerGameState.VesselChanged += KACWorkerGameState_VesselChanged;
         }
 
         private void InitWorkerVariables()
@@ -526,6 +529,16 @@ namespace KerbalAlarmClock
 
             KACWorkerGameState.SetLastFlightStatesToCurrent();
         }
+
+        void KACWorkerGameState_VesselChanged(Vessel OldVessel, Vessel NewVessel)
+        {
+            if (_ShowAddPane)
+            {
+                //trigger the string builder to reset stuff
+                AddTypeChanged();
+            }
+        }
+
 
         private void MonitorSOIOnPath()
         {

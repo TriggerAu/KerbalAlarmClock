@@ -206,9 +206,13 @@ namespace KerbalAlarmClock
         {
             KACWorkerGameState.LastSaveGameName = KACWorkerGameState.CurrentSaveGameName;
             KACWorkerGameState.LastTime = KACWorkerGameState.CurrentTime;
+            if (LastVessel != CurrentVessel) { if (VesselChanged != null) VesselChanged(LastVessel, CurrentVessel); }
             KACWorkerGameState.LastVessel = KACWorkerGameState.CurrentVessel;
             KACWorkerGameState.LastSOIBody = KACWorkerGameState.CurrentSOIBody;
             KACWorkerGameState.LastVesselTarget = KACWorkerGameState.CurrentVesselTarget;
         }
+
+        internal delegate void VesselChangedHandler(Vessel OldVessel, Vessel NewVessel);
+        internal static event VesselChangedHandler VesselChanged;
     }
 }

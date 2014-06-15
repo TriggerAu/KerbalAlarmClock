@@ -49,7 +49,10 @@ namespace KerbalAlarmClock
             timeMargin.BuildFromUT(Settings.AlarmDefaultMargin);
 
             //set default strings
-            strAlarmName = KACWorkerGameState.CurrentVessel.vesselName + "";
+            if (KACWorkerGameState.CurrentVessel != null)
+                strAlarmName = KACWorkerGameState.CurrentVessel.vesselName + "";
+            else
+                strAlarmName = "No Vessel";
             strAlarmNotes = "";
             AddNotesHeight = 100;
 
@@ -190,26 +193,27 @@ namespace KerbalAlarmClock
         private void BuildRawStrings()
         {
             String strWorking = "";
-            if (blnAlarmAttachToVessel)
+            if (blnAlarmAttachToVessel && KACWorkerGameState.CurrentVessel!=null)
                 strWorking = "Time to pay attention to:\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nRaw Time Alarm";
             else
                 strWorking = "Raw Time Alarm";
             strAlarmNotes = strWorking;
 
             strWorking = "";
-            if (blnAlarmAttachToVessel)
+            if (blnAlarmAttachToVessel && KACWorkerGameState.CurrentVessel != null)
                 strWorking = KACWorkerGameState.CurrentVessel.vesselName;
             else
                 strWorking = "Raw Time Alarm";
             strAlarmName = strWorking;
-
         }
 
         private void BuildCrewStrings()
         {
             strAlarmEventName = "Crew";
-            List<ProtoCrewMember> pCM = KACWorkerGameState.CurrentVessel.GetVesselCrew();
-            if(pCM.Count==0)
+            List<ProtoCrewMember> pCM=null;
+            if ( KACWorkerGameState.CurrentVessel!=null)
+                pCM= KACWorkerGameState.CurrentVessel.GetVesselCrew();
+            if(pCM!=null && pCM.Count==0)
             {
                 strAlarmName = "Crew member alarm";
                 strAlarmNotes = "No Kerbals present in this vessel";

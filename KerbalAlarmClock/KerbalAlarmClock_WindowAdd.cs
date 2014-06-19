@@ -70,24 +70,27 @@ namespace KerbalAlarmClock
             //trigger the work to set each type
             AddTypeChanged();
 
-            //build the XFer parents list
-            SetUpXferParents();
-            //if the craft is orbiting a body on the parents list then set it as the default
-            if (XferParentBodies.Contains(KACWorkerGameState.CurrentVessel.mainBody.referenceBody))
+            if (KACWorkerGameState.CurrentVessel != null)
             {
-                intXferCurrentParent = XferParentBodies.IndexOf(KACWorkerGameState.CurrentVessel.mainBody.referenceBody);
-                SetupXferOrigins();
-                intXferCurrentOrigin = XferOriginBodies.IndexOf(KACWorkerGameState.CurrentVessel.mainBody);
+                //build the XFer parents list
+                SetUpXferParents();
+                //if the craft is orbiting a body on the parents list then set it as the default
+                if (XferParentBodies.Contains(KACWorkerGameState.CurrentVessel.mainBody.referenceBody))
+                {
+                    intXferCurrentParent = XferParentBodies.IndexOf(KACWorkerGameState.CurrentVessel.mainBody.referenceBody);
+                    SetupXferOrigins();
+                    intXferCurrentOrigin = XferOriginBodies.IndexOf(KACWorkerGameState.CurrentVessel.mainBody);
+                }
+                else
+                {
+                    intXferCurrentParent = 0;
+                    SetupXferOrigins();
+                    intXferCurrentOrigin = 0;
+                }
+                //set initial targets
+                SetupXFerTargets();
+                intXferCurrentTarget = 0;
             }
-            else
-            {
-                intXferCurrentParent = 0;
-                SetupXferOrigins();
-                intXferCurrentOrigin = 0;
-            }
-            //set initial targets
-            SetupXFerTargets();
-            intXferCurrentTarget = 0;
 
             intSelectedCrew=0;
             strCrewUT = "";
@@ -260,6 +263,13 @@ namespace KerbalAlarmClock
                 new GUIContent(KACResources.btnXfer,"Transfer Window")
             };
 
+        GameScenes[] ScenesForAttachOption = new GameScenes[] 
+            { 
+                GameScenes.FLIGHT, 
+                GameScenes.TRACKSTATION, 
+            };
+
+
         KACAlarm.AlarmType[] TypesForAttachOption = new KACAlarm.AlarmType[] 
             { 
                 KACAlarm.AlarmType.Raw, 
@@ -310,7 +320,7 @@ namespace KerbalAlarmClock
             intHeight_AddWindowCommon = 64;
             if (AddType != KACAlarm.AlarmType.Raw && AddType!= KACAlarm.AlarmType.Crew) //add stuff for margins
                 intHeight_AddWindowCommon += 28;
-            if (TypesForAttachOption.Contains(AddType)) //add stuff for attach to ship
+            if (ScenesForAttachOption.Contains(KACWorkerGameState.CurrentGUIScene) && TypesForAttachOption.Contains(AddType)) //add stuff for attach to ship
                 intHeight_AddWindowCommon += 30;
 
             //layout the right fields for the common components
@@ -503,7 +513,7 @@ namespace KerbalAlarmClock
                 {
                     //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
                     String strVesselID = "";
-                    if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+                    if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
                     Settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmType.Raw, 
                         (AddAction== KACAlarm.AlarmAction.KillWarp), (AddAction== KACAlarm.AlarmAction.PauseGame)));
                     Settings.Save();
@@ -1148,7 +1158,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             GUILayout.Label("Vessel:", KACResources.styleAddHeading);
             String strVesselName = "Not Attached to Vessel";
-            if (blnAlarmAttachToVessel) strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
+            if (KACWorkerGameState.CurrentVessel!= null && blnAlarmAttachToVessel) strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
             GUILayout.TextField(strVesselName, KACResources.styleAddFieldGreen);
             GUILayout.Label("Alarm:", KACResources.styleAddHeading);
             strAlarmName = GUILayout.TextField(strAlarmName, KACResources.styleAddField, GUILayout.MaxWidth(184)).Replace("|", "");

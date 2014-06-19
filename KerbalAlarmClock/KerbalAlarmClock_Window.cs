@@ -970,7 +970,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
-            if (TypesForAttachOption.Contains(TypeOfAlarm))
+            if (ScenesForAttachOption.Contains(KACWorkerGameState.CurrentGUIScene) && TypesForAttachOption.Contains(TypeOfAlarm))
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);

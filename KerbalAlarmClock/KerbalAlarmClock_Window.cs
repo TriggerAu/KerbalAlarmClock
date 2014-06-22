@@ -464,9 +464,10 @@ namespace KerbalAlarmClock
             GUILayout.BeginHorizontal();
             GUILayout.Label("Alarm List", KACResources.styleHeading, GUILayout.ExpandWidth(true));
 
+            //No longer relevant
             //hide this stuff when not in alarm edit mode/flight mode
-            if (!parentBehaviour.ViewAlarmsOnly)
-            {
+            //if (!parentBehaviour.ViewAlarmsOnly)
+            //{
                 if (Settings.AlarmNodeRecalc)
                 {
                     GUIContent XferIcon = new GUIContent(KACResources.iconAp, "Orbit Node (Ap,Pe,AN,DN) Recalculation is enabled");
@@ -512,7 +513,7 @@ namespace KerbalAlarmClock
                     GUIContent ManIcon = new GUIContent(KACResources.iconMNode, strTooltip);
                     GUILayout.Label(ManIcon, KACResources.styleFlagIcon);
                 }
-            }
+            //}
 
             //Set a default for the MinMax button
             GUIContent contMaxMin = new GUIContent(KACResources.btnChevronUp, "Minimize");
@@ -537,8 +538,9 @@ namespace KerbalAlarmClock
                 _ShowEditPane = false;
                 _ShowEarthAlarm = false;
             }
-            if (!parentBehaviour.ViewAlarmsOnly)
-            {
+            //No longer relevant
+            //if (!parentBehaviour.ViewAlarmsOnly)
+            //{
 
                 if (DrawToggle(ref _ShowAddPane, new GUIContent(KACResources.btnAdd, "Add New Alarm..."), KACResources.styleSmallButton) && _ShowAddPane)
                 {
@@ -548,7 +550,7 @@ namespace KerbalAlarmClock
                     _ShowEditPane = false;
                     _ShowEarthAlarm = false;
                 }
-            }
+            //}
 
             GUILayout.EndHorizontal();
 

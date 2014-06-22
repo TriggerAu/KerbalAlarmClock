@@ -26,19 +26,19 @@ namespace KerbalAlarmClock
     public class KACFlight : KerbalAlarmClock
     {
         public override string MonoName { get { return this.name; } }
-        public override bool ViewAlarmsOnly { get { return false; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
     }
     [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
     public class KACSpaceCenter : KerbalAlarmClock
     {
         public override string MonoName { get { return this.name; } }
-        public override bool ViewAlarmsOnly { get { return false; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
     }
     [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
     public class KACTrackingStation : KerbalAlarmClock
     {
         public override string MonoName { get { return this.name; } }
-        public override bool ViewAlarmsOnly { get { return false; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
     }
 
     /// <summary>
@@ -49,7 +49,7 @@ namespace KerbalAlarmClock
         //Global Settings
         public static KACSettings Settings = new KACSettings();
         public virtual String MonoName { get; set; }
-        public virtual Boolean ViewAlarmsOnly { get; set; }
+        //public virtual Boolean ViewAlarmsOnly { get; set; }
         
         //GameState Objects for the monobehaviour
         private Boolean IsInPostDrawQueue=false ;

@@ -118,7 +118,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromGameDB(ref  iconPauseEffect000, "img_iconPauseEffect_000.png");
 
 
-                KACUtils.LoadImageFromGameDB(ref iconRaw, "img_listiconRaw.png");
+                KACUtils.LoadImageFromGameDB(ref iconRaw, "img_listiconRaw.tga");
                 KACUtils.LoadImageFromGameDB(ref iconSOI, "img_listiconSOI.png");
                 KACUtils.LoadImageFromGameDB(ref iconMNode, "img_listiconMNode.png");
                 KACUtils.LoadImageFromGameDB(ref iconAp, "img_listiconAp.png");
@@ -128,7 +128,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromGameDB(ref iconXFer, "img_listiconXfer.png");
                 KACUtils.LoadImageFromGameDB(ref iconClosest, "img_listiconClosest.png");
                 KACUtils.LoadImageFromGameDB(ref iconCrew, "img_listiconCrew.png");
-                KACUtils.LoadImageFromGameDB(ref iconEarth, "img_listiconEarth.png");
+                KACUtils.LoadImageFromGameDB(ref iconEarth, "img_listiconEarth.tga");
                 KACUtils.LoadImageFromGameDB(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.png");
                 KACUtils.LoadImageFromGameDB(ref iconWarpList100, "img_listiconWarpList_100.png");
                 KACUtils.LoadImageFromGameDB(ref iconWarpList080, "img_listiconWarpList_080.png");

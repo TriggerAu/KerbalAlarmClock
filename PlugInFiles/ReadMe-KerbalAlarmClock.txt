@@ -25,9 +25,15 @@ The plugin records troubleshooting data in the "<KSP_OS>\KSP_Data\output_log.txt
 If there are errors in loading the config you can delete the "<KSP_OS>\GameData\TriggerTech\PluginData\KerbalAlarmClock\config.xml" and restart the game
 
 LICENSE
-Licensed under Creative Commons Attribution-NonCommercial-Sharealike 3.0 Unported License. Visit the documentation site for more details and Attribution
+This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.7.5.0		-	KSP Version: 0.23.5
+- Tweaked Update check to be on a background worker process (Issue #28)
+- Added capability to add certain alarm types to SC and TS Scenes (Issue #24)
+- Added list icons for Raw and Earth alarms (Issue #29)
+- License Changed to MIT license (less restrictive than previous)
+
 Version 2.7.4.0		-	KSP Version: 0.23.5
 - Removed log message on periodic saves (Issue #25)
 - Window height now adjusts for Multiline Alarms (Issue #15)

@@ -285,6 +285,20 @@ namespace KerbalAlarmClock
                 GUILayout.Label(String.Format("CurrentV:{0}", KACWorkerGameState.CurrentVessel.name));
             }
 
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+            {
+                SpaceTracking st = (SpaceTracking)GameObject.FindObjectOfType(typeof(SpaceTracking));
+                if (st.mainCamera.target != null)
+                {
+                    if (st.mainCamera.target.type== MapObject.MapObjectType.VESSEL)
+                        GUILayout.Label(String.Format("CurrentSTV:{0}", st.mainCamera.target.vessel.name));
+                    else
+                        GUILayout.Label(String.Format("CurrentSTV:{0}", "Not a vessel"));
+
+                    //GUILayout.Label(String.Format("Fly:{0}", st.FlyButton.));
+                }
+            }
+
             //GUILayout.Label(String.Format("FG: {0}", FlightGlobals.fetch != null));
             //if (FlightGlobals.fetch)
             //{

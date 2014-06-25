@@ -187,13 +187,26 @@ namespace KerbalAlarmClock
                 KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
                 KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
             }
-            else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && 
-                    MapView.MapCamera.target.type== MapObject.MapObjectType.VESSEL)
+            else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
             {
-                KACWorkerGameState.CurrentVessel = MapView.MapCamera.target.vessel;
-                KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
-                KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
+                SpaceTracking st = (SpaceTracking) KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
+                if (st.mainCamera.target != null && st.mainCamera.target.type== MapObject.MapObjectType.VESSEL) {
+                    KACWorkerGameState.CurrentVessel = st.mainCamera.target.vessel;
+                    KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
+                    KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
+                } else {
+                    KACWorkerGameState.CurrentVessel = null;
+                    KACWorkerGameState.CurrentSOIBody = null;
+                    KACWorkerGameState.CurrentVesselTarget = null;
+                }
             }
+            //else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && 
+            //        MapView.MapCamera.target.type== MapObject.MapObjectType.VESSEL)
+            //{
+            //    KACWorkerGameState.CurrentVessel = MapView.MapCamera.target.vessel;
+            //    KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
+            //    KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
+            //}
             else
             {
                 KACWorkerGameState.CurrentVessel = null;

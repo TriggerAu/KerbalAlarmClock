@@ -94,7 +94,8 @@ namespace KerbalAlarmClock
             KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
 
             //Load Hohmann modelling data - if in flight mode
-            if ((KACWorkerGameState.LastGUIScene== GameScenes.FLIGHT) && Settings.XferModelLoadData)
+            //if ((KACWorkerGameState.LastGUIScene == GameScenes.FLIGHT) && Settings.XferModelLoadData)
+            if (Settings.XferModelLoadData)
                 Settings.XferModelDataLoaded = KACResources.LoadModelPoints();
 
             //Common Toolbar Code

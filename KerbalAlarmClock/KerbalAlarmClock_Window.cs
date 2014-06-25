@@ -961,6 +961,16 @@ namespace KerbalAlarmClock
             GUILayout.Label(strTitle, KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(WindowHeight));
 
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Selected Vessel:", KACResources.styleAddHeading);
+                String strVesselName = "No Selected Vessel";
+                if (KACWorkerGameState.CurrentVessel != null) strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
+                GUILayout.Label(strVesselName, KACResources.styleLabelWarning);
+                GUILayout.EndHorizontal();
+            }
+
             GUILayout.BeginHorizontal();
             GUILayout.Label("Alarm:", KACResources.styleAddHeading, GUILayout.Width(60));
             strName = GUILayout.TextField(strName, KACResources.styleAddField, GUILayout.MaxWidth(200)).Replace("|", "");
@@ -972,7 +982,8 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
-            if (ScenesForAttachOption.Contains(KACWorkerGameState.CurrentGUIScene) && TypesForAttachOption.Contains(TypeOfAlarm))
+            if (ScenesForAttachOption.Contains(KACWorkerGameState.CurrentGUIScene) && TypesForAttachOption.Contains(TypeOfAlarm)
+                && KACWorkerGameState.CurrentVessel!=null)
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
@@ -1267,7 +1278,7 @@ namespace KerbalAlarmClock
 
         public Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params GUIContent[] Choices)
         {
-            int Selection = KACAlarm.AlarmTypeToButton[selType];
+            int Selection = (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION) ? KACAlarm.AlarmTypeToButton[selType] : KACAlarm.AlarmTypeToButtonTS[selType];
             Boolean blnReturn = DrawButtonList(ref Selection, Choices);
             if (blnReturn)
             {

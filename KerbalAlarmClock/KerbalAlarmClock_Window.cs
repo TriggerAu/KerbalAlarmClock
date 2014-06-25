@@ -766,6 +766,9 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmType.Crew:
                     GUILayout.Label(KACResources.iconCrew, KACResources.styleAlarmIcon);
                     break;
+                case KACAlarm.AlarmType.EarthTime:
+                    GUILayout.Label(KACResources.iconEarth, KACResources.styleAlarmIcon);
+                    break;
                 default:
                     GUILayout.Label(KACResources.iconNone, KACResources.styleAlarmIcon);
                     break;

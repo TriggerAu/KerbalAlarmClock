@@ -44,6 +44,7 @@ namespace KerbalAlarmClock
         public static Texture2D iconClosest; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconLaunchRendezvous; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconCrew; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        public static Texture2D iconEarth; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
 
         public static Texture2D iconNone; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconEdit; //  = new Texture2D(16, 16, TextureFormat.ARGB32, false);
@@ -127,6 +128,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromGameDB(ref iconXFer, "img_listiconXfer.png");
                 KACUtils.LoadImageFromGameDB(ref iconClosest, "img_listiconClosest.png");
                 KACUtils.LoadImageFromGameDB(ref iconCrew, "img_listiconCrew.png");
+                KACUtils.LoadImageFromGameDB(ref iconEarth, "img_listiconEarth.png");
                 KACUtils.LoadImageFromGameDB(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.png");
                 KACUtils.LoadImageFromGameDB(ref iconWarpList100, "img_listiconWarpList_100.png");
                 KACUtils.LoadImageFromGameDB(ref iconWarpList080, "img_listiconWarpList_080.png");

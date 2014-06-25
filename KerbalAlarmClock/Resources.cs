@@ -33,6 +33,7 @@ namespace KerbalAlarmClock
         public static Texture2D iconPauseEffect000; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
         //Alarm List icons
+        public static Texture2D iconRaw; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconMNode; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconSOI; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         public static Texture2D iconAp; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
@@ -116,6 +117,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromGameDB(ref  iconPauseEffect000, "img_iconPauseEffect_000.png");
 
 
+                KACUtils.LoadImageFromGameDB(ref iconRaw, "img_listiconRaw.png");
                 KACUtils.LoadImageFromGameDB(ref iconSOI, "img_listiconSOI.png");
                 KACUtils.LoadImageFromGameDB(ref iconMNode, "img_listiconMNode.png");
                 KACUtils.LoadImageFromGameDB(ref iconAp, "img_listiconAp.png");

@@ -478,10 +478,18 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             GUILayout.Label(Settings.VersionCheckDate_AttemptString, KACResources.styleContent);
 
-            if (Settings.VersionAvailable)
-                GUILayout.Label(String.Format("{0} @ {1}", Settings.VersionWeb, Settings.VersionCheckDate_SuccessString), KACResources.styleVersionHighlight);
+            if (Settings.VersionCheckRunning)
+            {
+                Int32 intDots = Convert.ToInt32(Math.Truncate(DateTime.Now.Millisecond/250d)) + 1;
+                GUILayout.Label(String.Format("{0} Checking", new String('.', intDots)), KACResources.styleVersionHighlight);
+            }
             else
-                GUILayout.Label(String.Format("{0} @ {1}", Settings.VersionWeb, Settings.VersionCheckDate_SuccessString), KACResources.styleContent);
+            {
+                if (Settings.VersionAvailable)
+                    GUILayout.Label(String.Format("{0} @ {1}", Settings.VersionWeb, Settings.VersionCheckDate_SuccessString), KACResources.styleVersionHighlight);
+                else
+                    GUILayout.Label(String.Format("{0} @ {1}", Settings.VersionWeb, Settings.VersionCheckDate_SuccessString), KACResources.styleContent);
+            }
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 

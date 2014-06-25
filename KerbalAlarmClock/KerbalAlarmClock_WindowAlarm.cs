@@ -130,8 +130,8 @@ namespace KerbalAlarmClock
             int intNoOfActionButtonsDoubleLine = 0;
             //if the alarm has a vessel ID/Kerbal associated
             if (StoredVesselOrCrewExists(tmpAlarm.VesselID,tmpAlarm.TypeOfAlarm))
-                //option to allow jumping from view only ships
-                if (!parentBehaviour.ViewAlarmsOnly || Settings.AllowJumpFromViewOnly)
+                //option to allow jumping from SC and TS
+                if (Settings.AllowJumpFromViewOnly)
                     intNoOfActionButtons = DrawAlarmActionButtons(tmpAlarm, out intNoOfActionButtonsDoubleLine);
 
             //Work out the text
@@ -307,9 +307,9 @@ namespace KerbalAlarmClock
                 int intNoOfActionButtonsDoubleLine = 0;
                 //if the alarm has a vessel ID/Kerbal associated
                 if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
-                    //option to allow jumping from view only ships
-                    if (!parentBehaviour.ViewAlarmsOnly || Settings.AllowJumpFromViewOnly)
-                        intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit,out intNoOfActionButtonsDoubleLine);
+                    //option to allow jumping from SC and TS
+                    if (Settings.AllowJumpFromViewOnly)
+                        intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit, out intNoOfActionButtonsDoubleLine);
 
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
                 {
@@ -345,8 +345,8 @@ namespace KerbalAlarmClock
                 int intNoOfActionButtonsDoubleLine = 0;
                 //if the alarm has a vessel ID/Kerbal associated
                 if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
-                    //option to allow jumping from view only ships
-                    if (!parentBehaviour.ViewAlarmsOnly || Settings.AllowJumpFromViewOnly)
+                    //option to allow jumping from SC and TS
+                    if (Settings.AllowJumpFromViewOnly)
                         intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit, out intNoOfActionButtonsDoubleLine);
 
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
@@ -365,7 +365,8 @@ namespace KerbalAlarmClock
             NoOfDoubleLineButtons = 0;
             
             ////is it the current vessel?
-            if ((!parentBehaviour.ViewAlarmsOnly) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
+            //if ((!parentBehaviour.ViewAlarmsOnly) && (KACWorkerGameState.CurrentVessel!=null) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
+            if ((KACWorkerGameState.CurrentGUIScene== GameScenes.FLIGHT) && (KACWorkerGameState.CurrentVessel != null) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
             {
                 //There is a node and the alarm + Margin is not expired
                 if ((tmpAlarm.ManNodes != null))
@@ -377,11 +378,11 @@ namespace KerbalAlarmClock
                     //Add a jump to ship button if not the active ship
                     //As well as to the 
                     String strRestoretext = "Restore Maneuver Node(s)";
-                    if (FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.Count > 0)
+                    if (KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Count > 0)
                     {
                         strRestoretext = "Replace Maneuver Node(s)";
                         //if the count and UT's are the same then go from there
-                        if (!KACAlarm.CompareManNodeListSimple(FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes,tmpAlarm.ManNodes))
+                        if (!KACAlarm.CompareManNodeListSimple(KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes, tmpAlarm.ManNodes))
                             strRestoretext += "\r\nNOTE: There is already a Node on the flight path";
                         else
                             strRestoretext += "\r\nNOTE: These Node's appear to be already set on the flight path";
@@ -396,7 +397,7 @@ namespace KerbalAlarmClock
                     if (GUILayout.Button(strRestoretext, KACResources.styleButton))
                     {
                         DebugLogFormatted("Attempting to add Node");
-                        FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.Clear();
+                        KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Clear();
                         RestoreManeuverNodeList(tmpAlarm.ManNodes);
                     }
                 }

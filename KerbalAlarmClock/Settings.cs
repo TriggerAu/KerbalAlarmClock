@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 
+using System.ComponentModel;
+
 using UnityEngine;
 using KSP;
 
@@ -489,50 +491,6 @@ namespace KerbalAlarmClock
             tw.Close();
         }
 
-        public Boolean getLatestVersion()
-        {
-            Boolean blnReturn = false;
-            try 
-            {
-                //Get the file from Codeplex
-                this.VersionCheckResult = "Unknown - check again later";
-                this.VersionCheckDate_Attempt = DateTime.Now;
-
-                KACWorker.DebugLogFormatted("Reading version from Web");
-                //Page content FormatException is |LATESTVERSION|1.2.0.0|LATESTVERSION|
-                //WWW www = new WWW("http://kerbalalarmclock.codeplex.com/wikipage?title=LatestVersion");
-                WWW www = new WWW("https://sites.google.com/site/kerbalalarmclock/latestversion");
-                while (!www.isDone) { }
-
-                //Parse it for the version String
-                String strFile = www.text;
-                KACWorker.DebugLogFormatted("Response Length:" + strFile.Length);
-
-                Match matchVersion;
-                matchVersion = Regex.Match(strFile, "(?<=\\|LATESTVERSION\\|).+(?=\\|LATESTVERSION\\|)", System.Text.RegularExpressions.RegexOptions.Singleline);
-                KACWorker.DebugLogFormatted("Got Version '" + matchVersion.ToString() + "'");
-
-                String strVersionWeb = matchVersion.ToString();
-                if (strVersionWeb != "")
-                {
-                    this.VersionCheckResult = "Success";
-                    this.VersionCheckDate_Success = DateTime.Now;
-                    this.VersionWeb = strVersionWeb;
-                    blnReturn = true;
-                } else
-                {
-                    this.VersionCheckResult = "Unable to parse web service";
-                }
-	        }
-	        catch (Exception ex)
-	        {
-                KACWorker.DebugLogFormatted("Failed to read Version info from web");
-                KACWorker.DebugLogFormatted(ex.Message);
-                
-	        }
-            KACWorker.DebugLogFormatted("Version Check result:" + VersionCheckResult);
-            return blnReturn;
-        }
 
         /// <summary>
         /// Does some logic to see if a check is needed, and returns true if there is a different version
@@ -551,17 +509,17 @@ namespace KerbalAlarmClock
                     blnDoCheck = true;
                     KACWorker.DebugLogFormatted("Starting Version Check-Forced");
                 } 
-                else if (this.VersionWeb=="")
-                {
-                    blnDoCheck = true;
-                    KACWorker.DebugLogFormatted("Starting Version Check-No current web version stored");
-                }
-                else if (this.VersionCheckDate_Success<DateTime.Now.AddYears(-9))
+                //else if (this.VersionWeb=="")
+                //{
+                //    blnDoCheck = true;
+                //    KACWorker.DebugLogFormatted("Starting Version Check-No current web version stored");
+                //}
+                else if (this.VersionCheckDate_Attempt<DateTime.Now.AddYears(-9))
                 {
                     blnDoCheck = true;
                     KACWorker.DebugLogFormatted("Starting Version Check-No current date stored");
                 }
-                else if (this.VersionCheckDate_Success.Date!=DateTime.Now.Date)
+                else if (this.VersionCheckDate_Attempt.Date!=DateTime.Now.Date)
                 {
                     blnDoCheck = true;
                     KACWorker.DebugLogFormatted("Starting Version Check-stored date is not today");
@@ -572,15 +530,13 @@ namespace KerbalAlarmClock
 
                 if (blnDoCheck)
                 {
-                    getLatestVersion();
-                    this.Save();
-                    //if (getLatestVersion())
-                    //{
-                    //    //save all the details to the file
-                    //    this.Save();
-                    //}
-                    //if theres a new version then set the flag
-                    VersionAttentionFlag = VersionAvailable;
+                    //prep the background thread
+                    bwVersionCheck = new BackgroundWorker();
+                    bwVersionCheck.DoWork += bwVersionCheck_DoWork;
+                    bwVersionCheck.RunWorkerCompleted += bwVersionCheck_RunWorkerCompleted;
+
+                    //fire the worker
+                    bwVersionCheck.RunWorkerAsync();
                 }
                 blnReturn = true;
             }
@@ -591,6 +547,133 @@ namespace KerbalAlarmClock
             }
             return blnReturn;
         }
+
+        internal Boolean VersionCheckRunning = false;
+        BackgroundWorker bwVersionCheck;
+        WWW wwwVersionCheck;
+
+        void bwVersionCheck_DoWork(object sender, DoWorkEventArgs e)
+        {
+            //set initial stuff and save it
+            VersionCheckRunning = true;
+            this.VersionCheckResult = "Unknown - check again later";
+            this.VersionCheckDate_Attempt = DateTime.Now;
+            this.Save();
+
+            //now do the download
+            KACWorker.DebugLogFormatted("Reading version from Web");
+            wwwVersionCheck = new WWW("https://sites.google.com/site/kerbalalarmclock/latestversion");
+            while (!wwwVersionCheck.isDone) { }
+            KACWorker.DebugLogFormatted("Download complete:{0}", wwwVersionCheck.text.Length);
+            VersionCheckRunning = false;
+        }
+
+        void bwVersionCheck_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            try
+            {
+                //get the response from the variable and work with it
+                //Parse it for the version String
+                String strFile = wwwVersionCheck.text;
+                KACWorker.DebugLogFormatted("Response Length:" + strFile.Length);
+
+                Match matchVersion;
+                matchVersion = Regex.Match(strFile, "(?<=\\|LATESTVERSION\\|).+(?=\\|LATESTVERSION\\|)", System.Text.RegularExpressions.RegexOptions.Singleline);
+                KACWorker.DebugLogFormatted("Got Version '" + matchVersion.ToString() + "'");
+
+                String strVersionWeb = matchVersion.ToString();
+                if (strVersionWeb != "")
+                {
+                    this.VersionCheckResult = "Success";
+                    this.VersionCheckDate_Success = DateTime.Now;
+                    this.VersionWeb = strVersionWeb;
+                }
+                else
+                {
+                    this.VersionCheckResult = "Unable to parse web service";
+                }
+            }
+            catch (Exception ex)
+            {
+                KACWorker.DebugLogFormatted("Failed to read Version info from web");
+                KACWorker.DebugLogFormatted(ex.Message);
+
+            }
+            KACWorker.DebugLogFormatted("Version Check result:" + VersionCheckResult);
+            
+            this.Save();
+            VersionAttentionFlag = VersionAvailable;
+        }
+
+
+        //public void startDownload()
+        //{
+        //    var bw = new System.ComponentModel.BackgroundWorker();
+
+        //    bw.DoWork += delegate(object o, System.ComponentModel.DoWorkEventArgs args)
+        //    {
+        //        KACWorker.DebugLogFormatted("Starting download");
+        //        WWW www = new WWW("http://speed.mirror.sptel.com.au/1mb.dat");
+        //        while (!www.isDone) { }
+        //        KACWorker.DebugLogFormatted("GotDownload:{0}", www.text.Length);
+        //    };
+
+        //    bw.RunWorkerCompleted += bw_RunWorkerCompleted;
+        //    bw.RunWorkerAsync();
+        //}
+
+        //void bw_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        //{
+        //    KACWorker.DebugLogFormatted("runWorkerComplete");
+
+        //}
+
+        //public Boolean getLatestVersion()
+        //{
+        //    Boolean blnReturn = false;
+        //    try
+        //    {
+        //        startDownload();
+        //        //Get the file from Codeplex
+        //        this.VersionCheckResult = "Unknown - check again later";
+        //        this.VersionCheckDate_Attempt = DateTime.Now;
+
+        //        KACWorker.DebugLogFormatted("Reading version from Web");
+        //        //Page content FormatException is |LATESTVERSION|1.2.0.0|LATESTVERSION|
+        //        //WWW www = new WWW("http://kerbalalarmclock.codeplex.com/wikipage?title=LatestVersion");
+        //        //WWW www = new WWW("https://sites.google.com/site/kerbalalarmclock/latestversion");
+        //        //while (!www.isDone) { }
+
+        //        //Parse it for the version String
+        //        String strFile = "";//www.text;
+        //        KACWorker.DebugLogFormatted("Response Length:" + strFile.Length);
+
+        //        Match matchVersion;
+        //        matchVersion = Regex.Match(strFile, "(?<=\\|LATESTVERSION\\|).+(?=\\|LATESTVERSION\\|)", System.Text.RegularExpressions.RegexOptions.Singleline);
+        //        KACWorker.DebugLogFormatted("Got Version '" + matchVersion.ToString() + "'");
+
+        //        String strVersionWeb = matchVersion.ToString();
+        //        if (strVersionWeb != "")
+        //        {
+        //            this.VersionCheckResult = "Success";
+        //            this.VersionCheckDate_Success = DateTime.Now;
+        //            this.VersionWeb = strVersionWeb;
+        //            blnReturn = true;
+        //        }
+        //        else
+        //        {
+        //            this.VersionCheckResult = "Unable to parse web service";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        KACWorker.DebugLogFormatted("Failed to read Version info from web");
+        //        KACWorker.DebugLogFormatted(ex.Message);
+
+        //    }
+        //    KACWorker.DebugLogFormatted("Version Check result:" + VersionCheckResult);
+        //    return blnReturn;
+        //}
     }
 
 }

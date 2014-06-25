@@ -464,9 +464,10 @@ namespace KerbalAlarmClock
             GUILayout.BeginHorizontal();
             GUILayout.Label("Alarm List", KACResources.styleHeading, GUILayout.ExpandWidth(true));
 
+            //No longer relevant
             //hide this stuff when not in alarm edit mode/flight mode
-            if (!parentBehaviour.ViewAlarmsOnly)
-            {
+            //if (!parentBehaviour.ViewAlarmsOnly)
+            //{
                 if (Settings.AlarmNodeRecalc)
                 {
                     GUIContent XferIcon = new GUIContent(KACResources.iconAp, "Orbit Node (Ap,Pe,AN,DN) Recalculation is enabled");
@@ -512,7 +513,7 @@ namespace KerbalAlarmClock
                     GUIContent ManIcon = new GUIContent(KACResources.iconMNode, strTooltip);
                     GUILayout.Label(ManIcon, KACResources.styleFlagIcon);
                 }
-            }
+            //}
 
             //Set a default for the MinMax button
             GUIContent contMaxMin = new GUIContent(KACResources.btnChevronUp, "Minimize");
@@ -537,8 +538,9 @@ namespace KerbalAlarmClock
                 _ShowEditPane = false;
                 _ShowEarthAlarm = false;
             }
-            if (!parentBehaviour.ViewAlarmsOnly)
-            {
+            //No longer relevant
+            //if (!parentBehaviour.ViewAlarmsOnly)
+            //{
 
                 if (DrawToggle(ref _ShowAddPane, new GUIContent(KACResources.btnAdd, "Add New Alarm..."), KACResources.styleSmallButton) && _ShowAddPane)
                 {
@@ -548,7 +550,7 @@ namespace KerbalAlarmClock
                     _ShowEditPane = false;
                     _ShowEarthAlarm = false;
                 }
-            }
+            //}
 
             GUILayout.EndHorizontal();
 
@@ -725,7 +727,7 @@ namespace KerbalAlarmClock
             switch (tmpAlarm.TypeOfAlarm)
             {
                 case KACAlarm.AlarmType.Raw:
-                    GUILayout.Label(KACResources.iconNone, KACResources.styleAlarmIcon);
+                    GUILayout.Label(KACResources.iconRaw, KACResources.styleAlarmIcon);
                     break;
                 case KACAlarm.AlarmType.Maneuver:
                 case KACAlarm.AlarmType.ManeuverAuto:
@@ -763,6 +765,9 @@ namespace KerbalAlarmClock
                     break;
                 case KACAlarm.AlarmType.Crew:
                     GUILayout.Label(KACResources.iconCrew, KACResources.styleAlarmIcon);
+                    break;
+                case KACAlarm.AlarmType.EarthTime:
+                    GUILayout.Label(KACResources.iconEarth, KACResources.styleAlarmIcon);
                     break;
                 default:
                     GUILayout.Label(KACResources.iconNone, KACResources.styleAlarmIcon);
@@ -959,6 +964,16 @@ namespace KerbalAlarmClock
             GUILayout.Label(strTitle, KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(WindowHeight));
 
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Selected Vessel:", KACResources.styleAddHeading);
+                String strVesselName = "No Selected Vessel";
+                if (KACWorkerGameState.CurrentVessel != null) strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
+                GUILayout.Label(strVesselName, KACResources.styleLabelWarning);
+                GUILayout.EndHorizontal();
+            }
+
             GUILayout.BeginHorizontal();
             GUILayout.Label("Alarm:", KACResources.styleAddHeading, GUILayout.Width(60));
             strName = GUILayout.TextField(strName, KACResources.styleAddField, GUILayout.MaxWidth(200)).Replace("|", "");
@@ -970,7 +985,8 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
-            if (TypesForAttachOption.Contains(TypeOfAlarm))
+            if (ScenesForAttachOption.Contains(KACWorkerGameState.CurrentGUIScene) && TypesForAttachOption.Contains(TypeOfAlarm)
+                && KACWorkerGameState.CurrentVessel!=null)
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
@@ -1265,10 +1281,15 @@ namespace KerbalAlarmClock
 
         public Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params GUIContent[] Choices)
         {
-            int Selection = KACAlarm.AlarmTypeToButton[selType];
+            int Selection = (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION) ? KACAlarm.AlarmTypeToButton[selType] : KACAlarm.AlarmTypeToButtonTS[selType];
             Boolean blnReturn = DrawButtonList(ref Selection, Choices);
             if (blnReturn)
-                selType = KACAlarm.AlarmTypeFromButton[Selection];
+            {
+                if (KACWorkerGameState.CurrentGUIScene== GameScenes.TRACKSTATION)
+                    selType = KACAlarm.AlarmTypeFromButtonTS[Selection];
+                else
+                    selType = KACAlarm.AlarmTypeFromButton[Selection];
+            }
             return blnReturn;
         }
 

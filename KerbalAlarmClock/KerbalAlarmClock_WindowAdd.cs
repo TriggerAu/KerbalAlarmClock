@@ -49,7 +49,10 @@ namespace KerbalAlarmClock
             timeMargin.BuildFromUT(Settings.AlarmDefaultMargin);
 
             //set default strings
-            strAlarmName = FlightGlobals.ActiveVessel.vesselName + "";
+            if (KACWorkerGameState.CurrentVessel != null)
+                strAlarmName = KACWorkerGameState.CurrentVessel.vesselName + "";
+            else
+                strAlarmName = "No Vessel";
             strAlarmNotes = "";
             AddNotesHeight = 100;
 
@@ -69,18 +72,19 @@ namespace KerbalAlarmClock
 
             //build the XFer parents list
             SetUpXferParents();
-            //if the craft is orbiting a body on the parents list then set it as the default
-            if (XferParentBodies.Contains(KACWorkerGameState.CurrentVessel.mainBody.referenceBody))
+            intXferCurrentParent = 0;
+            SetupXferOrigins();
+            intXferCurrentOrigin = 0;
+
+            if (KACWorkerGameState.CurrentVessel != null)
             {
-                intXferCurrentParent = XferParentBodies.IndexOf(KACWorkerGameState.CurrentVessel.mainBody.referenceBody);
-                SetupXferOrigins();
-                intXferCurrentOrigin = XferOriginBodies.IndexOf(KACWorkerGameState.CurrentVessel.mainBody);
-            }
-            else
-            {
-                intXferCurrentParent = 0;
-                SetupXferOrigins();
-                intXferCurrentOrigin = 0;
+                //if the craft is orbiting a body on the parents list then set it as the default
+                if (XferParentBodies.Contains(KACWorkerGameState.CurrentVessel.mainBody.referenceBody))
+                {
+                    intXferCurrentParent = XferParentBodies.IndexOf(KACWorkerGameState.CurrentVessel.mainBody.referenceBody);
+                    SetupXferOrigins();
+                    intXferCurrentOrigin = XferOriginBodies.IndexOf(KACWorkerGameState.CurrentVessel.mainBody);
+                }
             }
             //set initial targets
             SetupXFerTargets();
@@ -90,6 +94,13 @@ namespace KerbalAlarmClock
             strCrewUT = "";
         }
 
+        List<KACAlarm.AlarmType> AlarmsThatBuildStrings = new List<KACAlarm.AlarmType>() {
+            KACAlarm.AlarmType.Raw,
+            KACAlarm.AlarmType.Transfer,
+            KACAlarm.AlarmType.TransferModelled,
+            KACAlarm.AlarmType.Crew
+        };
+
         String strAlarmEventName = "Alarm";
         public void AddTypeChanged()
         {
@@ -98,72 +109,77 @@ namespace KerbalAlarmClock
             else
                 blnAlarmAttachToVessel = true;
 
-            //set strings, etc here for type changes
             switch (AddType)
             {
-                case KACAlarm.AlarmType.Raw:
-                    strAlarmEventName = "Alarm";
-                    BuildRawStrings();
-                    break;
-                case KACAlarm.AlarmType.Maneuver:
-                    strAlarmEventName = "Node";
-                    strAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-                    strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Maneuver Node";
-                    break;
-                case KACAlarm.AlarmType.SOIChange:
-                    strAlarmEventName = "SOI";
-                    strAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-                    strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing SOI Change\r\n" +
-                                        "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
-                                        "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
-                    break;
+                case KACAlarm.AlarmType.Raw:                strAlarmEventName = "Alarm";            break;
+                case KACAlarm.AlarmType.Maneuver:           strAlarmEventName = "Node";             break;
+                case KACAlarm.AlarmType.SOIChange:          strAlarmEventName = "SOI";              break;
                 case KACAlarm.AlarmType.Transfer:
-                case KACAlarm.AlarmType.TransferModelled:
-                    strAlarmEventName = "Transfer";
-                    BuildTransferStrings();
-                    break;
-                case KACAlarm.AlarmType.Apoapsis:
-                    strAlarmEventName = "Apoapsis";
-                    strAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-                    strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Apoapsis";
-                    break;
-                case KACAlarm.AlarmType.Periapsis:
-                    strAlarmEventName = "Periapsis";
-                    strAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-                    strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Periapsis";
-                    break;
-                case KACAlarm.AlarmType.AscendingNode:
-                    strAlarmEventName = "Ascending";
-                    strAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-                    strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Ascending Node";
-                    break;
-                case KACAlarm.AlarmType.DescendingNode:
-                    strAlarmEventName = "Descending";
-                    strAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-                    strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Descending Node";
-                    break;
-                case KACAlarm.AlarmType.LaunchRendevous:
-                    strAlarmEventName = "Launch Ascent";
-                    strAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-                    strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Launch Rendevous";
-                    break;
-                case KACAlarm.AlarmType.Closest:
-                    strAlarmEventName = "Closest";
-                    strAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-                    strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Closest Approach";
-                    break;
-                case KACAlarm.AlarmType.Distance:
-                    strAlarmEventName = " Target Distance";
-                    strAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-                    strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Target Distance";
-                    break;
-                case KACAlarm.AlarmType.Crew:
-                    BuildCrewStrings();
-                    CrewAlarmStoreNode = Settings.AlarmCrewDefaultStoreNode;
-                    break;
+                case KACAlarm.AlarmType.TransferModelled:   strAlarmEventName = "Transfer";         break;
+                case KACAlarm.AlarmType.Apoapsis:           strAlarmEventName = "Apoapsis";         break;
+                case KACAlarm.AlarmType.Periapsis:          strAlarmEventName = "Periapsis";        break;
+                case KACAlarm.AlarmType.AscendingNode:      strAlarmEventName = "Ascending";        break;
+                case KACAlarm.AlarmType.DescendingNode:     strAlarmEventName = "Descending";       break;
+                case KACAlarm.AlarmType.LaunchRendevous:    strAlarmEventName = "Launch Ascent";    break;
+                case KACAlarm.AlarmType.Closest:            strAlarmEventName = "Closest";          break;
+                case KACAlarm.AlarmType.Distance:           strAlarmEventName = "Target Distance";  break;
+                case KACAlarm.AlarmType.Crew:               strAlarmEventName = "Crew";             break;
                 default:
-                    strAlarmEventName = "Alarm"; 
+                    strAlarmEventName = "Alarm";
                     break;
+            }
+
+            //set strings, etc here for type changes
+            strAlarmName = (KACWorkerGameState.CurrentVessel != null) ? KACWorkerGameState.CurrentVessel.vesselName : "Alarm";
+            strAlarmNotes = "";
+            if (KACWorkerGameState.CurrentVessel != null)
+            {
+                switch (AddType)
+                {
+                    case KACAlarm.AlarmType.Raw:
+                        BuildRawStrings();
+                        break;
+                    case KACAlarm.AlarmType.Maneuver:
+                        strAlarmNotes = "Time to pay attention to\r\n    " + strAlarmName + "\r\nNearing Maneuver Node";
+                        break;
+                    case KACAlarm.AlarmType.SOIChange:
+                        if (KACWorkerGameState.SOIPointExists)
+                            strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing SOI Change\r\n" +
+                                            "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
+                                            "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
+                        break;
+                    case KACAlarm.AlarmType.Transfer:
+                    case KACAlarm.AlarmType.TransferModelled:
+                        BuildTransferStrings();
+                        break;
+                    case KACAlarm.AlarmType.Apoapsis:
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Apoapsis";
+                        break;
+                    case KACAlarm.AlarmType.Periapsis:
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Periapsis";
+                        break;
+                    case KACAlarm.AlarmType.AscendingNode:
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Ascending Node";
+                        break;
+                    case KACAlarm.AlarmType.DescendingNode:
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Descending Node";
+                        break;
+                    case KACAlarm.AlarmType.LaunchRendevous:
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Launch Rendevous";
+                        break;
+                    case KACAlarm.AlarmType.Closest:
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Closest Approach";
+                        break;
+                    case KACAlarm.AlarmType.Distance:
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Target Distance";
+                        break;
+                    case KACAlarm.AlarmType.Crew:
+                        BuildCrewStrings();
+                        CrewAlarmStoreNode = Settings.AlarmCrewDefaultStoreNode;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -190,26 +206,27 @@ namespace KerbalAlarmClock
         private void BuildRawStrings()
         {
             String strWorking = "";
-            if (blnAlarmAttachToVessel)
+            if (blnAlarmAttachToVessel && KACWorkerGameState.CurrentVessel!=null)
                 strWorking = "Time to pay attention to:\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nRaw Time Alarm";
             else
                 strWorking = "Raw Time Alarm";
             strAlarmNotes = strWorking;
 
             strWorking = "";
-            if (blnAlarmAttachToVessel)
+            if (blnAlarmAttachToVessel && KACWorkerGameState.CurrentVessel != null)
                 strWorking = KACWorkerGameState.CurrentVessel.vesselName;
             else
                 strWorking = "Raw Time Alarm";
             strAlarmName = strWorking;
-
         }
 
         private void BuildCrewStrings()
         {
             strAlarmEventName = "Crew";
-            List<ProtoCrewMember> pCM = KACWorkerGameState.CurrentVessel.GetVesselCrew();
-            if(pCM.Count==0)
+            List<ProtoCrewMember> pCM=null;
+            if ( KACWorkerGameState.CurrentVessel!=null)
+                pCM= KACWorkerGameState.CurrentVessel.GetVesselCrew();
+            if(pCM!=null && pCM.Count==0)
             {
                 strAlarmName = "Crew member alarm";
                 strAlarmNotes = "No Kerbals present in this vessel";
@@ -243,6 +260,27 @@ namespace KerbalAlarmClock
                 new GUIContent(KACResources.btnRaw,"Raw Time Alarm")
             };
 
+        GUIContent[] guiTypesSpaceCenter = new GUIContent[]
+            {
+                new GUIContent(KACResources.btnRaw,"Raw Time Alarm"),
+                //new GUIContent(KACResources.btnXfer,"Transfer Window")
+            };
+        GUIContent[] guiTypesTrackingStation = new GUIContent[]
+            {
+                new GUIContent(KACResources.btnRaw,"Raw Time Alarm"),
+                new GUIContent(KACResources.btnMNode,"Maneuver Node"),
+                new GUIContent(KACResources.btnApPe,"Apoapsis / Periapsis"),
+                new GUIContent(KACResources.btnSOI,"SOI Change"),
+                new GUIContent(KACResources.btnXfer,"Transfer Window")
+            };
+
+        GameScenes[] ScenesForAttachOption = new GameScenes[] 
+            { 
+                GameScenes.FLIGHT, 
+                GameScenes.TRACKSTATION, 
+            };
+
+
         KACAlarm.AlarmType[] TypesForAttachOption = new KACAlarm.AlarmType[] 
             { 
                 KACAlarm.AlarmType.Raw, 
@@ -268,7 +306,16 @@ namespace KerbalAlarmClock
 
             //AddType =  (KACAlarm.AlarmType)GUILayout.Toolbar((int)AddType, strAddTypes,KACResources.styleButton);
             GUIContent[] guiButtons = guiTypes;
-            if (parentBehaviour.ViewAlarmsOnly) guiButtons = guiTypesView;
+            switch (parentBehaviour.MonoName)
+            {
+                case "KACSpaceCenter":
+                    guiButtons = guiTypesSpaceCenter; break;
+                case "KACTrackingStation":
+                    guiButtons = guiTypesTrackingStation; break;
+                default:
+                    break;
+            }
+            //if (parentBehaviour.ViewAlarmsOnly) guiButtons = guiTypesView;
             if (DrawButtonList(ref AddType,guiButtons))
             {
                 AddTypeChanged();
@@ -284,12 +331,16 @@ namespace KerbalAlarmClock
             intHeight_AddWindowCommon = 64;
             if (AddType != KACAlarm.AlarmType.Raw && AddType!= KACAlarm.AlarmType.Crew) //add stuff for margins
                 intHeight_AddWindowCommon += 28;
-            if (TypesForAttachOption.Contains(AddType)) //add stuff for attach to ship
+            if (ScenesForAttachOption.Contains(KACWorkerGameState.CurrentGUIScene) && TypesForAttachOption.Contains(AddType) && KACWorkerGameState.CurrentVessel!=null) //add stuff for attach to ship
                 intHeight_AddWindowCommon += 30;
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+                intHeight_AddWindowCommon += 18;
 
             //layout the right fields for the common components
             Boolean blnAttachPre = blnAlarmAttachToVessel;
             WindowLayout_CommonFields2(ref strAlarmName, ref blnAlarmAttachToVessel, ref AddAction, ref timeMargin, AddType, intHeight_AddWindowCommon);
+
+            Double dblTimeToPoint = 0;
 
             //layout the specific pieces for each type of alarm
             switch (AddType)
@@ -302,7 +353,8 @@ namespace KerbalAlarmClock
                     WindowLayout_AddPane_Maneuver();
                     break;
                 case KACAlarm.AlarmType.SOIChange:
-                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.SOIPointExists, KACWorkerGameState.CurrentVessel.orbit.UTsoi - KACWorkerGameState.CurrentTime.UT);
+                    dblTimeToPoint = (KACWorkerGameState.CurrentVessel==null) ? 0 : KACWorkerGameState.CurrentVessel.orbit.UTsoi - KACWorkerGameState.CurrentTime.UT;
+                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.SOIPointExists,dblTimeToPoint);
                     //WindowLayout_AddPane_SOI2();
                     break;
                 case KACAlarm.AlarmType.Transfer:
@@ -312,11 +364,13 @@ namespace KerbalAlarmClock
                     break;
                 case KACAlarm.AlarmType.Apoapsis:
                     WindowLayout_AddTypeApPe();
-                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.ApPointExists, KACWorkerGameState.CurrentVessel.orbit.timeToAp);
+                    dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToAp;
+                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.ApPointExists, dblTimeToPoint);
                     break;
                 case KACAlarm.AlarmType.Periapsis:
                     WindowLayout_AddTypeApPe();
-                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.PePointExists, KACWorkerGameState.CurrentVessel.orbit.timeToPe);
+                    dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToPe;
+                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.PePointExists, dblTimeToPoint);
                     break;
                 case KACAlarm.AlarmType.AscendingNode:
                     WindowLayout_AddTypeANDN();
@@ -405,6 +459,7 @@ namespace KerbalAlarmClock
                 AddTypeChanged();
 
             }
+
             GUILayout.EndHorizontal();
         }
 
@@ -477,7 +532,7 @@ namespace KerbalAlarmClock
                 {
                     //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
                     String strVesselID = "";
-                    if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+                    if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
                     Settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmType.Raw, 
                         (AddAction== KACAlarm.AlarmAction.KillWarp), (AddAction== KACAlarm.AlarmAction.PauseGame)));
                     Settings.Save();
@@ -663,8 +718,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             GUILayout.Label("Node Details...", KACResources.styleAddSectionHeading);
 
-            Vessel myVessel = FlightGlobals.ActiveVessel;
-            if (myVessel == null)
+            if (KACWorkerGameState.CurrentVessel == null)
             {
                 GUILayout.Label("No Active Vessel");
             }
@@ -679,9 +733,9 @@ namespace KerbalAlarmClock
                     Boolean blnFoundNode = false;
                     String strMarginConversion = "";
                     //loop to find the first future node
-                    for (int intNode = 0; (intNode < myVessel.patchedConicSolver.maneuverNodes.Count) && !blnFoundNode; intNode++)
+                    for (int intNode = 0; (intNode < KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Count) && !blnFoundNode; intNode++)
                     {
-                        KACTime nodeTime = new KACTime(myVessel.patchedConicSolver.maneuverNodes[intNode].UT);
+                        KACTime nodeTime = new KACTime(KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes[intNode].UT);
                         KACTime nodeInterval = new KACTime(nodeTime.UT - KACWorkerGameState.CurrentTime.UT);
 
                         KACTime nodeAlarm;
@@ -703,9 +757,9 @@ namespace KerbalAlarmClock
                             if (DrawAddAlarm(nodeTime,nodeInterval,nodeAlarmInterval))
                             {
                                 //Get a list of all future Maneuver Nodes - thats what the skip does
-                                List<ManeuverNode> manNodesToStore = myVessel.patchedConicSolver.maneuverNodes.Skip(intNode).ToList<ManeuverNode>();
+                                List<ManeuverNode> manNodesToStore = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Skip(intNode).ToList<ManeuverNode>();
 
-                                Settings.Alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.Maneuver,
+                                Settings.Alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.Maneuver,
                                     (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), manNodesToStore));
                                 Settings.Save();
                                 _ShowAddPane = false;
@@ -746,17 +800,18 @@ namespace KerbalAlarmClock
                 }
             }
 
-            Vessel myVessel = FlightGlobals.ActiveVessel;
-            if (myVessel == null)
+            if (KACWorkerGameState.CurrentVessel == null)
                 GUILayout.Label("No Active Vessel");
             else
             {
                 if (!PointFound)
+                {
                     GUILayout.Label("No " + strAlarmEventName + " Point Found on current plan", GUILayout.ExpandWidth(true));
+                }
                 else
                 {
                     String strMarginConversion = "";
-                    KACTime eventTime = new KACTime(KACWorkerGameState.CurrentTime.UT+ timeToPoint);
+                    KACTime eventTime = new KACTime(KACWorkerGameState.CurrentTime.UT + timeToPoint);
                     KACTime eventInterval = new KACTime(timeToPoint);
 
                     KACTime eventAlarm;
@@ -777,7 +832,7 @@ namespace KerbalAlarmClock
                     {
                         if (DrawAddAlarm(eventTime, eventInterval, eventAlarmInterval))
                         {
-                            KACAlarm newAlarm = new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, eventAlarm.UT, timeMargin.UT, AddType,
+                            KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes, eventAlarm.UT, timeMargin.UT, AddType,
                                 (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame));
                             if (lstAlarmsWithTarget.Contains(AddType))
                                 newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
@@ -789,7 +844,7 @@ namespace KerbalAlarmClock
                     }
                     else
                     {
-                        strMarginConversion="No Future " + strAlarmEventName + "Points found";
+                        strMarginConversion = "No Future " + strAlarmEventName + "Points found";
                     }
 
                     if (strMarginConversion != "")
@@ -897,8 +952,6 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
             try
             {
-                
-
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Xfer Parent:", KACResources.styleAddHeading, GUILayout.Width(80), GUILayout.Height(20));
                 GUILayout.Label(XferParentBodies[intXferCurrentParent].bodyName, KACResources.styleAddXferName, GUILayout.ExpandWidth(true), GUILayout.Height(20));
@@ -926,6 +979,7 @@ namespace KerbalAlarmClock
                     BuildTransferStrings();
                     //strAlarmNotesNew = String.Format("{0} Transfer", XferOriginBodies[intXferCurrentOrigin].bodyName);
                 }
+
                 if (!Settings.AlarmXferDisplayList)
                     GUILayout.Space(34);
                 else
@@ -964,7 +1018,7 @@ namespace KerbalAlarmClock
 
                     GUILayout.BeginHorizontal();
                     GUILayout.Label("Phase Angle-Target:", KACResources.styleAddHeading, GUILayout.Width(130));
-                    if (intXferCurrentParent != 0 || (!Settings.XferUseModelData && Settings.XferModelDataLoaded))
+                    if (intXferCurrentParent != 0 || (!(Settings.XferUseModelData && Settings.XferModelDataLoaded)))
                     {
                         //formula based
                         GUILayout.Label(String.Format("{0:0.00}", XferTargetBodies[intXferCurrentTarget].PhaseAngleTarget), KACResources.styleContent, GUILayout.Width(67));
@@ -1011,7 +1065,7 @@ namespace KerbalAlarmClock
                     {
                         GUILayout.BeginHorizontal();
                         GUILayout.Label(XferTargetBodies[intTarget].Target.bodyName, KACResources.styleAddXferName, GUILayout.Width(55), GUILayout.Height(20));
-                        if (intXferCurrentParent != 0 || (!Settings.XferUseModelData && Settings.XferModelDataLoaded))
+                        if (intXferCurrentParent != 0 || (!(Settings.XferUseModelData && Settings.XferModelDataLoaded)))
                         {
                             //formula based
                             String strPhase = String.Format("{0:0.00}({1:0.00})", XferTargetBodies[intTarget].PhaseAngleCurrent, XferTargetBodies[intTarget].PhaseAngleTarget);
@@ -1064,7 +1118,7 @@ namespace KerbalAlarmClock
                     intAddXferHeight += -56 + ( XferTargetBodies.Count * 30);
                 }
 
-                if (intXferCurrentParent != 0 || (!Settings.XferUseModelData && Settings.XferModelDataLoaded))
+                if (intXferCurrentParent != 0 || (!(Settings.XferUseModelData && Settings.XferModelDataLoaded)))
                 {
                     //Formula based - add new alarm
                     if (DrawAddAlarm(new KACTime(KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT),
@@ -1089,14 +1143,14 @@ namespace KerbalAlarmClock
                                     new KACTime(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT),
                                     new KACTime(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT)))
                         {
-                        String strVesselID = "";
-                        if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                        Settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
-                            (XferCurrentTargetEventTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmType.Transfer,
-                            (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), XferTargetBodies[intXferCurrentTarget]));
-                        Settings.Save();
-                        _ShowAddPane = false;
-                    }
+                            String strVesselID = "";
+                            if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+                            Settings.Alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
+                                (XferCurrentTargetEventTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmType.Transfer,
+                                (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame), XferTargetBodies[intXferCurrentTarget]));
+                            Settings.Save();
+                            _ShowAddPane = false;
+                        }
                     }
                     else{
                         GUILayout.Label("Selected a transfer with no event date",GUILayout.ExpandWidth(true));
@@ -1124,7 +1178,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             GUILayout.Label("Vessel:", KACResources.styleAddHeading);
             String strVesselName = "Not Attached to Vessel";
-            if (blnAlarmAttachToVessel) strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
+            if (KACWorkerGameState.CurrentVessel!= null && blnAlarmAttachToVessel) strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
             GUILayout.TextField(strVesselName, KACResources.styleAddFieldGreen);
             GUILayout.Label("Alarm:", KACResources.styleAddHeading);
             strAlarmName = GUILayout.TextField(strAlarmName, KACResources.styleAddField, GUILayout.MaxWidth(184)).Replace("|", "");

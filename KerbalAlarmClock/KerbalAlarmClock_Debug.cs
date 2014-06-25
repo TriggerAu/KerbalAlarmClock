@@ -235,6 +235,7 @@ namespace KerbalAlarmClock
         
 
         int intTestDistance = 710000;
+
         public void FillDebugWindow(int WindowID)
         {
             GUILayout.BeginVertical();
@@ -263,21 +264,100 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
-            GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count));
-            GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.AlarmListMaxAlarmsInt));
-            foreach (KACAlarm item in KerbalAlarmClock.Settings.Alarms)
+            //GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count));
+            //GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.AlarmListMaxAlarmsInt));
+            //foreach (KACAlarm item in KerbalAlarmClock.Settings.Alarms)
+            //{
+            //    GUILayout.Label(String.Format("{0} ({1},{2})", item.Name, item.AlarmLineWidth, item.AlarmLineHeight));
+            //}
+
+
+            //GUILayout.Label("Time:" + GameSettings.KERBIN_TIME.ToString());
+            //GUILayout.Label("ManMargin:" + KerbalAlarmClock.Settings.AlarmAddManAutoMargin.ToString());
+
+
+            if (KACWorkerGameState.CurrentVessel == null)
             {
-                GUILayout.Label(String.Format("{0} ({1},{2})", item.Name, item.AlarmLineWidth, item.AlarmLineHeight));
+                GUILayout.Label(String.Format("No Current Version"));
+            }
+            else
+            {
+                GUILayout.Label(String.Format("CurrentV:{0}", KACWorkerGameState.CurrentVessel.name));
             }
 
-
-            GUILayout.Label("Time:" + GameSettings.KERBIN_TIME.ToString());
-            GUILayout.Label("ManMargin:" + KerbalAlarmClock.Settings.AlarmAddManAutoMargin.ToString());
-
-            if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
             {
-                GUILayout.Label (KACWorkerGameState.ManeuverNodeExists.ToString());
-                GUILayout.Label((KACWorkerGameState.ManeuverNodeFuture != null).ToString());
+                SpaceTracking st = (SpaceTracking)GameObject.FindObjectOfType(typeof(SpaceTracking));
+                if (st.mainCamera.target != null)
+                {
+                    if (st.mainCamera.target.type== MapObject.MapObjectType.VESSEL)
+                        GUILayout.Label(String.Format("CurrentSTV:{0}", st.mainCamera.target.vessel.name));
+                    else
+                        GUILayout.Label(String.Format("CurrentSTV:{0}", "Not a vessel"));
+
+                    //GUILayout.Label(String.Format("Fly:{0}", st.FlyButton.));
+                }
+            }
+
+            //GUILayout.Label(String.Format("FG: {0}", FlightGlobals.fetch != null));
+            //if (FlightGlobals.fetch)
+            //{
+            //    GUILayout.Label(String.Format("FG-AV: {0}", FlightGlobals.fetch.activeVessel != null));
+            //    GUILayout.Label(String.Format("FG-AT: {0}", FlightGlobals.fetch.VesselTarget != null));
+            //}
+
+            //GUILayout.Label(String.Format("MV: {0}", MapView.fetch != null));
+            //if (MapView.fetch)
+            //{
+            //    GUILayout.Label(String.Format("MV: {0}", MapView.fetch.scaledVessel != null));
+            //    GUILayout.Label(String.Format("MV-MC: {0}", MapView.MapCamera != null));
+            //    GUILayout.Label(String.Format("MV-MC-T: {0}", MapView.MapCamera.target != null));
+            //    if (MapView.MapCamera.target != null)
+            //    {
+            //        GUILayout.Label(String.Format("MV-MC-T-n: {0}", MapView.MapCamera.target.name));
+            //        GUILayout.Label(String.Format("MV-MC-T-T: {0}", MapView.MapCamera.target.type));
+            //    }
+            //    if (MapView.MapCamera.targets != null)
+            //    {
+            //        GUILayout.Label(String.Format("MV-MC-Ts: {0}", MapView.MapCamera.targets.Count));
+            //    }
+
+            //}
+
+            //foreach (Vessel item in FlightGlobals.Vessels)
+            //{
+            //    GUILayout.Label(String.Format("{0}-{1}", item.vesselName, item.isActiveVessel));
+            //}
+
+            //if (KACWorkerGameState.CurrentVessel != null)
+            //{
+            //    GUILayout.Label(String.Format("CurrentV:{0}", KACWorkerGameState.CurrentVessel.name));
+            //    GUILayout.Label(String.Format("CurrentSOI:{0}", KACWorkerGameState.CurrentSOIBody.bodyName));
+            //    if (KACWorkerGameState.CurrentVesselTarget!=null)
+            //        GUILayout.Label(String.Format("CurrentT:{0}", KACWorkerGameState.CurrentVesselTarget.GetName()));
+
+            //    if (KACWorkerGameState.CurrentVessel.patchedConicSolver != null)
+            //    {
+            //        if (KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes != null)
+            //        {
+            //            if (KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Count > 0)
+            //            {
+            //                GUILayout.Label(String.Format("CV Node:{0}", "true")); ;
+            //            }
+            //        }
+            //    }
+            //}
+
+
+            //GUILayout.Label(String.Format("Node:{0}", KACWorkerGameState.ManeuverNodeExists));
+            //GUILayout.Label(String.Format("SOI:{0}", KACWorkerGameState.SOIPointExists));
+            //GUILayout.Label(FormatVar("Vessel:{0}", KACWorkerGameState.CurrentVessel.mainBody.ToString()));
+
+
+            //if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+            //{
+            //    GUILayout.Label (KACWorkerGameState.ManeuverNodeExists.ToString());
+            //    GUILayout.Label((KACWorkerGameState.ManeuverNodeFuture != null).ToString());
 
 
 
@@ -735,7 +815,7 @@ namespace KerbalAlarmClock
 
 
                 //GUILayout.Label(blnRecalc.ToString());
-            }
+            //}
             GUILayout.EndVertical();
             GUI.DragWindow();
 

@@ -731,7 +731,7 @@ namespace KerbalAlarmClock
             switch (tmpAlarm.TypeOfAlarm)
             {
                 case KACAlarm.AlarmType.Raw:
-                    GUILayout.Label(KACResources.iconNone, KACResources.styleAlarmIcon);
+                    GUILayout.Label(KACResources.iconRaw, KACResources.styleAlarmIcon);
                     break;
                 case KACAlarm.AlarmType.Maneuver:
                 case KACAlarm.AlarmType.ManeuverAuto:
@@ -769,6 +769,9 @@ namespace KerbalAlarmClock
                     break;
                 case KACAlarm.AlarmType.Crew:
                     GUILayout.Label(KACResources.iconCrew, KACResources.styleAlarmIcon);
+                    break;
+                case KACAlarm.AlarmType.EarthTime:
+                    GUILayout.Label(KACResources.iconEarth, KACResources.styleAlarmIcon);
                     break;
                 default:
                     GUILayout.Label(KACResources.iconNone, KACResources.styleAlarmIcon);

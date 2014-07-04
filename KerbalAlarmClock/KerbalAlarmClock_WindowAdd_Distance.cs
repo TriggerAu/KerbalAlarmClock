@@ -115,7 +115,7 @@ namespace KerbalAlarmClock
                     {
                         if (DrawAddAlarm(eventTime, eventInterval, eventAlarmInterval))
                         {
-                            KACAlarm newAlarm = new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes,
+                            KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes,
                                 eventAlarm.UT, timeMargin.UT, AddType,
                                 AddAction);
                             newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
@@ -313,7 +313,7 @@ namespace KerbalAlarmClock
             {
                 if (DrawAddAlarm(eventTime, eventInterval, eventAlarmInterval))
                 {
-                    KACAlarm newAlarm = new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes,
+                    KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes,
                         eventAlarm.UT, timeMargin.UT, AddType,
                         AddAction);
                     newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;

@@ -50,7 +50,7 @@ namespace KerbalAlarmClock
             timeMargin.BuildFromUT(settings.AlarmDefaultMargin);
 
             //set default strings
-            strAlarmName = FlightGlobals.ActiveVessel.vesselName + "";
+            strAlarmName = KACWorkerGameState.CurrentVessel.vesselName + "";
             strAlarmNotes = "";
             AddNotesHeight = 100;
 
@@ -664,8 +664,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             GUILayout.Label("Node Details...", KACResources.styleAddSectionHeading);
 
-            Vessel myVessel = FlightGlobals.ActiveVessel;
-            if (myVessel == null)
+            if (KACWorkerGameState.CurrentVessel == null)
             {
                 GUILayout.Label("No Active Vessel");
             }
@@ -680,9 +679,9 @@ namespace KerbalAlarmClock
                     Boolean blnFoundNode = false;
                     String strMarginConversion = "";
                     //loop to find the first future node
-                    for (int intNode = 0; (intNode < myVessel.patchedConicSolver.maneuverNodes.Count) && !blnFoundNode; intNode++)
+                    for (int intNode = 0; (intNode < KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Count) && !blnFoundNode; intNode++)
                     {
-                        KACTime nodeTime = new KACTime(myVessel.patchedConicSolver.maneuverNodes[intNode].UT);
+                        KACTime nodeTime = new KACTime(KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes[intNode].UT);
                         KACTime nodeInterval = new KACTime(nodeTime.UT - KACWorkerGameState.CurrentTime.UT);
 
                         KACTime nodeAlarm;
@@ -704,9 +703,9 @@ namespace KerbalAlarmClock
                             if (DrawAddAlarm(nodeTime,nodeInterval,nodeAlarmInterval))
                             {
                                 //Get a list of all future Maneuver Nodes - thats what the skip does
-                                List<ManeuverNode> manNodesToStore = myVessel.patchedConicSolver.maneuverNodes.Skip(intNode).ToList<ManeuverNode>();
+                                List<ManeuverNode> manNodesToStore = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Skip(intNode).ToList<ManeuverNode>();
 
-                                alarms.Add(new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.Maneuver,
+                                alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmType.Maneuver,
                                     AddAction, manNodesToStore));
                                 settings.Save();
                                 _ShowAddPane = false;
@@ -747,8 +746,7 @@ namespace KerbalAlarmClock
                 }
             }
 
-            Vessel myVessel = FlightGlobals.ActiveVessel;
-            if (myVessel == null)
+            if (KACWorkerGameState.CurrentVessel == null)
                 GUILayout.Label("No Active Vessel");
             else
             {
@@ -778,7 +776,7 @@ namespace KerbalAlarmClock
                     {
                         if (DrawAddAlarm(eventTime, eventInterval, eventAlarmInterval))
                         {
-                            KACAlarm newAlarm = new KACAlarm(FlightGlobals.ActiveVessel.id.ToString(), strAlarmName, strAlarmNotes, eventAlarm.UT, timeMargin.UT, AddType,
+                            KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes, eventAlarm.UT, timeMargin.UT, AddType,
                                 AddAction);
                             if (lstAlarmsWithTarget.Contains(AddType))
                                 newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;

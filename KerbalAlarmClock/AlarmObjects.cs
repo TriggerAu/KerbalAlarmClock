@@ -58,9 +58,25 @@ namespace KerbalAlarmClock
             {6,AlarmType.Transfer },
             {7,AlarmType.Crew }
         };
-
-
-
+        
+        public static Dictionary<AlarmType, int> AlarmTypeToButtonTS = new Dictionary<AlarmType, int>() {
+            {AlarmType.Raw, 0},
+            {AlarmType.Maneuver , 1},
+            {AlarmType.ManeuverAuto , 1},
+            {AlarmType.Apoapsis , 2},
+            {AlarmType.Periapsis , 2},
+            {AlarmType.SOIChange , 3},
+            {AlarmType.SOIChangeAuto , 3},
+            {AlarmType.Transfer , 4},
+            {AlarmType.TransferModelled , 4},
+        };
+        internal static Dictionary<int, AlarmType> AlarmTypeFromButtonTS = new Dictionary<int, AlarmType>() {
+            {0,AlarmType.Raw},
+            {1,AlarmType.Maneuver },
+            {2,AlarmType.Apoapsis },
+            {3,AlarmType.SOIChange },
+            {4,AlarmType.Transfer },
+        };
 
         public enum AlarmActionEnum
         {

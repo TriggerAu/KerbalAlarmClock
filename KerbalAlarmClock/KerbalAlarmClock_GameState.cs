@@ -189,13 +189,29 @@ namespace KerbalAlarmClock
                KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
                KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
             }
-            else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION &&
-                    MapView.MapCamera.target.type == MapObject.MapObjectType.VESSEL)
+            else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
             {
-                KACWorkerGameState.CurrentVessel = MapView.MapCamera.target.vessel;
-                KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
-                KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
+                SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
+                if (st.mainCamera.target != null && st.mainCamera.target.type == MapObject.MapObjectType.VESSEL)
+                {
+                    KACWorkerGameState.CurrentVessel = st.mainCamera.target.vessel;
+                    KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
+                    KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
+                }
+                else
+                {
+                    KACWorkerGameState.CurrentVessel = null;
+                    KACWorkerGameState.CurrentSOIBody = null;
+                    KACWorkerGameState.CurrentVesselTarget = null;
+                }
             }
+            //else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION &&
+            //        MapView.MapCamera.target.type == MapObject.MapObjectType.VESSEL)
+            //{
+            //    KACWorkerGameState.CurrentVessel = MapView.MapCamera.target.vessel;
+            //    KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
+            //    KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
+            //}
             else
             {
                KACWorkerGameState.CurrentVessel = null;
@@ -208,9 +224,13 @@ namespace KerbalAlarmClock
         {
            KACWorkerGameState.LastSaveGameName =KACWorkerGameState.CurrentSaveGameName;
            KACWorkerGameState.LastTime =KACWorkerGameState.CurrentTime;
-           KACWorkerGameState.LastVessel =KACWorkerGameState.CurrentVessel;
+           if (LastVessel != CurrentVessel) { if (VesselChanged != null) VesselChanged(LastVessel, CurrentVessel); }
+           KACWorkerGameState.LastVessel = KACWorkerGameState.CurrentVessel;
            KACWorkerGameState.LastSOIBody =KACWorkerGameState.CurrentSOIBody;
            KACWorkerGameState.LastVesselTarget =KACWorkerGameState.CurrentVesselTarget;
         }
+
+        internal delegate void VesselChangedHandler(Vessel OldVessel, Vessel NewVessel);
+        internal static event VesselChangedHandler VesselChanged;
     }
 }

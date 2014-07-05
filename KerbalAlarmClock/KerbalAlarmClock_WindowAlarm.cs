@@ -133,8 +133,8 @@ namespace KerbalAlarmClock
             int intNoOfActionButtonsDoubleLine = 0;
             //if the alarm has a vessel ID/Kerbal associated
             if (StoredVesselOrCrewExists(tmpAlarm.VesselID,tmpAlarm.TypeOfAlarm))
-                //option to allow jumping from view only ships
-                if (!ViewAlarmsOnly || settings.AllowJumpFromViewOnly)
+                //option to allow jumping from SC and TS
+                if (settings.AllowJumpFromViewOnly)
                     intNoOfActionButtons = DrawAlarmActionButtons(tmpAlarm, out intNoOfActionButtonsDoubleLine);
 
             //Work out the text
@@ -302,9 +302,9 @@ namespace KerbalAlarmClock
                 int intNoOfActionButtonsDoubleLine = 0;
                 //if the alarm has a vessel ID/Kerbal associated
                 if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
-                    //option to allow jumping from view only ships
-                    if (!ViewAlarmsOnly || settings.AllowJumpFromViewOnly)
-                        intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit,out intNoOfActionButtonsDoubleLine);
+                    //option to allow jumping from SC and TS
+                    if (settings.AllowJumpFromViewOnly)
+                        intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit, out intNoOfActionButtonsDoubleLine);
 
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
                 {
@@ -340,8 +340,8 @@ namespace KerbalAlarmClock
                 int intNoOfActionButtonsDoubleLine = 0;
                 //if the alarm has a vessel ID/Kerbal associated
                 if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
-                    //option to allow jumping from view only ships
-                    if (!ViewAlarmsOnly || settings.AllowJumpFromViewOnly)
+                    //option to allow jumping from SC and TS
+                    if (settings.AllowJumpFromViewOnly)
                         intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit, out intNoOfActionButtonsDoubleLine);
 
                 if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
@@ -360,7 +360,8 @@ namespace KerbalAlarmClock
             NoOfDoubleLineButtons = 0;
             
             ////is it the current vessel?
-            if ((!ViewAlarmsOnly) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
+            //if ((!ViewAlarmsOnly) && (KACWorkerGameState.CurrentVessel != null) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
+            if ((KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT) && (KACWorkerGameState.CurrentVessel != null) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
             {
                 //There is a node and the alarm + Margin is not expired
                 if ((tmpAlarm.ManNodes != null))

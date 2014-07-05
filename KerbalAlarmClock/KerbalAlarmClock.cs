@@ -27,19 +27,19 @@ namespace KerbalAlarmClock
     public class KACFlight : KerbalAlarmClock
     {
         public override string MonoName { get { return this.name; } }
-        public override bool ViewAlarmsOnly { get { return false; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
     }
     [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
     public class KACSpaceCenter : KerbalAlarmClock
     {
         public override string MonoName { get { return this.name; } }
-        public override bool ViewAlarmsOnly { get { return true; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
     }
     [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
     public class KACTrackingStation : KerbalAlarmClock
     {
         public override string MonoName { get { return this.name; } }
-        public override bool ViewAlarmsOnly { get { return true; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ namespace KerbalAlarmClock
         internal static Settings settings;
         internal static KACAlarmList alarms=new KACAlarmList();
         public virtual String MonoName { get; set; }
-        public virtual Boolean ViewAlarmsOnly { get; set; }
+        //public virtual Boolean ViewAlarmsOnly { get; set; }
         
         //GameState Objects for the monobehaviour
         private Boolean IsInPostDrawQueue=false ;
@@ -88,6 +88,9 @@ namespace KerbalAlarmClock
 
             InitVariables();
 
+            //Event for when the vessel changes (within a scene).
+            KACWorkerGameState.VesselChanged += KACWorkerGameState_VesselChanged;
+
             //Load the Settings values from the file
             //Settings.Load();
             LogFormatted("Loading Settings");
@@ -99,8 +102,9 @@ namespace KerbalAlarmClock
             KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
 
             //Load Hohmann modelling data - if in flight mode
-            if ((KACWorkerGameState.LastGUIScene== GameScenes.FLIGHT) && settings.XferModelLoadData)
-                settings.XferModelDataLoaded = KACResources.LoadModelPoints();
+            //if ((KACWorkerGameState.LastGUIScene == GameScenes.FLIGHT) && settings.XferModelLoadData)
+            if (settings.XferModelLoadData)
+                    settings.XferModelDataLoaded = KACResources.LoadModelPoints();
 
             //Common Toolbar Code
             BlizzyToolbarIsAvailable = HookToolbar();
@@ -492,6 +496,15 @@ namespace KerbalAlarmClock
             ParseAlarmsAndAffectWarpAndPause(SecondsTillNextUpdate);
 
             KACWorkerGameState.SetLastFlightStatesToCurrent();
+        }
+
+        void KACWorkerGameState_VesselChanged(Vessel OldVessel, Vessel NewVessel)
+        {
+            if (_ShowAddPane)
+            {
+                //trigger the string builder to reset stuff
+                AddTypeChanged();
+            }
         }
 
         private void MonitorSOIOnPath()

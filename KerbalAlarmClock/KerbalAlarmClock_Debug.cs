@@ -290,8 +290,16 @@ namespace KerbalAlarmClock
                 SpaceTracking st = (SpaceTracking)GameObject.FindObjectOfType(typeof(SpaceTracking));
                 if (st.mainCamera.target != null)
                 {
-                    if (st.mainCamera.target.type== MapObject.MapObjectType.VESSEL)
+                    if (st.mainCamera.target.type == MapObject.MapObjectType.VESSEL)
+                    {
                         GUILayout.Label(String.Format("CurrentSTV:{0}", st.mainCamera.target.vessel.name));
+                        GUILayout.Label(String.Format("Controllable:{0}, Command:{1}", st.mainCamera.target.vessel.IsControllable, st.mainCamera.target.vessel.isCommandable));
+                        GUILayout.Label(String.Format("State:{0}", st.mainCamera.target.vessel.state));
+                        GUILayout.Label(String.Format("TS:{0}", st.mainCamera.target.vessel.DiscoveryInfo.trackingStatus.Value));
+                        GUILayout.Label(String.Format("sit:{0}", st.mainCamera.target.vessel.DiscoveryInfo.situation.Value));
+                        GUILayout.Label(String.Format("type:{0}", st.mainCamera.target.vessel.DiscoveryInfo.type.Value));
+                        GUILayout.Label(String.Format("life:{0}", st.mainCamera.target.vessel.DiscoveryInfo.referenceLifetime.ToString()));
+                    }
                     else
                         GUILayout.Label(String.Format("CurrentSTV:{0}", "Not a vessel"));
 

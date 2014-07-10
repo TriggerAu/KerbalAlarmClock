@@ -96,6 +96,7 @@ namespace KerbalAlarmClock
         public KACAlarmList Alarms = new KACAlarmList();
 
         public Boolean AllowJumpFromViewOnly = true;
+        public Boolean AllowJumpToAsteroid = false;
         public Boolean BackupSaves = true;
         public Boolean CancelFlightModeJumpOnBackupFailure = false;
         public int BackupSavesToKeep = 20;
@@ -223,8 +224,9 @@ namespace KerbalAlarmClock
                 this.BackupSaves = configfile.GetValue("BackupSaves",true);
                 this.BackupSavesToKeep = configfile.GetValue("BackupSavesToKeep",20);
                 this.CancelFlightModeJumpOnBackupFailure = configfile.GetValue("CancelFlightModeJumpOnBackupFailure", false);
-                
+
                 this.AllowJumpFromViewOnly = configfile.GetValue("AllowJumpFromViewOnly", true);
+                this.AllowJumpToAsteroid = configfile.GetValue("AllowJumpToAsteroid", false);
 
                 this.AlarmListMaxAlarms = configfile.GetValue("AlarmListMaxAlarms", "10");
                 this.AlarmDefaultAction = configfile.GetValue<int>("AlarmDefaultAction", 1);
@@ -401,7 +403,8 @@ namespace KerbalAlarmClock
             configfile.SetValue("CancelFlightModeJumpOnBackupFailure", this.CancelFlightModeJumpOnBackupFailure);
             
             configfile.SetValue("AllowJumpFromViewOnly", this.AllowJumpFromViewOnly);
-
+            configfile.SetValue("AllowJumpToAsteroid", this.AllowJumpToAsteroid);
+            
             configfile.SetValue("AlarmListMaxAlarms", this.AlarmListMaxAlarms);
             configfile.SetValue("AlarmPosition", this.AlarmPosition);
             configfile.SetValue("AlarmDefaultAction", this.AlarmDefaultAction);

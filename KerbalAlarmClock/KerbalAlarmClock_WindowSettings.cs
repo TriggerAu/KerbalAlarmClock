@@ -94,7 +94,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 572;//542;
+                    intSettingsHeight = 602;// 572;//542;
                     break;
                 case 1:
                     WindowLayout_SettingsSpecifics1();
@@ -153,6 +153,9 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             if (DrawCheckbox(ref Settings.AllowJumpFromViewOnly, "Allow Ship Jump in Space Center and Tracking Station"))
+                Settings.Save();
+
+            if (DrawCheckbox(ref Settings.AllowJumpToAsteroid, "Allow Ship Jump to Asteroids"))
                 Settings.Save();
 
             //if (DrawCheckbox(ref Settings.TimeAsUT, "Display Times as UT (instead of Date/Time)"))

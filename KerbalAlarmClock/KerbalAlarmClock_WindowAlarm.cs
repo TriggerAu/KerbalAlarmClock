@@ -132,7 +132,7 @@ namespace KerbalAlarmClock
             int intNoOfActionButtons = 0;
             int intNoOfActionButtonsDoubleLine = 0;
             //if the alarm has a vessel ID/Kerbal associated
-            if (StoredVesselOrCrewExists(tmpAlarm.VesselID,tmpAlarm.TypeOfAlarm))
+            if (CheckVesselOrCrewForJump(tmpAlarm.VesselID,tmpAlarm.TypeOfAlarm))
                 //option to allow jumping from SC and TS
                 if (settings.AllowJumpFromViewOnly)
                     intNoOfActionButtons = DrawAlarmActionButtons(tmpAlarm, out intNoOfActionButtonsDoubleLine);
@@ -171,7 +171,7 @@ namespace KerbalAlarmClock
 
 
         //VesselOrCrewStuff
-        private static Boolean StoredVesselOrCrewExists(String ID, KACAlarm.AlarmType aType)
+        private static Boolean CheckVesselOrCrewForJump(String ID, KACAlarm.AlarmType aType)
         {
             if (aType == KACAlarm.AlarmType.Crew && StoredCrewExists(ID))
             {
@@ -179,9 +179,15 @@ namespace KerbalAlarmClock
             }
             else if (StoredVesselExists(ID))
             {
-                return true;
+                if (settings.AllowJumpToAsteroid)
+                    return true;
+                else if (StoredVessel(ID).vesselType != VesselType.SpaceObject)
+                    return true;
+                else
+                    return false;
             }
-            else return false;
+            else 
+                return false;
 
         }
 
@@ -301,7 +307,7 @@ namespace KerbalAlarmClock
                 int intNoOfActionButtons = 0;
                 int intNoOfActionButtonsDoubleLine = 0;
                 //if the alarm has a vessel ID/Kerbal associated
-                if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
+                if (CheckVesselOrCrewForJump(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
                     //option to allow jumping from SC and TS
                     if (settings.AllowJumpFromViewOnly)
                         intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit, out intNoOfActionButtonsDoubleLine);
@@ -339,7 +345,7 @@ namespace KerbalAlarmClock
                 int intNoOfActionButtons = 0;
                 int intNoOfActionButtonsDoubleLine = 0;
                 //if the alarm has a vessel ID/Kerbal associated
-                if (StoredVesselOrCrewExists(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
+                if (CheckVesselOrCrewForJump(alarmEdit.VesselID, alarmEdit.TypeOfAlarm))
                     //option to allow jumping from SC and TS
                     if (settings.AllowJumpFromViewOnly)
                         intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit, out intNoOfActionButtonsDoubleLine);

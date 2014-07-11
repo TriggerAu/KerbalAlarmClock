@@ -58,6 +58,7 @@ namespace KerbalAlarmClock
 
 
         [Persistent] internal Boolean AllowJumpFromViewOnly = true;
+        [Persistent] internal Boolean AllowJumpToAsteroid = true;
         [Persistent] internal Boolean BackupSaves = true;
         [Persistent] internal Boolean CancelFlightModeJumpOnBackupFailure = false;
         [Persistent] internal int BackupSavesToKeep = 20;

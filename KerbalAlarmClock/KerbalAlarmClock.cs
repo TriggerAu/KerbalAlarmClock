@@ -1008,7 +1008,7 @@ namespace KerbalAlarmClock
                 if (game != null && game.flightState != null && game.compatible)
                 {
                     Int32 FirstVessel;
-                    Boolean blnFoundVessel=false;
+                    Boolean blnFoundVessel = false;
                     for (FirstVessel = 0; FirstVessel < game.flightState.protoVessels.Count; FirstVessel++)
                     {
                         if (game.flightState.protoVessels[FirstVessel].vesselType != VesselType.SpaceObject &&

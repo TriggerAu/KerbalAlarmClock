@@ -18,10 +18,10 @@ namespace KerbalAlarmClock
         int intUpdateBoxheight = 116;
         int intSOIBoxheight = 214; //166;
 
-        KACTimeStringArray timeDefaultMargin = new KACTimeStringArray();
-        KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray();
-        KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray();
-        KACTimeStringArray timeAutoManNodeThreshold = new KACTimeStringArray();
+        KACTimeStringArray timeDefaultMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        KACTimeStringArray timeAutoManNodeThreshold = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private void NewSettingsWindow()
         {
             if (Settings.VersionAttentionFlag)
@@ -94,7 +94,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 572;//542;
+                    intSettingsHeight = 602;// 572;//542;
                     break;
                 case 1:
                     WindowLayout_SettingsSpecifics1();
@@ -153,6 +153,9 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             if (DrawCheckbox(ref Settings.AllowJumpFromViewOnly, "Allow Ship Jump in Space Center and Tracking Station"))
+                Settings.Save();
+
+            if (DrawCheckbox(ref Settings.AllowJumpToAsteroid, "Allow Ship Jump to Asteroids"))
                 Settings.Save();
 
             //if (DrawCheckbox(ref Settings.TimeAsUT, "Display Times as UT (instead of Date/Time)"))
@@ -218,7 +221,7 @@ namespace KerbalAlarmClock
             if (DrawAlarmActionChoice(ref Settings.AlarmDefaultAction, "Default Action:", 90))
                 Settings.Save();
 
-            if (DrawTimeEntry(ref timeDefaultMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Default Margin:", 100))
+            if (DrawTimeEntry(ref timeDefaultMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Default Margin:", 100))
             {
                 //convert it and save it in the settings
                 Settings.AlarmDefaultMargin = timeDefaultMargin.UT;
@@ -267,7 +270,7 @@ namespace KerbalAlarmClock
                 {
                     Settings.Save();
                 }
-                if (DrawTimeEntry(ref timeAutoSOIMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Alarm Margin:", 100))
+                if (DrawTimeEntry(ref timeAutoSOIMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Alarm Margin:", 100))
                 {
                     //convert it and save it in the settings
                     Settings.AlarmAutoSOIMargin = timeAutoSOIMargin.UT;
@@ -327,7 +330,7 @@ namespace KerbalAlarmClock
                     Settings.Save();
                 }
                 GUILayout.Label("Dont Add New alarms if Man node is closer than this threshold", KACResources.styleAddHeading);
-                if (DrawTimeEntry(ref timeAutoManNodeThreshold , KACTimeStringArray.TimeEntryPrecision.Hours, "Threshold:", 100))
+                if (DrawTimeEntry(ref timeAutoManNodeThreshold , KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Threshold:", 100))
                 {
                     //convert it and save it in the settings
                     Settings.AlarmAddManAutoThreshold= timeAutoManNodeThreshold.UT;
@@ -339,7 +342,7 @@ namespace KerbalAlarmClock
                 {
                     Settings.Save();
                 }
-                if (DrawTimeEntry(ref timeAutoManNodeMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Alarm Margin:", 100))
+                if (DrawTimeEntry(ref timeAutoManNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Alarm Margin:", 100))
                 {
                     //convert it and save it in the settings
                     Settings.AlarmAddManAutoMargin = timeAutoManNodeMargin.UT;

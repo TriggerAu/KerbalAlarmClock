@@ -520,6 +520,29 @@ namespace KerbalAlarmClock
                 if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(SecondsWarpLightIsShown) < DateTime.Now)
                     KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
 
+            //Window Pos Movement Mechanic
+            if (WindowPosLast.x != WindowPosByActiveScene.x || WindowPosLast.y != WindowPosByActiveScene.y)
+            {
+                //The window has moved;
+                if (!WindowPosLastInited)
+                    WindowPosLastInited = true;
+                else
+                {
+                    WindowPosSaved = false;
+                    WindowPosMoveDetectedAt = DateTime.Now;
+                }
+            }
+            //Was it moved and has been stationary for the last second
+            if (WindowPosLastInited && !WindowPosSaved && (DateTime.Now - WindowPosMoveDetectedAt).TotalSeconds > 1)
+            {
+                DebugLogFormatted("Saving Moved Window");
+                Settings.SaveConfig();
+                WindowPosSaved = true;
+            }
+            //Update the Last pos
+            WindowPosLast.x = WindowPosByActiveScene.x;
+            WindowPosLast.y = WindowPosByActiveScene.y;
+
             //Work out how many game seconds will pass till this runs again
             double SecondsTillNextUpdate;
             double dWarpRate = TimeWarp.CurrentRate;
@@ -530,6 +553,12 @@ namespace KerbalAlarmClock
 
             KACWorkerGameState.SetLastFlightStatesToCurrent();
         }
+
+        public Vector3d WindowPosLast;
+        public DateTime WindowPosMoveDetectedAt;
+        public Boolean WindowPosSaved = true;
+        public Boolean WindowPosLastInited = false;
+        
 
         void KACWorkerGameState_VesselChanged(Vessel OldVessel, Vessel NewVessel)
         {
@@ -960,4 +989,43 @@ namespace KerbalAlarmClock
         }
     }
 
+#if DEBUG
+    //This will kick us into the save called default and set the first vessel active
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    public class Debug_AutoLoadPersistentSaveOnStartup : MonoBehaviour
+    {
+        //use this variable for first run to avoid the issue with when this is true and multiple addons use it
+        public static bool first = true;
+        public void Start()
+        {
+            //only do it on the first entry to the menu
+            if (first)
+            {
+                first = false;
+                HighLogic.SaveFolder = "default";
+                Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
+
+                if (game != null && game.flightState != null && game.compatible)
+                {
+                    Int32 FirstVessel;
+                    Boolean blnFoundVessel = false;
+                    for (FirstVessel = 0; FirstVessel < game.flightState.protoVessels.Count; FirstVessel++)
+                    {
+                        if (game.flightState.protoVessels[FirstVessel].vesselType != VesselType.SpaceObject &&
+                            game.flightState.protoVessels[FirstVessel].vesselType != VesselType.Unknown)
+                        {
+                            blnFoundVessel = true;
+                            break;
+                        }
+                    }
+                    if (!blnFoundVessel)
+                        FirstVessel = 0;
+                    FlightDriver.StartAndFocusVessel(game, FirstVessel);
+                }
+
+                //CheatOptions.InfiniteFuel = true;
+            }
+        }
+    }
+#endif
 }

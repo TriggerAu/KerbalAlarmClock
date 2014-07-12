@@ -198,6 +198,7 @@ namespace KerbalAlarmClock
             try
             {
                 if (FileName.ToLower().EndsWith(".png")) FileName = FileName.Substring(0, FileName.Length - 4);
+                if (FileName.ToLower().EndsWith(".tga")) FileName = FileName.Substring(0, FileName.Length - 4);
                 if (FolderPath == "") FolderPath = DBPathTextures;
                 KACWorker.DebugLogFormatted("Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
                 tex = GameDatabase.Instance.GetTexture(String.Format("{0}/{1}", FolderPath, FileName), false);

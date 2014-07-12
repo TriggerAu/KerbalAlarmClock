@@ -486,7 +486,10 @@ namespace KerbalAlarmClock
             GUILayout.Label("Time type:", KACResources.styleAddHeading, GUILayout.Width(90));
             if (DrawRadioList(ref intRawType, new string[] { "Date", "Time Interval" }))
             {
-
+                if (intRawType == 0)
+                {
+                    rawEntry = new KACTimeStringArray(Planetarium.GetUniversalTime() + 600, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
+                }
             }
             GUILayout.EndHorizontal();
 
@@ -607,7 +610,12 @@ namespace KerbalAlarmClock
                 GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Time type:", KACResources.styleAddHeading, GUILayout.Width(90));
-                if (DrawRadioList(ref intCrewType, new string[] { "Date", "Time Interval" })) { }
+                if (DrawRadioList(ref intCrewType, new string[] { "Date", "Time Interval" })) {
+                    if (intRawType == 0)
+                    {
+                        rawEntry = new KACTimeStringArray(Planetarium.GetUniversalTime() + 600, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
+                    }
+                }
                 GUILayout.EndHorizontal();
 
                 if (intCrewType == 0)

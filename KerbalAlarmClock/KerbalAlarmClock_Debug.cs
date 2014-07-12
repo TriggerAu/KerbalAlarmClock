@@ -264,6 +264,13 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
+            KACTime tmp = new KACTime(0, 0, 6, 0, 0);
+            KACTimeStringArray arr = new KACTimeStringArray(tmp.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+
+            GUILayout.Label(string.Format("{0},{1},{2},{3},{4},{5}", tmp.UT.ToString(), tmp.Year, tmp.Day, tmp.Hour, tmp.Minute, tmp.Second));
+            GUILayout.Label(string.Format("{0},{1},{2},{3},{4},{5}", arr.UT.ToString(), arr.Years, arr.Days, arr.Hours, arr.Minutes, arr.Seconds));
+
+
             //GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count));
             //GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.AlarmListMaxAlarmsInt));
             //foreach (KACAlarm item in KerbalAlarmClock.Settings.Alarms)
@@ -276,36 +283,36 @@ namespace KerbalAlarmClock
             //GUILayout.Label("ManMargin:" + KerbalAlarmClock.Settings.AlarmAddManAutoMargin.ToString());
 
 
-            if (KACWorkerGameState.CurrentVessel == null)
-            {
-                GUILayout.Label(String.Format("No Current Version"));
-            }
-            else
-            {
-                GUILayout.Label(String.Format("CurrentV:{0}", KACWorkerGameState.CurrentVessel.name));
-            }
+            //if (KACWorkerGameState.CurrentVessel == null)
+            //{
+            //    GUILayout.Label(String.Format("No Current Version"));
+            //}
+            //else
+            //{
+            //    GUILayout.Label(String.Format("CurrentV:{0}", KACWorkerGameState.CurrentVessel.name));
+            //}
 
-            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
-            {
-                SpaceTracking st = (SpaceTracking)GameObject.FindObjectOfType(typeof(SpaceTracking));
-                if (st.mainCamera.target != null)
-                {
-                    if (st.mainCamera.target.type == MapObject.MapObjectType.VESSEL)
-                    {
-                        GUILayout.Label(String.Format("CurrentSTV:{0}", st.mainCamera.target.vessel.name));
-                        GUILayout.Label(String.Format("Controllable:{0}, Command:{1}", st.mainCamera.target.vessel.IsControllable, st.mainCamera.target.vessel.isCommandable));
-                        GUILayout.Label(String.Format("State:{0}", st.mainCamera.target.vessel.state));
-                        GUILayout.Label(String.Format("TS:{0}", st.mainCamera.target.vessel.DiscoveryInfo.trackingStatus.Value));
-                        GUILayout.Label(String.Format("sit:{0}", st.mainCamera.target.vessel.DiscoveryInfo.situation.Value));
-                        GUILayout.Label(String.Format("type:{0}", st.mainCamera.target.vessel.DiscoveryInfo.type.Value));
-                        GUILayout.Label(String.Format("life:{0}", st.mainCamera.target.vessel.DiscoveryInfo.referenceLifetime.ToString()));
-                    }
-                    else
-                        GUILayout.Label(String.Format("CurrentSTV:{0}", "Not a vessel"));
+            //if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+            //{
+            //    SpaceTracking st = (SpaceTracking)GameObject.FindObjectOfType(typeof(SpaceTracking));
+            //    if (st.mainCamera.target != null)
+            //    {
+            //        if (st.mainCamera.target.type == MapObject.MapObjectType.VESSEL)
+            //        {
+            //            GUILayout.Label(String.Format("CurrentSTV:{0}", st.mainCamera.target.vessel.name));
+            //            GUILayout.Label(String.Format("Controllable:{0}, Command:{1}", st.mainCamera.target.vessel.IsControllable, st.mainCamera.target.vessel.isCommandable));
+            //            GUILayout.Label(String.Format("State:{0}", st.mainCamera.target.vessel.state));
+            //            GUILayout.Label(String.Format("TS:{0}", st.mainCamera.target.vessel.DiscoveryInfo.trackingStatus.Value));
+            //            GUILayout.Label(String.Format("sit:{0}", st.mainCamera.target.vessel.DiscoveryInfo.situation.Value));
+            //            GUILayout.Label(String.Format("type:{0}", st.mainCamera.target.vessel.DiscoveryInfo.type.Value));
+            //            GUILayout.Label(String.Format("life:{0}", st.mainCamera.target.vessel.DiscoveryInfo.referenceLifetime.ToString()));
+            //        }
+            //        else
+            //            GUILayout.Label(String.Format("CurrentSTV:{0}", "Not a vessel"));
 
-                    //GUILayout.Label(String.Format("Fly:{0}", st.FlyButton.));
-                }
-            }
+            //        //GUILayout.Label(String.Format("Fly:{0}", st.FlyButton.));
+            //    }
+            //}
 
             //GUILayout.Label(String.Format("FG: {0}", FlightGlobals.fetch != null));
             //if (FlightGlobals.fetch)

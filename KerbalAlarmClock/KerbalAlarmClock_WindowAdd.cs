@@ -14,8 +14,8 @@ namespace KerbalAlarmClock
         KACAlarm.AlarmType AddType = KACAlarm.AlarmType.Raw;
         KACAlarm.AlarmAction AddAction = KACAlarm.AlarmAction.MessageOnly;
 
-        KACTimeStringArray timeRaw = new KACTimeStringArray(600);
-        KACTimeStringArray timeMargin = new KACTimeStringArray();
+        KACTimeStringArray timeRaw = new KACTimeStringArray(600, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        KACTimeStringArray timeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
 
         private String strAlarmName = "";
         private String strAlarmNotes = "";
@@ -475,7 +475,7 @@ namespace KerbalAlarmClock
         ///// Layout the raw alarm screen inputs
         ///// </summary>
         int intRawType = 1;
-        KACTimeStringArray rawEntry = new KACTimeStringArray(600);
+        KACTimeStringArray rawEntry = new KACTimeStringArray(600, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
         private void WindowLayout_AddPane_Raw()
         {
             GUILayout.Label("Enter Raw Time Values...", KACResources.styleAddSectionHeading);
@@ -493,8 +493,8 @@ namespace KerbalAlarmClock
             if (intRawType == 0)
             {
                 //date
-                KACTimeStringArray rawDate = new KACTimeStringArray(rawEntry.UT + KACTime.timeDateOffest.UT);
-                if (DrawTimeEntry(ref rawDate, KACTimeStringArray.TimeEntryPrecision.Years, "Time:", 50, 35, 15))
+                KACTimeStringArray rawDate = new KACTimeStringArray(rawEntry.UT + KACTime.timeDateOffest.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
+                if (DrawTimeEntry(ref rawDate, KACTimeStringArray.TimeEntryPrecisionEnum.Years, "Time:", 50, 35, 15))
                 {
                     rawEntry.BuildFromUT(rawDate.UT - KACTime.timeDateOffest.UT);
                 }
@@ -502,7 +502,7 @@ namespace KerbalAlarmClock
             else
             {
                 //interval
-                if (DrawTimeEntry(ref rawEntry, KACTimeStringArray.TimeEntryPrecision.Years, "Time:", 50, 35, 15))
+                if (DrawTimeEntry(ref rawEntry, KACTimeStringArray.TimeEntryPrecisionEnum.Years, "Time:", 50, 35, 15))
                 {
 
                 }
@@ -551,7 +551,7 @@ namespace KerbalAlarmClock
         KACTime CrewTime = new KACTime(600);
         KACTime CrewTimeToAlarm = new KACTime();
         int intCrewType = 1;
-        KACTimeStringArray CrewEntry = new KACTimeStringArray(600);
+        KACTimeStringArray CrewEntry = new KACTimeStringArray(600, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
         Boolean CrewAlarmStoreNode = false;
         int intAddCrewHeight = 322;
         private void WindowLayout_AddPane_Crew()
@@ -613,8 +613,8 @@ namespace KerbalAlarmClock
                 if (intCrewType == 0)
                 {
                     //date
-                    KACTimeStringArray CrewDate = new KACTimeStringArray(CrewEntry.UT + KACTime.timeDateOffest.UT);
-                    if (DrawTimeEntry(ref CrewDate, KACTimeStringArray.TimeEntryPrecision.Years, "Time:", 50, 35, 15))
+                    KACTimeStringArray CrewDate = new KACTimeStringArray(CrewEntry.UT + KACTime.timeDateOffest.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
+                    if (DrawTimeEntry(ref CrewDate, KACTimeStringArray.TimeEntryPrecisionEnum.Years, "Time:", 50, 35, 15))
                     {
                         rawEntry.BuildFromUT(CrewDate.UT - KACTime.timeDateOffest.UT);
                     }
@@ -622,7 +622,7 @@ namespace KerbalAlarmClock
                 else
                 {
                     //interval
-                    if (DrawTimeEntry(ref CrewEntry, KACTimeStringArray.TimeEntryPrecision.Years, "Time:", 50, 35, 15))
+                    if (DrawTimeEntry(ref CrewEntry, KACTimeStringArray.TimeEntryPrecisionEnum.Years, "Time:", 50, 35, 15))
                     {
 
                     }

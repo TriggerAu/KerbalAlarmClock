@@ -897,7 +897,7 @@ namespace KerbalAlarmClock
 
         private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref int Action, ref Double Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
         {
-            KACTimeStringArray tmpTime = new KACTimeStringArray(Margin);
+            KACTimeStringArray tmpTime = new KACTimeStringArray(Margin,KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
             WindowLayout_CommonFields(ref strName, ref strMessage, ref Action, ref tmpTime, TypeOfAlarm, WindowHeight);
             Margin = tmpTime.UT;
         }
@@ -930,7 +930,7 @@ namespace KerbalAlarmClock
 
             if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime && TypeOfAlarm != KACAlarm.AlarmType.Crew)
             {
-                DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecision.Hours, "Alarm Margin:", 90);
+                DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Alarm Margin:", 90);
             }
 
             GUILayout.EndVertical();
@@ -999,7 +999,7 @@ namespace KerbalAlarmClock
 
             if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime && TypeOfAlarm != KACAlarm.AlarmType.Crew)
             {
-                DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecision.Hours, "Margin:", 60);
+                DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Margin:", 60);
             }
             GUILayout.EndVertical();
         }
@@ -1178,17 +1178,17 @@ namespace KerbalAlarmClock
 
 
 
-        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, params GUILayoutOption[] options)
+        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecisionEnum Prec, params GUILayoutOption[] options)
         {
             return DrawTimeEntry(ref time, Prec, "", 0, 40,20);
         }
 
-        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, String LabelText, int LabelWidth, params GUILayoutOption[] options)
+        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecisionEnum Prec, String LabelText, int LabelWidth, params GUILayoutOption[] options)
         {
             return DrawTimeEntry(ref time, Prec, LabelText, LabelWidth, 40,20);
         }
 
-        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecision Prec, String LabelText, int LabelWidth, int FieldWidth, int SuffixWidth, params GUILayoutOption[] options)
+        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecisionEnum Prec, String LabelText, int LabelWidth, int FieldWidth, int SuffixWidth, params GUILayoutOption[] options)
         {
             Boolean blnReturn = false;
 
@@ -1197,7 +1197,7 @@ namespace KerbalAlarmClock
                 GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth));
             
             String strTemp;
-            if (Prec >= KACTimeStringArray.TimeEntryPrecision.Years)
+            if (Prec >= KACTimeStringArray.TimeEntryPrecisionEnum.Years)
             {
                 strTemp = time.Years;
                 if (DrawTimeField(ref strTemp, "y", FieldWidth, SuffixWidth))
@@ -1206,38 +1206,38 @@ namespace KerbalAlarmClock
                     time.Years = strTemp;
                 }
             }
-            if (Prec >= KACTimeStringArray.TimeEntryPrecision.Days)
+            if (Prec >= KACTimeStringArray.TimeEntryPrecisionEnum.Days)
             {
-                if (Prec > KACTimeStringArray.TimeEntryPrecision.Days)
+                //if (Prec > KACTimeStringArray.TimeEntryPrecision.Days)
                     strTemp = time.Days;
-                else{
-                    KACTime tmp = new KACTime(time.UT);
-                    strTemp = (tmp.Year * (GameSettings.KERBIN_TIME?426:365) ) + time.Days;
-                }
+                //else{
+                //    KACTime tmp = new KACTime(time.UT);
+                //    strTemp = ((tmp.Year * (GameSettings.KERBIN_TIME?426:365) ) + Convert.ToInt64(time.Days)).ToString();
+                //}
                 if (DrawTimeField(ref strTemp, "d", FieldWidth, SuffixWidth))
                 {
                     blnReturn = true;
                     time.Days = strTemp;
                 }
             }
-            if (Prec >= KACTimeStringArray.TimeEntryPrecision.Hours)
+            if (Prec >= KACTimeStringArray.TimeEntryPrecisionEnum.Hours)
             {
-                if (Prec > KACTimeStringArray.TimeEntryPrecision.Hours)
+                //if (Prec > KACTimeStringArray.TimeEntryPrecision.Hours)
                     strTemp = time.Hours;
-                else
-                {
-                    KACTime tmp = new KACTime(time.UT);
-                    strTemp = (tmp.Year * (GameSettings.KERBIN_TIME ? 426 : 365)) + 
-                                (tmp.Day * (GameSettings.KERBIN_TIME ? 6 : 24)) +
-                                time.Hours;
-                }
+                //else
+                //{
+                //    KACTime tmp = new KACTime(time.UT);
+                //    strTemp = ((tmp.Year * (GameSettings.KERBIN_TIME ? 426 : 365)) + 
+                //                (tmp.Day * (GameSettings.KERBIN_TIME ? 6 : 24)) +
+                //                Convert.ToInt64(time.Hours)).ToString();
+                //}
                 if (DrawTimeField(ref strTemp, "h", FieldWidth, SuffixWidth))
                 {
                     blnReturn = true;
                     time.Hours = strTemp;
                 }
             }
-            if (Prec >= KACTimeStringArray.TimeEntryPrecision.Minutes)
+            if (Prec >= KACTimeStringArray.TimeEntryPrecisionEnum.Minutes)
             {
                 strTemp = time.Minutes;
                 if (DrawTimeField(ref strTemp, "m", FieldWidth, SuffixWidth))
@@ -1246,7 +1246,7 @@ namespace KerbalAlarmClock
                     time.Minutes = strTemp;
                 }
             }
-            if (Prec >= KACTimeStringArray.TimeEntryPrecision.Seconds)
+            if (Prec >= KACTimeStringArray.TimeEntryPrecisionEnum.Seconds)
             {
                 strTemp = time.Seconds;
                 if (DrawTimeField(ref strTemp, "s", FieldWidth, SuffixWidth))

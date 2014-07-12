@@ -248,7 +248,13 @@ namespace KerbalAlarmClock
             return IntervalStringLong();
         }
 
-#region "Static Functions"
+        #region Static Properties
+        public Double HoursPerDay { get { return GameSettings.KERBIN_TIME ? HoursPerDayKerbin : HoursPerDayEarth; } }
+        public Double HoursPerYear { get { return GameSettings.KERBIN_TIME ? HoursPerYearKerbin : HoursPerYearEarth; } }
+        public Double DaysPerYear { get { return HoursPerYear / HoursPerDay; } }
+        #endregion
+
+        #region "Static Functions"
         //fudging for dates
         public static KACTime timeDateOffest = new KACTime(1, 1, 0, 0, 0);
 
@@ -322,7 +328,7 @@ namespace KerbalAlarmClock
 
     public class KACTimeStringArray
     {
-        public enum TimeEntryPrecision
+        public enum TimeEntryPrecisionEnum
         {
             Seconds = 0,
             Minutes = 1,
@@ -331,6 +337,7 @@ namespace KerbalAlarmClock
             Years = 4
         }
 
+        public TimeEntryPrecisionEnum TimeEntryPrecision { get; private set; }
 
         private String _Years="",_Days="",_Hours="",_Minutes="",_Seconds="";
 
@@ -343,8 +350,11 @@ namespace KerbalAlarmClock
         public Boolean Valid { get { return _Valid; } }
         Boolean _Valid=true;
 
-        public KACTimeStringArray() {}
-        public KACTimeStringArray(Double NewUT)
+        public KACTimeStringArray(TimeEntryPrecisionEnum LevelOfPrecision) {
+            TimeEntryPrecision = LevelOfPrecision;
+        }
+        public KACTimeStringArray(Double NewUT, TimeEntryPrecisionEnum LevelOfPrecision)
+            :this(LevelOfPrecision)
         {
             BuildFromUT(NewUT);
         }
@@ -370,9 +380,25 @@ namespace KerbalAlarmClock
         public void BuildFromUT(Double UT)
         {
             KACTime timeTemp = new KACTime(UT);
-            Years = timeTemp.Year.ToString();
-            Days = timeTemp.Day.ToString();
-            Hours = timeTemp.Hour.ToString();
+            if (TimeEntryPrecision >= TimeEntryPrecisionEnum.Years)
+                Years = timeTemp.Year.ToString();
+            else
+                Years = "0";
+
+            if (TimeEntryPrecision > TimeEntryPrecisionEnum.Days)
+                Days = timeTemp.Day.ToString();
+            else if (TimeEntryPrecision == TimeEntryPrecisionEnum.Days)
+                Days = ((timeTemp.Year*timeTemp.DaysPerYear) + timeTemp.Day).ToString();
+            else
+                Days="0";
+
+            if (TimeEntryPrecision > TimeEntryPrecisionEnum.Hours)
+                Hours = timeTemp.Hour.ToString();
+            else if (TimeEntryPrecision == TimeEntryPrecisionEnum.Hours)
+                Hours  = ((timeTemp.Year * timeTemp.HoursPerYear) + (timeTemp.Day * timeTemp.HoursPerDay) + timeTemp.Hour).ToString();
+            else
+                Hours = "0";
+
             Minutes = timeTemp.Minute.ToString();
             Seconds = timeTemp.Second.ToString();
         }

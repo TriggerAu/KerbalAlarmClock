@@ -280,7 +280,6 @@ namespace KerbalAlarmClock
                 this.LoadManNode = configfile.GetValue("LoadManNode", "");
                 this.LoadVesselTarget = configfile.GetValue("LoadVesselTarget", "");
 
-                //HIGHLOGIC IS NOT YET SET HERE!!!
                 if (KSP.IO.File.Exists<KerbalAlarmClock>(String.Format("Alarms-{0}.txt", HighLogic.CurrentGame.Title)))
                 {
                     KACWorker.DebugLogFormatted("Trying New Alarms file..."); 

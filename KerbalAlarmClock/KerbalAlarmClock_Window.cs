@@ -1208,12 +1208,7 @@ namespace KerbalAlarmClock
             }
             if (Prec >= KACTimeStringArray.TimeEntryPrecisionEnum.Days)
             {
-                //if (Prec > KACTimeStringArray.TimeEntryPrecision.Days)
-                    strTemp = time.Days;
-                //else{
-                //    KACTime tmp = new KACTime(time.UT);
-                //    strTemp = ((tmp.Year * (GameSettings.KERBIN_TIME?426:365) ) + Convert.ToInt64(time.Days)).ToString();
-                //}
+                strTemp = time.Days;
                 if (DrawTimeField(ref strTemp, "d", FieldWidth, SuffixWidth))
                 {
                     blnReturn = true;
@@ -1222,15 +1217,7 @@ namespace KerbalAlarmClock
             }
             if (Prec >= KACTimeStringArray.TimeEntryPrecisionEnum.Hours)
             {
-                //if (Prec > KACTimeStringArray.TimeEntryPrecision.Hours)
-                    strTemp = time.Hours;
-                //else
-                //{
-                //    KACTime tmp = new KACTime(time.UT);
-                //    strTemp = ((tmp.Year * (GameSettings.KERBIN_TIME ? 426 : 365)) + 
-                //                (tmp.Day * (GameSettings.KERBIN_TIME ? 6 : 24)) +
-                //                Convert.ToInt64(time.Hours)).ToString();
-                //}
+                strTemp = time.Hours;
                 if (DrawTimeField(ref strTemp, "h", FieldWidth, SuffixWidth))
                 {
                     blnReturn = true;

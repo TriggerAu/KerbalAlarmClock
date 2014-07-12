@@ -28,6 +28,13 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.7.6.0		-	KSP Version: 0.23.5
+- Change ability to Jump to Asteroid to be an Option - default is disabled (Issue #37)
+- Fixed issue with Time Margin Entry and putting in large numbers (Issue #36)
+- Added new code to detect when window is repositioned and save it after its stopped moving (Issue#35)
+- Changed all Images to TGA format to fix compression artifacts (Issue #33)
+- Added function to set default Date for Raw type alarms to start at today + 10mins (Issue #31)
+
 Version 2.7.5.0		-	KSP Version: 0.23.5
 - Tweaked Update check to be on a background worker process (Issue #28)
 - Added capability to add certain alarm types to SC and TS Scenes (Issue #24)

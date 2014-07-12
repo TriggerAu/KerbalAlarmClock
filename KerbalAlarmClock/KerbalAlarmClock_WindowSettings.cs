@@ -19,10 +19,10 @@ namespace KerbalAlarmClock
         private Int32 intUpdateBoxheight = 116;
         private Int32 intSOIBoxheight = 178; //166;
 
-        private KACTimeStringArray timeDefaultMargin = new KACTimeStringArray();
-        private KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray();
-        private KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray();
-        private KACTimeStringArray timeAutoManNodeThreshold = new KACTimeStringArray();
+        private KACTimeStringArray timeDefaultMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        private KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        private KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        private KACTimeStringArray timeAutoManNodeThreshold = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private void NewSettingsWindow()
         {
             if (settings.VersionAttentionFlag)
@@ -233,7 +233,7 @@ namespace KerbalAlarmClock
             if (DrawAlarmActionChoice3(ref settings.AlarmDefaultAction, "Default Action:", 108, 61))
                 settings.Save();
 
-            if (DrawTimeEntry(ref timeDefaultMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Default Margin:", 100))
+            if (DrawTimeEntry(ref timeDefaultMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Default Margin:", 100))
             {
                 //convert it and save it in the settings
                 settings.AlarmDefaultMargin = timeDefaultMargin.UT;
@@ -264,7 +264,7 @@ namespace KerbalAlarmClock
                     settings.Save();
                 }
                 GUILayout.Label("Dont Add New alarms if Man node is closer than this threshold", KACResources.styleAddHeading);
-                if (DrawTimeEntry(ref timeAutoManNodeThreshold, KACTimeStringArray.TimeEntryPrecision.Hours, "Threshold:", 100))
+                if (DrawTimeEntry(ref timeAutoManNodeThreshold, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Threshold:", 100))
                 {
                     //convert it and save it in the settings
                     settings.AlarmAddManAutoThreshold = timeAutoManNodeThreshold.UT;
@@ -276,7 +276,7 @@ namespace KerbalAlarmClock
                 {
                     settings.Save();
                 }
-                if (DrawTimeEntry(ref timeAutoManNodeMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Alarm Margin:", 100))
+                if (DrawTimeEntry(ref timeAutoManNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Alarm Margin:", 100))
                 {
                     //convert it and save it in the settings
                     settings.AlarmAddManAutoMargin = timeAutoManNodeMargin.UT;
@@ -323,7 +323,7 @@ namespace KerbalAlarmClock
                 {
                     settings.Save();
                 }
-                if (DrawTimeEntry(ref timeAutoSOIMargin, KACTimeStringArray.TimeEntryPrecision.Hours, "Alarm Margin:", 100))
+                if (DrawTimeEntry(ref timeAutoSOIMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Alarm Margin:", 100))
                 {
                     //convert it and save it in the settings
                     settings.AlarmAutoSOIMargin = timeAutoSOIMargin.UT;

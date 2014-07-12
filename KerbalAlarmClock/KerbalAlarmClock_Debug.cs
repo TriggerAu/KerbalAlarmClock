@@ -264,12 +264,17 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
-            KACTime tmp = new KACTime(0, 0, 6, 0, 0);
-            KACTimeStringArray arr = new KACTimeStringArray(tmp.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+            //KACTime tmp = new KACTime(0, 0, 6, 0, 0);
+            //KACTimeStringArray arr = new KACTimeStringArray(tmp.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
 
-            GUILayout.Label(string.Format("{0},{1},{2},{3},{4},{5}", tmp.UT.ToString(), tmp.Year, tmp.Day, tmp.Hour, tmp.Minute, tmp.Second));
-            GUILayout.Label(string.Format("{0},{1},{2},{3},{4},{5}", arr.UT.ToString(), arr.Years, arr.Days, arr.Hours, arr.Minutes, arr.Seconds));
+            //GUILayout.Label(string.Format("{0},{1},{2},{3},{4},{5}", tmp.UT.ToString(), tmp.Year, tmp.Day, tmp.Hour, tmp.Minute, tmp.Second));
+            //GUILayout.Label(string.Format("{0},{1},{2},{3},{4},{5}", arr.UT.ToString(), arr.Years, arr.Days, arr.Hours, arr.Minutes, arr.Seconds));
 
+
+            GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosSaved));
+            GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosMoveDetectedAt));
+            GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosByActiveScene));
+            GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosLast));
 
             //GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count));
             //GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.AlarmListMaxAlarmsInt));

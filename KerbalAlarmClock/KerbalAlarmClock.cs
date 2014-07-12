@@ -520,6 +520,29 @@ namespace KerbalAlarmClock
                 if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(SecondsWarpLightIsShown) < DateTime.Now)
                     KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
 
+            //Window Pos Movement Mechanic
+            if (WindowPosLast.x != WindowPosByActiveScene.x || WindowPosLast.y != WindowPosByActiveScene.y)
+            {
+                //The window has moved;
+                if (!WindowPosLastInited)
+                    WindowPosLastInited = true;
+                else
+                {
+                    WindowPosSaved = false;
+                    WindowPosMoveDetectedAt = DateTime.Now;
+                }
+            }
+            //Was it moved and has been stationary for the last second
+            if (WindowPosLastInited && !WindowPosSaved && (DateTime.Now - WindowPosMoveDetectedAt).TotalSeconds > 1)
+            {
+                DebugLogFormatted("Saving Moved Window");
+                Settings.SaveConfig();
+                WindowPosSaved = true;
+            }
+            //Update the Last pos
+            WindowPosLast.x = WindowPosByActiveScene.x;
+            WindowPosLast.y = WindowPosByActiveScene.y;
+
             //Work out how many game seconds will pass till this runs again
             double SecondsTillNextUpdate;
             double dWarpRate = TimeWarp.CurrentRate;
@@ -530,6 +553,12 @@ namespace KerbalAlarmClock
 
             KACWorkerGameState.SetLastFlightStatesToCurrent();
         }
+
+        public Vector3d WindowPosLast;
+        public DateTime WindowPosMoveDetectedAt;
+        public Boolean WindowPosSaved = true;
+        public Boolean WindowPosLastInited = false;
+        
 
         void KACWorkerGameState_VesselChanged(Vessel OldVessel, Vessel NewVessel)
         {

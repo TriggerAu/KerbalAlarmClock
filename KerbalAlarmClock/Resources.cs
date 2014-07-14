@@ -100,79 +100,79 @@ namespace KerbalAlarmClock
 
             try
             {
-                KACUtils.LoadImageFromGameDB(ref iconNorm, "img_iconNorm.tga");
-                KACUtils.LoadImageFromGameDB(ref iconNormShow, "img_iconNormShow.tga");
-                KACUtils.LoadImageFromGameDB(ref iconAlarm, "img_iconAlarm.tga");
-                KACUtils.LoadImageFromGameDB(ref iconAlarmShow, "img_iconAlarmShow.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect100, "img_iconWarpEffect2_100.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect080, "img_iconWarpEffect2_080.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect060, "img_iconWarpEffect2_060.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect040, "img_iconWarpEffect2_040.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect020, "img_iconWarpEffect2_020.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect000, "img_iconWarpEffect2_000.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect100, "img_iconPauseEffect_100.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect080, "img_iconPauseEffect_080.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect060, "img_iconPauseEffect_060.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect040, "img_iconPauseEffect_040.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect020, "img_iconPauseEffect_020.tga");
-                KACUtils.LoadImageFromGameDB(ref  iconPauseEffect000, "img_iconPauseEffect_000.tga");
+                KACUtils.LoadImageFromGameDB(ref iconNorm, "img_iconNorm.png");
+                KACUtils.LoadImageFromGameDB(ref iconNormShow, "img_iconNormShow.png");
+                KACUtils.LoadImageFromGameDB(ref iconAlarm, "img_iconAlarm.png");
+                KACUtils.LoadImageFromGameDB(ref iconAlarmShow, "img_iconAlarmShow.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect100, "img_iconWarpEffect2_100.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect080, "img_iconWarpEffect2_080.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect060, "img_iconWarpEffect2_060.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect040, "img_iconWarpEffect2_040.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect020, "img_iconWarpEffect2_020.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpEffect000, "img_iconWarpEffect2_000.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect100, "img_iconPauseEffect_100.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect080, "img_iconPauseEffect_080.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect060, "img_iconPauseEffect_060.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect040, "img_iconPauseEffect_040.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseEffect020, "img_iconPauseEffect_020.png");
+                KACUtils.LoadImageFromGameDB(ref  iconPauseEffect000, "img_iconPauseEffect_000.png");
 
 
-                KACUtils.LoadImageFromGameDB(ref iconRaw, "img_listiconRaw.tga");
-                KACUtils.LoadImageFromGameDB(ref iconSOI, "img_listiconSOI.tga");
-                KACUtils.LoadImageFromGameDB(ref iconMNode, "img_listiconMNode.tga");
-                KACUtils.LoadImageFromGameDB(ref iconAp, "img_listiconAp.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPe, "img_listiconPe.tga");
-                KACUtils.LoadImageFromGameDB(ref iconAN, "img_listiconAN.tga");
-                KACUtils.LoadImageFromGameDB(ref iconDN, "img_listiconDN.tga");
-                KACUtils.LoadImageFromGameDB(ref iconXFer, "img_listiconXfer.tga");
-                KACUtils.LoadImageFromGameDB(ref iconClosest, "img_listiconClosest.tga");
-                KACUtils.LoadImageFromGameDB(ref iconCrew, "img_listiconCrew.tga");
-                KACUtils.LoadImageFromGameDB(ref iconEarth, "img_listiconEarth.tga");
-                KACUtils.LoadImageFromGameDB(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList100, "img_listiconWarpList_100.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList080, "img_listiconWarpList_080.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList060, "img_listiconWarpList_060.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList040, "img_listiconWarpList_040.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList020, "img_listiconWarpList_020.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList000, "img_listiconWarpList_000.tga");
+                KACUtils.LoadImageFromGameDB(ref iconRaw, "img_listiconRaw.png");
+                KACUtils.LoadImageFromGameDB(ref iconSOI, "img_listiconSOI.png");
+                KACUtils.LoadImageFromGameDB(ref iconMNode, "img_listiconMNode.png");
+                KACUtils.LoadImageFromGameDB(ref iconAp, "img_listiconAp.png");
+                KACUtils.LoadImageFromGameDB(ref iconPe, "img_listiconPe.png");
+                KACUtils.LoadImageFromGameDB(ref iconAN, "img_listiconAN.png");
+                KACUtils.LoadImageFromGameDB(ref iconDN, "img_listiconDN.png");
+                KACUtils.LoadImageFromGameDB(ref iconXFer, "img_listiconXfer.png");
+                KACUtils.LoadImageFromGameDB(ref iconClosest, "img_listiconClosest.png");
+                KACUtils.LoadImageFromGameDB(ref iconCrew, "img_listiconCrew.png");
+                KACUtils.LoadImageFromGameDB(ref iconEarth, "img_listiconEarth.png");
+                KACUtils.LoadImageFromGameDB(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList100, "img_listiconWarpList_100.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList080, "img_listiconWarpList_080.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList060, "img_listiconWarpList_060.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList040, "img_listiconWarpList_040.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList020, "img_listiconWarpList_020.png");
+                KACUtils.LoadImageFromGameDB(ref iconWarpList000, "img_listiconWarpList_000.png");
 
-                KACUtils.LoadImageFromGameDB(ref iconPauseList100, "img_listiconPauseList_100.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseList080, "img_listiconPauseList_080.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseList060, "img_listiconPauseList_060.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseList040, "img_listiconPauseList_040.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseList020, "img_listiconPauseList_020.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseList000, "img_listiconPauseList_000.tga");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList100, "img_listiconPauseList_100.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList080, "img_listiconPauseList_080.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList060, "img_listiconPauseList_060.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList040, "img_listiconPauseList_040.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList020, "img_listiconPauseList_020.png");
+                KACUtils.LoadImageFromGameDB(ref iconPauseList000, "img_listiconPauseList_000.png");
 
-                KACUtils.LoadImageFromGameDB(ref iconNone, "img_listiconNone.tga");
-                KACUtils.LoadImageFromGameDB(ref iconEdit, "img_listiconEdit.tga");
+                KACUtils.LoadImageFromGameDB(ref iconNone, "img_listiconNone.png");
+                KACUtils.LoadImageFromGameDB(ref iconEdit, "img_listiconEdit.png");
 
                 //KACUtils.LoadImageFromGameDB(ref iconstatusSOI, "img_statusiconSOI.png");
 
-                KACUtils.LoadImageFromGameDB(ref btnRaw, "img_buttonTypeRaw.tga");
-                KACUtils.LoadImageFromGameDB(ref btnMNode, "img_buttonTypeMNode.tga");
-                KACUtils.LoadImageFromGameDB(ref btnAp, "img_buttonTypeAp.tga");
-                KACUtils.LoadImageFromGameDB(ref btnPe, "img_buttonTypePe.tga");
-                KACUtils.LoadImageFromGameDB(ref btnApPe, "img_buttonTypeApPe.tga");
-                KACUtils.LoadImageFromGameDB(ref btnAN, "img_buttonTypeAN.tga");
-                KACUtils.LoadImageFromGameDB(ref btnDN, "img_buttonTypeDN.tga");
-                KACUtils.LoadImageFromGameDB(ref btnANDN, "img_buttonTypeANDN.tga");
-                KACUtils.LoadImageFromGameDB(ref btnSOI, "img_buttonTypeSOI.tga");
-                KACUtils.LoadImageFromGameDB(ref btnXfer, "img_buttonTypeXfer.tga");
-                KACUtils.LoadImageFromGameDB(ref btnClosest, "img_buttonTypeClosest.tga");
-                KACUtils.LoadImageFromGameDB(ref btnCrew, "img_buttonTypeCrew.tga");
+                KACUtils.LoadImageFromGameDB(ref btnRaw, "img_buttonTypeRaw.png");
+                KACUtils.LoadImageFromGameDB(ref btnMNode, "img_buttonTypeMNode.png");
+                KACUtils.LoadImageFromGameDB(ref btnAp, "img_buttonTypeAp.png");
+                KACUtils.LoadImageFromGameDB(ref btnPe, "img_buttonTypePe.png");
+                KACUtils.LoadImageFromGameDB(ref btnApPe, "img_buttonTypeApPe.png");
+                KACUtils.LoadImageFromGameDB(ref btnAN, "img_buttonTypeAN.png");
+                KACUtils.LoadImageFromGameDB(ref btnDN, "img_buttonTypeDN.png");
+                KACUtils.LoadImageFromGameDB(ref btnANDN, "img_buttonTypeANDN.png");
+                KACUtils.LoadImageFromGameDB(ref btnSOI, "img_buttonTypeSOI.png");
+                KACUtils.LoadImageFromGameDB(ref btnXfer, "img_buttonTypeXfer.png");
+                KACUtils.LoadImageFromGameDB(ref btnClosest, "img_buttonTypeClosest.png");
+                KACUtils.LoadImageFromGameDB(ref btnCrew, "img_buttonTypeCrew.png");
 
-                KACUtils.LoadImageFromGameDB(ref btnChevronUp, "img_buttonChevronUp.tga");
-                KACUtils.LoadImageFromGameDB(ref btnChevronDown, "img_buttonChevronDown.tga");
-                KACUtils.LoadImageFromGameDB(ref btnChevLeft, "img_buttonChevronLeft.tga");
-                KACUtils.LoadImageFromGameDB(ref btnChevRight, "img_buttonChevronRight.tga");
+                KACUtils.LoadImageFromGameDB(ref btnChevronUp, "img_buttonChevronUp.png");
+                KACUtils.LoadImageFromGameDB(ref btnChevronDown, "img_buttonChevronDown.png");
+                KACUtils.LoadImageFromGameDB(ref btnChevLeft, "img_buttonChevronLeft.png");
+                KACUtils.LoadImageFromGameDB(ref btnChevRight, "img_buttonChevronRight.png");
 
-                KACUtils.LoadImageFromGameDB(ref btnRedCross, "img_buttonRedCross.tga");
-                KACUtils.LoadImageFromGameDB(ref btnSettings, "img_buttonSettings.tga");
-                KACUtils.LoadImageFromGameDB(ref btnSettingsAttention, "img_buttonSettingsAttention.tga");
-                KACUtils.LoadImageFromGameDB(ref btnAdd, "img_buttonAdd.tga");
+                KACUtils.LoadImageFromGameDB(ref btnRedCross, "img_buttonRedCross.png");
+                KACUtils.LoadImageFromGameDB(ref btnSettings, "img_buttonSettings.png");
+                KACUtils.LoadImageFromGameDB(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
+                KACUtils.LoadImageFromGameDB(ref btnAdd, "img_buttonAdd.png");
 
-                KACUtils.LoadImageFromGameDB(ref txtTooltipBackground, "txt_TooltipBackground.tga");
+                KACUtils.LoadImageFromGameDB(ref txtTooltipBackground, "txt_TooltipBackground.png");
 
 
                 //KACUtils.LoadImageFromGameDB(ref txtRedTint, "Textures", "RedOverlay.png");

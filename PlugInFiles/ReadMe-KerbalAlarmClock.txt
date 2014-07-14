@@ -29,7 +29,7 @@ This work is licensed under an MIT license as outlined at the OSI site. Visit th
 
 VERSION HISTORY
 Version 2.7.6.1		-	KSP Version: 0.23.5
-- Reversed changed of Images to TGA - Back to PNGs (Issue #33)
+- Reversed change of Images to TGA, Back to PNGs (Issue #33)
 
 Version 2.7.6.0		-	KSP Version: 0.23.5
 - Change ability to Jump to Asteroid to be an Option - default is disabled (Issue #37)

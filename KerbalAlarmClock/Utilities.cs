@@ -211,6 +211,25 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
+        public static Boolean LoadImageFromFile(ref Texture2D tex, String FileName, String FolderPath = "")
+        {
+            //DebugLogFormatted("{0},{1}",FileName, FolderPath);
+            Boolean blnReturn = false;
+            try
+            {
+                //File Exists check
+
+                //Load texture
+                //Texture.Load(System.IO.File.ReadAllBytes) or similar
+
+            }
+            catch (Exception)
+            {
+                KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0}/{1}", String.Format("{0}/{1}", FolderPath, FileName));
+            }
+            return blnReturn;
+        }
+
 
         #region "offset building"
         public static RectOffset SetWindowRectOffset(RectOffset tmpRectOffset, int intValue)

@@ -16,8 +16,13 @@ namespace KerbalAlarmClock
         //public static String PlugInPath = AppPath + "PluginData/KerbalAlarmClock/";
         public static String PathApp = KSPUtil.ApplicationRootPath.Replace("\\", "/");
         public static String PathTriggerTech = string.Format("{0}GameData/TriggerTech", PathApp);
-        public static String PathPluginData = string.Format("{0}/PluginData/{1}", PathTriggerTech, "KerbalAlarmClock");
-        public static String PathTextures = string.Format("{0}/Textures/{1}", PathTriggerTech, "KerbalAlarmClock");
+
+        //Use the DLLs location as the start point - then the location of the resources can be anywhere
+        public static String PathPlugin = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        public static String PathPluginData = string.Format("{0}/PluginData/{1}", PathPlugin, "KerbalAlarmClock");
+        public static String PathTextures = string.Format("{0}/Textures/{1}", PathPlugin, "KerbalAlarmClock");
+
+        //public static String PathPlugin = System.Reflection.Assembly.GetExecutingAssembly().Location;// string.Format("{0}/PluginData/{1}", PathTriggerTech, "KerbalAlarmClock");
 
         public static String DBPathTriggerTech = string.Format("TriggerTech");
         public static String DBPathTextures = string.Format("{0}/Textures/{1}", DBPathTriggerTech, "KerbalAlarmClock");
@@ -146,37 +151,37 @@ namespace KerbalAlarmClock
             return strReturn;
         }
 
-        public static Byte[] LoadFileToArray(String Filename)
-        {
-            Byte[] arrBytes;
+        //public static Byte[] LoadFileToArray(String Filename)
+        //{
+        //    Byte[] arrBytes;
 
-            arrBytes = KSP.IO.File.ReadAllBytes<KerbalAlarmClock>(Filename);
+        //    arrBytes = KSP.IO.File.ReadAllBytes<KerbalAlarmClock>(Filename);
 
-            return arrBytes;
-        }
+        //    return arrBytes;
+        //}
 
-        public static void SaveFileFromArray(Byte[] data, String Filename)
-        {
-            KSP.IO.File.WriteAllBytes<KerbalAlarmClock>(data, Filename);
-        }
+        //public static void SaveFileFromArray(Byte[] data, String Filename)
+        //{
+        //    KSP.IO.File.WriteAllBytes<KerbalAlarmClock>(data, Filename);
+        //}
 
 
-        public static void LoadImageIntoTexture(ref Texture2D tex, String FileName)
-        {
+        //public static void LoadImageIntoTexture(ref Texture2D tex, String FileName)
+        //{
 
-            try
-            {
-                //KACWorker.DebugLogFormatted("Loading: TriggerTech/Textures/KerbalAlarmClock/{0}", FileName);
-                //tex = GameDatabase.Instance.GetTexture("TriggerTech/Textures/KerbalAlarmClock/" + FileName.Replace(".png", ""), false);
-                //if (tex == null) KACWorker.DebugLogFormat GetTextureted("Textures Empty");
+        //    try
+        //    {
+        //        //KACWorker.DebugLogFormatted("Loading: TriggerTech/Textures/KerbalAlarmClock/{0}", FileName);
+        //        //tex = GameDatabase.Instance.GetTexture("TriggerTech/Textures/KerbalAlarmClock/" + FileName.Replace(".png", ""), false);
+        //        //if (tex == null) KACWorker.DebugLogFormat GetTextureted("Textures Empty");
 
-                tex.LoadImage(LoadFileToArray(FileName));
-            }
-            catch (Exception)
-            {
-                KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0}", FileName);
-            }
-        }
+        //        tex.LoadImage(LoadFileToArray(FileName));
+        //    }
+        //    catch (Exception)
+        //    {
+        //        KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0}", FileName);
+        //    }
+        //}
 
         //stop using unity www object as some clients get timeouts searching via the url address
 
@@ -191,36 +196,70 @@ namespace KerbalAlarmClock
         //    WWW img1 = new WWW(String.Format("file://{0}{1}/{2}", PlugInPath, FolderName,FileName));
         //    img1.LoadImageIntoTexture(tex);
         //}
-        public static Boolean LoadImageFromGameDB(ref Texture2D tex, String FileName, String FolderPath = "")
-        {
-            //DebugLogFormatted("{0},{1}",FileName, FolderPath);
-            Boolean blnReturn = false;
-            try
-            {
-                if (FileName.ToLower().EndsWith(".png")) FileName = FileName.Substring(0, FileName.Length - 4);
-                if (FileName.ToLower().EndsWith(".tga")) FileName = FileName.Substring(0, FileName.Length - 4);
-                if (FolderPath == "") FolderPath = DBPathTextures;
-                KACWorker.DebugLogFormatted("Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
-                tex = GameDatabase.Instance.GetTexture(String.Format("{0}/{1}", FolderPath, FileName), false);
-                blnReturn = true;
-            }
-            catch (Exception)
-            {
-                KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0}/{1}", String.Format("{0}/{1}", FolderPath, FileName));
-            }
-            return blnReturn;
-        }
 
+        /// <summary>
+        /// Loads texture from GameDatabase
+        /// If texture is a TGA then its quality is affected by the game settings
+        /// If texture is a PNG then its quality is affetced by texture compression in game
+        /// </summary>
+        /// <param name="tex"></param>
+        /// <param name="FileName"></param>
+        /// <param name="FolderPath"></param>
+        /// <returns></returns>
+        //public static Boolean LoadImageFromGameDB(ref Texture2D tex, String FileName, String FolderPath = "")
+        //{
+        //    //DebugLogFormatted("{0},{1}",FileName, FolderPath);
+        //    Boolean blnReturn = false;
+        //    try
+        //    {
+        //        if (FileName.ToLower().EndsWith(".png")) FileName = FileName.Substring(0, FileName.Length - 4);
+        //        if (FileName.ToLower().EndsWith(".tga")) FileName = FileName.Substring(0, FileName.Length - 4);
+        //        if (FolderPath == "") FolderPath = DBPathTextures;
+        //        KACWorker.DebugLogFormatted("Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
+        //        tex = GameDatabase.Instance.GetTexture(String.Format("{0}/{1}", FolderPath, FileName), false);
+        //        blnReturn = true;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0}/{1}", String.Format("{0}/{1}", FolderPath, FileName));
+        //    }
+        //    return blnReturn;
+        //}
+
+        /// <summary>
+        /// Loads a texture from the file system directly
+        /// </summary>
+        /// <param name="tex"></param>
+        /// <param name="FileName"></param>
+        /// <param name="FolderPath"></param>
+        /// <returns></returns>
         public static Boolean LoadImageFromFile(ref Texture2D tex, String FileName, String FolderPath = "")
         {
             //DebugLogFormatted("{0},{1}",FileName, FolderPath);
             Boolean blnReturn = false;
             try
             {
+                if (FolderPath == "") FolderPath = PathTextures;
+                
                 //File Exists check
-
-                //Load texture
-                //Texture.Load(System.IO.File.ReadAllBytes) or similar
+                if (System.IO.File.Exists(String.Format("{0}/{1}", FolderPath, FileName)))
+                {
+                    try
+                    {
+                        KACWorker.DebugLogFormatted("Loading: {0}", String.Format("{0}/{1}", FolderPath, FileName));
+                        tex.LoadImage(System.IO.File.ReadAllBytes(String.Format("{0}/{1}", FolderPath, FileName)));
+                        blnReturn = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        KACWorker.DebugLogFormatted("Failed to load the texture:{0} ({1})", String.Format("{0}/{1}", FolderPath, FileName),ex.Message);
+                    }
+                }
+                else
+                {
+                    KACWorker.DebugLogFormatted("Cannot find texture to load:{0}", String.Format("{0}/{1}", FolderPath, FileName));
+                }
+                
 
             }
             catch (Exception)

@@ -83,7 +83,8 @@ namespace KerbalAlarmClock
         public void Awake()
         {
             KACWorker.DebugLogFormatted("Awakening the KerbalAlarmClock-{0}", MonoName);
-
+            KACWorker.DebugLogFormatted("PluginPath:{0}", KACUtils.PathPlugin);
+            
             //Load Image resources
             KACResources.loadGUIAssets();
 

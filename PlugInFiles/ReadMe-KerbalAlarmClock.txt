@@ -28,8 +28,12 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.7.7.0		-	KSP Version: 0.24.0
+- Compiled against 0.24 binaries
+- 4th attempt at texture blurring (Issue #33)
+
 Version 2.7.6.1		-	KSP Version: 0.23.5
-- Reversed changed of Images to TGA - Back to PNGs (Issue #33)
+- Reversed change of Images to TGA, Back to PNGs (Issue #33)
 
 Version 2.7.6.0		-	KSP Version: 0.23.5
 - Change ability to Jump to Asteroid to be an Option - default is disabled (Issue #37)

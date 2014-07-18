@@ -209,7 +209,7 @@ namespace KerbalAlarmClock
                 this.IconPos.height = 32; this.IconPos.width = 32;
                 this.IconPos_SpaceCenter = configfile.GetValue<Rect>("IconPos_SpaceCenter", new Rect(3, 3, 32, 32));
                 this.IconPos_SpaceCenter.height = 32; this.IconPos_TrackingStation.width = 32;
-                this.IconPos_TrackingStation = configfile.GetValue<Rect>("IconPos_TrackingStation", new Rect(202, 0, 32, 32));
+                this.IconPos_TrackingStation = configfile.GetValue<Rect>("IconPos_TrackingStation", new Rect(196, 0, 32, 32));
                 this.IconPos_TrackingStation.height = 32; this.IconPos_TrackingStation.width = 32;
 
                 this.IconShow_SpaceCenter = configfile.GetValue("IconShow_SpaceCenter", true);

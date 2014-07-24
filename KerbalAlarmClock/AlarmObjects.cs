@@ -91,18 +91,19 @@ namespace KerbalAlarmClock
                 #region "Constructors"
         public KACAlarm()
         {
+            ID = Guid.NewGuid().ToString("N");
         }
-        public KACAlarm(double UT)
+        public KACAlarm(double UT) : this ()
         {
             AlarmTime.UT = UT;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction) :
+            this (UT)
         {
             VesselID = vID;
             Name = NewName;
             Notes = NewNotes;
-            AlarmTime.UT = UT;
             AlarmMarginSecs = Margin;
             TypeOfAlarm = atype;
             Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
@@ -135,7 +136,8 @@ namespace KerbalAlarmClock
 
 
 
-        [Persistent] public String VesselID="";
+        [Persistent] public String VesselID {get; private set;}
+        [Persistent] public String ID="";
         [Persistent] public String Name = "";                                       //Name of Alarm
         public String Notes = "";                                      //Entered extra details
         [Persistent] private String NotesStorage = "";                                      //Entered extra details
@@ -462,6 +464,16 @@ namespace KerbalAlarmClock
         internal KACAlarm GetByWindowID(Int32 windowID)
         {
             return this.FirstOrDefault(x => x.AlarmWindowID == windowID);
+        }
+
+        /// <summary>
+        /// Get the Alarm object from the Unity Window ID
+        /// </summary>
+        /// <param name="windowID"></param>
+        /// <returns></returns>
+        internal KACAlarm GetByID(String ID)
+        {
+            return this.FirstOrDefault(x => x.ID == ID);
         }
 
         /// <summary>

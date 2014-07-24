@@ -229,9 +229,9 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Loads a texture from the file system directly
         /// </summary>
-        /// <param name="tex"></param>
-        /// <param name="FileName"></param>
-        /// <param name="FolderPath"></param>
+        /// <param name="tex">Unity Texture to Load</param>
+        /// <param name="FileName">Image file name</param>
+        /// <param name="FolderPath">Optional folder path of image</param>
         /// <returns></returns>
         public static Boolean LoadImageFromFile(ref Texture2D tex, String FileName, String FolderPath = "")
         {
@@ -262,9 +262,9 @@ namespace KerbalAlarmClock
                 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0}/{1}", String.Format("{0}/{1}", FolderPath, FileName));
+                KACWorker.DebugLogFormatted("Failed to load (are you missing a file):{0} ({1})", String.Format("{0}/{1}", FolderPath, FileName),ex.Message);
             }
             return blnReturn;
         }

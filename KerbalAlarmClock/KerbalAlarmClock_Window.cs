@@ -1076,6 +1076,8 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmType.AscendingNode: strTitle = "Ascending Node"; break;
                 case KACAlarm.AlarmType.DescendingNode: strTitle = "Descending Node"; break;
                 case KACAlarm.AlarmType.LaunchRendevous: strTitle = "Launch Ascent"; break;
+                case KACAlarm.AlarmType.Closest: strTitle = "Closest Approach"; break;
+                case KACAlarm.AlarmType.Distance: strTitle = "Target Distance"; break;
                 case KACAlarm.AlarmType.Crew: strTitle = "Crew"; break;
                 case KACAlarm.AlarmType.EarthTime: strTitle = "Earth Time"; break;
                 default: strTitle = "Raw Time"; break;
@@ -1402,8 +1404,8 @@ namespace KerbalAlarmClock
         public Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params GUIContent[] Choices)
         {
             int Selection = KACAlarm.AlarmTypeToButton[selType];
-            if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION) Selection = KACAlarm.AlarmTypeToButtonTS[selType];
-            else if (KACWorkerGameState.CurrentGUIScene != GameScenes.SPACECENTER) Selection = KACAlarm.AlarmTypeToButtonSC[selType];
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) Selection = KACAlarm.AlarmTypeToButtonTS[selType];
+            else if (KACWorkerGameState.CurrentGUIScene == GameScenes.SPACECENTER) Selection = KACAlarm.AlarmTypeToButtonSC[selType];
 
             Boolean blnReturn = DrawButtonList(ref Selection, Choices);
             if (blnReturn)

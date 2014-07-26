@@ -28,10 +28,13 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.7.8.1		-	KSP Version: 0.24.2
+- Fixed bug with Add alarm types ("!=" != "==") (Issue #47)
+
 Version 2.7.8.0		-	KSP Version: 0.24.2
 - Compiled against 0.24.2 binaries
-- Fixed click through in KSC - used InputLockManager and the ControlType of KSCFacilities (Fixes #45)
-- Added Transfer Windows type to SC Alarms (Fixes #46)
+- Fixed click through in KSC - used InputLockManager and the ControlType of KSCFacilities (Issue #45)
+- Added Transfer Windows type to SC Alarms (Issue #46)
 
 Version 2.7.7.0		-	KSP Version: 0.24.0
 - Compiled against 0.24 binaries

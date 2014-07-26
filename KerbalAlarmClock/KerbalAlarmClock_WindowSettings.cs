@@ -102,11 +102,11 @@ namespace KerbalAlarmClock
                     break;
                 case 2:
                     WindowLayout_SettingsSpecifics2();
-                    intSettingsHeight = 354 ;//600; //513;// 374;
+                    intSettingsHeight = 354;//600; //513;// 374;
                     break;
                 case 3:
                     WindowLayout_SettingsIcons();
-                    intSettingsHeight =  518;//466 //406;
+                    intSettingsHeight =  548;//518 //466 //406;
                     break;
                 case 4:
                     WindowLayout_SettingsAbout();
@@ -428,6 +428,11 @@ namespace KerbalAlarmClock
                     if (Settings.UseBlizzyToolbarIfAvailable) parentBehaviour.InitToolbarButton();
                     Settings.Save();
                 }
+            }
+            if (Title == "Space Center")
+            {
+                if (DrawCheckbox(ref Settings.KSCUIBlockersEnabled, new GUIContent("Enable UI Click Through Blockers", "This will insert invisible buttons between the Mod and the game interface and prevent clicking on the GUI from clicking the buildings underneath")))
+                    Settings.Save();
             }
             GUILayout.Label("Icon Position",KACResources.styleAddSectionHeading);
             //Now two columns

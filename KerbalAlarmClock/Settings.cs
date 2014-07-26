@@ -90,6 +90,8 @@ namespace KerbalAlarmClock
         public Boolean UseBlizzyToolbarIfAvailable = true;
         public MiminalDisplayType WindowMinimizedType = MiminalDisplayType.NextAlarm;
 
+        public Boolean KSCUIBlockersEnabled = true;
+
         public int BehaviourChecksPerSec = 10;
         public int BehaviourChecksPerSec_Custom = 40;
 
@@ -217,6 +219,8 @@ namespace KerbalAlarmClock
 
                 this.UseBlizzyToolbarIfAvailable = configfile.GetValue<Boolean>("UseBlizzyToolbarIfAvailable", true);
                 this.WindowMinimizedType = (MiminalDisplayType) configfile.GetValue("WindowMinimizedType", 0);
+
+                this.KSCUIBlockersEnabled = configfile.GetValue<Boolean>("UIBlockersEnabled", true);
 
                 this.BehaviourChecksPerSec = configfile.GetValue("BehaviourChecksPerSec", 10);
                 this.BehaviourChecksPerSec_Custom = configfile.GetValue("BehaviourChecksPerSecCustom",40);
@@ -394,6 +398,8 @@ namespace KerbalAlarmClock
 
             configfile.SetValue("UseBlizzyToolbarIfAvailable", this.UseBlizzyToolbarIfAvailable);
             configfile.SetValue("WindowMinimizedType", (int)this.WindowMinimizedType);
+
+            configfile.SetValue("UIBlockersEnabled", this.KSCUIBlockersEnabled);
 
             configfile.SetValue("BehaviourChecksPerSec", this.BehaviourChecksPerSec);
 

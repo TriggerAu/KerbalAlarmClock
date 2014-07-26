@@ -94,6 +94,8 @@ namespace KerbalAlarmClock
         //public static Texture2D txtBlackSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
         //public static Texture2D txtWhiteSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
 
+        public static Texture2D txtUIBlocker = new Texture2D(1, 1, TextureFormat.ARGB32, false); 
+
         public static void loadGUIAssets()
         {
             KACWorker.DebugLogFormatted("Loading Textures");
@@ -179,6 +181,12 @@ namespace KerbalAlarmClock
 
                 //KACUtils.LoadImageFromFile(ref txtBlackSquare, "Textures", "BlackSquare.png");
                 //KACUtils.LoadImageFromFile(ref txtWhiteSquare, "Textures", "WhiteSquare.png");
+
+                txtUIBlocker.SetPixels(new Color[] { new Color(1f, 1f, 1f, 0.0f) }); // white, but transparent 
+#if DEBUG
+                txtUIBlocker.SetPixels(new Color[] { new Color(1f, 0f, 0f, 0.1f) }); // red to find it for debugging
+#endif
+                txtUIBlocker.Apply();
 
                 KACWorker.DebugLogFormatted("Loaded Textures");
             }

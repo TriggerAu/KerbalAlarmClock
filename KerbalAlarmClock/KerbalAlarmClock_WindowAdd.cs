@@ -263,7 +263,7 @@ namespace KerbalAlarmClock
         GUIContent[] guiTypesSpaceCenter = new GUIContent[]
             {
                 new GUIContent(KACResources.btnRaw,"Raw Time Alarm"),
-                //new GUIContent(KACResources.btnXfer,"Transfer Window")
+                new GUIContent(KACResources.btnXfer,"Transfer Window")
             };
         GUIContent[] guiTypesTrackingStation = new GUIContent[]
             {

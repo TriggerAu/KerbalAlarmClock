@@ -117,6 +117,15 @@ namespace KerbalAlarmClock
             //SetupRepeatingFunction("DebugWriter", 2F);
         }
 
+        //public void Start()
+        //{
+        //    if (HighLogic.LoadedScene==GameScenes.SPACECENTER && Settings.UIBlockersEnabled)
+        //    {
+        //        WorkerObjectInstance.InitBlockers();
+        //    }
+        //}
+
+
         public void SetupRepeatingFunction_BehaviourUpdate(int ChecksPerSec)
         {
             SetupRepeatingFunction("BehaviourUpdate", ChecksPerSec);
@@ -309,7 +318,17 @@ namespace KerbalAlarmClock
                 if (WorkerObjectInstance.WindowVisibleByActiveScene)
                 {
                     WorkerObjectInstance.DrawWindows();
+
                 }
+            }
+
+            ////Update Blocker behaviour in flight scene
+            //if (KACWorkerGameState.CurrentGUIScene == GameScenes.SPACECENTER && Settings.UIBlockersRunning)
+            //    WorkerObjectInstance.PositionBlockers();
+            
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.SPACECENTER)
+            {
+                WorkerObjectInstance.KSCInputLocking();
             }
 
             //If Game is paused then update Earth Alarms for list drawing
@@ -1029,4 +1048,48 @@ namespace KerbalAlarmClock
 //        }
 //    }
 //#endif
+    //[KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    //class TriggerUIButtonTest : MonoBehaviour
+    //{
+    //    public static UIButton blocker {get;set;}
+
+    //    public static void SetPosition(float a, float b, float c){
+    //        blocker.transform.position = new Vector3(a, b, c);
+
+    //    }
+    //    void Start()
+    //    {
+    //        var uiCamera = Camera.allCameras.ToList().Find(c => c.name == "UI camera");
+    //        KACWorker.DebugLogFormatted("A");
+
+    //        Vector3 v = uiCamera.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f));
+    //        KACWorker.DebugLogFormatted(v.ToString());
+
+    //        KACWorker.DebugLogFormatted("AA");
+    //        blocker = UIButton.Create("ButtonTest.Blocker", v);
+    //        blocker.SetAnchor(SpriteRoot.ANCHOR_METHOD.UPPER_LEFT);
+    //        blocker.renderCamera = uiCamera;
+    //        blocker.gameObject.layer = LayerMask.NameToLayer("EzGUI_UI");
+
+    //        KACWorker.DebugLogFormatted("AAA");
+    //        var texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+    //        texture.SetPixels(new Color[] { new Color(0f, 0f, 1f, 0.1f) }); // nice peaceful blue for debug purposes
+    //        texture.Apply();
+
+    //        KACWorker.DebugLogFormatted("AAAA");
+    //        blocker.Setup(200, 200, new Material(Shader.Find("Sprite/Vertex Colored")) { mainTexture = texture });
+
+
+    //        KACWorker.DebugLogFormatted("AAAAA");
+    //        // just cover the screen with it
+    //        var buttonPosition = uiCamera.ScreenToWorldPoint(new Vector3(0f, Screen.height, 0f));
+
+    //        KACWorker.DebugLogFormatted("AAAAAA");
+    //        buttonPosition.z = 0f;
+    //        blocker.transform.position = buttonPosition;
+
+    //        KACWorker.DebugLogFormatted("AAAAAAA");
+    //        blocker.AddValueChangedDelegate(delegate(IUIObject obj) { ScreenMessages.PostScreenMessage("You clicked the background button", 3f); });
+    //    }
+    //}
 }

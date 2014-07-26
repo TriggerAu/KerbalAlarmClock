@@ -292,7 +292,127 @@ namespace KerbalAlarmClock
             }
         }
 
+//        internal Camera EZGUICamera;
 
+//        internal UIButton UIBlockerMain;
+//        internal UIButton UIBlockerSettings;
+//        internal UIButton UIBlockerAdd;
+//        internal UIButton UIBlockerAddMessages;
+//        internal UIButton UIBlockerEdit;
+//        internal UIButton UIBlockerEarthAlarm;
+
+//        public void InitBlockers()
+//        {
+//            //Get the EZGUI Cam
+//            DebugLogFormatted("Get Cam");
+//            EZGUICamera = Camera.allCameras.ToList().Find(c => c.name == "EZGUI Cam");
+
+//            Settings.UIBlockersRunning = true;
+//            UIBlockerMain = CreateUIBlocker("UIBlockerMain");
+//            UIBlockerSettings = CreateUIBlocker("UIBlockerSettings");
+//            UIBlockerAdd = CreateUIBlocker("UIBlockerAdd");
+//            UIBlockerAddMessages = CreateUIBlocker("UIBlockerAddMessages");
+//            UIBlockerEdit = CreateUIBlocker("UIBlockerEdit");
+//            UIBlockerEarthAlarm = CreateUIBlocker("UIBlockerEarthAlarm");
+//        }
+
+//        private UIButton CreateUIBlocker(String Name)
+//        {
+//            UIButton retUIBlocker=null;
+
+//            try
+//            {
+//                //Create the UI Blockers
+//                DebugLogFormatted("Create Blocker: {0}",Name);
+//                retUIBlocker = UIButton.Create(Name, Vector3.zero);
+//                retUIBlocker.renderCamera = EZGUICamera;
+//                retUIBlocker.gameObject.layer = LayerMask.NameToLayer("EzGUI_UI");
+//                retUIBlocker.SetAnchor(SpriteRoot.ANCHOR_METHOD.UPPER_LEFT);
+//                //just a default size to start with
+//                retUIBlocker.Setup(100, 100, new Material(Shader.Find("Sprite/Vertex Colored")) { mainTexture = KACResources.txtUIBlocker });
+
+//#if DEBUG
+//                retUIBlocker.AddValueChangedDelegate(delegate(IUIObject obj) { ScreenMessages.PostScreenMessage(Name + " Blocker Clicked", 2f); });
+//#endif
+//            }
+//            catch (Exception ex)
+//            {
+//                DebugLogFormatted("ERROR: Unable to set up UIBlocker-Disabling Blocking Functionality-{0}",ex.Message);
+//                Settings.UIBlockersRunning = false;                
+//            } return retUIBlocker;
+//        }
+
+//        public void PositionBlockers()
+//        {
+//            PositionBlocker(UIBlockerMain, WindowPosByActiveScene, WindowVisibleByActiveScene);
+//            PositionBlocker(UIBlockerSettings, _WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings);
+//            PositionBlocker(UIBlockerAdd, _WindowAddRect, WindowVisibleByActiveScene && _ShowAddPane);
+//            PositionBlocker(UIBlockerAddMessages, _WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
+//            PositionBlocker(UIBlockerEdit, _WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
+//            PositionBlocker(UIBlockerEarthAlarm, _WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
+//        }
+
+        //private void PositionBlocker(UIButton uiBlocker,Rect WindowToBlock,Boolean Visible)
+        //{
+        //    if (uiBlocker != null)
+        //    {
+        //        //get the top left corner of the window
+        //        Vector3 uiBlockerPos = EZGUICamera.ScreenToWorldPoint(new Vector3(WindowToBlock.x, Screen.height - WindowToBlock.y, 0));
+        //        if (Visible && Settings.UIBlockersEnabled)
+        //            uiBlockerPos.z = 0;
+        //        else
+        //            uiBlockerPos.z = -100;
+        //        uiBlocker.transform.position = uiBlockerPos;
+
+        //        if (uiBlocker.width != WindowToBlock.width ||
+        //            uiBlocker.height != WindowToBlock.height)
+        //        {
+        //            DebugLogFormatted("Resizing UIBlocker:{0}",uiBlocker.name);
+        //            uiBlocker.Setup(WindowToBlock.width, WindowToBlock.height);
+        //        }
+        //    }
+        //}
+
+
+        internal void KSCInputLocking()
+        {
+            LockKSCIfMouseOver("windowMainLock", WindowPosByActiveScene, WindowVisibleByActiveScene);
+            LockKSCIfMouseOver("windowAddLock", _WindowAddRect, WindowVisibleByActiveScene && _ShowAddPane);
+            LockKSCIfMouseOver("windowSettingsLock", _WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings);
+            LockKSCIfMouseOver("windowAddMessagesLock", _WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
+            LockKSCIfMouseOver("windowEditLock", _WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
+            LockKSCIfMouseOver("windowEarthLock", _WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
+
+            foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
+            {
+                if (tmpAlarm.AlarmWindowID != 0 && tmpAlarm.Actioned )
+                {
+                    LockKSCIfMouseOver(tmpAlarm.AlarmWindowID + "Lock", tmpAlarm.AlarmWindow, !tmpAlarm.AlarmWindowClosed);
+                }
+            }
+        }
+
+        private void LockKSCIfMouseOver(String LockName,Rect WindowRect,Boolean WindowVisible)
+        {
+            if (Settings.KSCUIBlockersEnabled && WindowVisible && WindowRect.Contains(Event.current.mousePosition))
+            {
+                if (!(InputLockManager.GetControlLock(LockName) == ControlTypes.KSC_FACILITIES)) {
+#if DEBUG 
+                    DebugLogFormatted("AddingLock-{0}", LockName); 
+#endif
+                    InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, LockName);
+                }
+            }
+            else
+            {
+                if (InputLockManager.GetControlLock(LockName) == ControlTypes.KSC_FACILITIES) {
+#if DEBUG 
+                    DebugLogFormatted("Removing-{0}", LockName); 
+#endif
+                    InputLockManager.RemoveControlLock(LockName);
+                }
+            }
+        }
 
         //Basic setup of draw stuff
         private static int _WindowMainID = 0;
@@ -1281,12 +1401,17 @@ namespace KerbalAlarmClock
 
         public Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params GUIContent[] Choices)
         {
-            int Selection = (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION) ? KACAlarm.AlarmTypeToButton[selType] : KACAlarm.AlarmTypeToButtonTS[selType];
+            int Selection = KACAlarm.AlarmTypeToButton[selType];
+            if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION) Selection = KACAlarm.AlarmTypeToButtonTS[selType];
+            else if (KACWorkerGameState.CurrentGUIScene != GameScenes.SPACECENTER) Selection = KACAlarm.AlarmTypeToButtonSC[selType];
+
             Boolean blnReturn = DrawButtonList(ref Selection, Choices);
             if (blnReturn)
             {
                 if (KACWorkerGameState.CurrentGUIScene== GameScenes.TRACKSTATION)
                     selType = KACAlarm.AlarmTypeFromButtonTS[Selection];
+                else if (KACWorkerGameState.CurrentGUIScene == GameScenes.SPACECENTER)
+                    selType = KACAlarm.AlarmTypeFromButtonSC[Selection];
                 else
                     selType = KACAlarm.AlarmTypeFromButton[Selection];
             }

@@ -263,6 +263,36 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
+            //var uiCamera = Camera.allCameras.ToList();
+            //foreach (Camera item in uiCamera)
+            //{
+            //    GUILayout.Label(string.Format("{0},{1},{2}", item.name, item.enabled, item.transform.position.ToString()));
+
+            //    if (item.name == "UI camera")
+            //    {
+            //        GUILayout.Label(string.Format("{0},{1}",
+            //            item.ScreenToWorldPoint(new Vector3(0, 0, 0)),
+            //            item.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0))));
+
+            //        //GUILayout.Label(string.Format("{0},{1}",
+            //        //    TriggerUIButtonTest.blocker.transform.position,
+            //        //    TriggerUIButtonTest.blocker.width));
+
+            //        //TriggerUIButtonTest.SetPosition(intTestheight, intTestheight2, 0);
+            //    }
+            //}
+
+            //GUILayout.Label(FlightCamera.fetch.transform.position.ToString());
+            //GUILayout.Label(FlightCamera.fetch.mainCamera.transform.position.ToString());
+
+            //GUILayout.Label(FlightCamera.fetch.mainCamera.WorldToScreenPoint(FlightGlobals.ActiveVessel.transform.position).ToString());
+            //GUILayout.Label(FlightGlobals.ActiveVessel.findWorldCenterOfMass().ToString());
+            //GUILayout.Label((FlightCamera.fetch.transform.position - FlightGlobals.ActiveVessel.findWorldCenterOfMass()).ToString());
+            //foreach (Camera item in FlightCamera.fetch.cameras)
+            //{
+            //    GUILayout.Label(item. item.name + item.transform.position.ToString());
+
+            //}
 
             //KACTime tmp = new KACTime(0, 0, 6, 0, 0);
             //KACTimeStringArray arr = new KACTimeStringArray(tmp.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
@@ -271,10 +301,10 @@ namespace KerbalAlarmClock
             //GUILayout.Label(string.Format("{0},{1},{2},{3},{4},{5}", arr.UT.ToString(), arr.Years, arr.Days, arr.Hours, arr.Minutes, arr.Seconds));
 
 
-            GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosSaved));
-            GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosMoveDetectedAt));
-            GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosByActiveScene));
-            GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosLast));
+            //GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosSaved));
+            //GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosMoveDetectedAt));
+            //GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosByActiveScene));
+            //GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosLast));
 
             //GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count));
             //GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.AlarmListMaxAlarmsInt));

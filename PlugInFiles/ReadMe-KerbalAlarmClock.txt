@@ -28,6 +28,9 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.7.8.2		-	KSP Version: 0.24.2
+- Fixed issue with inputlocks not coming off sometimes (Fixes #48)
+
 Version 2.7.8.1		-	KSP Version: 0.24.2
 - Fixed bug with Add alarm types ("!=" != "==") (Issue #47)
 

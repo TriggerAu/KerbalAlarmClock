@@ -376,43 +376,88 @@ namespace KerbalAlarmClock
 
         internal void KSCInputLocking()
         {
-            LockKSCIfMouseOver("windowMainLock", WindowPosByActiveScene, WindowVisibleByActiveScene);
-            LockKSCIfMouseOver("windowAddLock", _WindowAddRect, WindowVisibleByActiveScene && _ShowAddPane);
-            LockKSCIfMouseOver("windowSettingsLock", _WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings);
-            LockKSCIfMouseOver("windowAddMessagesLock", _WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
-            LockKSCIfMouseOver("windowEditLock", _WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
-            LockKSCIfMouseOver("windowEarthLock", _WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
+            Boolean MouseOverAnyWindow = false;
 
+            //Check if the mouse is over any KAC window
+            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(WindowPosByActiveScene, WindowVisibleByActiveScene);
+            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowAddRect, WindowVisibleByActiveScene && _ShowAddPane);
+            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings);
+            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
+            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
+            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
             foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
             {
-                if (tmpAlarm.AlarmWindowID != 0 && tmpAlarm.Actioned )
+                if (tmpAlarm.AlarmWindowID != 0 && tmpAlarm.Actioned)
                 {
-                    LockKSCIfMouseOver(tmpAlarm.AlarmWindowID + "Lock", tmpAlarm.AlarmWindow, !tmpAlarm.AlarmWindowClosed);
+                    MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(tmpAlarm.AlarmWindow, !tmpAlarm.AlarmWindowClosed);
                 }
             }
-        }
 
-        private void LockKSCIfMouseOver(String LockName,Rect WindowRect,Boolean WindowVisible)
-        {
-            if (Settings.KSCUIBlockersEnabled && WindowVisible && WindowRect.Contains(Event.current.mousePosition))
+            //If the setting is on and the mouse is over any window then lock it
+            if (Settings.KSCUIBlockersEnabled && MouseOverAnyWindow)
             {
-                if (!(InputLockManager.GetControlLock(LockName) == ControlTypes.KSC_FACILITIES)) {
-#if DEBUG 
-                    DebugLogFormatted("AddingLock-{0}", LockName); 
+                if (!(InputLockManager.GetControlLock("KACLockOfKSCFacilities") == ControlTypes.KSC_FACILITIES))
+                {
+#if DEBUG
+                    DebugLogFormatted("AddingLock-{0}", "KACLockOfKSCFacilities");
 #endif
-                    InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, LockName);
+                    InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, "KACLockOfKSCFacilities");
                 }
             }
+                //Otherwise make sure the lock is removed
             else
             {
-                if (InputLockManager.GetControlLock(LockName) == ControlTypes.KSC_FACILITIES) {
+                if (InputLockManager.GetControlLock("KACLockOfKSCFacilities") == ControlTypes.KSC_FACILITIES)
+                {
 #if DEBUG 
-                    DebugLogFormatted("Removing-{0}", LockName); 
+                    DebugLogFormatted("Removing-{0}", "KACLockOfKSCFacilities"); 
 #endif
-                    InputLockManager.RemoveControlLock(LockName);
+                    InputLockManager.RemoveControlLock("KACLockOfKSCFacilities");
                 }
             }
+            
+            //LockKSCIfMouseOver("windowMainLock", WindowPosByActiveScene, WindowVisibleByActiveScene);
+            //LockKSCIfMouseOver("windowAddLock", _WindowAddRect, WindowVisibleByActiveScene && _ShowAddPane);
+            //LockKSCIfMouseOver("windowSettingsLock", _WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings);
+            //LockKSCIfMouseOver("windowAddMessagesLock", _WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
+            //LockKSCIfMouseOver("windowEditLock", _WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
+            //LockKSCIfMouseOver("windowEarthLock", _WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
+
+            //foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
+            //{
+            //    if (tmpAlarm.AlarmWindowID != 0 && tmpAlarm.Actioned )
+            //    {
+            //        LockKSCIfMouseOver(tmpAlarm.AlarmWindowID + "Lock", tmpAlarm.AlarmWindow, !tmpAlarm.AlarmWindowClosed);
+            //    }
+            //}
         }
+
+        private Boolean MouseOverWindow(Rect WindowRect, Boolean WindowVisible)
+        {
+            return WindowVisible && WindowRect.Contains(Event.current.mousePosition);
+        }
+
+//        private void LockKSCIfMouseOver(String LockName,Rect WindowRect,Boolean WindowVisible)
+//        {
+//            if (Settings.KSCUIBlockersEnabled && WindowVisible && WindowRect.Contains(Event.current.mousePosition))
+//            {
+//                if (!(InputLockManager.GetControlLock(LockName) == ControlTypes.KSC_FACILITIES)) {
+//#if DEBUG 
+//                    DebugLogFormatted("AddingLock-{0}", LockName); 
+//#endif
+//                    InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, LockName);
+//                }
+//            }
+//            else
+//            {
+//                if (InputLockManager.GetControlLock(LockName) == ControlTypes.KSC_FACILITIES) {
+//#if DEBUG 
+//                    DebugLogFormatted("Removing-{0}", LockName); 
+//#endif
+//                    InputLockManager.RemoveControlLock(LockName);
+//                }
+//            }
+//        }
 
         //Basic setup of draw stuff
         private static int _WindowMainID = 0;

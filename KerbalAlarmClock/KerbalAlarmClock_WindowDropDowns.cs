@@ -199,18 +199,70 @@ namespace KerbalAlarmClock
 
         }
 
+        public class DropDownItemList : List<DropDownItem>
+        {
+            public static DropDownItemList FromStringList(List<String> Items){
+                DropDownItemList lstReturn = new DropDownItemList();
+                foreach (String item in Items)
+	            {
+                    lstReturn.Add(new DropDownItem(item));
+            	}
+                return lstReturn;
+            } 
+
+            public List<String> ToStringList()
+            {
+                return this.Select(x => x.Text).ToList();
+            }
+        }
+
+        public class DropDownItem
+        {
+            public DropDownItem(String Text, Texture2D Icon):this(Text)
+            {
+                this.Icon = Icon;
+            }
+            public DropDownItem(String Text):this()
+            {
+                this.Text = Text;
+            }
+            public DropDownItem() { }
+
+            public String Text { get; set; }
+            public Texture2D Icon { get; set; }
+        }
+
+        [Flags]
+        public enum DropDownListDisplayStyleEnum
+        {
+            TextOnly = 1,
+            ImageOnly = 2,
+            Both = 3
+        }
+
         public class DropDownList
         {
             //Constructors
+            public DropDownList(DropDownItemList Items, Int32 Selected, Rect WindowRect)
+                : this(Items, WindowRect)
+            {
+                SelectedIndex = Selected;
+            }
             public DropDownList(IEnumerable<String> Items, Int32 Selected, Rect WindowRect)
                 : this(Items, WindowRect)
             {
                 SelectedIndex = Selected;
             }
+            public DropDownList(DropDownItemList Items, Rect WindowRect)
+                : this(WindowRect)
+            {
+                this.Items = Items;
+            }
+
             public DropDownList(IEnumerable<String> Items, Rect WindowRect)
                 : this(WindowRect)
             {
-                this.Items = Items.ToList<String>();
+                this.Items = DropDownItemList.FromStringList(Items.ToList<String>());
             }
             //public DropDownList(Enum Items)
             //    : this()
@@ -228,9 +280,15 @@ namespace KerbalAlarmClock
             }
 
             //properties to use
-            internal List<String> Items { get; set; }
+            internal DropDownItemList Items { get; set; }
             internal Int32 SelectedIndex { get; set; }
-            internal String SelectedValue { get { return Items[SelectedIndex]; } }
+            internal String SelectedValue { get { return Items[SelectedIndex].Text; } }
+
+            private DropDownListDisplayStyleEnum _DropDownListDisplayStyle = DropDownListDisplayStyleEnum.TextOnly;
+            internal DropDownListDisplayStyleEnum DropDownListDisplayStyle{
+                get {return _DropDownListDisplayStyle;}
+                set {_DropDownListDisplayStyle = value;}
+            }
 
             private Boolean _ListVisible;
             internal Boolean ListVisible

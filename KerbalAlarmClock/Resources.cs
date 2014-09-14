@@ -16,100 +16,100 @@ namespace KerbalAlarmClock
         #region "Textures"
 
         //Clock Icons
-        internal static Texture2D iconNorm; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconNormShow; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconAlarm; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconAlarmShow; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpEffect100; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpEffect080; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpEffect060; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpEffect040; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpEffect020; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpEffect000; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseEffect100; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseEffect080; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseEffect060; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseEffect040; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseEffect020; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseEffect000; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconNorm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconNormShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconAlarm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconAlarmShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
         //Alarm List icons
-        internal static Texture2D iconRaw; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconMNode; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconSOI; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconAp; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPe; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconAN; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconDN; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconXFer; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconClosest; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconLaunchRendezvous; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconCrew; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconEarth; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconRaw = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconMNode = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconSOI = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconAp = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPe = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconAN = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconDN = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconXFer = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconClosest = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconLaunchRendezvous = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconCrew = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconEarth = new Texture2D(18, 14, TextureFormat.ARGB32, false);
 
-        internal static Texture2D iconNone; //  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        internal static Texture2D iconEdit; //  = new Texture2D(16, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D iconNone = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconEdit = new Texture2D(16, 16, TextureFormat.ARGB32, false);
 
-        internal static Texture2D iconWarpList100; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpList080; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpList060; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpList040; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpList020; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconWarpList000; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
-        internal static Texture2D iconPauseList100; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseList080; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseList060; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseList040; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseList020; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        internal static Texture2D iconPauseList000; //  = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
-        //internal static Texture2D iconstatusSOI; //  = new Texture2D(14, 11, TextureFormat.ARGB32, false);
+        //internal static Texture2D iconstatusSOI = new Texture2D(14, 11, TextureFormat.ARGB32, false);
 
 
-        internal static Texture2D btnRaw; //  = new Texture2D(20, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnMNode; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnAp; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnPe; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnApPe; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnAN; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnDN; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnANDN; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnSOI; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnXfer; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnClosest; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        internal static Texture2D btnCrew; //  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnRaw = new Texture2D(20, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnMNode = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnAp = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnPe = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnApPe = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnAN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnDN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnANDN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnSOI = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnXfer = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnClosest = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnCrew = new Texture2D(25, 20, TextureFormat.ARGB32, false);
         
-        internal static Texture2D btnChevronUp; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnChevronDown; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnChevLeft; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnChevRight; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnChevronUp = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnChevronDown = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnChevLeft = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnChevRight = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
-        internal static Texture2D btnRedCross; //  = new Texture2D(16, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnSettings; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnSettingsAttention; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnAdd; //  = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnRedCross = new Texture2D(16, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnSettings = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnSettingsAttention = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnAdd = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
-        internal static Texture2D btnActionMsg;
-        internal static Texture2D btnActionWarp;
-        internal static Texture2D btnActionWarpMsg;
-        internal static Texture2D btnActionPause;
+        internal static Texture2D btnActionMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionWarp = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionWarpMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionPause = new Texture2D(32, 16, TextureFormat.ARGB32, false);
 
-        internal static Texture2D btnDropDown;
-        internal static Texture2D btnPlay;
-        internal static Texture2D btnStop;
+        internal static Texture2D btnDropDown = new Texture2D(10,10, TextureFormat.ARGB32, false);
+        internal static Texture2D btnPlay = new Texture2D(10, 10, TextureFormat.ARGB32, false);
+        internal static Texture2D btnStop = new Texture2D(10, 10, TextureFormat.ARGB32, false);
 
-        internal static Texture2D texBox;
-        internal static Texture2D texBoxUnity;
-        internal static Texture2D texTooltip;
+        internal static Texture2D texBox = new Texture2D(9,9, TextureFormat.ARGB32, false);
+        internal static Texture2D texBoxUnity = new Texture2D(9, 9, TextureFormat.ARGB32, false);
+        internal static Texture2D texTooltip = new Texture2D(9, 9, TextureFormat.ARGB32, false);
 
-        internal static Texture2D texSeparatorV;
-        internal static Texture2D texSeparatorH;
+        internal static Texture2D texSeparatorV = new Texture2D(6, 2, TextureFormat.ARGB32, false);
+        internal static Texture2D texSeparatorH = new Texture2D(2, 20, TextureFormat.ARGB32, false);
 
-        //internal static Texture2D txtTooltipBackground; //  = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
-        //internal static Texture2D txtRedTint; //  = new Texture2D(16, 16); //, TextureFormat.ARGB32, false);
-        //internal static Texture2D txtBlackSquare; //  = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
-        //internal static Texture2D txtWhiteSquare; //  = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
+        //internal static Texture2D txtTooltipBackground = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
+        //internal static Texture2D txtRedTint = new Texture2D(16, 16); //, TextureFormat.ARGB32, false);
+        //internal static Texture2D txtBlackSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
+        //internal static Texture2D txtWhiteSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
 
         internal static void loadGUIAssets()
         {
@@ -117,98 +117,98 @@ namespace KerbalAlarmClock
 
             try
             {
-                KACUtils.LoadImageFromGameDB(ref iconNorm, "KACIcon-Norm.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconNormShow, "KACIcon-NormShow.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconAlarm, "KACIcon-Alarm.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconAlarmShow, "KACIcon-AlarmShow.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect100, "KACIcon-WarpEffect2_100.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect080, "KACIcon-WarpEffect2_080.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect060, "KACIcon-WarpEffect2_060.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect040, "KACIcon-WarpEffect2_040.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect020, "KACIcon-WarpEffect2_020.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconWarpEffect000, "KACIcon-WarpEffect2_000.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect100, "KACIcon-PauseEffect_100.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect080, "KACIcon-PauseEffect_080.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect060, "KACIcon-PauseEffect_060.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect040, "KACIcon-PauseEffect_040.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref iconPauseEffect020, "KACIcon-PauseEffect_020.tga", KACUtils.DBPathToolbarIcons);
-                KACUtils.LoadImageFromGameDB(ref  iconPauseEffect000, "KACIcon-PauseEffect_000.tga", KACUtils.DBPathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconNorm, "KACIcon-Norm.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconNormShow, "KACIcon-NormShow.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconAlarm, "KACIcon-Alarm.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconAlarmShow, "KACIcon-AlarmShow.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect100, "KACIcon-WarpEffect2_100.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect080, "KACIcon-WarpEffect2_080.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect060, "KACIcon-WarpEffect2_060.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect040, "KACIcon-WarpEffect2_040.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect020, "KACIcon-WarpEffect2_020.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect000, "KACIcon-WarpEffect2_000.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect100, "KACIcon-PauseEffect_100.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect080, "KACIcon-PauseEffect_080.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect060, "KACIcon-PauseEffect_060.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect040, "KACIcon-PauseEffect_040.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect020, "KACIcon-PauseEffect_020.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref  iconPauseEffect000, "KACIcon-PauseEffect_000.png", KACUtils.PathToolbarIcons);
 
 
-                KACUtils.LoadImageFromGameDB(ref iconRaw, "img_listiconRaw.tga");
-                KACUtils.LoadImageFromGameDB(ref iconSOI, "img_listiconSOI.tga");
-                KACUtils.LoadImageFromGameDB(ref iconMNode, "img_listiconMNode.tga");
-                KACUtils.LoadImageFromGameDB(ref iconAp, "img_listiconAp.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPe, "img_listiconPe.tga");
-                KACUtils.LoadImageFromGameDB(ref iconAN, "img_listiconAN.tga");
-                KACUtils.LoadImageFromGameDB(ref iconDN, "img_listiconDN.tga");
-                KACUtils.LoadImageFromGameDB(ref iconXFer, "img_listiconXfer.tga");
-                KACUtils.LoadImageFromGameDB(ref iconClosest, "img_listiconClosest.tga");
-                KACUtils.LoadImageFromGameDB(ref iconCrew, "img_listiconCrew.tga");
-                KACUtils.LoadImageFromGameDB(ref iconEarth, "img_listiconEarth.tga");
-                KACUtils.LoadImageFromGameDB(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList100, "img_listiconWarpList_100.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList080, "img_listiconWarpList_080.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList060, "img_listiconWarpList_060.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList040, "img_listiconWarpList_040.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList020, "img_listiconWarpList_020.tga");
-                KACUtils.LoadImageFromGameDB(ref iconWarpList000, "img_listiconWarpList_000.tga");
+                KACUtils.LoadImageFromFile(ref iconRaw, "img_listiconRaw.png");
+                KACUtils.LoadImageFromFile(ref iconSOI, "img_listiconSOI.png");
+                KACUtils.LoadImageFromFile(ref iconMNode, "img_listiconMNode.png");
+                KACUtils.LoadImageFromFile(ref iconAp, "img_listiconAp.png");
+                KACUtils.LoadImageFromFile(ref iconPe, "img_listiconPe.png");
+                KACUtils.LoadImageFromFile(ref iconAN, "img_listiconAN.png");
+                KACUtils.LoadImageFromFile(ref iconDN, "img_listiconDN.png");
+                KACUtils.LoadImageFromFile(ref iconXFer, "img_listiconXfer.png");
+                KACUtils.LoadImageFromFile(ref iconClosest, "img_listiconClosest.png");
+                KACUtils.LoadImageFromFile(ref iconCrew, "img_listiconCrew.png");
+                KACUtils.LoadImageFromFile(ref iconEarth, "img_listiconEarth.png");
+                KACUtils.LoadImageFromFile(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.png");
+                KACUtils.LoadImageFromFile(ref iconWarpList100, "img_listiconWarpList_100.png");
+                KACUtils.LoadImageFromFile(ref iconWarpList080, "img_listiconWarpList_080.png");
+                KACUtils.LoadImageFromFile(ref iconWarpList060, "img_listiconWarpList_060.png");
+                KACUtils.LoadImageFromFile(ref iconWarpList040, "img_listiconWarpList_040.png");
+                KACUtils.LoadImageFromFile(ref iconWarpList020, "img_listiconWarpList_020.png");
+                KACUtils.LoadImageFromFile(ref iconWarpList000, "img_listiconWarpList_000.png");
 
-                KACUtils.LoadImageFromGameDB(ref iconPauseList100, "img_listiconPauseList_100.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseList080, "img_listiconPauseList_080.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseList060, "img_listiconPauseList_060.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseList040, "img_listiconPauseList_040.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseList020, "img_listiconPauseList_020.tga");
-                KACUtils.LoadImageFromGameDB(ref iconPauseList000, "img_listiconPauseList_000.tga");
+                KACUtils.LoadImageFromFile(ref iconPauseList100, "img_listiconPauseList_100.png");
+                KACUtils.LoadImageFromFile(ref iconPauseList080, "img_listiconPauseList_080.png");
+                KACUtils.LoadImageFromFile(ref iconPauseList060, "img_listiconPauseList_060.png");
+                KACUtils.LoadImageFromFile(ref iconPauseList040, "img_listiconPauseList_040.png");
+                KACUtils.LoadImageFromFile(ref iconPauseList020, "img_listiconPauseList_020.png");
+                KACUtils.LoadImageFromFile(ref iconPauseList000, "img_listiconPauseList_000.png");
 
-                KACUtils.LoadImageFromGameDB(ref iconNone, "img_listiconNone.tga");
-                KACUtils.LoadImageFromGameDB(ref iconEdit, "img_listiconEdit.tga");
+                KACUtils.LoadImageFromFile(ref iconNone, "img_listiconNone.png");
+                KACUtils.LoadImageFromFile(ref iconEdit, "img_listiconEdit.png");
 
-                //KACUtils.LoadImageFromGameDB(ref iconstatusSOI, "img_statusiconSOI.png");
+                //KACUtils.LoadImageFromFile(ref iconstatusSOI, "img_statusiconSOI.png");
 
-                KACUtils.LoadImageFromGameDB(ref btnRaw, "img_buttonTypeRaw.tga");
-                KACUtils.LoadImageFromGameDB(ref btnMNode, "img_buttonTypeMNode.tga");
-                KACUtils.LoadImageFromGameDB(ref btnAp, "img_buttonTypeAp.tga");
-                KACUtils.LoadImageFromGameDB(ref btnPe, "img_buttonTypePe.tga");
-                KACUtils.LoadImageFromGameDB(ref btnApPe, "img_buttonTypeApPe.tga");
-                KACUtils.LoadImageFromGameDB(ref btnAN, "img_buttonTypeAN.tga");
-                KACUtils.LoadImageFromGameDB(ref btnDN, "img_buttonTypeDN.tga");
-                KACUtils.LoadImageFromGameDB(ref btnANDN, "img_buttonTypeANDN.tga");
-                KACUtils.LoadImageFromGameDB(ref btnSOI, "img_buttonTypeSOI.tga");
-                KACUtils.LoadImageFromGameDB(ref btnXfer, "img_buttonTypeXfer.tga");
-                KACUtils.LoadImageFromGameDB(ref btnClosest, "img_buttonTypeClosest.tga");
-                KACUtils.LoadImageFromGameDB(ref btnCrew, "img_buttonTypeCrew.tga");
+                KACUtils.LoadImageFromFile(ref btnRaw, "img_buttonTypeRaw.png");
+                KACUtils.LoadImageFromFile(ref btnMNode, "img_buttonTypeMNode.png");
+                KACUtils.LoadImageFromFile(ref btnAp, "img_buttonTypeAp.png");
+                KACUtils.LoadImageFromFile(ref btnPe, "img_buttonTypePe.png");
+                KACUtils.LoadImageFromFile(ref btnApPe, "img_buttonTypeApPe.png");
+                KACUtils.LoadImageFromFile(ref btnAN, "img_buttonTypeAN.png");
+                KACUtils.LoadImageFromFile(ref btnDN, "img_buttonTypeDN.png");
+                KACUtils.LoadImageFromFile(ref btnANDN, "img_buttonTypeANDN.png");
+                KACUtils.LoadImageFromFile(ref btnSOI, "img_buttonTypeSOI.png");
+                KACUtils.LoadImageFromFile(ref btnXfer, "img_buttonTypeXfer.png");
+                KACUtils.LoadImageFromFile(ref btnClosest, "img_buttonTypeClosest.png");
+                KACUtils.LoadImageFromFile(ref btnCrew, "img_buttonTypeCrew.png");
 
-                KACUtils.LoadImageFromGameDB(ref btnChevronUp, "img_buttonChevronUp.tga");
-                KACUtils.LoadImageFromGameDB(ref btnChevronDown, "img_buttonChevronDown.tga");
-                KACUtils.LoadImageFromGameDB(ref btnChevLeft, "img_buttonChevronLeft.tga");
-                KACUtils.LoadImageFromGameDB(ref btnChevRight, "img_buttonChevronRight.tga");
+                KACUtils.LoadImageFromFile(ref btnChevronUp, "img_buttonChevronUp.png");
+                KACUtils.LoadImageFromFile(ref btnChevronDown, "img_buttonChevronDown.png");
+                KACUtils.LoadImageFromFile(ref btnChevLeft, "img_buttonChevronLeft.png");
+                KACUtils.LoadImageFromFile(ref btnChevRight, "img_buttonChevronRight.png");
 
-                KACUtils.LoadImageFromGameDB(ref btnRedCross, "img_buttonRedCross.tga");
-                KACUtils.LoadImageFromGameDB(ref btnSettings, "img_buttonSettings.tga");
-                KACUtils.LoadImageFromGameDB(ref btnSettingsAttention, "img_buttonSettingsAttention.tga");
-                KACUtils.LoadImageFromGameDB(ref btnAdd, "img_buttonAdd.tga");
+                KACUtils.LoadImageFromFile(ref btnRedCross, "img_buttonRedCross.png");
+                KACUtils.LoadImageFromFile(ref btnSettings, "img_buttonSettings.png");
+                KACUtils.LoadImageFromFile(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
+                KACUtils.LoadImageFromFile(ref btnAdd, "img_buttonAdd.png");
 
-                KACUtils.LoadImageFromGameDB(ref btnActionMsg, "img_buttonActionMsg.tga");
-                KACUtils.LoadImageFromGameDB(ref btnActionWarp, "img_buttonActionWarp.tga");
-                KACUtils.LoadImageFromGameDB(ref btnActionWarpMsg, "img_buttonActionWarpMsg.tga");
-                KACUtils.LoadImageFromGameDB(ref btnActionPause, "img_buttonActionPause.tga");
+                KACUtils.LoadImageFromFile(ref btnActionMsg, "img_buttonActionMsg.png");
+                KACUtils.LoadImageFromFile(ref btnActionWarp, "img_buttonActionWarp.png");
+                KACUtils.LoadImageFromFile(ref btnActionWarpMsg, "img_buttonActionWarpMsg.png");
+                KACUtils.LoadImageFromFile(ref btnActionPause, "img_buttonActionPause.png");
 
-                KACUtils.LoadImageFromGameDB(ref btnDropDown, "img_DropDown.tga");
-                KACUtils.LoadImageFromGameDB(ref btnPlay, "img_Play.tga");
-                KACUtils.LoadImageFromGameDB(ref btnStop, "img_Stop.tga");
+                KACUtils.LoadImageFromFile(ref btnDropDown, "img_DropDown.png");
+                KACUtils.LoadImageFromFile(ref btnPlay, "img_Play.png");
+                KACUtils.LoadImageFromFile(ref btnStop, "img_Stop.png");
 
-                KACUtils.LoadImageFromGameDB(ref texBox, "tex_Box.tga");
-                KACUtils.LoadImageFromGameDB(ref texBoxUnity, "tex_BoxUnity.tga");
+                KACUtils.LoadImageFromFile(ref texBox, "tex_Box.png");
+                KACUtils.LoadImageFromFile(ref texBoxUnity, "tex_BoxUnity.png");
 
-                KACUtils.LoadImageFromGameDB(ref texSeparatorH, "img_SeparatorHorizontal.tga");
-                KACUtils.LoadImageFromGameDB(ref texSeparatorV, "img_SeparatorVertical.tga");
+                KACUtils.LoadImageFromFile(ref texSeparatorH, "img_SeparatorHorizontal.png");
+                KACUtils.LoadImageFromFile(ref texSeparatorV, "img_SeparatorVertical.png");
 
 
-                //KACUtils.LoadImageFromGameDB(ref txtRedTint, "Textures", "RedOverlay.png");
+                //KACUtils.LoadImageFromFile(ref txtRedTint, "Textures", "RedOverlay.png");
 
-                //KACUtils.LoadImageFromGameDB(ref txtBlackSquare, "Textures", "BlackSquare.png");
-                //KACUtils.LoadImageFromGameDB(ref txtWhiteSquare, "Textures", "WhiteSquare.png");
+                //KACUtils.LoadImageFromFile(ref txtBlackSquare, "Textures", "BlackSquare.png");
+                //KACUtils.LoadImageFromFile(ref txtWhiteSquare, "Textures", "WhiteSquare.png");
 
                 MonoBehaviourExtended.LogFormatted("Loaded Textures");
             }
@@ -306,7 +306,7 @@ namespace KerbalAlarmClock
 
         internal static String GetWarpIconTexturePath()
         {
-            String textureReturn = "TriggerTech/ToolbarIcons/KACIcon-WarpEffect2_";
+            String textureReturn = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-WarpEffect2_";
 
             textureReturn = GetIconPercentageFromTime(textureReturn);
             return textureReturn;
@@ -314,7 +314,7 @@ namespace KerbalAlarmClock
 
         internal static String GetPauseIconTexturePath()
         {
-            String textureReturn = "TriggerTech/ToolbarIcons/KACIcon-PauseEffect_";
+            String textureReturn = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-PauseEffect_";
 
             textureReturn = GetIconPercentageFromTime(textureReturn);
             return textureReturn;

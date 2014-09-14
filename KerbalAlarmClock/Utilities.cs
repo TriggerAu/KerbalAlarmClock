@@ -17,8 +17,11 @@ namespace KerbalAlarmClock
         //public static String PlugInPath = AppPath + "PluginData/KerbalAlarmClock/";
         internal static String PathApp = KSPUtil.ApplicationRootPath.Replace("\\", "/");
         internal static String PathTriggerTech = string.Format("{0}GameData/TriggerTech", PathApp);
-        internal static String PathPlugin = string.Format("{0}/{1}", PathTriggerTech, KerbalAlarmClock._AssemblyName);
+
+        internal static String PathPlugin = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         internal static String PathPluginData = string.Format("{0}/Data", PathPlugin);
+        internal static String PathTextures = string.Format("{0}/Textures", PathPlugin);
+        internal static String PathToolbarIcons = string.Format("{0}/ToolbarIcons", PathPlugin);
         internal static String PathPluginSounds = string.Format("{0}/Sounds", PathPlugin);
 
         internal static String DBPathTriggerTech = string.Format("TriggerTech");
@@ -195,6 +198,16 @@ namespace KerbalAlarmClock
         //    WWW img1 = new WWW(String.Format("file://{0}{1}/{2}", PlugInPath, FolderName,FileName));
         //    img1.LoadImageIntoTexture(tex);
         //}
+
+        /// <summary>
+        /// Loads texture from GameDatabase
+        /// If texture is a TGA then its quality is affected by the game settings
+        /// If texture is a PNG then its quality is affetced by texture compression in game
+        /// </summary>
+        /// <param name="tex"></param>
+        /// <param name="FileName"></param>
+        /// <param name="FolderPath"></param>
+        /// <returns></returns>
         //public static Boolean LoadImageFromGameDB(ref Texture2D tex, String FileName, String FolderPath = "")
         //{
         //    //DebugLogFormatted("{0},{1}",FileName, FolderPath);
@@ -202,8 +215,9 @@ namespace KerbalAlarmClock
         //    try
         //    {
         //        if (FileName.ToLower().EndsWith(".png")) FileName = FileName.Substring(0, FileName.Length - 4);
+        //        if (FileName.ToLower().EndsWith(".tga")) FileName = FileName.Substring(0, FileName.Length - 4);
         //        if (FolderPath == "") FolderPath = DBPathTextures;
-        //        //MonoBehaviourExtended.LogFormatted("Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
+        //        MonoBehaviourExtended.LogFormatted_DebugOnly("Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
         //        tex = GameDatabase.Instance.GetTexture(String.Format("{0}/{1}", FolderPath, FileName), false);
         //        blnReturn = true;
         //    }
@@ -213,28 +227,46 @@ namespace KerbalAlarmClock
         //    }
         //    return blnReturn;
         //}
-        internal static Boolean LoadImageFromGameDB(ref Texture2D tex, String FileName, String FolderPath = "")
+
+        /// <summary>
+        /// Loads a texture from the file system directly
+        /// </summary>
+        /// <param name="tex">Unity Texture to Load</param>
+        /// <param name="FileName">Image file name</param>
+        /// <param name="FolderPath">Optional folder path of image</param>
+        /// <returns></returns>
+        public static Boolean LoadImageFromFile(ref Texture2D tex, String FileName, String FolderPath = "")
         {
+            //DebugLogFormatted("{0},{1}",FileName, FolderPath);
             Boolean blnReturn = false;
             try
             {
-                //trim off the tga and png extensions
-                if (FileName.ToLower().EndsWith(".png")) FileName = FileName.Substring(0, FileName.Length - 4);
-                if (FileName.ToLower().EndsWith(".tga")) FileName = FileName.Substring(0, FileName.Length - 4);
-                //default folder
-                if (FolderPath == "") FolderPath = DBPathTextures;
+                if (FolderPath == "") FolderPath = PathTextures;
 
-                //Look for case mismatches
-                if (!GameDatabase.Instance.ExistsTexture(String.Format("{0}/{1}", FolderPath, FileName)))
-                    throw new Exception();
+                //File Exists check
+                if (System.IO.File.Exists(String.Format("{0}/{1}", FolderPath, FileName)))
+                {
+                    try
+                    {
+                        MonoBehaviourExtended.LogFormatted_DebugOnly("Loading: {0}", String.Format("{0}/{1}", FolderPath, FileName));
+                        tex.LoadImage(System.IO.File.ReadAllBytes(String.Format("{0}/{1}", FolderPath, FileName)));
+                        blnReturn = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MonoBehaviourExtended.LogFormatted("Failed to load the texture:{0} ({1})", String.Format("{0}/{1}", FolderPath, FileName), ex.Message);
+                    }
+                }
+                else
+                {
+                    MonoBehaviourExtended.LogFormatted("Cannot find texture to load:{0}", String.Format("{0}/{1}", FolderPath, FileName));
+                }
 
-                //now load it
-                tex = GameDatabase.Instance.GetTexture(String.Format("{0}/{1}", FolderPath, FileName), false);
-                blnReturn = true;
+
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MonoBehaviourExtended.LogFormatted("Failed to load (are you missing a file - and check case):{0}/{1}", FolderPath, FileName);
+                MonoBehaviourExtended.LogFormatted("Failed to load (are you missing a file):{0} ({1})", String.Format("{0}/{1}", FolderPath, FileName), ex.Message);
             }
             return blnReturn;
         }

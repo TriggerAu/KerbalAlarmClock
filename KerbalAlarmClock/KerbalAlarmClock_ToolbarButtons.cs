@@ -36,7 +36,7 @@ namespace KerbalAlarmClock
             {
                 LogFormatted("Initialising the Toolbar Icon");
                 btnReturn = ToolbarManager.Instance.add("KerbalAlarmClock", "btnToolbarIcon");
-                btnReturn.TexturePath = "TriggerTech/ToolbarIcons/KACIcon-Norm";
+                btnReturn.TexturePath = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-Norm";
                 btnReturn.ToolTip = "Kerbal Alarm Clock";
                 btnReturn.OnClick += (e) =>
                 {

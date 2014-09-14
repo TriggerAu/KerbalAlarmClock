@@ -568,7 +568,7 @@ namespace KerbalAlarmClock
                             height = 20
                         };
 
-                        if (GUI.Button(ListButtonRect, Items[i], styleListItemToDraw))
+                        if (GUI.Button(ListButtonRect, Items[i].Text, styleListItemToDraw))
                         {
                             ListVisible = false;
                             SelectedIndex = i;

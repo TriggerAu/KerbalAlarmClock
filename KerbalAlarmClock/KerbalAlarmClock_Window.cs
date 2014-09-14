@@ -1300,12 +1300,18 @@ namespace KerbalAlarmClock
 
         internal Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params GUIContent[] Choices)
         {
-            int Selection = (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION) ? KACAlarm.AlarmTypeToButton[selType] : KACAlarm.AlarmTypeToButtonTS[selType];
+            //int Selection = (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION) ? KACAlarm.AlarmTypeToButton[selType] : KACAlarm.AlarmTypeToButtonTS[selType];
+            int Selection = KACAlarm.AlarmTypeToButton[selType];
+            if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION) Selection = KACAlarm.AlarmTypeToButtonTS[selType];
+            else if (KACWorkerGameState.CurrentGUIScene != GameScenes.SPACECENTER) Selection = KACAlarm.AlarmTypeToButtonSC[selType];
+
             Boolean blnReturn = DrawButtonList(ref Selection, Choices);
             if (blnReturn)
             {
                 if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
                     selType = KACAlarm.AlarmTypeFromButtonTS[Selection];
+                else if (KACWorkerGameState.CurrentGUIScene == GameScenes.SPACECENTER)
+                    selType = KACAlarm.AlarmTypeFromButtonSC[Selection];
                 else
                     selType = KACAlarm.AlarmTypeFromButton[Selection];
             }

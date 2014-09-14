@@ -78,6 +78,16 @@ namespace KerbalAlarmClock
             {4,AlarmType.Transfer },
         };
 
+        public static Dictionary<AlarmType, int> AlarmTypeToButtonSC = new Dictionary<AlarmType, int>() {
+            {AlarmType.Raw, 0},
+            {AlarmType.Transfer , 1},
+            {AlarmType.TransferModelled , 1},
+        };
+        public static Dictionary<int, AlarmType> AlarmTypeFromButtonSC = new Dictionary<int, AlarmType>() {
+            {0,AlarmType.Raw},
+            {1,AlarmType.Transfer },
+        };
+
         public enum AlarmActionEnum
         {
 

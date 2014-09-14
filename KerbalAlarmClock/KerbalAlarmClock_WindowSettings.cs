@@ -152,7 +152,16 @@ namespace KerbalAlarmClock
             GUILayout.Label("App Button:", KACResources.styleAddHeading, GUILayout.Width(90));
             ddlSettingsButtonStyle.DrawButton();
             GUILayout.EndHorizontal();
-
+            //intBlizzyToolbarMissingHeight = 0;
+            if (!settings.BlizzyToolbarIsAvailable)
+            {
+                if (settings.ButtonStyleChosen == Settings.ButtonStyleEnum.Toolbar)
+                {
+                    if (GUILayout.Button(new GUIContent("Not Installed. Click for Toolbar Info", "Click to open your browser and find out more about the Common Toolbar"), Styles.styleTextCenterGreen))
+                        Application.OpenURL("http://forum.kerbalspaceprogram.com/threads/60863");
+                    //intBlizzyToolbarMissingHeight = 18;
+                }
+            }
             GUILayout.EndVertical();
 
             GUILayout.BeginHorizontal();
@@ -517,7 +526,13 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             if (settings.VersionAvailable)
-                GUILayout.Label("Updated Version Available", KACResources.styleVersionHighlight);
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(80);
+                if (GUILayout.Button("Updated Version Available - Click Here", KACResources.styleVersionHighlight))
+                    Application.OpenURL("https://github.com/TriggerAu/KerbalAlarmClock/releases");
+                GUILayout.EndHorizontal();
+            }
             GUILayout.EndVertical();
 
             //Update Check Area
@@ -535,9 +550,9 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             //GUILayout.Label("Trigger Au",KACResources.styleContent);
             if (GUILayout.Button("Click Here", KACResources.styleContent))
-                Application.OpenURL("https://sites.google.com/site/kerbalalarmclock/");
+                Application.OpenURL("http://triggerau.github.io/KerbalAlarmClock/");
             if (GUILayout.Button("Click Here", KACResources.styleContent))
-                Application.OpenURL("http://kerbalspaceport.com/kerbal-alarm-clock-2/");
+                Application.OpenURL("http://github.com/TriggerAu/KerbalAlarmClock/");
             if (GUILayout.Button("Click Here", KACResources.styleContent))
                 Application.OpenURL("http://forum.kerbalspaceprogram.com/showthread.php/24786-Kerbal-Alarm-Clock");
 

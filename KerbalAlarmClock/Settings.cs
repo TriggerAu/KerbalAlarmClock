@@ -197,6 +197,9 @@ namespace KerbalAlarmClock
         }
 
         #region Version Checks
+        private String VersionCheckURL = "http://triggerau.github.io/KerbalAlarmClock/versioncheck.txt";
+        //Could use this one to see usage, but need to be very aware of data connectivity if its ever used "http://bit.ly/KACVersion";
+
         private String ConvertVersionCheckDateToString(DateTime Date)
         {
             if (Date < DateTime.Now.AddYears(-10))
@@ -305,7 +308,7 @@ namespace KerbalAlarmClock
 
             //now do the download
             MonoBehaviourExtended.LogFormatted("Reading version from Web");
-            wwwVersionCheck = new WWW("https://sites.google.com/site/kerbalalarmclock/latestversion");
+            wwwVersionCheck = new WWW(VersionCheckURL);
             while (!wwwVersionCheck.isDone) { }
             MonoBehaviourExtended.LogFormatted("Download complete:{0}", wwwVersionCheck.text.Length);
             VersionCheckRunning = false;

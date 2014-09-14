@@ -43,6 +43,31 @@ Version 3.0.0.0
 Restructure Alamrs list and storage into save file scenario
 alarmlist.add/remove should save as it goes
 
+Version 2.7.8.2		-	KSP Version: 0.24.2
+- Fixed issue with inputlocks not coming off sometimes (Fixes #48)
+
+Version 2.7.8.1		-	KSP Version: 0.24.2
+- Fixed bug with Add alarm types ("!=" != "==") (Issue #47)
+
+Version 2.7.8.0		-	KSP Version: 0.24.2
+- Compiled against 0.24.2 binaries
+- Fixed click through in KSC - used InputLockManager and the ControlType of KSCFacilities (Issue #45)
+- Added Transfer Windows type to SC Alarms (Issue #46)
+
+Version 2.7.7.0		-	KSP Version: 0.24.0
+- Compiled against 0.24 binaries
+- 4th attempt at texture blurring (Issue #33)
+
+Version 2.7.6.1		-	KSP Version: 0.23.5
+- Reversed change of Images to TGA, Back to PNGs (Issue #33)
+
+Version 2.7.6.0		-	KSP Version: 0.23.5
+- Change ability to Jump to Asteroid to be an Option - default is disabled (Issue #37)
+- Fixed issue with Time Margin Entry and putting in large numbers (Issue #36)
+- Added new code to detect when window is repositioned and save it after its stopped moving (Issue#35)
+- Changed all Images to TGA format to fix compression artifacts (Issue #33)
+- Added function to set default Date for Raw type alarms to start at today + 10mins (Issue #31)
+
 Version 2.7.5.0		-	KSP Version: 0.23.5
 - Tweaked Update check to be on a background worker process (Issue #28)
 - Added capability to add certain alarm types to SC and TS Scenes (Issue #24)

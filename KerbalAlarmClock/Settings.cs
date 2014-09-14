@@ -138,6 +138,12 @@ namespace KerbalAlarmClock
         internal Boolean BlizzyToolbarIsAvailable = false;
         [Persistent] internal Boolean UseBlizzyToolbarIfAvailable = false;
 
+        //Click through protection
+        [Persistent] internal Boolean ClickThroughProtect_KSC=true;
+        [Persistent] internal Boolean ClickThroughProtect_Tracking=true;
+        //[Persistent] internal Boolean ClickThroughProtect_Editor=true;
+        [Persistent] internal Boolean ClickThroughProtect_Flight=true;
+        
         //Version Stuff
         [Persistent] internal Boolean DailyVersionCheck = true;
         internal Boolean VersionAttentionFlag = false;

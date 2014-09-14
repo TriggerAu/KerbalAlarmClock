@@ -415,15 +415,15 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
 
-            DrawIconPos("Flight Mode", false, ref blnTemp, ref settings.IconPos, ref settings.WindowVisible);
+            DrawIconPos("Flight Mode", false, ref blnTemp, ref settings.IconPos, ref settings.WindowVisible,ref settings.ClickThroughProtect_Flight);
 
-            DrawIconPos("Space Center", true, ref settings.IconShow_SpaceCenter, ref settings.IconPos_SpaceCenter, ref settings.WindowVisible_SpaceCenter);
+            DrawIconPos("Space Center", true, ref settings.IconShow_SpaceCenter, ref settings.IconPos_SpaceCenter, ref settings.WindowVisible_SpaceCenter, ref settings.ClickThroughProtect_KSC);
 
-            DrawIconPos("Tracking Station", true, ref settings.IconShow_TrackingStation, ref settings.IconPos_TrackingStation,ref settings.WindowVisible_TrackingStation);
+            DrawIconPos("Tracking Station", true, ref settings.IconShow_TrackingStation, ref settings.IconPos_TrackingStation,ref settings.WindowVisible_TrackingStation,ref settings.ClickThroughProtect_Tracking);
 
         }
 
-        private void DrawIconPos(String Title,Boolean Toggleable, ref Boolean IconShow,ref Rect IconPos,ref Boolean WindowVisible)
+        private void DrawIconPos(String Title,Boolean Toggleable, ref Boolean IconShow,ref Rect IconPos,ref Boolean WindowVisible,ref Boolean ClickThroughProtect)
         {
             GUILayout.Label(Title, KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
@@ -438,6 +438,11 @@ namespace KerbalAlarmClock
                     settings.Save();
                 }
             }
+
+            if (DrawCheckbox(ref ClickThroughProtect, "Prevent Click Through over Windows")) {
+                    settings.Save();
+            }
+
             GUILayout.Label("Icon Position",KACResources.styleAddSectionHeading);
             //Now two columns
             GUILayout.BeginHorizontal();

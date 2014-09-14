@@ -321,11 +321,100 @@ namespace KerbalAlarmClock
                 }
             }
 
+            ControlInputLocks();
+
             //If Game is paused then update Earth Alarms for list drawing
             if (WindowVisibleByActiveScene && FlightDriver.Pause)
             {
                 UpdateEarthAlarms();
             }
+        }
+
+        internal Boolean MouseOverAnyWindow = false;
+        internal Boolean InputLockExists = false;
+        internal void ControlInputLocks()
+        {
+            //Do this for control Locks
+            if (settings.ClickThroughProtect_KSC || settings.ClickThroughProtect_Tracking || settings.ClickThroughProtect_Flight)
+            {
+                MouseOverAnyWindow = false;
+                MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(WindowPosByActiveScene, WindowVisibleByActiveScene);
+                MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowAddRect, WindowVisibleByActiveScene && _ShowAddPane);
+                MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings);
+                MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
+                MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
+                MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
+#if DEBUG
+                MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowDebugRect, WindowVisibleByActiveScene && _ShowDebugPane);
+#endif
+                foreach (KACAlarm tmpAlarm in alarms)
+                {
+                    if (tmpAlarm.AlarmWindowID != 0 && tmpAlarm.Actioned)
+                    {
+                        MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(tmpAlarm.AlarmWindow, !tmpAlarm.AlarmWindowClosed);
+                    }
+                }
+
+
+                //If the setting is on and the mouse is over any window then lock it
+                if (MouseOverAnyWindow && !InputLockExists)
+                {
+                    Boolean AddLock = false;
+                    switch (HighLogic.LoadedScene)
+                    {
+                        case GameScenes.SPACECENTER: AddLock = settings.ClickThroughProtect_KSC && !(InputLockManager.GetControlLock("KACControlLock") == ControlTypes.KSC_FACILITIES); break;
+                        case GameScenes.EDITOR:
+                        case GameScenes.SPH: break;
+                        case GameScenes.FLIGHT: AddLock = settings.ClickThroughProtect_Flight && !(InputLockManager.GetControlLock("KACControlLock") == ControlTypes.All); break;
+                        case GameScenes.TRACKSTATION: AddLock = settings.ClickThroughProtect_Tracking && !(InputLockManager.GetControlLock("KACControlLock") == ControlTypes.EDITOR_LOCK); break;
+                        default:
+                            break;
+                    }
+                    if (AddLock)
+                    {
+                        LogFormatted_DebugOnly("AddingLock-{0}", "KACControlLock");
+
+                        switch (HighLogic.LoadedScene)
+                        {
+                            case GameScenes.SPACECENTER: InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, "KACControlLock"); break;
+                            case GameScenes.EDITOR:
+                            case GameScenes.SPH:
+                                break;
+                            case GameScenes.FLIGHT:
+                                InputLockManager.SetControlLock(ControlTypes.All, "KACControlLock");
+                                break;
+                            case GameScenes.TRACKSTATION:
+                                InputLockManager.SetControlLock(ControlTypes.TRACKINGSTATION_ALL, "KACControlLock");
+                                break;
+                            default:
+                                break;
+                        }
+                        InputLockExists = true;
+                    }
+                }
+                //Otherwise make sure the lock is removed
+                else if (!MouseOverAnyWindow && InputLockExists)
+                {
+                    RemoveInputLock();
+                }
+            }
+        }
+
+        internal void RemoveInputLock()
+        {
+            if (InputLockManager.GetControlLock("KACControlLock") == ControlTypes.KSC_FACILITIES ||
+                InputLockManager.GetControlLock("KACControlLock") == ControlTypes.TRACKINGSTATION_ALL ||
+                InputLockManager.GetControlLock("KACControlLock") == ControlTypes.All)
+            {
+                LogFormatted_DebugOnly("Removing-{0}", "KACControlLock");
+                InputLockManager.RemoveControlLock("KACControlLock");
+            }
+            InputLockExists = false;
+        }
+
+        private Boolean MouseOverWindow(Rect WindowRect, Boolean WindowVisible)
+        {
+            return WindowVisible && WindowRect.Contains(Event.current.mousePosition);
         }
 
 #if DEBUG

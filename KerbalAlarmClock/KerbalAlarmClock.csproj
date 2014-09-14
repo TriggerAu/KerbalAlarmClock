@@ -42,6 +42,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\~Games\KSP_win_PlugInTest\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\~Games\KSP_win_PluginTest\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -58,7 +62,8 @@
     <Compile Include="Framework\ConfigNodeStorage.cs" />
     <Compile Include="Framework\ExtensionsUnity.cs" />
     <Compile Include="Framework\MonoBehaviourExtended.cs" />
-    <Compile Include="Framework\ToolbarWrapper.cs" />
+    <Compile Include="SharedStuff\AppLauncher.cs" />
+    <Compile Include="SharedStuff\ToolbarWrapper.cs" />
     <Compile Include="KerbalAlarmClock_WindowDropDowns.cs" />
     <Compile Include="KerbalAlarmClock_GameState.cs" />
     <Compile Include="KerbalAlarmClock_ScenarioModule.cs" />

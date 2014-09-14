@@ -34,13 +34,13 @@ namespace KerbalAlarmClock
 
         [Persistent] internal Boolean WindowVisible_TrackingStation = false;
         [Persistent] internal Boolean WindowMinimized_TrackingStation = false;
-        internal Rect WindowPos_TrackingStation = new Rect(202, 45, 300, 45);
+        internal Rect WindowPos_TrackingStation = new Rect(196, 45, 300, 45);
         [Persistent] private RectStorage WindowPos_TrackingStationStored = new RectStorage();
 
         [Persistent] internal Rect IconPos =  new Rect(152, 0, 32, 32);
         [Persistent] internal Rect IconPos_SpaceCenter = new Rect(3, 3, 32, 32);
         [Persistent] internal Boolean IconShow_SpaceCenter = true;
-        [Persistent] internal Rect IconPos_TrackingStation = new Rect(202, 0, 32, 32);
+        [Persistent] internal Rect IconPos_TrackingStation = new Rect(196, 0, 32, 32);
         [Persistent] internal Boolean IconShow_TrackingStation = true;
 
         [Persistent] internal MiminalDisplayType WindowMinimizedType = MiminalDisplayType.NextAlarm;
@@ -136,7 +136,24 @@ namespace KerbalAlarmClock
 
         //Toolbar Integration
         internal Boolean BlizzyToolbarIsAvailable = false;
-        [Persistent] internal Boolean UseBlizzyToolbarIfAvailable = false;
+
+        internal ButtonStyleEnum ButtonStyleToDisplay {
+            get {
+                if (BlizzyToolbarIsAvailable || ButtonStyleChosen != ButtonStyleEnum.Toolbar)
+                    return ButtonStyleChosen;
+                else
+                    return ButtonStyleEnum.Launcher;
+            }
+        }
+        [Persistent] internal ButtonStyleEnum ButtonStyleChosen = ButtonStyleEnum.Launcher;
+
+        internal enum ButtonStyleEnum
+        {
+            [Description("Basic button")]                       Basic,
+            [Description("Common Toolbar (by Blizzy78)")]       Toolbar,
+            [Description("KSP App Launcher Button")]            Launcher,
+        }
+
 
         //Click through protection
         [Persistent] internal Boolean ClickThroughProtect_KSC=true;

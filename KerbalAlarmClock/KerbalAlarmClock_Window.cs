@@ -204,7 +204,8 @@ namespace KerbalAlarmClock
         /// </summary>
         internal void DrawIcons()
         {
-            if (!settings.UseBlizzyToolbarIfAvailable || btnToolbarKAC == null)
+            //if (!settings.UseBlizzyToolbarIfAvailable || btnToolbarKAC == null)
+            if (settings.ButtonStyleToDisplay == Settings.ButtonStyleEnum.Basic)
             {
             Texture2D iconToShow;
             //Replace this with workerstate object that can test for pause and catch errors - is it doing this in flight mode??

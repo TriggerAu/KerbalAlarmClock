@@ -106,6 +106,8 @@ namespace KerbalAlarmClock
         internal static Texture2D texSeparatorV = new Texture2D(6, 2, TextureFormat.ARGB32, false);
         internal static Texture2D texSeparatorH = new Texture2D(2, 20, TextureFormat.ARGB32, false);
 
+        internal static Texture2D texAppLaunchIcon = new Texture2D(38, 38, TextureFormat.ARGB32, false);
+
         //internal static Texture2D txtTooltipBackground = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
         //internal static Texture2D txtRedTint = new Texture2D(16, 16); //, TextureFormat.ARGB32, false);
         //internal static Texture2D txtBlackSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);

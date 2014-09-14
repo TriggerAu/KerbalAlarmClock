@@ -147,6 +147,12 @@ namespace KerbalAlarmClock
             GUILayout.BeginHorizontal();
             GUILayout.Label("Styling:", KACResources.styleAddHeading, GUILayout.Width(90));
             ddlSettingsSkin.DrawButton();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("App Button:", KACResources.styleAddHeading, GUILayout.Width(90));
+            ddlSettingsButtonStyle.DrawButton();
+            GUILayout.EndHorizontal();
+
             GUILayout.EndVertical();
 
             GUILayout.BeginHorizontal();
@@ -379,28 +385,28 @@ namespace KerbalAlarmClock
         {
             Boolean blnTemp = false;
 
-            GUILayout.Label("Common Toolbar Integration (By Blizzy78)", KACResources.styleAddSectionHeading);
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            //GUILayout.Label("Common Toolbar Integration (By Blizzy78)", KACResources.styleAddSectionHeading);
+            //GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-            if (BlizzyToolbarIsAvailable)
-            {
-                if (DrawCheckbox(ref settings.UseBlizzyToolbarIfAvailable, "Use Toolbar Button instead of KAC Button"))
-                {
-                    DestroyToolbarButton(btnToolbarKAC);
-                    if (settings.UseBlizzyToolbarIfAvailable) InitToolbarButton();
-                    settings.Save();
-                }
-            }
-            else
-            {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("Get the Common Toolbar:", KACResources.styleAddHeading);
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Click here", KACResources.styleContent))
-                    Application.OpenURL("http://forum.kerbalspaceprogram.com/threads/60863");
-                GUILayout.EndHorizontal();
-            }
-            GUILayout.EndVertical();
+            //if (BlizzyToolbarIsAvailable)
+            //{
+            //    if (DrawCheckbox(ref settings.UseBlizzyToolbarIfAvailable, "Use Toolbar Button instead of KAC Button"))
+            //    {
+            //        DestroyToolbarButton(btnToolbarKAC);
+            //        if (settings.UseBlizzyToolbarIfAvailable) InitToolbarButton();
+            //        settings.Save();
+            //    }
+            //}
+            //else
+            //{
+            //    GUILayout.BeginHorizontal();
+            //    GUILayout.Label("Get the Common Toolbar:", KACResources.styleAddHeading);
+            //    GUILayout.FlexibleSpace();
+            //    if (GUILayout.Button("Click here", KACResources.styleContent))
+            //        Application.OpenURL("http://forum.kerbalspaceprogram.com/threads/60863");
+            //    GUILayout.EndHorizontal();
+            //}
+            //GUILayout.EndVertical();
             int MinimalDisplayChoice=(int)settings.WindowMinimizedType;
 
             GUILayout.Label("Minimal Mode", KACResources.styleAddSectionHeading);
@@ -434,7 +440,7 @@ namespace KerbalAlarmClock
                 {
                     WindowVisible = IconShow;
                     DestroyToolbarButton(btnToolbarKAC);
-                    if (settings.UseBlizzyToolbarIfAvailable) InitToolbarButton();
+                    //if (settings.UseBlizzyToolbarIfAvailable) InitToolbarButton();
                     settings.Save();
                 }
             }

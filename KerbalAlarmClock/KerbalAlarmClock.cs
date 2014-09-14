@@ -8,6 +8,8 @@ using UnityEngine;
 using KSP;
 using KSPPluginFramework;
 
+using KACToolbarWrapper;
+
 namespace KerbalAlarmClock
 {
     /// <summary>
@@ -107,12 +109,24 @@ namespace KerbalAlarmClock
                     settings.XferModelDataLoaded = KACResources.LoadModelPoints();
 
             //Common Toolbar Code
-            BlizzyToolbarIsAvailable = HookToolbar();
+            //BlizzyToolbarIsAvailable = HookToolbar();
 
-            if (BlizzyToolbarIsAvailable && settings.UseBlizzyToolbarIfAvailable)
+            //if (BlizzyToolbarIsAvailable && settings.UseBlizzyToolbarIfAvailable)
+            //{
+            //    btnToolbarKAC = InitToolbarButton();
+            //}
+
+            //Get whether the toolbar is there
+            settings.BlizzyToolbarIsAvailable = ToolbarManager.ToolbarAvailable;
+
+            //setup the Toolbar button if necessary
+            if (settings.ButtonStyleToDisplay == Settings.ButtonStyleEnum.Toolbar)
             {
                 btnToolbarKAC = InitToolbarButton();
             }
+            //Hook the App Launcher
+            GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+            GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
 
             //Set up the updating function - do this 5 times a sec not on every frame.
             StartRepeatingWorker(settings.BehaviourChecksPerSec);

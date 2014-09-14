@@ -16,6 +16,7 @@ namespace KerbalAlarmClock
 
         private DropDownList ddlChecksPerSec;
         private DropDownList ddlSettingsSkin;
+        private DropDownList ddlSettingsButtonStyle;
 
         private DropDownList ddlSettingsAlarmSpecs;
 
@@ -37,6 +38,9 @@ namespace KerbalAlarmClock
 
             ddlSettingsSkin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.DisplaySkin>(), (Int32)settings.SelectedSkin, _WindowSettingsRect);
             ddlSettingsSkin.OnSelectionChanged += ddlSettingsSkin_OnSelectionChanged;
+
+            ddlSettingsButtonStyle = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.ButtonStyleEnum>(), (Int32)settings.ButtonStyleChosen, _WindowSettingsRect);
+            ddlSettingsButtonStyle.OnSelectionChanged += ddlSettingsButtonStyle_OnSelectionChanged;
 
             ddlSettingsAlarmSpecs = new DropDownList(EnumExtensions.ToEnumDescriptions<SettingsAlarmSpecsEnum>(), (int)SettingsAlarmSpecSelected, _WindowSettingsRect);
             ddlSettingsAlarmSpecs.OnSelectionChanged += ddlSettingsAlarmSpecs_OnSelectionChanged;
@@ -83,6 +87,33 @@ namespace KerbalAlarmClock
             settings.SelectedSkin = (Settings.DisplaySkin)NewIndex;
             KACResources.SetSkin(settings.SelectedSkin);
             settings.Save();
+        }
+        void ddlSettingsButtonStyle_OnSelectionChanged(DropDownList sender, int OldIndex, int NewIndex)
+        {
+            settings.ButtonStyleChosen = (Settings.ButtonStyleEnum)NewIndex;
+            settings.Save();
+
+            //destroy Old Objects
+            switch ((Settings.ButtonStyleEnum)OldIndex)
+            {
+                case Settings.ButtonStyleEnum.Toolbar:
+                    DestroyToolbarButton(btnToolbarKAC);
+                    break;
+                case Settings.ButtonStyleEnum.Launcher:
+                    DestroyAppLauncherButton();
+                    break;
+            }
+
+            //Create New ones
+            switch ((Settings.ButtonStyleEnum)NewIndex)
+            {
+                case Settings.ButtonStyleEnum.Toolbar:
+                    btnToolbarKAC = InitToolbarButton();
+                    break;
+                case Settings.ButtonStyleEnum.Launcher:
+                    btnAppLauncher = InitAppLauncherButton();
+                    break;
+            }
         }
         void ddlSettingsAlarmSpecs_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
         {

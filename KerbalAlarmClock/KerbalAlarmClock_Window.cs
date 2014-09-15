@@ -558,6 +558,7 @@ namespace KerbalAlarmClock
                     _ShowEarthAlarm = false;
                 }
             //}
+                ddlAddQuick.DrawButton();
 
             GUILayout.EndHorizontal();
 

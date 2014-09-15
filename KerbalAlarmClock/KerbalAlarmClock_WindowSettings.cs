@@ -157,7 +157,7 @@ namespace KerbalAlarmClock
             {
                 if (settings.ButtonStyleChosen == Settings.ButtonStyleEnum.Toolbar)
                 {
-                    if (GUILayout.Button(new GUIContent("Not Installed. Click for Toolbar Info", "Click to open your browser and find out more about the Common Toolbar"), Styles.styleTextCenterGreen))
+                    if (GUILayout.Button(new GUIContent("Not Installed. Click for Toolbar Info", "Click to open your browser and find out more about the Common Toolbar"), KACResources.styleContent))
                         Application.OpenURL("http://forum.kerbalspaceprogram.com/threads/60863");
                     //intBlizzyToolbarMissingHeight = 18;
                 }

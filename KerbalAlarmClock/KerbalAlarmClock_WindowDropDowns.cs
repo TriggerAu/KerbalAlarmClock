@@ -19,6 +19,7 @@ namespace KerbalAlarmClock
         private DropDownList ddlSettingsButtonStyle;
 
         private DropDownList ddlSettingsAlarmSpecs;
+        private DropDownList ddlAddQuick;
 
         private SettingsAlarmSpecsEnum SettingsAlarmSpecSelected = SettingsAlarmSpecsEnum.Default;
         internal enum SettingsAlarmSpecsEnum
@@ -45,9 +46,16 @@ namespace KerbalAlarmClock
             ddlSettingsAlarmSpecs = new DropDownList(EnumExtensions.ToEnumDescriptions<SettingsAlarmSpecsEnum>(), (int)SettingsAlarmSpecSelected, _WindowSettingsRect);
             ddlSettingsAlarmSpecs.OnSelectionChanged += ddlSettingsAlarmSpecs_OnSelectionChanged;
 
+            ddlAddQuick = new DropDownList(WindowPosByActiveScene);
+            ddlAddQuick.Items.Add(new DropDownItem("Maneuver Node", KACResources.iconMNode));
+            ddlAddQuick.Items.Add(new DropDownItem("Ap", KACResources.iconAp));
+            ddlAddQuick.Items.Add(new DropDownItem("Pe", KACResources.iconAp));
+
+
             ddlManager.AddDDL(ddlChecksPerSec);
             ddlManager.AddDDL(ddlSettingsSkin);
             ddlManager.AddDDL(ddlSettingsAlarmSpecs);
+            ddlManager.AddDDL(ddlAddQuick);
 
         }
 
@@ -257,10 +265,33 @@ namespace KerbalAlarmClock
             {
                 this.Text = Text;
             }
+            public DropDownItem(Texture2D Icon)
+                : this()
+            {
+                this.Icon = Icon;
+            }
             public DropDownItem() { }
 
-            public String Text { get; set; }
-            public Texture2D Icon { get; set; }
+            private String _Text;
+            public String Text {
+                get { return _Text; }
+                set { _Text = value; setContent(); }
+            }
+            private Texture2D _Icon;
+            public Texture2D Icon { 
+                get { return _Icon; }
+                set { _Icon = value; setContent(); }
+            }
+            private void setContent(){
+                if(Icon!=null && Text!=""){
+                    Content = new GUIContent(Text, Icon);
+                } else if (Icon != null ){
+                    Content = new GUIContent(Icon);
+                } else {
+                    Content = new GUIContent(Text);
+                }
+            }
+            public GUIContent Content { get; private set; }
         }
 
         [Flags]
@@ -599,7 +630,7 @@ namespace KerbalAlarmClock
                             height = 20
                         };
 
-                        if (GUI.Button(ListButtonRect, Items[i].Text, styleListItemToDraw))
+                        if (GUI.Button(ListButtonRect, Items[i].Content, styleListItemToDraw))
                         {
                             ListVisible = false;
                             SelectedIndex = i;

@@ -130,6 +130,11 @@ namespace KACWrapper
                 LogFormatted("Success: " + (APIReadyField != null).ToString());
                 
                 //WORK OUT THE STUFF WE NEED TO HOOK FOR PEOPEL HERE
+                LogFormatted("Getting Alarms Object");
+                AlarmsField = KACType.GetField("alarms", BindingFlags.Public | BindingFlags.Instance);
+                actualAlarms = AlarmsField.GetValue(actualKAC);
+                LogFormatted("Success: " + (actualAlarms != null).ToString());
+
 
             }
 
@@ -149,7 +154,75 @@ namespace KACWrapper
                     return (Boolean)APIReadyField.GetValue(null);
                 }
             }
-        
+
+            #region Alarms
+            private Object actualAlarms;
+            private FieldInfo AlarmsField;
+
+
+            internal KACAlarmList Alarms
+            {
+                get
+                {
+                    return ExtractAlarmList(actualAlarms);
+                }
+            }
+
+            /// <summary>
+            /// This converts the ARPResourceList actual object to a new dictionary for consumption
+            /// </summary>
+            /// <param name="actualAlarmList"></param>
+            /// <returns></returns>
+            private KACAlarmList ExtractAlarmList(Object actualAlarmList)
+            {
+                KACAlarmList ListToReturn = new KACAlarmList();
+                try {
+                    //iterate each "value" in the dictionary
+                    foreach (var item in (IDictionary)actualAlarmList) {
+                        PropertyInfo pi = item.GetType().GetProperty("Value");
+                        object oVal = pi.GetValue(item, null);
+                        KACAlarm r1 = new KACAlarm(oVal);
+                        ListToReturn.Add(r1.ID, r1);
+                    }
+                }
+                catch (Exception) {
+                    //
+                }
+                return ListToReturn;
+            }
+
+            #endregion
+
+
+            public class KACAlarm
+            {
+                internal KACAlarm(Object a)
+                {
+                    actualAlarm = a;
+                    VesselIDProperty = KACAlarmType.GetProperty("VesselID");
+                    IDProperty = KACAlarmType.GetProperty("ID");
+                    NameProperty = KACAlarmType.GetProperty("Name");
+                    NotesProperty = KACAlarmType.GetProperty("Notes");
+                }
+                private Object actualAlarm;
+
+                private PropertyInfo VesselIDProperty;
+                public String VesselID { get { return (String)VesselIDProperty.GetValue(actualAlarm, null); } }
+
+                private PropertyInfo IDProperty;
+                public String ID { get { return (String)IDProperty.GetValue(actualAlarm, null); } }
+
+                private PropertyInfo NameProperty;
+                public String Name { get { return (String)NameProperty.GetValue(actualAlarm, null); } }
+                
+                private PropertyInfo NotesProperty;
+                public String Notes { get { return (String)NotesProperty.GetValue(actualAlarm, null); } }
+            }
+
+            public class KACAlarmList : Dictionary<String, KACAlarm>
+            {
+
+            }
         }
         #region Logging Stuff
         /// <summary>

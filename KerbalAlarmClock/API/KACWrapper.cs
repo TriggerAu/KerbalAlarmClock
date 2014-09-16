@@ -135,6 +135,12 @@ namespace KACWrapper
                 actualAlarms = AlarmsField.GetValue(actualKAC);
                 LogFormatted("Success: " + (actualAlarms != null).ToString());
 
+                //Events
+                LogFormatted("Getting Alarm State Change Event");
+                onAlarmStateChangedEvent = KACType.GetEvent("onAlarmStateChanged", BindingFlags.Public | BindingFlags.Instance);
+                AddHandler(onAlarmStateChangedEvent, actualKAC, AlarmStateChanged);
+
+
 
             }
 
@@ -193,6 +199,71 @@ namespace KACWrapper
 
             #endregion
 
+            #region Events
+            /// <summary>
+            /// Takes an EventInfo and binds a method to the event firing
+            /// </summary>
+            /// <param name="Event">EventInfo of the event we want to attach to</param>
+            /// <param name="ARPObject">actual object the eventinfo is gathered from</param>
+            /// <param name="Handler">Method that we are going to hook to the event</param>
+            protected void AddHandler(EventInfo Event, Object ARPObject, Action<Object> Handler)
+            {
+                //build a delegate
+                Delegate d = Delegate.CreateDelegate(Event.EventHandlerType, Handler.Target, Handler.Method);
+                //get the Events Add method
+                MethodInfo addHandler = Event.GetAddMethod();
+                //and add the delegate
+                addHandler.Invoke(ARPObject, new System.Object[] { d });
+            }
+
+            //the info about the event;
+            private EventInfo onAlarmStateChangedEvent;
+
+            /// <summary>
+            /// Event that fires when the AlarmState of a vessel resource changes
+            /// </summary>
+            public event AlarmStateChangedHandler onAlarmStateChanged;
+            /// <summary>
+            /// Structure of the event delegeate
+            /// </summary>
+            /// <param name="e"></param>
+            public delegate void AlarmStateChangedHandler(AlarmStateChangedEventArgs e);
+            /// <summary>
+            /// This is the structure that holds the event arguments
+            /// </summary>
+            public class AlarmStateChangedEventArgs
+            {
+                //public AlarmChangedEventArgs(ARPResource sender, ARPResource.AlarmType alarmType, Boolean TurnedOn, Boolean Acknowledged)
+                public AlarmStateChangedEventArgs(System.Object actualEvent, KACAPI kac)
+                {
+                    Type type = actualEvent.GetType();
+                    this.alarm = new KACAlarm(type.GetField("alarm").GetValue(actualEvent));
+                    this.eventType = (KACAlarm.AlarmStateEventsEnum)type.GetField("eventType").GetValue(actualEvent); ;
+                }
+
+                /// <summary>
+                /// Resource that has had the monitor state change
+                /// </summary>
+                public KACAlarm alarm;
+                /// <summary>
+                /// What the state was before the event
+                /// </summary>
+                public KACAlarm.AlarmStateEventsEnum eventType;
+            }
+
+
+            /// <summary>
+            /// private function that grabs the actual event and fires our wrapped one
+            /// </summary>
+            /// <param name="actualEvent">actual event from the ARP</param>
+            private void AlarmStateChanged(object actualEvent)
+            {
+                if (onAlarmStateChanged != null) {
+                    onAlarmStateChanged(new AlarmStateChangedEventArgs(actualEvent, this));
+                }
+            }
+            #endregion
+
 
             public class KACAlarm
             {
@@ -217,6 +288,14 @@ namespace KACWrapper
                 
                 private PropertyInfo NotesProperty;
                 public String Notes { get { return (String)NotesProperty.GetValue(actualAlarm, null); } }
+
+                public enum AlarmStateEventsEnum
+                {
+                    Created,
+                    Triggered,
+                    Closed,
+                    Deleted,
+                }
             }
 
             public class KACAlarmList : Dictionary<String, KACAlarm>

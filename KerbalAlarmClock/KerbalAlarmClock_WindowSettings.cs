@@ -164,6 +164,7 @@ namespace KerbalAlarmClock
             }
             GUILayout.EndVertical();
 
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
             GUILayout.BeginHorizontal();
             if (DrawTextBox(ref settings.AlarmListMaxAlarms, KACResources.styleAddField,GUILayout.Width(45)))
                 settings.Save();

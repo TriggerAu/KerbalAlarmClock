@@ -19,7 +19,6 @@ namespace KerbalAlarmClock
         private DropDownList ddlSettingsButtonStyle;
 
         private DropDownList ddlSettingsAlarmSpecs;
-        private DropDownList ddlAddQuick;
 
         private SettingsAlarmSpecsEnum SettingsAlarmSpecSelected = SettingsAlarmSpecsEnum.Default;
         internal enum SettingsAlarmSpecsEnum
@@ -46,24 +45,18 @@ namespace KerbalAlarmClock
             ddlSettingsAlarmSpecs = new DropDownList(EnumExtensions.ToEnumDescriptions<SettingsAlarmSpecsEnum>(), (int)SettingsAlarmSpecSelected, _WindowSettingsRect);
             ddlSettingsAlarmSpecs.OnSelectionChanged += ddlSettingsAlarmSpecs_OnSelectionChanged;
 
-            ddlAddQuick = new DropDownList(WindowPosByActiveScene);
-            ddlAddQuick.Items.Add(new DropDownItem("Maneuver Node", KACResources.iconMNode));
-            ddlAddQuick.Items.Add(new DropDownItem("Ap", KACResources.iconAp));
-            ddlAddQuick.Items.Add(new DropDownItem("Pe", KACResources.iconAp));
-
-
             ddlManager.AddDDL(ddlChecksPerSec);
             ddlManager.AddDDL(ddlSettingsSkin);
+            ddlManager.AddDDL(ddlSettingsButtonStyle);
             ddlManager.AddDDL(ddlSettingsAlarmSpecs);
-            ddlManager.AddDDL(ddlAddQuick);
 
         }
-
 
         internal void DestroyDropDowns()
         {
             ddlChecksPerSec.OnSelectionChanged -= ddlChecksPerSec_OnSelectionChanged;
             ddlSettingsSkin.OnSelectionChanged -= ddlSettingsSkin_OnSelectionChanged;
+            ddlSettingsButtonStyle.OnSelectionChanged -= ddlSettingsButtonStyle_OnSelectionChanged;
             ddlSettingsAlarmSpecs.OnSelectionChanged -= ddlSettingsAlarmSpecs_OnSelectionChanged;
         }
 
@@ -71,6 +64,7 @@ namespace KerbalAlarmClock
         {
             ddlChecksPerSec.WindowRect = _WindowSettingsRect;
             ddlSettingsSkin.WindowRect = _WindowSettingsRect;
+            ddlSettingsButtonStyle.WindowRect = _WindowSettingsRect;
             ddlSettingsAlarmSpecs.WindowRect = _WindowSettingsRect;
         }
 
@@ -238,94 +232,20 @@ namespace KerbalAlarmClock
 
         }
 
-        public class DropDownItemList : List<DropDownItem>
-        {
-            public static DropDownItemList FromStringList(List<String> Items){
-                DropDownItemList lstReturn = new DropDownItemList();
-                foreach (String item in Items)
-	            {
-                    lstReturn.Add(new DropDownItem(item));
-            	}
-                return lstReturn;
-            } 
-
-            public List<String> ToStringList()
-            {
-                return this.Select(x => x.Text).ToList();
-            }
-        }
-
-        public class DropDownItem
-        {
-            public DropDownItem(String Text, Texture2D Icon):this(Text)
-            {
-                this.Icon = Icon;
-            }
-            public DropDownItem(String Text):this()
-            {
-                this.Text = Text;
-            }
-            public DropDownItem(Texture2D Icon)
-                : this()
-            {
-                this.Icon = Icon;
-            }
-            public DropDownItem() { }
-
-            private String _Text;
-            public String Text {
-                get { return _Text; }
-                set { _Text = value; setContent(); }
-            }
-            private Texture2D _Icon;
-            public Texture2D Icon { 
-                get { return _Icon; }
-                set { _Icon = value; setContent(); }
-            }
-            private void setContent(){
-                if(Icon!=null && Text!=""){
-                    Content = new GUIContent(Text, Icon);
-                } else if (Icon != null ){
-                    Content = new GUIContent(Icon);
-                } else {
-                    Content = new GUIContent(Text);
-                }
-            }
-            public GUIContent Content { get; private set; }
-        }
-
-        [Flags]
-        public enum DropDownListDisplayStyleEnum
-        {
-            TextOnly = 1,
-            ImageOnly = 2,
-            Both = 3
-        }
-
         public class DropDownList
         {
             //Constructors
-            public DropDownList(DropDownItemList Items, Int32 Selected, Rect WindowRect)
-                : this(Items, WindowRect)
-            {
-                SelectedIndex = Selected;
-            }
             public DropDownList(IEnumerable<String> Items, Int32 Selected, Rect WindowRect)
                 : this(Items, WindowRect)
             {
                 SelectedIndex = Selected;
             }
-            public DropDownList(DropDownItemList Items, Rect WindowRect)
-                : this(WindowRect)
-            {
-                this.Items = Items;
-            }
-
             public DropDownList(IEnumerable<String> Items, Rect WindowRect)
                 : this(WindowRect)
             {
-                this.Items = DropDownItemList.FromStringList(Items.ToList<String>());
+                this.Items = Items.ToList<String>();
             }
+
             //public DropDownList(Enum Items)
             //    : this()
             //{
@@ -342,15 +262,9 @@ namespace KerbalAlarmClock
             }
 
             //properties to use
-            internal DropDownItemList Items { get; set; }
+            internal List<String> Items { get; set; }
             internal Int32 SelectedIndex { get; set; }
-            internal String SelectedValue { get { return Items[SelectedIndex].Text; } }
-
-            private DropDownListDisplayStyleEnum _DropDownListDisplayStyle = DropDownListDisplayStyleEnum.TextOnly;
-            internal DropDownListDisplayStyleEnum DropDownListDisplayStyle{
-                get {return _DropDownListDisplayStyle;}
-                set {_DropDownListDisplayStyle = value;}
-            }
+            internal String SelectedValue { get { return Items[SelectedIndex]; } }
 
             private Boolean _ListVisible;
             internal Boolean ListVisible
@@ -630,7 +544,7 @@ namespace KerbalAlarmClock
                             height = 20
                         };
 
-                        if (GUI.Button(ListButtonRect, Items[i].Content, styleListItemToDraw))
+                        if (GUI.Button(ListButtonRect, Items[i], styleListItemToDraw))
                         {
                             ListVisible = false;
                             SelectedIndex = i;

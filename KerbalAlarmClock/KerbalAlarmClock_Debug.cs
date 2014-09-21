@@ -267,9 +267,14 @@ namespace KerbalAlarmClock
 
             dblTest = Convert.ToDouble(GUILayout.TextField(dblTest.ToString()));
 
+            
 
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
+
+            //GUILayout.Label(string.Format("button:{0}", KACResources.styleDefButton.padding));
+            GUILayout.Label(string.Format("button:{0}", KACResources.styleQAListButton.padding));
+            //KACResources.styleQAButton.padding = new RectOffset(intTestheight, intTestheight2, intTestheight3, intTestheight4);
 
             if (GUILayout.Button("KSP"))
             {

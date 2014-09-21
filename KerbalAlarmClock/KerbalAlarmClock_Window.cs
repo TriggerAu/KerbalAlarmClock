@@ -255,10 +255,10 @@ namespace KerbalAlarmClock
                 }
             }
         }
-            else
-            {
+            else if (btnToolbarKAC != null) { 
+            //{
                 //Do for Blizzies Toolbar
-                if (btnToolbarKAC != null) { 
+                //if (btnToolbarKAC != null) { 
                     String TexturePath = "";
                     if (!(KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT) || (!KACWorkerGameState.PauseMenuOpen && !KACWorkerGameState.FlightResultsDialogOpen))
                     {
@@ -290,6 +290,40 @@ namespace KerbalAlarmClock
 
                         btnToolbarKAC.TexturePath = TexturePath;
                     }
+                //}
+            }
+            else if (btnAppLauncher != null)
+            {
+                Texture2D iconToShow;
+                //Replace this with workerstate object that can test for pause and catch errors - is it doing this in flight mode??
+                if (!(KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT) || (!KACWorkerGameState.PauseMenuOpen && !KACWorkerGameState.FlightResultsDialogOpen))
+                {
+                    if (FlightDriver.Pause)
+                    {
+                        iconToShow = KACResources.GetPauseIcon(true);
+                    }
+                    else if (KACWorkerGameState.CurrentlyUnderWarpInfluence)
+                    {
+                        iconToShow = KACResources.GetWarpIcon(true);
+                    }
+                    else
+                    {
+                        if (alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
+                        {
+                            if (WindowVisibleByActiveScene)
+                                iconToShow = KACResources.toolbariconAlarmShow;
+                            else
+                                iconToShow = KACResources.toolbariconAlarm;
+                        }
+                        else
+                        {
+                            if (WindowVisibleByActiveScene)
+                                iconToShow = KACResources.toolbariconNormShow;
+                            else
+                                iconToShow = KACResources.toolbariconNorm;
+                        }
+                    }
+                    btnAppLauncher.SetTexture(iconToShow);
                 }
             }
         }
@@ -330,6 +364,12 @@ namespace KerbalAlarmClock
         private Int32 _ShowBackupFailedMessageForSecs=10;
         private static Int32 _WindowBackupFailedID = 0;
         private static Rect _WindowBackupFailedRect;
+
+        private Boolean _ShowQuickAdd = false;
+        private static Int32 _WindowQuickAddID = 0;
+        private static Rect _WindowQuickAddRect;
+
+        
 
         //Window Size Constants
         private Int32 intMainWindowWidth = 300;
@@ -446,6 +486,10 @@ namespace KerbalAlarmClock
             {
                 _WindowEditRect = GUILayout.Window(_WindowEditID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, intPaneWindowWidth, intAlarmEditHeight), FillEditWindow, "Editing Alarm", KACResources.styleWindow);
             }
+            else if (_ShowQuickAdd)
+            {
+                _WindowQuickAddRect = GUILayout.Window(_WindowQuickAddID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, 200, 10), FillQuickWindow, "Quick Add", KACResources.styleWindow);
+            }
 
             if (_ShowBackupFailedMessage)
             {
@@ -544,6 +588,7 @@ namespace KerbalAlarmClock
                 _ShowAddPane = false;
                 _ShowEditPane = false;
                 _ShowEarthAlarm = false;
+                _ShowQuickAdd = false;
             }
             //No longer relevant
             //if (!ViewAlarmsOnly)
@@ -556,9 +601,19 @@ namespace KerbalAlarmClock
                     _ShowSettings = false;
                     _ShowEditPane = false;
                     _ShowEarthAlarm = false;
+                    _ShowQuickAdd = false;
                 }
             //}
-                ddlAddQuick.DrawButton();
+            //get this button right up against the add one
+            GUILayout.Space(-5);
+            if (DrawToggle(ref _ShowQuickAdd, new GUIContent("+", "Quick Add..."), KACResources.styleQAButton) && _ShowQuickAdd)
+            {
+                _ShowAddPane = false;
+                _ShowEditPane = false;
+                _ShowEarthAlarm = false;
+                _ShowSettings = false;
+                SetupQuickList();
+            }
 
             GUILayout.EndHorizontal();
 

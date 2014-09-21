@@ -33,6 +33,24 @@ namespace KerbalAlarmClock
         internal static Texture2D iconPauseEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         internal static Texture2D iconPauseEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
+        //Clock toolbaricons
+        internal static Texture2D toolbariconNorm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconNormShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconAlarm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconAlarmShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+
         //Alarm List icons
         internal static Texture2D iconRaw = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         internal static Texture2D iconMNode = new Texture2D(18, 14, TextureFormat.ARGB32, false);
@@ -106,8 +124,6 @@ namespace KerbalAlarmClock
         internal static Texture2D texSeparatorV = new Texture2D(6, 2, TextureFormat.ARGB32, false);
         internal static Texture2D texSeparatorH = new Texture2D(2, 20, TextureFormat.ARGB32, false);
 
-        internal static Texture2D texAppLaunchIcon = new Texture2D(38, 38, TextureFormat.ARGB32, false);
-
         //internal static Texture2D txtTooltipBackground = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
         //internal static Texture2D txtRedTint = new Texture2D(16, 16); //, TextureFormat.ARGB32, false);
         //internal static Texture2D txtBlackSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
@@ -134,7 +150,24 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref iconPauseEffect060, "KACIcon-PauseEffect_060.png", KACUtils.PathToolbarIcons);
                 KACUtils.LoadImageFromFile(ref iconPauseEffect040, "KACIcon-PauseEffect_040.png", KACUtils.PathToolbarIcons);
                 KACUtils.LoadImageFromFile(ref iconPauseEffect020, "KACIcon-PauseEffect_020.png", KACUtils.PathToolbarIcons);
-                KACUtils.LoadImageFromFile(ref  iconPauseEffect000, "KACIcon-PauseEffect_000.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect000, "KACIcon-PauseEffect_000.png", KACUtils.PathToolbarIcons);
+
+                KACUtils.LoadImageFromFile(ref toolbariconNorm, "KACIconBig-Norm.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconNormShow, "KACIconBig-NormShow.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconAlarm, "KACIconBig-Alarm.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconAlarmShow, "KACIconBig-AlarmShow.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect100, "KACIconBig-WarpEffect2_100.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect080, "KACIconBig-WarpEffect2_080.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect060, "KACIconBig-WarpEffect2_060.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect040, "KACIconBig-WarpEffect2_040.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect020, "KACIconBig-WarpEffect2_020.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect000, "KACIconBig-WarpEffect2_000.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect100, "KACIconBig-PauseEffect_100.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect080, "KACIconBig-PauseEffect_080.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect060, "KACIconBig-PauseEffect_060.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect040, "KACIconBig-PauseEffect_040.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect020, "KACIconBig-PauseEffect_020.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect000, "KACIconBig-PauseEffect_000.png", KACUtils.PathToolbarIcons);
 
 
                 KACUtils.LoadImageFromFile(ref iconRaw, "img_listiconRaw.png");
@@ -234,7 +267,7 @@ namespace KerbalAlarmClock
 
             return textureReturn;
         }
-        internal static Texture2D GetWarpIcon()
+        internal static Texture2D GetWarpIcon(Boolean AppLauncherVersion = false)
         {
             Texture2D textureReturn;
 
@@ -242,35 +275,35 @@ namespace KerbalAlarmClock
             switch (Convert.ToInt64(intHundredth))
             {
                 case 0:
-                    textureReturn = KACResources.iconWarpEffect100;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect100 : KACResources.iconWarpEffect100;
                     break;
                 case 1:
                 case 9:
-                    textureReturn = KACResources.iconWarpEffect080;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect080 : KACResources.iconWarpEffect080;
                     break;
                 case 2:
                 case 8:
-                    textureReturn = KACResources.iconWarpEffect060;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect060 : KACResources.iconWarpEffect060;
                     break;
                 case 3:
                 case 7:
-                    textureReturn = KACResources.iconWarpEffect040;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect040 : KACResources.iconWarpEffect040;
                     break;
                 case 4:
                 case 6:
-                    textureReturn = KACResources.iconWarpEffect020;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect020 : KACResources.iconWarpEffect020;
                     break;
                 case 5:
-                    textureReturn = KACResources.iconWarpEffect000;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect000 : KACResources.iconWarpEffect000;
                     break;
                 default:
-                    textureReturn = KACResources.iconWarpEffect100;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect100 : KACResources.iconWarpEffect100;
                     break;
             }
             return textureReturn;
         }
 
-        internal static Texture2D GetPauseIcon()
+        internal static Texture2D GetPauseIcon(Boolean AppLauncherVersion=false)
         {
             Texture2D textureReturn;
 
@@ -278,26 +311,26 @@ namespace KerbalAlarmClock
             switch (Convert.ToInt64(intHundredth))
             {
                 case 0:
-                    textureReturn = KACResources.iconPauseEffect100;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect100 : KACResources.iconPauseEffect100;
                     break;
                 case 1:
                 case 9:
-                    textureReturn = KACResources.iconPauseEffect080;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect080 : KACResources.iconPauseEffect080;
                     break;
                 case 2:
                 case 8:
-                    textureReturn = KACResources.iconPauseEffect060;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect060 : KACResources.iconPauseEffect060;
                     break;
                 case 3:
                 case 7:
-                    textureReturn = KACResources.iconPauseEffect040;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect040 : KACResources.iconPauseEffect040;
                     break;
                 case 4:
                 case 6:
-                    textureReturn = KACResources.iconPauseEffect020;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect020 : KACResources.iconPauseEffect020;
                     break;
                 case 5:
-                    textureReturn = KACResources.iconPauseEffect000;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect000 : KACResources.iconPauseEffect000;
                     break;
                 default:
                     textureReturn = KACResources.iconPauseEffect100;
@@ -530,6 +563,9 @@ namespace KerbalAlarmClock
 
             styleWindow = new GUIStyle(CurrentSkin.window);
             styleWindow.padding = KACUtils.SetWindowRectOffset(styleWindow.padding, 4);
+
+
+            //styleWindowQuickAdd = new GUIStyle(styleWindow);
             //styleWindow.normal.background = KACResources.txtWhiteSquare;
             //styleWindow.normal.textColor = new Color32(183, 254, 0, 255);
             //styleWindow.normal.textColor = Color.red;
@@ -589,7 +625,7 @@ namespace KerbalAlarmClock
         #region "Styles"
         //Styles for windows - Cant initialize the objects here as the GUIStyle Constructor cannot be called outside of OnGUI
 
-        internal static GUIStyle styleWindow;
+        internal static GUIStyle styleWindow;//, styleWindowQuickAdd;
         internal static GUIStyle styleTooltipStyle;
 
         internal static GUIStyle styleIconStyle;
@@ -611,7 +647,7 @@ namespace KerbalAlarmClock
         internal static GUIStyle styleButtonList;
         internal static GUIStyle styleButtonListAlarmActions;
 
-        internal static GUIStyle styleSmallButton;
+        internal static GUIStyle styleSmallButton, styleQAButton, styleQAListButton;
 
         internal static GUIStyle styleFlagIcon;
 
@@ -766,6 +802,31 @@ namespace KerbalAlarmClock
             styleSmallButton.fontStyle = FontStyle.Normal;
             styleSmallButton.padding = KACUtils.SetRectOffset(styleSmallButton.padding, 0);
             styleSmallButton.onNormal.background = styleSmallButton.active.background;
+
+            styleQAButton = new GUIStyle(styleSmallButton);
+            if (KerbalAlarmClock.settings.SelectedSkin == Settings.DisplaySkin.Default)
+            {
+                styleQAButton.padding.left = 1;
+                styleQAButton.padding.top = 5;
+            }
+            else
+            {
+                styleQAButton.padding.right = 1;
+                styleQAButton.padding.top = 1;
+            }
+            styleQAButton.fixedWidth = 18;
+            styleQAButton.normal.textColor = new Color32(177, 193, 205, 255);
+            styleQAButton.fontStyle = FontStyle.Bold;
+            styleQAButton.fontSize=16;
+
+            styleQAListButton = new GUIStyle(styleDefButton);
+            styleQAListButton.normal.textColor = new Color32(177, 193, 205, 255);
+            styleQAListButton.fixedHeight = 20;
+            styleQAListButton.alignment = TextAnchor.MiddleCenter;
+            if (KerbalAlarmClock.settings.SelectedSkin== Settings.DisplaySkin.Default)
+                styleQAListButton.padding = new RectOffset(4, 4, 10, 6);
+            else
+                styleQAListButton.padding = styleDefButton.padding;
 
             styleFlagIcon = new GUIStyle(styleDefLabel);
             styleFlagIcon.padding = KACUtils.SetRectOffset(styleFlagIcon.padding, 0);

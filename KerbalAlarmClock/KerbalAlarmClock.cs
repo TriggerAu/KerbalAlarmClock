@@ -152,9 +152,15 @@ namespace KerbalAlarmClock
         {
             LogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
 
+            //Hook the App Launcher
+            GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+            GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
+
             DestroyDropDowns();
 
             DestroyToolbarButton(btnToolbarKAC);
+
+            DestroyAppLauncherButton();
 
             APIDestroy();
         }
@@ -299,6 +305,7 @@ namespace KerbalAlarmClock
             KACResources.InitSkins();
 
             InitDDLStyles();
+
             //Called by SetSkin
             //KACResources.SetStyles();
 
@@ -468,6 +475,7 @@ namespace KerbalAlarmClock
             _WindowEditID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
             _WindowEarthAlarmID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
             _WindowBackupFailedID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
+            _WindowQuickAddID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
         }
         //#endregion
 

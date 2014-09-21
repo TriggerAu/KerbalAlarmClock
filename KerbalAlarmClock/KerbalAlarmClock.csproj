@@ -62,6 +62,7 @@
     <Compile Include="Framework\ConfigNodeStorage.cs" />
     <Compile Include="Framework\ExtensionsUnity.cs" />
     <Compile Include="Framework\MonoBehaviourExtended.cs" />
+    <Compile Include="KerbalAlarmClock_WindowQuick.cs" />
     <Compile Include="SharedStuff\AppLauncher.cs" />
     <Compile Include="SharedStuff\ToolbarWrapper.cs" />
     <Compile Include="KerbalAlarmClock_WindowDropDowns.cs" />

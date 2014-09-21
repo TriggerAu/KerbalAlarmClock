@@ -42,7 +42,7 @@ namespace KerbalAlarmClock
                     onAppLaunchHoverOn, onAppLaunchHoverOff,
                     null, null,
                     ApplicationLauncher.AppScenes.ALWAYS,
-                    (Texture)KACResources.texAppLaunchIcon);
+                    (Texture)KACResources.toolbariconNorm);
 
                 //AppLauncherButtonMutuallyExclusive(settings.AppLauncherMutuallyExclusive);
 
@@ -65,6 +65,7 @@ namespace KerbalAlarmClock
 
         internal void DestroyAppLauncherButton()
         {
+            LogFormatted_DebugOnly("Here");
             if (btnAppLauncher != null)
             {
                 ApplicationLauncher.Instance.RemoveModApplication(btnAppLauncher);
@@ -75,11 +76,13 @@ namespace KerbalAlarmClock
             MonoBehaviourExtended.LogFormatted_DebugOnly("TOn");
 
             WindowVisibleByActiveScene = true;
+            MonoBehaviourExtended.LogFormatted_DebugOnly("{0}",WindowVisibleByActiveScene);
         }
         void onAppLaunchToggleOff() {
             MonoBehaviourExtended.LogFormatted_DebugOnly("TOff");
 
             WindowVisibleByActiveScene = false;
+            MonoBehaviourExtended.LogFormatted_DebugOnly("{0}", WindowVisibleByActiveScene);
         }
         void onAppLaunchHoverOn() {
             MonoBehaviourExtended.LogFormatted_DebugOnly("HovOn");

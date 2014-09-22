@@ -108,16 +108,26 @@ namespace KerbalAlarmClock
             AlarmTime.UT = UT;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction) :
-            this (UT)
+        public KACAlarm(String NewName, double UT, AlarmType atype, AlarmActionEnum aAction)
+            : this(UT)
         {
-            VesselID = vID;
             Name = NewName;
-            Notes = NewNotes;
-            AlarmMarginSecs = Margin;
             TypeOfAlarm = atype;
             Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
             AlarmAction = aAction;
+        }
+
+        public KACAlarm(String vID, String NewName, double UT, AlarmType atype, AlarmActionEnum aAction)
+            : this(NewName,UT,atype,aAction)
+        {
+            VesselID = vID;
+        }
+
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction)
+            : this (vID,NewName,UT,atype,aAction)
+        {
+            Notes = NewNotes;
+            AlarmMarginSecs = Margin;
         }
 
         public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction, List<ManeuverNode> NewManeuvers)

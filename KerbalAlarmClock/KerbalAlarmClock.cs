@@ -195,16 +195,19 @@ namespace KerbalAlarmClock
         private void HandleKeyStrokes()
         {
             //Look for key inputs to change settings
-            if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F11))
+            if (!settings.F11KeystrokeDisabled)
             {
-                //switch (KACWorkerGameState.CurrentGUIScene)
-                //{
-                //    case GameScenes.SPACECENTER: Settings.WindowVisible_SpaceCenter = !Settings.WindowVisible_SpaceCenter; break;
-                //    case GameScenes.TRACKSTATION: Settings.WindowVisible_TrackingStation = !Settings.WindowVisible_TrackingStation; break;
-                //    default: Settings.WindowVisible = !Settings.WindowVisible; break;
-                //}
-                WindowVisibleByActiveScene = !WindowVisibleByActiveScene;
-                settings.Save();
+                if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F11))
+                {
+                    //switch (KACWorkerGameState.CurrentGUIScene)
+                    //{
+                    //    case GameScenes.SPACECENTER: Settings.WindowVisible_SpaceCenter = !Settings.WindowVisible_SpaceCenter; break;
+                    //    case GameScenes.TRACKSTATION: Settings.WindowVisible_TrackingStation = !Settings.WindowVisible_TrackingStation; break;
+                    //    default: Settings.WindowVisible = !Settings.WindowVisible; break;
+                    //}
+                    WindowVisibleByActiveScene = !WindowVisibleByActiveScene;
+                    settings.Save();
+                }
             }
 
             //TODO:Disable this one

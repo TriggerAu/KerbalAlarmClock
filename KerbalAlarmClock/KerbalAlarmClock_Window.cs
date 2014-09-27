@@ -372,16 +372,16 @@ namespace KerbalAlarmClock
         
 
         //Window Size Constants
-        private Int32 intMainWindowWidth = 300;
-        private Int32 intMainWindowMinHeight = 114;
-        private Int32 intMainWindowBaseHeight = 114;
+        private Int32 intMainWindowWidth = 340;
+        private Int32 intMainWindowMinHeight = 110;
+        private Int32 intMainWindowBaseHeight = 111;
 
         private Int32 intMainWindowAlarmListItemHeight = 26;
         private Int32 intMainWindowAlarmListScrollPad = 3;
-        private Int32 intMainWindowEarthTimeHeight = 26;
+        private Int32 intMainWindowEarthTimeHeight = 25;
 
         private Int32 intPaneWindowWidth = 380;
-        private Int32 intAddPaneWindowWidth = 320;
+        private Int32 intAddPaneWindowWidth = 340;
         private Int32 AddWindowHeight;
 
         private Int32 EarthWindowHeight = 216;
@@ -400,7 +400,7 @@ namespace KerbalAlarmClock
             //Min or normal window
             if (WindowMinimizedByActiveScene)
             {
-                MainWindowPos.height = intMainWindowMinHeight + 2;
+                MainWindowPos.height = intMainWindowMinHeight-2;
             }
             else
             {
@@ -408,21 +408,25 @@ namespace KerbalAlarmClock
                 //Work out the number of alarms and therefore the height of the window
                 if (alarms.Count > 1)
                 {
-                    if (alarms.Count<2)
-                        MainWindowPos.height = intMainWindowBaseHeight;
-                    else if (alarms.Count < settings.AlarmListMaxAlarmsInt)
+                    //if (alarms.Count<2)
+                    //    MainWindowPos.height = intMainWindowBaseHeight;
+                    //else 
+                    if (alarms.Count < settings.AlarmListMaxAlarmsInt)
                         MainWindowPos.height = intMainWindowBaseHeight + 
                             ((alarms.Count - 1) * intMainWindowAlarmListItemHeight) +
                             alarms.Sum(x=>x.AlarmLineHeightExtra);
                     else
                         //this is scrolling
-                        MainWindowPos.height = (intMainWindowBaseHeight -3) + 
+                        MainWindowPos.height = (intMainWindowBaseHeight -3 )  +
                             ((settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) + 
                             alarms.Take(settings.AlarmListMaxAlarmsInt).Sum(x=>x.AlarmLineHeightExtra) +
                             intMainWindowAlarmListScrollPad;
                 }
-                else MainWindowPos.height = intMainWindowBaseHeight+2;
+                else MainWindowPos.height = intMainWindowBaseHeight;
             }
+            if (KerbalAlarmClock.settings.SelectedSkin != Settings.DisplaySkin.Default)
+                MainWindowPos.height -= 8;
+
             if (settings.ShowEarthTime)
             {
                 MainWindowPos.height += intMainWindowEarthTimeHeight;
@@ -552,7 +556,7 @@ namespace KerbalAlarmClock
                         else if (settings.AlarmOnSOIChange_Action != KACAlarm.AlarmActionEnum.MessageOnly) SOITooltip += " (Warp Kill Action)";
                     }
                     GUIContent SOIIcon = new GUIContent(KACResources.iconSOI, SOITooltip);
-                    GUILayout.Label(SOIIcon, KACResources.styleSOIIndicator);
+                    GUILayout.Label(SOIIcon, KACResources.styleFlagIcon);
                 }
 
                 if (settings.AlarmAddManAuto)
@@ -633,7 +637,7 @@ namespace KerbalAlarmClock
             //Current Game time at the botttom of the control 
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button(new GUIContent("Current Time:","Toggle Display of time from an alternate galaxy on a planet called \"Earth\""), KACResources.styleHeading))
+            if (GUILayout.Button(new GUIContent("Current Time:", "Toggle Display of time from an alternate galaxy on a planet called \"Earth\""), KACResources.styleAddSectionHeading))
             {
                 settings.ShowEarthTime = !settings.ShowEarthTime;
             }
@@ -658,7 +662,7 @@ namespace KerbalAlarmClock
             if (settings.ShowEarthTime)
             {
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button(new GUIContent("Earth Time:", "Hide Display of \"Real\" Time"), KACResources.styleHeadingEarth))
+                if (GUILayout.Button(new GUIContent("Earth Time:", "Hide Display of \"Real\" Time"), KACResources.styleHeadingEarth,GUILayout.Width(80)))
                 {
                     settings.ShowEarthTime = !settings.ShowEarthTime;
                 }
@@ -747,6 +751,7 @@ namespace KerbalAlarmClock
             }
             else
             {
+                GUILayout.Space(4);
                 List<KACAlarm> AlarmsToRemove = new List<KACAlarm>();
                 List<KACAlarm> AlarmsToSort = alarms;
                 AlarmsToSort.Sort(KACAlarm.SortByUT);
@@ -781,7 +786,7 @@ namespace KerbalAlarmClock
 
         }
 
-        private Boolean DrawAlarmLine(KACAlarm tmpAlarm)
+        private Boolean  DrawAlarmLine(KACAlarm tmpAlarm)
         {
             Boolean blnReturn = false;
 
@@ -893,12 +898,12 @@ namespace KerbalAlarmClock
             Single sOutMin1, sOutMax1;
             styleLabel.CalcMinMaxWidth(contAlarmLabel, out sOutMin1, out sOutMax1);
             tmpAlarm.AlarmLineWidth = Convert.ToInt32(sOutMax1);
-            Int32 intMaxwidth = 220;// 228;
-            if (_ShowEditPane && (alarmEdit == tmpAlarm)) intMaxwidth = 198;// 216;
-            tmpAlarm.AlarmLineHeight = Convert.ToInt32(styleLabel.CalcHeight(contAlarmLabel, intMaxwidth));
+            Int32 intMaxwidth = 256;// 220;// 228;
+            if (_ShowEditPane && (alarmEdit == tmpAlarm)) intMaxwidth = 235;// 198;// 216;
+            tmpAlarm.AlarmLineHeight = Convert.ToInt32(styleLabel.CalcHeight(contAlarmLabel, intMaxwidth)); //218
 
             //Draw a button that looks like a label.
-            if (GUILayout.Button(contAlarmLabel, styleLabel, GUILayout.MaxWidth(218)))
+            if (GUILayout.Button(contAlarmLabel, styleLabel, GUILayout.MaxWidth(256)))
             {
                 if (!_ShowSettings)
                 {
@@ -1154,6 +1159,9 @@ namespace KerbalAlarmClock
             Boolean blnReturn = false;
             Boolean blnToggleInitial = blnVar;
 
+            if (settings.SelectedSkin == Settings.DisplaySkin.Default)
+                GUILayout.Space(-3);
+
             GUILayout.BeginHorizontal();
             //Draw the radio
             DrawToggle(ref blnVar, "", KACResources.styleCheckbox, options);
@@ -1169,6 +1177,8 @@ namespace KerbalAlarmClock
             }
 
             GUILayout.EndHorizontal();
+            if (settings.SelectedSkin == Settings.DisplaySkin.Default)
+                GUILayout.Space(-3);
 
             //If output value doesnt = input value
             if (blnToggleInitial != blnVar)

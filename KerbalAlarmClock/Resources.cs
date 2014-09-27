@@ -502,6 +502,7 @@ namespace KerbalAlarmClock
             {
                 case Settings.DisplaySkin.Default:
                     _CurrentSkin = DefKSPSkin;
+                    _CurrentSkin.font = DefUnitySkin.font;
                     SetStyleDefaults();
                     SetKSPStyles();
                     SetKSPButtons();
@@ -538,7 +539,7 @@ namespace KerbalAlarmClock
 
         static GUIStyle styleDefLabel, styleDefTextField, styleDefTextArea, styleDefToggle, styleDefButton;
         static int intFontSizeDefault;
-        private static void SetStyleDefaults(Int32 FontSize=13)
+        private static void SetStyleDefaults(Int32 FontSize=12)
         {
             Color32 colLabelText = new Color32(220, 220, 220, 255);
             intFontSizeDefault = FontSize;
@@ -658,8 +659,8 @@ namespace KerbalAlarmClock
         internal static GUIStyle styleAlarmIcon;
         internal static GUIStyle styleLabelWarp;
         internal static GUIStyle styleLabelWarpGrayed;
-        internal static GUIStyle styleSOIIndicator;
-        internal static GUIStyle styleSOIIcon;
+        //internal static GUIStyle styleSOIIndicator;
+        //internal static GUIStyle styleSOIIcon;
 
         //Add Alarm Styles
         internal static GUIStyle styleAddSectionHeading;
@@ -749,6 +750,7 @@ namespace KerbalAlarmClock
             styleTooltipStyle.alignment = TextAnchor.MiddleCenter;
 
             styleHeading = new GUIStyle(styleDefLabel);
+            styleHeading.fontSize = styleDefLabel.fontSize + 1;
             styleHeading.normal.textColor = Color.white;
             styleHeading.fontStyle = FontStyle.Bold;
 
@@ -756,11 +758,6 @@ namespace KerbalAlarmClock
             styleContent.normal.textColor = new Color32(183, 254, 0, 255);
             styleContent.alignment = TextAnchor.MiddleRight;
             styleContent.stretchWidth = true;
-
-            styleHeadingEarth = new GUIStyle(styleHeading);
-            styleHeadingEarth.normal.textColor = new Color32(0 , 173, 236, 255);
-            styleContentEarth = new GUIStyle(styleContent);
-            styleContentEarth.normal.textColor = new Color32(0, 173, 236, 255);
 
             styleButton = new GUIStyle(styleDefButton);
             styleButton.hover.textColor = Color.yellow;
@@ -806,8 +803,8 @@ namespace KerbalAlarmClock
             styleQAButton = new GUIStyle(styleSmallButton);
             if (KerbalAlarmClock.settings.SelectedSkin == Settings.DisplaySkin.Default)
             {
-                styleQAButton.padding.left = 1;
-                styleQAButton.padding.top = 5;
+                styleQAButton.padding.left = -1;
+                styleQAButton.padding.top = 1;
             }
             else
             {
@@ -829,7 +826,7 @@ namespace KerbalAlarmClock
                 styleQAListButton.padding = styleDefButton.padding;
 
             styleFlagIcon = new GUIStyle(styleDefLabel);
-            styleFlagIcon.padding = KACUtils.SetRectOffset(styleFlagIcon.padding, 0);
+            styleFlagIcon.padding = KACUtils.SetRectOffset(styleFlagIcon.padding, 0,0,4,0);
             styleFlagIcon.alignment = TextAnchor.MiddleLeft;
             styleFlagIcon.fixedWidth = 20;
 
@@ -854,21 +851,23 @@ namespace KerbalAlarmClock
 
             styleAlarmIcon = new GUIStyle(styleDefLabel);
             styleAlarmIcon.alignment = TextAnchor.UpperCenter;
+            styleAlarmIcon.fixedWidth = 18;
 
             styleLabelWarp = new GUIStyle(styleDefLabel);
             styleLabelWarp.alignment = TextAnchor.MiddleRight;
+            styleLabelWarp.fixedWidth = 18;
             styleLabelWarpGrayed = new GUIStyle(styleLabelWarp);
             styleLabelWarpGrayed.normal.textColor = Color.gray;
 
 
 
-            styleSOIIndicator = new GUIStyle(styleDefLabel);
-            styleSOIIndicator.alignment = TextAnchor.MiddleLeft;
-            //styleSOIIndicator.fontSize = 11;
-            styleSOIIndicator.normal.textColor = new Color32(0, 112, 227, 255);
-            styleSOIIndicator.padding = KACUtils.SetRectOffset(styleSOIIndicator.padding, 0);
+            //styleSOIIndicator = new GUIStyle(styleDefLabel);
+            //styleSOIIndicator.alignment = TextAnchor.MiddleLeft;
+            ////styleSOIIndicator.fontSize = 11;
+            //styleSOIIndicator.normal.textColor = new Color32(0, 112, 227, 255);
+            //styleSOIIndicator.padding = KACUtils.SetRectOffset(styleSOIIndicator.padding, 0);
 
-            styleSOIIcon = new GUIStyle(styleSOIIndicator);
+            //styleSOIIcon = new GUIStyle(styleSOIIndicator);
 
 
             styleAddSectionHeading = new GUIStyle(styleDefLabel);
@@ -946,6 +945,13 @@ namespace KerbalAlarmClock
             styleVersionHighlight.fontStyle = FontStyle.Bold;
             styleVersionHighlight.alignment = TextAnchor.MiddleRight;
             styleVersionHighlight.stretchWidth = true;
+
+
+            styleHeadingEarth = new GUIStyle(styleHeading);
+            styleHeadingEarth.normal.textColor = new Color32(0, 173, 236, 255);
+            styleContentEarth = new GUIStyle(styleContent);
+            styleContentEarth.normal.textColor = new Color32(0, 173, 236, 255);
+
 
             styleDropDownListItem = new GUIStyle();
             styleDropDownListItem.normal.textColor = new Color(207, 207, 207);

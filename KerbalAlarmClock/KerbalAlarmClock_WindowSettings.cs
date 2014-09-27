@@ -57,10 +57,10 @@ namespace KerbalAlarmClock
             String[] strSettingsTabs = new String[] { "All Alarms","Specific Types","About" };
             GUIContent[] contSettingsTabs = new GUIContent[] 
             { 
-                new GUIContent("All Alarms","Global Settings"), 
+                new GUIContent("General","Global Settings"), 
                 //new GUIContent("Specifics-1","SOI, Ap, Pe, AN, DN Specific Settings" ), 
                 //new GUIContent("Specifics-2","Man Node Specific Settings"), 
-                new GUIContent("Alarm Specifics","Specific Settings for Alarm Types"), 
+                new GUIContent("Alarm Settings","Specific Settings for Alarm Types"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
                 new GUIContent("About") 
             };
@@ -132,6 +132,7 @@ namespace KerbalAlarmClock
                 default:
                     break;
             }
+            intSettingsHeight = intTestheight;
             GUILayout.EndVertical();
 
             SetTooltipText();
@@ -152,6 +153,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("App Button:", KACResources.styleAddHeading, GUILayout.Width(90));
             ddlSettingsButtonStyle.DrawButton();
             GUILayout.EndHorizontal();
+
             //intBlizzyToolbarMissingHeight = 0;
             if (!settings.BlizzyToolbarIsAvailable)
             {
@@ -163,6 +165,7 @@ namespace KerbalAlarmClock
                 }
             }
             GUILayout.EndVertical();
+            if (settings.SelectedSkin == Settings.DisplaySkin.Default) GUILayout.Space(intTestheight3);
 
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
             GUILayout.BeginHorizontal();

@@ -114,6 +114,8 @@ namespace KerbalAlarmClock
                     break;
                 case Settings.ButtonStyleEnum.Launcher:
                     btnAppLauncher = InitAppLauncherButton();
+                    if (WindowVisibleByActiveScene)
+                        btnAppLauncher.SetTrue();
                     break;
             }
         }

@@ -272,21 +272,25 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
-            //GUILayout.Label(string.Format("button:{0}", KACResources.styleDefButton.padding));
-            GUILayout.Label(string.Format("button:{0}", KACResources.styleQAListButton.padding));
-            //KACResources.styleQAButton.padding = new RectOffset(intTestheight, intTestheight2, intTestheight3, intTestheight4);
+            //intMainWindowEarthTimeHeight = intTestheight4;
 
             if (GUILayout.Button("KSP"))
             {
-                KACResources.SetSkin(Settings.DisplaySkin.Default);
+                settings.SelectedSkin = Settings.DisplaySkin.Default;
+                KACResources.SetSkin(settings.SelectedSkin);
+                settings.Save();
             }
             if (GUILayout.Button("Unity"))
             {
-                KACResources.SetSkin(Settings.DisplaySkin.Unity);
+                settings.SelectedSkin = Settings.DisplaySkin.Unity;
+                KACResources.SetSkin(settings.SelectedSkin);
+                settings.Save();
             }
             if (GUILayout.Button("Unity w KSP"))
             {
-                KACResources.SetSkin(Settings.DisplaySkin.UnityWKSPButtons);
+                settings.SelectedSkin = Settings.DisplaySkin.UnityWKSPButtons;
+                KACResources.SetSkin(settings.SelectedSkin);
+                settings.Save();
             }
 
 

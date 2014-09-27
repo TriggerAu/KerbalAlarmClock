@@ -936,7 +936,7 @@ namespace KerbalAlarmClock
             KACTime XferCurrentTargetEventTime = null;
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Transfers", KACResources.styleHeading);
+            GUILayout.Label("Transfers", KACResources.styleAddSectionHeading);
             //add something here to select the modelled or formula values for Solar orbiting bodies
             if (settings.XferModelDataLoaded)
             {

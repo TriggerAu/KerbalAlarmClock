@@ -23,6 +23,15 @@ namespace KerbalAlarmClock
         private KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeAutoManNodeThreshold = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+
+        private KACTimeStringArray timeQuickManNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        private KACTimeStringArray timeQuickSOIMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        private KACTimeStringArray timeQuickNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        //private KACTimeStringArray timeQuickApNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        //private KACTimeStringArray timeQuickPeNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        //private KACTimeStringArray timeQuickANNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        //private KACTimeStringArray timeQuickDNNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        
         private void NewSettingsWindow()
         {
             if (settings.VersionAttentionFlag)
@@ -42,6 +51,14 @@ namespace KerbalAlarmClock
             timeAutoSOIMargin.BuildFromUT(settings.AlarmAutoSOIMargin);
             timeAutoManNodeMargin.BuildFromUT(settings.AlarmAddManAutoMargin);
             timeAutoManNodeThreshold.BuildFromUT(settings.AlarmAddManAutoThreshold);
+
+            timeQuickManNodeMargin.BuildFromUT(settings.AlarmAddManQuickMargin);
+            timeQuickSOIMargin.BuildFromUT(settings.AlarmAddSOIQuickMargin);
+            timeQuickNodeMargin.BuildFromUT(settings.AlarmAddNodeQuickMargin);
+            //timeQuickApNodeMargin.BuildFromUT(settings.AlarmAddApQuickMargin);
+            //timeQuickPeNodeMargin.BuildFromUT(settings.AlarmAddPeQuickMargin);
+            //timeQuickANNodeMargin.BuildFromUT(settings.AlarmAddANQuickMargin);
+            //timeQuickDNNodeMargin.BuildFromUT(settings.AlarmAddDNQuickMargin);
 
         }
 
@@ -304,6 +321,20 @@ namespace KerbalAlarmClock
 
             }
             GUILayout.EndVertical();
+
+            GUILayout.Label("Maneuver Quick Alarms", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+            if (DrawAlarmActionChoice3(ref settings.AlarmAddManQuickAction, "Quick Action:", 108, 61))
+                settings.Save();
+
+            if (DrawTimeEntry(ref timeAutoManNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
+            {
+                //convert it and save it in the settings
+                settings.AlarmAddManQuickMargin = timeAutoManNodeMargin.UT;
+                settings.Save();
+            }
+            GUILayout.EndVertical();
         }
         private void WindowLayout_SettingsSpecifics_SOI()
         {
@@ -351,6 +382,21 @@ namespace KerbalAlarmClock
 
             }
             GUILayout.EndVertical();
+
+            GUILayout.Label("SOI Quick Alarms", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+            if (DrawAlarmActionChoice3(ref settings.AlarmAddSOIQuickAction, "Quick Action:", 108, 61))
+                settings.Save();
+
+            if (DrawTimeEntry(ref timeAutoSOIMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
+            {
+                //convert it and save it in the settings
+                settings.AlarmAddSOIQuickMargin = timeAutoSOIMargin.UT;
+                settings.Save();
+            }
+            GUILayout.EndVertical();
+
         }
         private void WindowLayout_SettingsSpecifics_Other()
         {
@@ -377,6 +423,19 @@ namespace KerbalAlarmClock
                     RecalcNodeAlarmTimes(true);
                 }
             }
+
+            GUILayout.Label("Quick Alarm Settings", KACResources.styleAddSectionHeading);
+
+            if (DrawAlarmActionChoice3(ref settings.AlarmAddNodeQuickAction, "Quick Action:", 108, 61))
+                settings.Save();
+
+            if (DrawTimeEntry(ref timeQuickNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
+            {
+                //convert it and save it in the settings
+                settings.AlarmAddNodeQuickMargin = timeQuickNodeMargin.UT;
+                settings.Save();
+            }
+
             GUILayout.EndVertical();
 
             //Transfer Alarm Stuff

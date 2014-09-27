@@ -29,11 +29,10 @@ This work is licensed under an MIT license as outlined at the OSI site. Visit th
 
 VERSION HISTORY
 Version 3.0.0.0
-- New Toolbar Wrapper - official one
 - Restructure plugin folders
 - Restructure settings
-- Skins and selector
-- Alarm Saving - now in the games save file
+- Ability to choose from 3 visual Skins
+- Alarm Saving - now in the games save file - only saves and loads on game/save and load
 - Added Kill Warp with No Message action and restructured buttons/code behind
 - Removed periodic save of alarms file now that alarms are in the save files
 - Adjusted settings tabs to better layout options
@@ -41,10 +40,10 @@ Version 3.0.0.0
 - Sorted the multiline alarm display stuff
 - QuickAdd option for contextual Alarms
 - API for Alarm Creation/Modification and events
+- New Common Toolbar Wrapper - official one
 - App Launcher integration
-
-Restructure Alamrs list and storage into save file scenario
-alarmlist.add/remove should save as it goes
+- Has input locking options for when mouse is over the panels - this prevents action groups from occuring when mouse is over windows
+- Option to disable Alt+F11
 
 Version 2.7.8.2		-	KSP Version: 0.24.2
 - Fixed issue with inputlocks not coming off sometimes (Fixes #48)

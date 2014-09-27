@@ -370,7 +370,7 @@ namespace KerbalAlarmClock
             if ((KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT) && (KACWorkerGameState.CurrentVessel != null) && (FindVesselForAlarm(tmpAlarm).id.ToString() == KACWorkerGameState.CurrentVessel.id.ToString()))
             {
                 //There is a node and the alarm + Margin is not expired
-                if ((tmpAlarm.ManNodes != null))
+                if ((tmpAlarm.ManNodes != null) && tmpAlarm.ManNodes.Count > 0)
                 //if ((tmpAlarm.ManNodes != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
                 {
                     //Check if theres a manuever node and if so put a label saying that it already exists
@@ -431,8 +431,8 @@ namespace KerbalAlarmClock
                 //not current vessel
                 //There is a node and the alarm + Margin is not expired
                 //if (tmpAlarm.ManNodes != null && tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs > 0)
-                if (tmpAlarm.ManNodes != null)
-                    {
+                if (tmpAlarm.ManNodes != null && tmpAlarm.ManNodes.Count > 0)
+                {
                     String strRestoretext = "Jump To Ship and Restore Maneuver Node";
                     if (tmpAlarm.TypeOfAlarm == KACAlarm.AlarmType.Crew) strRestoretext = strRestoretext.Replace("Ship", "Kerbal");
                     if ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) < 0)

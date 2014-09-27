@@ -106,6 +106,7 @@ namespace KerbalAlarmClock
         public KACAlarm(double UT) : this ()
         {
             AlarmTime.UT = UT;
+            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
         }
 
         public KACAlarm(String NewName, double UT, AlarmType atype, AlarmActionEnum aAction)
@@ -113,7 +114,6 @@ namespace KerbalAlarmClock
         {
             Name = NewName;
             TypeOfAlarm = atype;
-            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
             AlarmAction = aAction;
         }
 
@@ -156,7 +156,7 @@ namespace KerbalAlarmClock
 
 
 
-        [Persistent] public String VesselID {get; private set;}
+        [Persistent] public String VesselID="";// {get; private set;}
         [Persistent] public String ID="";
         [Persistent] public String Name = "";                                       //Name of Alarm
         public String Notes = "";                                      //Entered extra details
@@ -378,10 +378,10 @@ namespace KerbalAlarmClock
 
             return blnReturn;
         }
-        internal static int SortByUT(KACAlarm c1, KACAlarm c2)
-        {
-            return c1.Remaining.UT.CompareTo(c2.Remaining.UT);
-        }
+        //internal static int SortByUT(KACAlarm c1, KACAlarm c2)
+        //{
+        //    return c1.Remaining.UT.CompareTo(c2.Remaining.UT);
+        //}
 
     }
 

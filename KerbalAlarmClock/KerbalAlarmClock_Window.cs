@@ -492,7 +492,7 @@ namespace KerbalAlarmClock
             }
             else if (_ShowQuickAdd)
             {
-                _WindowQuickAddRect = GUILayout.Window(_WindowQuickAddID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, 200, 10), FillQuickWindow, "Quick Add", KACResources.styleWindow);
+                _WindowQuickAddRect = GUILayout.Window(_WindowQuickAddID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, 300, 10), FillQuickWindow, "Quick Add", KACResources.styleWindow);
             }
 
             if (_ShowBackupFailedMessage)
@@ -753,9 +753,7 @@ namespace KerbalAlarmClock
             {
                 GUILayout.Space(4);
                 List<KACAlarm> AlarmsToRemove = new List<KACAlarm>();
-                List<KACAlarm> AlarmsToSort = alarms;
-                AlarmsToSort.Sort(KACAlarm.SortByUT);
-                foreach (KACAlarm tmpAlarm in AlarmsToSort)
+                foreach (KACAlarm tmpAlarm in alarms.OrderBy(a => a.AlarmTime.UT).ThenBy(a => a.ID.ToString()))
                 {
                     //Draw a line for each alarm, returns true is person clicked delete
                     if (DrawAlarmLine(tmpAlarm))

@@ -345,7 +345,12 @@ namespace KerbalAlarmClock
                 }
             }
 
+            //Do the stuff to lock inputs of people have that turned on
             ControlInputLocks();
+
+            //Now do the stuff to close the quick alarms window if you click off it
+            if (_ShowQuickAdd && Event.current.type == EventType.mouseDown && !_WindowQuickAddRect.Contains(Event.current.mousePosition) && !WindowPosByActiveScene.Contains(Event.current.mousePosition))
+                _ShowQuickAdd = false;
 
             //If Game is paused then update Earth Alarms for list drawing
             if (WindowVisibleByActiveScene && FlightDriver.Pause)
@@ -368,6 +373,7 @@ namespace KerbalAlarmClock
                 MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
                 MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
                 MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
+                //MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowQuickAddRect, WindowVisibleByActiveScene && _ShowQuickAdd);
 #if DEBUG
                 MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowDebugRect, WindowVisibleByActiveScene && _ShowDebugPane);
 #endif

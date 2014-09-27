@@ -118,6 +118,23 @@ namespace KerbalAlarmClock
         [Persistent] internal Double AlarmAddManAutoThreshold = 180;
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManAuto_Action = KACAlarm.AlarmActionEnum.KillWarp;
 
+        [Persistent] internal Double AlarmAddManQuickMargin = 180;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal Double AlarmAddSOIQuickMargin = 900;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddSOIQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+
+        [Persistent] internal Double AlarmAddNodeQuickMargin = 60;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddNodeQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+
+        //[Persistent] internal Double AlarmAddApQuickMargin = 60;
+        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddApQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        //[Persistent] internal Double AlarmAddPeQuickMargin = 60;
+        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddPeQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        //[Persistent] internal Double AlarmAddANQuickMargin = 60;
+        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddANQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        //[Persistent] internal Double AlarmAddDNQuickMargin = 60;
+        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddDNQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+
         //public double AlarmAddSOIMargin = 120;
         //[Persistent] internal Boolean AlarmCatchSOIChange = false;
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnSOIChange_Action = KACAlarm.AlarmActionEnum.KillWarp;

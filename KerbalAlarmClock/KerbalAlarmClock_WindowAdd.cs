@@ -365,12 +365,12 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmType.Apoapsis:
                     WindowLayout_AddTypeApPe();
                     dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToAp;
-                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.ApPointExists, dblTimeToPoint);
+                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.ApPointExists && !KACWorkerGameState.CurrentVessel.LandedOrSplashed, dblTimeToPoint);
                     break;
                 case KACAlarm.AlarmType.Periapsis:
                     WindowLayout_AddTypeApPe();
-                    dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToPe;
-                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.PePointExists, dblTimeToPoint);
+                    dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null ) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToPe;
+                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.PePointExists && !KACWorkerGameState.CurrentVessel.LandedOrSplashed, dblTimeToPoint);
                     break;
                 case KACAlarm.AlarmType.AscendingNode:
                     WindowLayout_AddTypeANDN();

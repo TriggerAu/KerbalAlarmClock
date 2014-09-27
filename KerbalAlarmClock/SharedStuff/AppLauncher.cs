@@ -19,6 +19,8 @@ namespace KerbalAlarmClock
                 if (settings.ButtonStyleChosen == Settings.ButtonStyleEnum.Launcher )
                 {
                     btnAppLauncher = InitAppLauncherButton();
+                    if (WindowVisibleByActiveScene)
+                        btnAppLauncher.SetTrue();
                 }
             }
             else { LogFormatted("App Launcher-Not Actually Ready"); }

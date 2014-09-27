@@ -821,7 +821,7 @@ namespace KerbalAlarmClock
             styleQAListButton.fixedHeight = 20;
             styleQAListButton.alignment = TextAnchor.MiddleCenter;
             if (KerbalAlarmClock.settings.SelectedSkin== Settings.DisplaySkin.Default)
-                styleQAListButton.padding = new RectOffset(4, 4, 10, 6);
+                styleQAListButton.padding = new RectOffset(4, 4, 6, 6);
             else
                 styleQAListButton.padding = styleDefButton.padding;
 

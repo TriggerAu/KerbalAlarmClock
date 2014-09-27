@@ -45,6 +45,8 @@ namespace KerbalAlarmClock
 
         [Persistent] internal MiminalDisplayType WindowMinimizedType = MiminalDisplayType.NextAlarm;
 
+        [Persistent] internal Boolean F11KeystrokeDisabled = true;
+
         //Audio Volume
         [Persistent] internal Boolean AlarmsVolumeFromUI=true;
         [Persistent] internal Single AlarmsVolume=0.25f;

@@ -53,7 +53,6 @@ namespace KerbalAlarmClock
 
         List<QuickAddItem> lstQuickButtons;
 
-        private int intHeight_QuickWindow;
         /// <summary>
         /// Draw the Add Window contents
         /// </summary>

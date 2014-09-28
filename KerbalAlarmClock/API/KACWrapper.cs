@@ -206,7 +206,7 @@ namespace KACWrapper
                         ListToReturn.Add(r1);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //LogFormatted("Arrggg: {0}", ex.Message);
                     //throw ex;
@@ -427,14 +427,10 @@ namespace KACWrapper
             public enum AlarmActionEnum
             {
 
-                [Description("Message Only-No Affect on warp")]
-                MessageOnly,
-                [Description("Kill Warp Only-No Message")]
-                KillWarpOnly,
-                [Description("Kill Warp and Message")]
-                KillWarp,
-                [Description("Pause Game and Message")]
-                PauseGame
+                [Description("Message Only-No Affect on warp")]     MessageOnly,
+                [Description("Kill Warp Only-No Message")]          KillWarpOnly,
+                [Description("Kill Warp and Message")]              KillWarp,
+                [Description("Pause Game and Message")]             PauseGame
             }
 
             public class KACAlarmList : List<KACAlarm>

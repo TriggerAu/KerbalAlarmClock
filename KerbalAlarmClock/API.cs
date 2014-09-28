@@ -7,8 +7,8 @@ namespace KerbalAlarmClock
 {
     public partial class KerbalAlarmClock
     {
-        internal event APIAlarmStateChangedHandler AlarmStateChanged;
-        internal delegate void APIAlarmStateChangedHandler(KACAlarm alarm, AlarmStateEventsEnum newstate);
+        //internal event APIAlarmStateChangedHandler AlarmStateChanged;
+        //internal delegate void APIAlarmStateChangedHandler(KACAlarm alarm, AlarmStateEventsEnum newstate);
 
         //For API Access
 
@@ -24,8 +24,7 @@ namespace KerbalAlarmClock
             //set up the hookable object
             APIInstance = this;
 
-            //set up the events we need
-            APIInstance.AlarmStateChanged += APIInstance_AlarmStateChanged;
+            //set up any events we need from the core code
 
             //flag it ready
             LogFormatted("API Ready");
@@ -37,7 +36,10 @@ namespace KerbalAlarmClock
             //tear it down
             APIInstance = null;
 
-            try { APIInstance.AlarmStateChanged -= APIInstance_AlarmStateChanged; } catch (Exception) { }
+            //Tear down any events we need to remove
+            //try { 
+                
+            //} catch (Exception) { }
        
             LogFormatted("API Cleaned up");
             APIReady = false;

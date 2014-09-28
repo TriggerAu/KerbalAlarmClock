@@ -99,7 +99,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 463; //434;// 572;//542;
+                    intSettingsHeight = 462; //463; //434;// 572;//542;
                     break;
                 //case 1:
                 //    WindowLayout_SettingsSpecifics1();
@@ -118,38 +118,39 @@ namespace KerbalAlarmClock
 	                {
                         case SettingsAlarmSpecsEnum.Default:
                             WindowLayout_SettingsSpecifics_Default();
-                            intSettingsHeight = 234;
+                            intSettingsHeight = 221; // 234;
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
-                            intSettingsHeight = 318;
+                            intSettingsHeight = 387; //318;
                             break;
                         case SettingsAlarmSpecsEnum.SOI:
                             WindowLayout_SettingsSpecifics_SOI();
-                            intSettingsHeight = 288;
+                            intSettingsHeight = 358; //288;
                             break;
                         case SettingsAlarmSpecsEnum.Other:
                             WindowLayout_SettingsSpecifics_Other();
-                            intSettingsHeight = 270;
+                            intSettingsHeight = 342; //270;
                             break;
                         default:
                             WindowLayout_SettingsSpecifics_Default();
-                            intSettingsHeight = intTestheight;
+                            intSettingsHeight = 221; //234;
                             break;
 	                }
                     break;
                 case 2:
                     WindowLayout_SettingsIcons();
-                    intSettingsHeight =  518;//466 //406;
+                    intSettingsHeight =  509; //518;//466 //406;
                     break;
                 case 3:
                     WindowLayout_SettingsAbout();
-                    intSettingsHeight = 306;
+                    intSettingsHeight = 294; //306;
                     break;
                 default:
                     break;
             }
-            intSettingsHeight = intTestheight;
+            //if (settings.SelectedSkin!= Settings.DisplaySkin.Default)
+            //    intSettingsHeight -= intTestheight;
             GUILayout.EndVertical();
 
             SetTooltipText();
@@ -157,8 +158,8 @@ namespace KerbalAlarmClock
 
         private void WindowLayout_SettingsGlobal()
         {
-            //Preferences
-            GUILayout.Label("Plugin Preferences", KACResources.styleAddSectionHeading);
+            //Styles
+            GUILayout.Label("Plugin Styles", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
             //two columns
@@ -182,7 +183,9 @@ namespace KerbalAlarmClock
                 }
             }
             GUILayout.EndVertical();
-            if (settings.SelectedSkin == Settings.DisplaySkin.Default) GUILayout.Space(intTestheight3);
+            //if (settings.SelectedSkin == Settings.DisplaySkin.Default) GUILayout.Space(intTestheight3);
+            //Preferences
+            GUILayout.Label("Plugin Preferences", KACResources.styleAddSectionHeading);
 
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
             GUILayout.BeginHorizontal();

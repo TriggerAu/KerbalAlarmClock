@@ -300,10 +300,9 @@ namespace KerbalAlarmClock
 
 
             GUILayout.Label("MouseAny: " + MouseOverAnyWindow.ToString());
-            GUILayout.Label("MouseQuick: " + MouseOverWindow(_WindowQuickAddRect, WindowVisibleByActiveScene && _ShowQuickAdd).ToString());
+            GUILayout.Label("MouseSettings: " + MouseOverWindow(_WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings).ToString());
             GUILayout.Label("MainRect: " + WindowPosByActiveScene.ToString());
-            GUILayout.Label("QuickRect: " + _WindowQuickAddRect.ToString());
-            GUILayout.Label("QuickShow: " + _ShowQuickAdd.ToString());
+            GUILayout.Label("SettingsRect: " + _WindowSettingsRect.ToString());
             GUILayout.Label("MousePos: " + Event.current.mousePosition.ToString());
 
 

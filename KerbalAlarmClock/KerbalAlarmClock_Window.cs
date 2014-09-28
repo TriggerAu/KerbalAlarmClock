@@ -445,26 +445,26 @@ namespace KerbalAlarmClock
             {
                 switch (AddType)
                 {
-                    case KACAlarm.AlarmType.Raw: 
+                    case KACAlarm.AlarmTypeEnum.Raw: 
                         AddWindowHeight = 250; break;
-                    case KACAlarm.AlarmType.Maneuver:
-                    case KACAlarm.AlarmType.SOIChange:
+                    case KACAlarm.AlarmTypeEnum.Maneuver:
+                    case KACAlarm.AlarmTypeEnum.SOIChange:
                         AddWindowHeight = 182; break;
-                    case KACAlarm.AlarmType.Apoapsis:
-                    case KACAlarm.AlarmType.Periapsis:
+                    case KACAlarm.AlarmTypeEnum.Apoapsis:
+                    case KACAlarm.AlarmTypeEnum.Periapsis:
                         AddWindowHeight = 208; break;
-                    case KACAlarm.AlarmType.AscendingNode:
-                    case KACAlarm.AlarmType.DescendingNode:
-                    case KACAlarm.AlarmType.LaunchRendevous:
+                    case KACAlarm.AlarmTypeEnum.AscendingNode:
+                    case KACAlarm.AlarmTypeEnum.DescendingNode:
+                    case KACAlarm.AlarmTypeEnum.LaunchRendevous:
                         AddWindowHeight = 234; break;
-                    case KACAlarm.AlarmType.Transfer:                        
-                    case KACAlarm.AlarmType.TransferModelled:
+                    case KACAlarm.AlarmTypeEnum.Transfer:                        
+                    case KACAlarm.AlarmTypeEnum.TransferModelled:
                         AddWindowHeight = intAddXferHeight; break;
-                    case KACAlarm.AlarmType.Closest:
+                    case KACAlarm.AlarmTypeEnum.Closest:
                         AddWindowHeight = 230; break;
-                    case KACAlarm.AlarmType.Distance:
+                    case KACAlarm.AlarmTypeEnum.Distance:
                         AddWindowHeight = intAddDistanceHeight; break;
-                    case KACAlarm.AlarmType.Crew:
+                    case KACAlarm.AlarmTypeEnum.Crew:
                         AddWindowHeight = intAddCrewHeight; break;
                     default: AddWindowHeight = 250; break;
                 }
@@ -792,47 +792,47 @@ namespace KerbalAlarmClock
 
             switch (tmpAlarm.TypeOfAlarm)
             {
-                case KACAlarm.AlarmType.Raw:
+                case KACAlarm.AlarmTypeEnum.Raw:
                     GUILayout.Label(KACResources.iconRaw, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Maneuver:
-                case KACAlarm.AlarmType.ManeuverAuto:
+                case KACAlarm.AlarmTypeEnum.Maneuver:
+                case KACAlarm.AlarmTypeEnum.ManeuverAuto:
                     GUILayout.Label(KACResources.iconMNode, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.SOIChange:
-                case KACAlarm.AlarmType.SOIChangeAuto:
+                case KACAlarm.AlarmTypeEnum.SOIChange:
+                case KACAlarm.AlarmTypeEnum.SOIChangeAuto:
                     GUILayout.Label(KACResources.iconSOI, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Transfer:
-                case KACAlarm.AlarmType.TransferModelled:
+                case KACAlarm.AlarmTypeEnum.Transfer:
+                case KACAlarm.AlarmTypeEnum.TransferModelled:
                     GUILayout.Label(KACResources.iconXFer, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Apoapsis:
+                case KACAlarm.AlarmTypeEnum.Apoapsis:
                     GUILayout.Label(KACResources.iconAp, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Periapsis:
+                case KACAlarm.AlarmTypeEnum.Periapsis:
                     GUILayout.Label(KACResources.iconPe, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.AscendingNode:
+                case KACAlarm.AlarmTypeEnum.AscendingNode:
                     GUILayout.Label(KACResources.iconAN, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.DescendingNode:
+                case KACAlarm.AlarmTypeEnum.DescendingNode:
                     GUILayout.Label(KACResources.iconDN, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.LaunchRendevous:
+                case KACAlarm.AlarmTypeEnum.LaunchRendevous:
                     GUILayout.Label(KACResources.iconLaunchRendezvous, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Closest:
+                case KACAlarm.AlarmTypeEnum.Closest:
                     GUILayout.Label(KACResources.iconClosest, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Distance:
+                case KACAlarm.AlarmTypeEnum.Distance:
                     //TODO - SOMETHING HERE MAYBE
                     GUILayout.Label(KACResources.iconClosest, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Crew:
+                case KACAlarm.AlarmTypeEnum.Crew:
                     GUILayout.Label(KACResources.iconCrew, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.EarthTime:
+                case KACAlarm.AlarmTypeEnum.EarthTime:
                     GUILayout.Label(KACResources.iconEarth, KACResources.styleAlarmIcon);
                     break;
                 default:
@@ -960,7 +960,7 @@ namespace KerbalAlarmClock
         
         #endregion
 
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref Double Margin, KACAlarm.AlarmType TypeOfAlarm, Int32 WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref Double Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
         {
             KACTimeStringArray tmpTime = new KACTimeStringArray(Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
             WindowLayout_CommonFields(ref strName, ref strMessage, ref Action, ref tmpTime, TypeOfAlarm, WindowHeight);
@@ -970,7 +970,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, Int32 WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
         {
             //Two Columns
             GUILayout.Label("Common Alarm Properties", KACResources.styleAddSectionHeading);
@@ -993,7 +993,7 @@ namespace KerbalAlarmClock
             //Full width one under the two columns for the kill time warp
             DrawAlarmActionChoice3(ref Action, "On Alarm:", 100,62);
 
-            if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime && TypeOfAlarm != KACAlarm.AlarmType.Crew)
+            if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {
                 DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Alarm Margin:", 90);
             }
@@ -1005,26 +1005,26 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, Int32 WindowHeight)
+        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
         {
             //Two Columns
             String strTitle = "";
             switch (TypeOfAlarm)
             {
-                case KACAlarm.AlarmType.Raw: strTitle = "Raw Time"; break;
-                case KACAlarm.AlarmType.Maneuver: strTitle = "Maneuver Node"; break;
-                case KACAlarm.AlarmType.SOIChange: strTitle = "SOI Change"; break;
-                case KACAlarm.AlarmType.Transfer: strTitle = "Transfer Window"; break;
-                case KACAlarm.AlarmType.TransferModelled: strTitle = "Transfer Window"; break;
-                case KACAlarm.AlarmType.Apoapsis: strTitle = "Apoapsis"; break;
-                case KACAlarm.AlarmType.Periapsis: strTitle = "Periapsis"; break;
-                case KACAlarm.AlarmType.AscendingNode: strTitle = "Ascending Node"; break;
-                case KACAlarm.AlarmType.DescendingNode: strTitle = "Descending Node"; break;
-                case KACAlarm.AlarmType.LaunchRendevous: strTitle = "Launch Ascent"; break;
-                case KACAlarm.AlarmType.Closest: strTitle = "Closest Approach"; break;
-                case KACAlarm.AlarmType.Distance: strTitle = "Target Distance"; break;
-                case KACAlarm.AlarmType.Crew: strTitle = "Crew"; break;
-                case KACAlarm.AlarmType.EarthTime: strTitle = "Earth Time"; break;
+                case KACAlarm.AlarmTypeEnum.Raw: strTitle = "Raw Time"; break;
+                case KACAlarm.AlarmTypeEnum.Maneuver: strTitle = "Maneuver Node"; break;
+                case KACAlarm.AlarmTypeEnum.SOIChange: strTitle = "SOI Change"; break;
+                case KACAlarm.AlarmTypeEnum.Transfer: strTitle = "Transfer Window"; break;
+                case KACAlarm.AlarmTypeEnum.TransferModelled: strTitle = "Transfer Window"; break;
+                case KACAlarm.AlarmTypeEnum.Apoapsis: strTitle = "Apoapsis"; break;
+                case KACAlarm.AlarmTypeEnum.Periapsis: strTitle = "Periapsis"; break;
+                case KACAlarm.AlarmTypeEnum.AscendingNode: strTitle = "Ascending Node"; break;
+                case KACAlarm.AlarmTypeEnum.DescendingNode: strTitle = "Descending Node"; break;
+                case KACAlarm.AlarmTypeEnum.LaunchRendevous: strTitle = "Launch Ascent"; break;
+                case KACAlarm.AlarmTypeEnum.Closest: strTitle = "Closest Approach"; break;
+                case KACAlarm.AlarmTypeEnum.Distance: strTitle = "Target Distance"; break;
+                case KACAlarm.AlarmTypeEnum.Crew: strTitle = "Crew"; break;
+                case KACAlarm.AlarmTypeEnum.EarthTime: strTitle = "Earth Time"; break;
                 default: strTitle = "Raw Time"; break;
             }
             strTitle += " Alarm - Common Properties";
@@ -1064,7 +1064,7 @@ namespace KerbalAlarmClock
             //Full width one under the two columns for the kill time warp
             DrawAlarmActionChoice3(ref Action, "Action:", 70 ,56);
 
-            if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime && TypeOfAlarm != KACAlarm.AlarmType.Crew)
+            if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {
                 DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Margin:", 60);
             }
@@ -1365,7 +1365,7 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        internal Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params GUIContent[] Choices)
+        internal Boolean DrawButtonList(ref KACAlarm.AlarmTypeEnum selType, params GUIContent[] Choices)
         {
             //int Selection = (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION) ? KACAlarm.AlarmTypeToButton[selType] : KACAlarm.AlarmTypeToButtonTS[selType];
             int Selection = KACAlarm.AlarmTypeToButton[selType];

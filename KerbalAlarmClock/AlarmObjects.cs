@@ -12,7 +12,7 @@ namespace KerbalAlarmClock
 {
     public class KACAlarm:ConfigNodeStorage
     {
-        public enum AlarmType
+        public enum AlarmTypeEnum
         {
             Raw,
             Maneuver,
@@ -31,61 +31,61 @@ namespace KerbalAlarmClock
             Crew,
             EarthTime
         }
-        internal static Dictionary<AlarmType, int> AlarmTypeToButton = new Dictionary<AlarmType, int>() {
-            {AlarmType.Raw, 0},
-            {AlarmType.Maneuver , 1},
-            {AlarmType.ManeuverAuto , 1},
-            {AlarmType.Apoapsis , 2},
-            {AlarmType.Periapsis , 2},
-            {AlarmType.AscendingNode , 3},
-            {AlarmType.DescendingNode , 3},
-            {AlarmType.LaunchRendevous , 3},
-            {AlarmType.Closest , 4},
-            {AlarmType.Distance , 4},
-            {AlarmType.SOIChange , 5},
-            {AlarmType.SOIChangeAuto , 5},
-            {AlarmType.Transfer , 6},
-            {AlarmType.TransferModelled , 6},
-            {AlarmType.Crew , 7}
+        internal static Dictionary<AlarmTypeEnum, int> AlarmTypeToButton = new Dictionary<AlarmTypeEnum, int>() {
+            {AlarmTypeEnum.Raw, 0},
+            {AlarmTypeEnum.Maneuver , 1},
+            {AlarmTypeEnum.ManeuverAuto , 1},
+            {AlarmTypeEnum.Apoapsis , 2},
+            {AlarmTypeEnum.Periapsis , 2},
+            {AlarmTypeEnum.AscendingNode , 3},
+            {AlarmTypeEnum.DescendingNode , 3},
+            {AlarmTypeEnum.LaunchRendevous , 3},
+            {AlarmTypeEnum.Closest , 4},
+            {AlarmTypeEnum.Distance , 4},
+            {AlarmTypeEnum.SOIChange , 5},
+            {AlarmTypeEnum.SOIChangeAuto , 5},
+            {AlarmTypeEnum.Transfer , 6},
+            {AlarmTypeEnum.TransferModelled , 6},
+            {AlarmTypeEnum.Crew , 7}
         };
-        internal static Dictionary<int, AlarmType> AlarmTypeFromButton = new Dictionary<int, AlarmType>() {
-            {0,AlarmType.Raw},
-            {1,AlarmType.Maneuver },
-            {2,AlarmType.Apoapsis },
-            {3,AlarmType.AscendingNode },
-            {4,AlarmType.Closest },
-            {5,AlarmType.SOIChange },
-            {6,AlarmType.Transfer },
-            {7,AlarmType.Crew }
+        internal static Dictionary<int, AlarmTypeEnum> AlarmTypeFromButton = new Dictionary<int, AlarmTypeEnum>() {
+            {0,AlarmTypeEnum.Raw},
+            {1,AlarmTypeEnum.Maneuver },
+            {2,AlarmTypeEnum.Apoapsis },
+            {3,AlarmTypeEnum.AscendingNode },
+            {4,AlarmTypeEnum.Closest },
+            {5,AlarmTypeEnum.SOIChange },
+            {6,AlarmTypeEnum.Transfer },
+            {7,AlarmTypeEnum.Crew }
         };
         
-        public static Dictionary<AlarmType, int> AlarmTypeToButtonTS = new Dictionary<AlarmType, int>() {
-            {AlarmType.Raw, 0},
-            {AlarmType.Maneuver , 1},
-            {AlarmType.ManeuverAuto , 1},
-            {AlarmType.Apoapsis , 2},
-            {AlarmType.Periapsis , 2},
-            {AlarmType.SOIChange , 3},
-            {AlarmType.SOIChangeAuto , 3},
-            {AlarmType.Transfer , 4},
-            {AlarmType.TransferModelled , 4},
+        public static Dictionary<AlarmTypeEnum, int> AlarmTypeToButtonTS = new Dictionary<AlarmTypeEnum, int>() {
+            {AlarmTypeEnum.Raw, 0},
+            {AlarmTypeEnum.Maneuver , 1},
+            {AlarmTypeEnum.ManeuverAuto , 1},
+            {AlarmTypeEnum.Apoapsis , 2},
+            {AlarmTypeEnum.Periapsis , 2},
+            {AlarmTypeEnum.SOIChange , 3},
+            {AlarmTypeEnum.SOIChangeAuto , 3},
+            {AlarmTypeEnum.Transfer , 4},
+            {AlarmTypeEnum.TransferModelled , 4},
         };
-        internal static Dictionary<int, AlarmType> AlarmTypeFromButtonTS = new Dictionary<int, AlarmType>() {
-            {0,AlarmType.Raw},
-            {1,AlarmType.Maneuver },
-            {2,AlarmType.Apoapsis },
-            {3,AlarmType.SOIChange },
-            {4,AlarmType.Transfer },
+        internal static Dictionary<int, AlarmTypeEnum> AlarmTypeFromButtonTS = new Dictionary<int, AlarmTypeEnum>() {
+            {0,AlarmTypeEnum.Raw},
+            {1,AlarmTypeEnum.Maneuver },
+            {2,AlarmTypeEnum.Apoapsis },
+            {3,AlarmTypeEnum.SOIChange },
+            {4,AlarmTypeEnum.Transfer },
         };
 
-        public static Dictionary<AlarmType, int> AlarmTypeToButtonSC = new Dictionary<AlarmType, int>() {
-            {AlarmType.Raw, 0},
-            {AlarmType.Transfer , 1},
-            {AlarmType.TransferModelled , 1},
+        public static Dictionary<AlarmTypeEnum, int> AlarmTypeToButtonSC = new Dictionary<AlarmTypeEnum, int>() {
+            {AlarmTypeEnum.Raw, 0},
+            {AlarmTypeEnum.Transfer , 1},
+            {AlarmTypeEnum.TransferModelled , 1},
         };
-        public static Dictionary<int, AlarmType> AlarmTypeFromButtonSC = new Dictionary<int, AlarmType>() {
-            {0,AlarmType.Raw},
-            {1,AlarmType.Transfer },
+        public static Dictionary<int, AlarmTypeEnum> AlarmTypeFromButtonSC = new Dictionary<int, AlarmTypeEnum>() {
+            {0,AlarmTypeEnum.Raw},
+            {1,AlarmTypeEnum.Transfer },
         };
 
         public enum AlarmActionEnum
@@ -109,7 +109,7 @@ namespace KerbalAlarmClock
             Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
         }
 
-        public KACAlarm(String NewName, double UT, AlarmType atype, AlarmActionEnum aAction)
+        public KACAlarm(String NewName, double UT, AlarmTypeEnum atype, AlarmActionEnum aAction)
             : this(UT)
         {
             Name = NewName;
@@ -117,27 +117,27 @@ namespace KerbalAlarmClock
             AlarmAction = aAction;
         }
 
-        public KACAlarm(String vID, String NewName, double UT, AlarmType atype, AlarmActionEnum aAction)
+        public KACAlarm(String vID, String NewName, double UT, AlarmTypeEnum atype, AlarmActionEnum aAction)
             : this(NewName,UT,atype,aAction)
         {
             VesselID = vID;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction)
             : this (vID,NewName,UT,atype,aAction)
         {
             Notes = NewNotes;
             AlarmMarginSecs = Margin;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction, List<ManeuverNode> NewManeuvers)
+        public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction, List<ManeuverNode> NewManeuvers)
             : this(vID, NewName, NewNotes, UT, Margin, atype, aAction)
         {
             //set maneuver node
             ManNodes = NewManeuvers;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction, KACXFerTarget NewTarget)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction, KACXFerTarget NewTarget)
             : this(vID, NewName, NewNotes, UT, Margin, atype, aAction)
         {
             //Set target details
@@ -145,7 +145,7 @@ namespace KerbalAlarmClock
             XferTargetBodyName = NewTarget.Target.bodyName;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmType atype, AlarmActionEnum aAction, ITargetable NewTarget)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction, ITargetable NewTarget)
             : this(vID,NewName,NewNotes,UT,Margin,atype,aAction)
         {
             //Set the ITargetable proerty
@@ -159,10 +159,10 @@ namespace KerbalAlarmClock
         [Persistent] public String VesselID="";// {get; private set;}
         [Persistent] public String ID="";
         [Persistent] public String Name = "";                                       //Name of Alarm
-        public String Notes = "";                                      //Entered extra details
-        [Persistent] private String NotesStorage = "";                                      //Entered extra details
+        public String Notes = "";                                                   //Entered extra details
+        [Persistent] private String NotesStorage = "";                              //Entered extra details
         
-        [Persistent] public AlarmType TypeOfAlarm = AlarmType.Raw;                  //What Type of Alarm
+        [Persistent] public AlarmTypeEnum TypeOfAlarm = AlarmTypeEnum.Raw;                  //What Type of Alarm
 
         public KACTime AlarmTime = new KACTime();                                   //UT of the alarm
         [Persistent] private Double AlarmTimeStorage;
@@ -441,7 +441,16 @@ namespace KerbalAlarmClock
 
     public class KACAlarmList: List<KACAlarm>
     {
-
+        new internal void Add(KACAlarm item)
+        {
+            KerbalAlarmClock.APIInstance.APIInstance_AlarmStateChanged(item, KerbalAlarmClock.AlarmStateEventsEnum.Created);
+            base.Add(item);
+        }
+        new internal void Remove(KACAlarm item)
+        {
+            KerbalAlarmClock.APIInstance.APIInstance_AlarmStateChanged(item, KerbalAlarmClock.AlarmStateEventsEnum.Deleted);
+            base.Remove(item);
+        }
 
         internal ConfigNode EncodeToCN()
         {

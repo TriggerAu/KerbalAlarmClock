@@ -22,12 +22,11 @@ namespace KACWrapper
     {
         protected static System.Type KACType;
         protected static System.Type KACAlarmType;
-        //protected static System.Type KSPARPResourceListType;
 
         protected static Object actualKAC = null;
 
         /// <summary>
-        /// This is the Alternate Resource Panel object
+        /// This is the Kerbal Alarm Clock object
         /// 
         /// SET AFTER INIT
         /// </summary>
@@ -52,7 +51,7 @@ namespace KACWrapper
         private static Boolean _KACWrapped = false;
 
         /// <summary>
-        /// Whether the object has been wrapped and the APIReady flag is set in the real ARP
+        /// Whether the object has been wrapped and the APIReady flag is set in the real KAC
         /// </summary>
         public static Boolean APIReady { get { return _KACWrapped && KAC.APIReady; } }
 
@@ -64,7 +63,7 @@ namespace KACWrapper
         /// <returns></returns>
         public static Boolean InitKACWrapper()
         {
-            //if (!_KSPARPWrapped )
+            //if (!_KACWrapped )
             //{
             //reset the internal objects
             _KACWrapped = false;
@@ -83,7 +82,7 @@ namespace KACWrapper
                 return false;
             }
 
-            //now the resource Type
+            //now the Alarm Type
             KACAlarmType = AssemblyLoader.loadedAssemblies
                 .Select(a => a.assembly.GetExportedTypes())
                 .SelectMany(t => t)
@@ -111,9 +110,9 @@ namespace KACWrapper
             _KACWrapped = true;
             return true;
         }
-                
+
         /// <summary>
-        /// The Type that is an analogue of the real ARP. This lets you access all the API-able properties and Methods of the ARP
+        /// The Type that is an analogue of the real KAC. This lets you access all the API-able properties and Methods of the KAC
         /// </summary>
         public class KACAPI
         {
@@ -128,27 +127,41 @@ namespace KACWrapper
                 LogFormatted("Getting APIReady Object");
                 APIReadyField = KACType.GetField("APIReady", BindingFlags.Public | BindingFlags.Static);
                 LogFormatted("Success: " + (APIReadyField != null).ToString());
-                
+
                 //WORK OUT THE STUFF WE NEED TO HOOK FOR PEOPEL HERE
                 LogFormatted("Getting Alarms Object");
-                AlarmsField = KACType.GetField("alarms", BindingFlags.Public | BindingFlags.Instance);
+                AlarmsField = KACType.GetField("alarms", BindingFlags.Public | BindingFlags.Static);
                 actualAlarms = AlarmsField.GetValue(actualKAC);
                 LogFormatted("Success: " + (actualAlarms != null).ToString());
 
                 //Events
                 LogFormatted("Getting Alarm State Change Event");
                 onAlarmStateChangedEvent = KACType.GetEvent("onAlarmStateChanged", BindingFlags.Public | BindingFlags.Instance);
+                LogFormatted_DebugOnly("Success: " + (onAlarmStateChangedEvent != null).ToString());
+                LogFormatted_DebugOnly("Adding Handler");
                 AddHandler(onAlarmStateChangedEvent, actualKAC, AlarmStateChanged);
 
+                //Methods
+                LogFormatted("Getting Create Method");
+                CreateAlarmMethod = KACType.GetMethod("CreateAlarm", BindingFlags.Public | BindingFlags.Instance);
+                LogFormatted_DebugOnly("Success: " + (CreateAlarmMethod != null).ToString());
 
+                LogFormatted("Getting Delete Method");
+                DeleteAlarmMethod = KACType.GetMethod("DeleteAlarm", BindingFlags.Public | BindingFlags.Instance);
+                LogFormatted_DebugOnly("Success: " + (DeleteAlarmMethod != null).ToString());
 
+                MethodInfo[] mis = KACType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+                foreach (MethodInfo mi in mis)
+                {
+                    LogFormatted("M:{0}-{1}", mi.Name, mi.DeclaringType);
+                }
             }
 
             private Object actualKAC;
 
             private FieldInfo APIReadyField;
             /// <summary>
-            /// Whether the APIReady flag is set in the real ARP
+            /// Whether the APIReady flag is set in the real KAC
             /// </summary>
             public Boolean APIReady
             {
@@ -175,23 +188,27 @@ namespace KACWrapper
             }
 
             /// <summary>
-            /// This converts the ARPResourceList actual object to a new dictionary for consumption
+            /// This converts the KACAlarmList actual object to a new List for consumption
             /// </summary>
             /// <param name="actualAlarmList"></param>
             /// <returns></returns>
             private KACAlarmList ExtractAlarmList(Object actualAlarmList)
             {
                 KACAlarmList ListToReturn = new KACAlarmList();
-                try {
+                try
+                {
                     //iterate each "value" in the dictionary
-                    foreach (var item in (IDictionary)actualAlarmList) {
-                        PropertyInfo pi = item.GetType().GetProperty("Value");
-                        object oVal = pi.GetValue(item, null);
-                        KACAlarm r1 = new KACAlarm(oVal);
-                        ListToReturn.Add(r1.ID, r1);
+
+                    foreach (var item in (IList)actualAlarmList)
+                    {
+                        KACAlarm r1 = new KACAlarm(item);
+                        ListToReturn.Add(r1);
                     }
                 }
-                catch (Exception) {
+                catch (Exception ex)
+                {
+                    //LogFormatted("Arrggg: {0}", ex.Message);
+                    //throw ex;
                     //
                 }
                 return ListToReturn;
@@ -204,23 +221,23 @@ namespace KACWrapper
             /// Takes an EventInfo and binds a method to the event firing
             /// </summary>
             /// <param name="Event">EventInfo of the event we want to attach to</param>
-            /// <param name="ARPObject">actual object the eventinfo is gathered from</param>
+            /// <param name="KACObject">actual object the eventinfo is gathered from</param>
             /// <param name="Handler">Method that we are going to hook to the event</param>
-            protected void AddHandler(EventInfo Event, Object ARPObject, Action<Object> Handler)
+            protected void AddHandler(EventInfo Event, Object KACObject, Action<Object> Handler)
             {
                 //build a delegate
                 Delegate d = Delegate.CreateDelegate(Event.EventHandlerType, Handler.Target, Handler.Method);
                 //get the Events Add method
                 MethodInfo addHandler = Event.GetAddMethod();
                 //and add the delegate
-                addHandler.Invoke(ARPObject, new System.Object[] { d });
+                addHandler.Invoke(KACObject, new System.Object[] { d });
             }
 
             //the info about the event;
             private EventInfo onAlarmStateChangedEvent;
 
             /// <summary>
-            /// Event that fires when the AlarmState of a vessel resource changes
+            /// Event that fires when the State of an Alarm changes
             /// </summary>
             public event AlarmStateChangedHandler onAlarmStateChanged;
             /// <summary>
@@ -233,16 +250,16 @@ namespace KACWrapper
             /// </summary>
             public class AlarmStateChangedEventArgs
             {
-                //public AlarmChangedEventArgs(ARPResource sender, ARPResource.AlarmType alarmType, Boolean TurnedOn, Boolean Acknowledged)
                 public AlarmStateChangedEventArgs(System.Object actualEvent, KACAPI kac)
                 {
                     Type type = actualEvent.GetType();
                     this.alarm = new KACAlarm(type.GetField("alarm").GetValue(actualEvent));
-                    this.eventType = (KACAlarm.AlarmStateEventsEnum)type.GetField("eventType").GetValue(actualEvent); ;
+                    this.eventType = (KACAlarm.AlarmStateEventsEnum)type.GetField("eventType").GetValue(actualEvent);
+
                 }
 
                 /// <summary>
-                /// Resource that has had the monitor state change
+                /// Alarm that has had the state change
                 /// </summary>
                 public KACAlarm alarm;
                 /// <summary>
@@ -255,39 +272,127 @@ namespace KACWrapper
             /// <summary>
             /// private function that grabs the actual event and fires our wrapped one
             /// </summary>
-            /// <param name="actualEvent">actual event from the ARP</param>
+            /// <param name="actualEvent">actual event from the KAC</param>
             private void AlarmStateChanged(object actualEvent)
             {
-                if (onAlarmStateChanged != null) {
+                if (onAlarmStateChanged != null)
+                {
                     onAlarmStateChanged(new AlarmStateChangedEventArgs(actualEvent, this));
                 }
             }
             #endregion
 
 
+            #region Methods
+            private MethodInfo CreateAlarmMethod;
+
+            /// <summary>
+            /// Create a new Alarm
+            /// </summary>
+            /// <param name="AlarmType">What type of alarm are we creating</param>
+            /// <param name="Name">Name of the Alarm for the display</param>
+            /// <param name="UT">Universal Time for the alarm</param>
+            /// <returns>ID of the newly created alarm</returns>
+            internal String CreateAlarm(AlarmTypeEnum AlarmType, String Name, Double UT)
+            {
+                return (String)CreateAlarmMethod.Invoke(actualKAC, new System.Object[] { (Int32)AlarmType, Name, UT });
+            }
+
+
+            private MethodInfo DeleteAlarmMethod;
+            /// <summary>
+            /// Delete an Alarm
+            /// </summary>
+            /// <param name="AlarmID">Unique ID of the alarm</param>
+            /// <returns>Success of the deletion</returns>
+            internal Boolean DeleteAlarm(String AlarmID)
+            {
+                return (Boolean)DeleteAlarmMethod.Invoke(actualKAC, new System.Object[] { AlarmID });
+            }
+
+            #endregion
+
             public class KACAlarm
             {
                 internal KACAlarm(Object a)
                 {
                     actualAlarm = a;
-                    VesselIDProperty = KACAlarmType.GetProperty("VesselID");
-                    IDProperty = KACAlarmType.GetProperty("ID");
-                    NameProperty = KACAlarmType.GetProperty("Name");
-                    NotesProperty = KACAlarmType.GetProperty("Notes");
+                    VesselIDField = KACAlarmType.GetField("VesselID");
+                    IDField = KACAlarmType.GetField("ID");
+                    NameField = KACAlarmType.GetField("Name");
+                    NotesField = KACAlarmType.GetField("Notes");
+                    AlarmTypeField = KACAlarmType.GetField("TypeOfAlarm");
+                    AlarmTimeField = KACAlarmType.GetField("AlarmTime");
+                    AlarmMarginField = KACAlarmType.GetField("AlarmMarginSecs");
+                    AlarmActionField = KACAlarmType.GetField("AlarmAction");
+                    RemainingField = KACAlarmType.GetField("Remaining");
+
+                    //PropertyInfo[] pis = KACAlarmType.GetProperties();
+                    //foreach (PropertyInfo pi in pis)
+                    //{
+                    //    LogFormatted("P:{0}-{1}", pi.Name, pi.DeclaringType);
+                    //}
+                    //FieldInfo[] fis = KACAlarmType.GetFields();
+                    //foreach (FieldInfo fi in fis)
+                    //{
+                    //    LogFormatted("F:{0}-{1}", fi.Name, fi.DeclaringType);
+                    //}
                 }
                 private Object actualAlarm;
 
-                private PropertyInfo VesselIDProperty;
-                public String VesselID { get { return (String)VesselIDProperty.GetValue(actualAlarm, null); } }
+                private FieldInfo VesselIDField;
+                public String VesselID
+                {
+                    get { return (String)VesselIDField.GetValue(actualAlarm); }
+                    set { VesselIDField.SetValue(actualAlarm, value); }
+                }
 
-                private PropertyInfo IDProperty;
-                public String ID { get { return (String)IDProperty.GetValue(actualAlarm, null); } }
+                private FieldInfo IDField;
+                public String ID
+                {
+                    get { return (String)IDField.GetValue(actualAlarm); }
+                }
 
-                private PropertyInfo NameProperty;
-                public String Name { get { return (String)NameProperty.GetValue(actualAlarm, null); } }
-                
-                private PropertyInfo NotesProperty;
-                public String Notes { get { return (String)NotesProperty.GetValue(actualAlarm, null); } }
+                private FieldInfo NameField;
+                public String Name
+                {
+                    get { return (String)NameField.GetValue(actualAlarm); }
+                    set { NameField.SetValue(actualAlarm, value); }
+                }
+
+                private FieldInfo NotesField;
+                public String Notes
+                {
+                    get { return (String)NotesField.GetValue(actualAlarm); }
+                    set { NotesField.SetValue(actualAlarm, value); }
+                }
+
+                private FieldInfo AlarmTypeField;
+                public AlarmTypeEnum AlarmType { get { return (AlarmTypeEnum)AlarmTypeField.GetValue(actualAlarm); } }
+
+                private FieldInfo AlarmTimeField;
+                public Double AlarmTime
+                {
+                    get { return (Double)AlarmTimeField.GetValue(actualAlarm); }
+                    set { AlarmTimeField.SetValue(actualAlarm, value); }
+                }
+
+                private FieldInfo AlarmMarginField;
+                public Double AlarmMargin
+                {
+                    get { return (Double)AlarmMarginField.GetValue(actualAlarm); }
+                    set { AlarmMarginField.SetValue(actualAlarm, value); }
+                }
+
+                private FieldInfo AlarmActionField;
+                public AlarmActionEnum AlarmAction
+                {
+                    get { return (AlarmActionEnum)AlarmActionField.GetValue(actualAlarm); }
+                    set { AlarmActionField.SetValue(actualAlarm, value); }
+                }
+
+                private FieldInfo RemainingField;
+                public Double Remaining { get { return (Double)RemainingField.GetValue(actualAlarm); } }
 
                 public enum AlarmStateEventsEnum
                 {
@@ -298,7 +403,40 @@ namespace KACWrapper
                 }
             }
 
-            public class KACAlarmList : Dictionary<String, KACAlarm>
+            public enum AlarmTypeEnum
+            {
+                Raw,
+                Maneuver,
+                ManeuverAuto,
+                Apoapsis,
+                Periapsis,
+                AscendingNode,
+                DescendingNode,
+                LaunchRendevous,
+                Closest,
+                SOIChange,
+                SOIChangeAuto,
+                Transfer,
+                TransferModelled,
+                Distance,
+                Crew,
+                EarthTime
+            }
+
+            public enum AlarmActionEnum
+            {
+
+                [Description("Message Only-No Affect on warp")]
+                MessageOnly,
+                [Description("Kill Warp Only-No Message")]
+                KillWarpOnly,
+                [Description("Kill Warp and Message")]
+                KillWarp,
+                [Description("Pause Game and Message")]
+                PauseGame
+            }
+
+            public class KACAlarmList : List<KACAlarm>
             {
 
             }

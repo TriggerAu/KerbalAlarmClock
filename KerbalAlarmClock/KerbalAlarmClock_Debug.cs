@@ -274,6 +274,11 @@ namespace KerbalAlarmClock
 
             //intMainWindowEarthTimeHeight = intTestheight4;
 
+            //if (GUILayout.Button("Create"))
+            //{
+            //    CreateAlarm(KACAlarm.AlarmTypeEnum.Raw, "TEST");
+            //}
+
             if (GUILayout.Button("KSP"))
             {
                 settings.SelectedSkin = Settings.DisplaySkin.Default;

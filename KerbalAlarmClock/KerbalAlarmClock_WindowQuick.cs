@@ -18,7 +18,6 @@ namespace KerbalAlarmClock
         {
             //what situation is the game in - and therefore what quick options are there?
             lstQuickButtons = new List<QuickAddItem>();
-            LogFormatted("A");
             if (KACWorkerGameState.CurrentVessel != null)
             {
                 if (KACWorkerGameState.ManeuverNodeExists && KACWorkerGameState.ManeuverNodeFuture != null)
@@ -111,7 +110,7 @@ namespace KerbalAlarmClock
         private KACAlarm QuickAddRaw()
         {
             KACAlarm tmpAlarm = new KACAlarm(KACWorkerGameState.CurrentTime.UT + 600);
-            tmpAlarm.TypeOfAlarm= KACAlarm.AlarmType.Raw;
+            tmpAlarm.TypeOfAlarm= KACAlarm.AlarmTypeEnum.Raw;
             tmpAlarm.Name = "Quick Raw";
             if (KACWorkerGameState.IsVesselActive)
                 tmpAlarm.VesselID = KACWorkerGameState.CurrentVessel.id.ToString();
@@ -129,7 +128,7 @@ namespace KerbalAlarmClock
                 "Quick Added Maneuver Alarm",
                 KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManQuickMargin,
                 settings.AlarmAddManQuickMargin,
-                KACAlarm.AlarmType.Maneuver,
+                KACAlarm.AlarmTypeEnum.Maneuver,
                 settings.AlarmAddManQuickAction,
                 KACWorkerGameState.ManeuverNodesFuture);
 
@@ -145,7 +144,7 @@ namespace KerbalAlarmClock
                 "Quick Added SOI Change Alarm",
                 KACWorkerGameState.CurrentVessel.orbit.UTsoi - settings.AlarmAddSOIQuickMargin,
                 settings.AlarmAddSOIQuickMargin,
-                KACAlarm.AlarmType.SOIChange,
+                KACAlarm.AlarmTypeEnum.SOIChange,
                 settings.AlarmAddSOIQuickAction);
 
             alarms.Add(tmpAlarm);
@@ -156,11 +155,11 @@ namespace KerbalAlarmClock
         private KACAlarm QuickAddAp()
         {
             KACAlarm tmpAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(),
-                KACWorkerGameState.CurrentVessel.vesselName + " Ap",
+                KACWorkerGameState.CurrentVessel.vesselName + " Apopasis",
                 "Quick Added Apoapsis Alarm",
                 KACWorkerGameState.CurrentTime.UT + KACWorkerGameState.CurrentVessel.orbit.timeToAp - settings.AlarmAddNodeQuickMargin,
                 settings.AlarmAddNodeQuickMargin,
-                KACAlarm.AlarmType.Apoapsis,
+                KACAlarm.AlarmTypeEnum.Apoapsis,
                 settings.AlarmAddNodeQuickAction);
             alarms.Add(tmpAlarm);
 
@@ -170,11 +169,11 @@ namespace KerbalAlarmClock
         private KACAlarm QuickAddPe()
         {
             KACAlarm tmpAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(),
-                KACWorkerGameState.CurrentVessel.vesselName + " Pe",
+                KACWorkerGameState.CurrentVessel.vesselName + " Periapsis",
                 "Quick Added Periapsis Alarm",
                 KACWorkerGameState.CurrentTime.UT + KACWorkerGameState.CurrentVessel.orbit.timeToPe - settings.AlarmAddNodeQuickMargin,
                 settings.AlarmAddNodeQuickMargin,
-                KACAlarm.AlarmType.Periapsis,
+                KACAlarm.AlarmTypeEnum.Periapsis,
                 settings.AlarmAddNodeQuickAction);
             alarms.Add(tmpAlarm);
 
@@ -188,7 +187,7 @@ namespace KerbalAlarmClock
                 "Quick Added Ascending Node",
                 KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT) - settings.AlarmAddNodeQuickMargin,
                 settings.AlarmAddNodeQuickMargin,
-                KACAlarm.AlarmType.AscendingNode,
+                KACAlarm.AlarmTypeEnum.AscendingNode,
                 settings.AlarmAddNodeQuickAction);
             alarms.Add(tmpAlarm);
 
@@ -202,7 +201,7 @@ namespace KerbalAlarmClock
                 "Quick Added Descending Node",
                 KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT) - settings.AlarmAddNodeQuickMargin,
                 settings.AlarmAddNodeQuickMargin,
-                KACAlarm.AlarmType.DescendingNode,
+                KACAlarm.AlarmTypeEnum.DescendingNode,
                 settings.AlarmAddNodeQuickAction);
             alarms.Add(tmpAlarm);
 

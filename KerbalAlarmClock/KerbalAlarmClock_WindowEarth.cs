@@ -14,7 +14,7 @@ namespace KerbalAlarmClock
     {
         private void NewEarthAlarm()
         {
-            AddType = KACAlarm.AlarmType.EarthTime;
+            AddType = KACAlarm.AlarmTypeEnum.EarthTime;
 
             strAlarmName="Earth Calling...";
             strAlarmNotes="";
@@ -89,7 +89,7 @@ namespace KerbalAlarmClock
                     alarms.Add(
                         new KACAlarm(null,strAlarmName,strAlarmNotes,
                             EarthTimeEncode(DateTime.Now + tmAlarm),
-                            0, KACAlarm.AlarmType.EarthTime,
+                            0, KACAlarm.AlarmTypeEnum.EarthTime,
                             AddAction)
                         );
                     //settings.SaveAlarms();

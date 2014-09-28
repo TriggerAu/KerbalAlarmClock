@@ -18,13 +18,13 @@ namespace KerbalAlarmClock
             GUILayout.BeginHorizontal();
             GUILayout.Label("Distance Type:", KACResources.styleAddHeading);
             int intOption = 0;
-            if (AddType != KACAlarm.AlarmType.Closest) intOption = 1;
+            if (AddType != KACAlarm.AlarmTypeEnum.Closest) intOption = 1;
             if (DrawRadioList(ref intOption, "Closest", "Target Distance"))
             {
                 if (intOption == 0)
-                    AddType = KACAlarm.AlarmType.Closest;
+                    AddType = KACAlarm.AlarmTypeEnum.Closest;
                 else
-                    AddType = KACAlarm.AlarmType.Distance;
+                    AddType = KACAlarm.AlarmTypeEnum.Distance;
                 AddTypeChanged();
             }
             GUILayout.EndHorizontal();

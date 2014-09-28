@@ -52,7 +52,7 @@ namespace KerbalAlarmClock
         //Global Settings
         //public static KACSettings Settings = new KACSettings();
         internal static Settings settings;
-        internal static KACAlarmList alarms=new KACAlarmList();
+        public static KACAlarmList alarms=new KACAlarmList();
         public virtual String MonoName { get; set; }
         //public virtual Boolean ViewAlarmsOnly { get; set; }
         
@@ -696,12 +696,12 @@ namespace KerbalAlarmClock
             {
                 return
                     (a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
-                    && ((a.TypeOfAlarm == KACAlarm.AlarmType.SOIChangeAuto) || (a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange))
+                    && ((a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.SOIChangeAuto) || (a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.SOIChange))
                     && (a.Triggered == false);
             });
 
             //if theres a manual SOI alarm already then ignore it
-            if ((tmpSOIAlarm != null) && tmpSOIAlarm.TypeOfAlarm == KACAlarm.AlarmType.SOIChange)
+            if ((tmpSOIAlarm != null) && tmpSOIAlarm.TypeOfAlarm == KACAlarm.AlarmTypeEnum.SOIChange)
             {
                 //Dont touch manually created SOI Alarms
             }
@@ -726,7 +726,7 @@ namespace KerbalAlarmClock
                         //alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strOldAlarmNameSOI, strOldAlarmMessageSOI, timeSOIAlarm, Settings.AlarmAutoSOIMargin,
                         //    KACAlarm.AlarmType.SOIChange, (Settings.AlarmOnSOIChange_Action > 0), (Settings.AlarmOnSOIChange_Action > 1)));
                         alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strSOIAlarmName, strSOIAlarmNotes, timeSOIAlarm, settings.AlarmAutoSOIMargin,
-                            KACAlarm.AlarmType.SOIChangeAuto, settings.AlarmOnSOIChange_Action));
+                            KACAlarm.AlarmTypeEnum.SOIChangeAuto, settings.AlarmOnSOIChange_Action));
                         //settings.SaveAlarms();
                     }
                 }
@@ -744,7 +744,7 @@ namespace KerbalAlarmClock
 
         private void RecalcSOIAlarmTimes(Boolean OverrideDriftThreshold)
         {
-            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmType.SOIChange && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()))
+            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.SOIChange && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()))
             {
                 if (tmpAlarm.Remaining.UT > settings.AlarmSOIRecalcThreshold)
                 {
@@ -761,7 +761,7 @@ namespace KerbalAlarmClock
 
         private void RecalcTransferAlarmTimes(Boolean OverrideDriftThreshold)
         {
-            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmType.Transfer))
+            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Transfer))
             {
                 if (tmpAlarm.Remaining.UT > settings.AlarmXferRecalcThreshold)
                 {
@@ -777,8 +777,8 @@ namespace KerbalAlarmClock
             }
         }
 
-        List<KACAlarm.AlarmType> TypesToRecalc = new List<KACAlarm.AlarmType>() {KACAlarm.AlarmType.Apoapsis,KACAlarm.AlarmType.Periapsis,
-                                                                                KACAlarm.AlarmType.AscendingNode,KACAlarm.AlarmType.DescendingNode};
+        List<KACAlarm.AlarmTypeEnum> TypesToRecalc = new List<KACAlarm.AlarmTypeEnum>() {KACAlarm.AlarmTypeEnum.Apoapsis,KACAlarm.AlarmTypeEnum.Periapsis,
+                                                                                KACAlarm.AlarmTypeEnum.AscendingNode,KACAlarm.AlarmTypeEnum.DescendingNode};
         private void RecalcNodeAlarmTimes(Boolean OverrideDriftThreshold)
         {
             //only do these recalcs for the current flight plan
@@ -788,17 +788,17 @@ namespace KerbalAlarmClock
                 {
                     switch (tmpAlarm.TypeOfAlarm)
 	                {
-                        case KACAlarm.AlarmType.Apoapsis:
+                        case KACAlarm.AlarmTypeEnum.Apoapsis:
                             if (KACWorkerGameState.ApPointExists &&
                                 ((Math.Abs(KACWorkerGameState.CurrentVessel.orbit.timeToAp) > settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
                                 tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + KACWorkerGameState.CurrentVessel.orbit.timeToAp;
                             break;
-                        case KACAlarm.AlarmType.Periapsis:
+                        case KACAlarm.AlarmTypeEnum.Periapsis:
                             if (KACWorkerGameState.PePointExists &&
                                 ((Math.Abs(KACWorkerGameState.CurrentVessel.orbit.timeToPe) > settings.AlarmNodeRecalcThreshold) || OverrideDriftThreshold))
                                 tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + KACWorkerGameState.CurrentVessel.orbit.timeToPe;
                             break;
-                        case KACAlarm.AlarmType.AscendingNode:
+                        case KACAlarm.AlarmTypeEnum.AscendingNode:
                             Double timeToAN;
                             //Boolean blnANExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Ascending, out timeToAN);
                             Boolean blnANExists;
@@ -818,7 +818,7 @@ namespace KerbalAlarmClock
                                 tmpAlarm.AlarmTime.UT = KACWorkerGameState.CurrentTime.UT - tmpAlarm.AlarmMarginSecs + timeToAN;
                             break;
 
-                        case KACAlarm.AlarmType.DescendingNode:
+                        case KACAlarm.AlarmTypeEnum.DescendingNode:
                             Double timeToDN;
                             //Boolean blnDNExists = KACUtils.CalcTimeToANorDN(KACWorkerGameState.CurrentVessel, KACUtils.ANDNNodeType.Descending, out timeToDN);
                             Boolean blnDNExists;
@@ -906,7 +906,7 @@ namespace KerbalAlarmClock
         private void MonitorManNodeOnPath()
         {
             //is there an alarm
-            KACAlarm tmpAlarm = alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmType.ManeuverAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString());
+            KACAlarm tmpAlarm = alarms.FirstOrDefault(a => a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.ManeuverAuto && a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString());
 
             //is there an alarm and no man node?
             if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
@@ -931,7 +931,7 @@ namespace KerbalAlarmClock
                     if (nodeAutoAlarm.UT + settings.AlarmAddManAutoMargin - settings.AlarmAddManAutoThreshold > KACWorkerGameState.CurrentTime.UT)
                     {
                         //or are we setting a new one
-                        alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin, KACAlarm.AlarmType.ManeuverAuto,
+                        alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin, KACAlarm.AlarmTypeEnum.ManeuverAuto,
                             settings.AlarmAddManAuto_Action , manNodesToStore));
                         settings.Save();
                     }
@@ -948,7 +948,7 @@ namespace KerbalAlarmClock
         /// </summary>
         public void UpdateEarthAlarms()
         {
-            foreach (KACAlarm tmpAlarm in alarms.Where(a=>a.TypeOfAlarm== KACAlarm.AlarmType.EarthTime))
+            foreach (KACAlarm tmpAlarm in alarms.Where(a=>a.TypeOfAlarm== KACAlarm.AlarmTypeEnum.EarthTime))
             {
                 tmpAlarm.Remaining.UT = (EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds;
             }
@@ -967,7 +967,7 @@ namespace KerbalAlarmClock
                         tmpAlarm.WarpInfluence = false;
 
                 //Update Remaining interval for each alarm
-                if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmType.EarthTime)
+                if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
                     tmpAlarm.Remaining.UT = tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT;
                 else
                     tmpAlarm.Remaining.UT = (EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds;
@@ -988,6 +988,7 @@ namespace KerbalAlarmClock
 
                         LogFormatted("Triggering Alarm - " + tmpAlarm.Name);
                         tmpAlarm.Triggered = true;
+                        APIInstance_AlarmStateChanged(tmpAlarm, AlarmStateEventsEnum.Triggered);
 
                         //If we are simply past the time make sure we halt the warp
                         //only do this in flight mode

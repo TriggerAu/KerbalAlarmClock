@@ -21,27 +21,27 @@ namespace KerbalAlarmClock
             {
                 int intTemp=0;
                 DrawRadioList(ref intTemp, "Launch Rendezvous");
-                if (AddType!= KACAlarm.AlarmType.LaunchRendevous)
+                if (AddType!= KACAlarm.AlarmTypeEnum.LaunchRendevous)
                 {
-                    AddType = KACAlarm.AlarmType.LaunchRendevous;
+                    AddType = KACAlarm.AlarmTypeEnum.LaunchRendevous;
                     AddTypeChanged();
                 }
             }
             else
             {
                 int intOption = 0;
-                if (AddType == KACAlarm.AlarmType.LaunchRendevous)
+                if (AddType == KACAlarm.AlarmTypeEnum.LaunchRendevous)
                 {
-                    AddType = KACAlarm.AlarmType.AscendingNode;
+                    AddType = KACAlarm.AlarmTypeEnum.AscendingNode;
                     AddTypeChanged();
                 }
-                if (AddType != KACAlarm.AlarmType.AscendingNode) intOption = 1;
+                if (AddType != KACAlarm.AlarmTypeEnum.AscendingNode) intOption = 1;
                 if (DrawRadioList(ref intOption, "Ascending", "Descending"))
                 {
                     if (intOption == 0)
-                        AddType = KACAlarm.AlarmType.AscendingNode;
+                        AddType = KACAlarm.AlarmTypeEnum.AscendingNode;
                     else
-                        AddType = KACAlarm.AlarmType.DescendingNode;
+                        AddType = KACAlarm.AlarmTypeEnum.DescendingNode;
                     AddTypeChanged();
                 }
             }

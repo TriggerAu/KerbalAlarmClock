@@ -39,11 +39,12 @@ Version 3.0.0.0
 - Screen clamping on main window
 - Sorted the multiline alarm display stuff
 - QuickAdd option for contextual Alarms
+- QuickAdd and Warp option
 - API for Alarm Creation/Modification and events
 - New Common Toolbar Wrapper - official one
 - App Launcher integration
 - Has input locking options for when mouse is over the panels - this prevents action groups from occuring when mouse is over windows
-- Option to disable Alt+F11
+- F11 keystroke disabled - can be reenabled via settings value
 
 Version 2.7.8.2		-	KSP Version: 0.24.2
 - Fixed issue with inputlocks not coming off sometimes (Fixes #48)

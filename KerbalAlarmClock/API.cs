@@ -43,7 +43,7 @@ namespace KerbalAlarmClock
             APIReady = false;
         }
 
-        void APIInstance_AlarmStateChanged(KACAlarm alarm, AlarmStateEventsEnum newstate)
+        internal void APIInstance_AlarmStateChanged(KACAlarm alarm, AlarmStateEventsEnum newstate)
         {
             if (onAlarmStateChanged != null)
                 onAlarmStateChanged(new AlarmStateChangedEventArgs(alarm, newstate));
@@ -55,13 +55,13 @@ namespace KerbalAlarmClock
 
         public class AlarmStateChangedEventArgs
         {
-            public AlarmStateChangedEventArgs(KACAlarm sender,AlarmStateEventsEnum eventType)
+            public AlarmStateChangedEventArgs(KACAlarm alarm,AlarmStateEventsEnum eventType)
             {
-                this.sender = sender;
+                this.alarm = alarm;
                 this.eventType = eventType;
             }
 
-            public KACAlarm sender;
+            public KACAlarm alarm;
             public AlarmStateEventsEnum eventType;
         }
 
@@ -74,8 +74,48 @@ namespace KerbalAlarmClock
 
 
         //methods
-       // public KACAlarm CreateAlarm() { }
+        public void TestMethod()
+        {
+            LogFormatted("API Method Called");
+        }
 
+        public String CreateAlarm(KACAlarm.AlarmTypeEnum AlarmType, String Name,Double UT)
+        //public KACAlarm CreateAlarm(String Name)
+        {
+            LogFormatted("B");
+            KACAlarm tmpAlarm = new KACAlarm(UT);
+            tmpAlarm.TypeOfAlarm=AlarmType;
+            tmpAlarm.Name=Name;
 
+            alarms.Add(tmpAlarm);
+
+            return tmpAlarm.ID;
+        }
+
+        public Boolean DeleteAlarm(String AlarmID)
+        {
+            Boolean blnReturn = false;
+            try
+            {
+                KACAlarm tmpAlarm = alarms.FirstOrDefault(a => a.ID == AlarmID);
+                if (tmpAlarm != null)
+                {
+                    LogFormatted("API-DeleteAlarm-Deleting:{0}", AlarmID);
+                    alarms.Remove(tmpAlarm);
+                    blnReturn = true;
+                }
+                else
+                {
+                    LogFormatted("API-DeleteAlarm-ID Not Found:{0}", AlarmID);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogFormatted("API-DeleteAlarm-Error:{0}\r\n{1}", AlarmID,ex.Message);
+            }
+            return blnReturn;
+
+        }
+       
     }
 }

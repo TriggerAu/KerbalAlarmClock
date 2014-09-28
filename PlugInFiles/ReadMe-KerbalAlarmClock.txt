@@ -28,23 +28,25 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
-Version 3.0.0.0
-- Restructure plugin folders
-- Restructure settings
+Version 3.0.0.0		-	KSP Version: 0.24.2
 - Ability to choose from 3 visual Skins
 - Alarm Saving - now in the games save file - only saves and loads on game/save and load
-- Added Kill Warp with No Message action and restructured buttons/code behind
-- Removed periodic save of alarms file now that alarms are in the save files
-- Adjusted settings tabs to better layout options
-- Screen clamping on main window
-- Sorted the multiline alarm display stuff
 - QuickAdd option for contextual Alarms
 - QuickAdd and Warp option
+- Added Kill Warp with No Message action and restructured buttons/code behind
+- Adjusted settings tabs to better layout options
 - API for Alarm Creation/Modification and events
-- New Common Toolbar Wrapper - official one
 - App Launcher integration
 - Has input locking options for when mouse is over the panels - this prevents action groups from occuring when mouse is over windows
+- New Common Toolbar Wrapper - official one
+- Removed periodic save of alarms file now that alarms are in the save files
+- Screen clamping on main window
+- Sorted the multiline alarm display stuff
+- Window Resizing for better display
+- Font changes to make more readable
 - F11 keystroke disabled - can be reenabled via settings value
+- Restructure settings
+- Restructure plugin folders
 
 Version 2.7.8.2		-	KSP Version: 0.24.2
 - Fixed issue with inputlocks not coming off sometimes (Fixes #48)

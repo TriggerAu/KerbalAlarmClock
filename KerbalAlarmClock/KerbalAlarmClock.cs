@@ -373,7 +373,7 @@ namespace KerbalAlarmClock
                 MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
                 MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
                 MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
-                //MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowQuickAddRect, WindowVisibleByActiveScene && _ShowQuickAdd);
+                MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowQuickAddRect, WindowVisibleByActiveScene && _ShowQuickAdd);
 #if DEBUG
                 MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowDebugRect, WindowVisibleByActiveScene && _ShowDebugPane);
 #endif

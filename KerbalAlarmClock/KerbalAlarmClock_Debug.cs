@@ -299,14 +299,21 @@ namespace KerbalAlarmClock
             }
 
 
-            GUILayout.Label("window: " + ddlSettingsSkin.WindowRect.ToString());
-            GUILayout.Label("button: " + ddlSettingsSkin.rectButton.ToString());
-            GUILayout.Label("list: " + ddlSettingsSkin.rectListBox.ToString());
+            GUILayout.Label("MouseAny: " + MouseOverAnyWindow.ToString());
+            GUILayout.Label("MouseQuick: " + MouseOverWindow(_WindowQuickAddRect, WindowVisibleByActiveScene && _ShowQuickAdd).ToString());
+            GUILayout.Label("MainRect: " + WindowPosByActiveScene.ToString());
+            GUILayout.Label("QuickRect: " + _WindowQuickAddRect.ToString());
+            GUILayout.Label("QuickShow: " + _ShowQuickAdd.ToString());
+            GUILayout.Label("MousePos: " + Event.current.mousePosition.ToString());
 
-            foreach (KACAlarm item in alarms)
-            {
-                GUILayout.Label(String.Format("{0}:{1}", item.Name, item.AlarmAction));
-            }
+
+            //GUILayout.Label("button: " + ddlSettingsSkin.rectButton.ToString());
+            //GUILayout.Label("list: " + ddlSettingsSkin.rectListBox.ToString());
+
+            //foreach (KACAlarm item in alarms)
+            //{
+            //    GUILayout.Label(String.Format("{0}:{1}", item.Name, item.AlarmAction));
+            //}
 
             
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)

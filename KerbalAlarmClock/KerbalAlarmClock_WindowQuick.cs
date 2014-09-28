@@ -42,8 +42,13 @@ namespace KerbalAlarmClock
             }
             lstQuickButtons.Add(new QuickAddItem("Raw Alarm (10 Min)", KACResources.iconRaw, QuickAddRaw));
 
-            lstQuickButtons.Add(new QuickAddItem("Earth Alarm (1 Hr)", KACResources.iconEarth));
+            QuickAddItem qkEarth = new QuickAddItem("Earth Alarm (1 Hr)", KACResources.iconEarth);
+            qkEarth.AllowAddAndWarp = false;
+            lstQuickButtons.Add(qkEarth);
 
+            QuickWindowHeight = 28 + (24 * lstQuickButtons.Count);
+            if (settings.SelectedSkin != Settings.DisplaySkin.Default)
+                QuickWindowHeight -= 8;
         }
 
         List<QuickAddItem> lstQuickButtons;
@@ -81,28 +86,31 @@ namespace KerbalAlarmClock
                 item.ButtonRect = GUILayoutUtility.GetLastRect();
             GUI.Box(new Rect(item.ButtonRect.x + 8, item.ButtonRect.y + 3, 18, 14), item.Icon, new GUIStyle());
 
-            GUILayout.Space(-5);
-
-            GUIContent contButton = new GUIContent(">>", "Warp to " + item.Text);
-            if (GUILayout.Button(contButton, KACResources.styleQAListButton, GUILayout.Width(30)))
+            if (item.AllowAddAndWarp)
             {
-                if (item.ActionToCall != null)
+                GUILayout.Space(-5);
+
+                GUIContent contButton = new GUIContent(">>", "Warp to " + item.Text);
+                if (GUILayout.Button(contButton, KACResources.styleQAListButton, GUILayout.Width(30)))
                 {
-                    KACAlarm newAlarm = item.ActionToCall.Invoke();
-
-                    LogFormatted("Creating Alarm and setting warp rate-Remaining Time:{0}", newAlarm.Remaining.UT);
-
-                    Int32 intRate = TimeWarp.fetch.warpRates.Length - 1;
-                    while (intRate > 0 && (TimeWarp.fetch.warpRates[intRate] * 2) > newAlarm.Remaining.UT)
+                    if (item.ActionToCall != null)
                     {
-                        intRate -= 1;
-                    }
-                    LogFormatted("Setting Rate to {0}={1}x", intRate, TimeWarp.fetch.warpRates[intRate]);
+                        KACAlarm newAlarm = item.ActionToCall.Invoke();
 
-                    TimeWarp.fetch.Mode = TimeWarp.Modes.HIGH;
-                    TimeWarp.SetRate(intRate, false);
+                        LogFormatted("Creating Alarm and setting warp rate-Remaining Time:{0}", newAlarm.Remaining.UT);
+
+                        Int32 intRate = TimeWarp.fetch.warpRates.Length - 1;
+                        while (intRate > 0 && (TimeWarp.fetch.warpRates[intRate] * 2) > newAlarm.Remaining.UT)
+                        {
+                            intRate -= 1;
+                        }
+                        LogFormatted("Setting Rate to {0}={1}x", intRate, TimeWarp.fetch.warpRates[intRate]);
+
+                        TimeWarp.fetch.Mode = TimeWarp.Modes.HIGH;
+                        TimeWarp.SetRate(intRate, false);
+                    }
+                    _ShowQuickAdd = false;
                 }
-                _ShowQuickAdd = false;
             }
             GUILayout.EndHorizontal();
         }
@@ -282,6 +290,8 @@ namespace KerbalAlarmClock
             internal GUIContent Content { get; private set; }
 
             internal Rect ButtonRect;
+            internal Boolean AllowAddAndWarp = true;
+
             internal Func<KACAlarm> ActionToCall;
         }
 

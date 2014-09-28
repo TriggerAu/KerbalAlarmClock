@@ -72,17 +72,16 @@ namespace KerbalAlarmClock
             Deleted,
         }
 
-
-        //methods
-        public void TestMethod()
-        {
-            LogFormatted("API Method Called");
-        }
-
+        /// <summary>
+        /// Create a new Alarm method for calling via API
+        /// </summary>
+        /// <param name="AlarmType">Enum of type of alarm</param>
+        /// <param name="Name">Text Name of the Alarm</param>
+        /// <param name="UT">Universal Time of the Alarm</param>
+        /// <returns>Alarms Unique ID</returns>
         public String CreateAlarm(KACAlarm.AlarmTypeEnum AlarmType, String Name,Double UT)
         //public KACAlarm CreateAlarm(String Name)
         {
-            LogFormatted("B");
             KACAlarm tmpAlarm = new KACAlarm(UT);
             tmpAlarm.TypeOfAlarm=AlarmType;
             tmpAlarm.Name=Name;
@@ -92,6 +91,11 @@ namespace KerbalAlarmClock
             return tmpAlarm.ID;
         }
 
+        /// <summary>
+        /// Delete Alarm Method for calling via API
+        /// </summary>
+        /// <param name="AlarmID">Unique ID of the alarm</param>
+        /// <returns>Success</returns>
         public Boolean DeleteAlarm(String AlarmID)
         {
             Boolean blnReturn = false;

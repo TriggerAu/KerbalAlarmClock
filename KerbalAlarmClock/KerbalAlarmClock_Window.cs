@@ -385,6 +385,7 @@ namespace KerbalAlarmClock
         private Int32 AddWindowHeight;
 
         private Int32 EarthWindowHeight = 216;
+        private Int32 QuickWindowHeight = 28;
 
         internal void DrawWindows()
         {
@@ -492,7 +493,7 @@ namespace KerbalAlarmClock
             }
             else if (_ShowQuickAdd)
             {
-                _WindowQuickAddRect = GUILayout.Window(_WindowQuickAddID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, 300, 10), FillQuickWindow, "Quick Add", KACResources.styleWindow);
+                _WindowQuickAddRect = GUILayout.Window(_WindowQuickAddID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, 300, QuickWindowHeight), FillQuickWindow, "Quick Add", KACResources.styleWindow);
             }
 
             if (_ShowBackupFailedMessage)

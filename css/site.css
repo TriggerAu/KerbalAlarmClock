@@ -1,0 +1,129 @@
+﻿body {
+    padding-top: 70px;
+    padding-bottom:40px;
+}
+
+.navbar-fixed-top {
+    min-height: 79px;
+}
+
+.navbar-fixed-bottom {
+    min-height: 30px;
+}
+
+    .navbar-fixed-bottom .navbar-text {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .navbar-fixed-bottom i {
+        font-size:18px;
+        padding-left:5px;
+        padding-right:5px;
+        color:#777;
+    }
+
+.navbar-brand {
+    padding-top: 0px;
+}
+
+.navbar-nav li {
+    text-align: center;
+}
+
+    .navbar-nav li > a {
+        padding-left: 20px;
+        padding-right: 20px;
+        text-decoration: none;
+        -o-transition: all .3s;
+        -moz-transition: all .3s;
+        -webkit-transition: all .3s;
+        -ms-transition: all .3s;
+    }
+
+        .navbar-nav > li > a:hover {
+            background-color: #007acc !important;
+            color: white !important;
+        }
+        .navbar-nav > li.disabled > a:hover {
+            background-color: transparent !important;
+            color: #ccc !important;
+        }
+
+
+
+.navbar-default .navbar-nav > .active > a:hover {
+    background-image: none;
+}
+
+.navbar-default .navbar-nav > .active > a {
+    border-top: #007acc solid 5px;
+    padding-top: 10px;
+}
+
+.navbar-toggle {
+    margin-top:20px;
+    margin-bottom:25px;
+}
+
+.ShadedBlock {
+    margin: 0 auto;
+    background: #f8f8f8 url(../images/backgroundpattern.jpg) left top repeat;
+    -moz-box-shadow: 0 5px 15px 0 rgba(0,0,0,.05) inset, 0 -5px 15px 0 rgba(0,0,0,.05) inset;
+    -webkit-box-shadow: 0 5px 15px 0 rgba(0,0,0,.05) inset, 0 -5px 15px 0 rgba(0,0,0,.05) inset;
+    box-shadow: 0 5px 15px 0 rgba(0,0,0,.05) inset, 0 -5px 15px 0 rgba(0,0,0,.05) inset;
+}
+
+.flexslider .slides > li {
+    margin-right: 8px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+    .flexslider .slides > li a {
+        cursor: zoom-in;
+    }
+
+
+        .list-links i {
+        font-size:18px;
+        padding-left:5px;
+        padding-right:5px;
+        color:#777;
+    }
+
+.version-banner{
+    position:fixed;
+    z-index:1030;
+    top:79px;
+    right:0px;
+    width:195px;
+    background-color:green;
+    color:white;
+    padding:2px 5px 4px 15px;
+    text-align:center;
+
+    /*background-image: -webkit-linear-gradient(top,#fff 0,#f8f8f8 100%);
+    background-image: -o-linear-gradient(top,#fff 0,#f8f8f8 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#fff),to(#f8f8f8));
+    background-image: linear-gradient(to bottom,#9ad98a 0,#78aa6c 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    background-repeat: repeat-x;*/
+    background-image: -webkit-linear-gradient(top,#5cb85c 0,#419641 100%);
+background-image: -o-linear-gradient(top,#5cb85c 0,#419641 100%);
+background-image: -webkit-gradient(linear,left top,left bottom,from(#5cb85c),to(#419641));
+background-image: linear-gradient(to bottom,#5cb85c 0,#419641 100%);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5cb85c', endColorstr='#ff419641', GradientType=0);
+filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+background-repeat: repeat-x;
+border-color: #3e8f3e;
+    /*Turned corner*/
+    -moz-border-radius-bottomleft: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+    -khtml-border-radius-bottomleft: 20px;  
+    border-bottom-left-radius: 20px;
+
+    /*DropShadow*/
+    -webkit-box-shadow: rgba(255, 255, 255, 0) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 1px 5px 0px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0),0 1px 5px rgba(0,0,0,.2);
+}

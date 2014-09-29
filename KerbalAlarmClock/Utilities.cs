@@ -271,7 +271,6 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-
         #region "offset building"
         internal static RectOffset SetWindowRectOffset(RectOffset tmpRectOffset, int intValue)
         {

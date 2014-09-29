@@ -133,6 +133,10 @@ namespace KerbalAlarmClock
 
             InitDropDowns();
 
+            winAlarmImport.KAC = this;
+            winAlarmImport.Visible = false;
+            winAlarmImport.InitWindow();
+
             APIAwake();
         }
 
@@ -144,6 +148,11 @@ namespace KerbalAlarmClock
             } else {
                 if (!psm.targetScenes.Any(x=>x==HighLogic.LoadedScene))
                     psm.targetScenes.Add(HighLogic.LoadedScene);
+            }
+
+            foreach (AssemblyLoader.LoadedAssembly item in AssemblyLoader.loadedAssemblies )
+            {
+                LogFormatted("A:{0}-{1}.{2}", item.assembly.FullName, item.versionMajor,item.versionMinor);
             }
         }
 

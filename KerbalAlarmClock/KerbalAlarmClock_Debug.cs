@@ -272,6 +272,30 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
+
+            if (GUILayout.Button("Load Old Alarm List"))
+            {
+                winAlarmImport.Visible = !winAlarmImport.Visible;
+                //KACAlarmList oldAlarms = UtilitiesLegacy.Loadv2Alarms();
+
+                //if (oldAlarms.Count>0)
+                //{
+                //    //write it out
+                //    foreach (KACAlarm oldAlarm in oldAlarms)
+                //    {
+                //        LogFormatted("{0} @ {1}", oldAlarm.Name, oldAlarm.AlarmTime.UT);
+                //    }
+                //    LogFormatted("{0}", oldAlarms.EncodeToCN().ToString());
+
+                //    alarms = oldAlarms;
+                //}
+                //else
+                //{
+                //    LogFormatted("Could not find alarms file for: {0}", HighLogic.CurrentGame.Title);
+                //}
+
+            }
+
             //intMainWindowEarthTimeHeight = intTestheight4;
 
             //if (GUILayout.Button("Create"))
@@ -805,6 +829,7 @@ namespace KerbalAlarmClock
             GUI.DragWindow();
 
         }
+                
         //bool blnRecalc = false;
 
         //private void GUILabelPhaseApproach(Orbit orbitOrig,Orbit orbitTarget)

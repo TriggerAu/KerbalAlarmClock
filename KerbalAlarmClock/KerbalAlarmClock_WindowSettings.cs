@@ -144,7 +144,7 @@ namespace KerbalAlarmClock
                     break;
                 case 3:
                     WindowLayout_SettingsAbout();
-                    intSettingsHeight = 294; //306;
+                    intSettingsHeight = intTestheight; // 294; //306;
                     break;
                 default:
                     break;
@@ -601,7 +601,7 @@ namespace KerbalAlarmClock
             }
             GUILayout.EndVertical();
 
-            //Update Check Area
+            //About Area
             GUILayout.Label("About", KACResources.styleAddSectionHeading);
 
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
@@ -622,6 +622,29 @@ namespace KerbalAlarmClock
             if (GUILayout.Button("Click Here", KACResources.styleContent))
                 Application.OpenURL("http://forum.kerbalspaceprogram.com/showthread.php/24786-Kerbal-Alarm-Clock");
 
+            GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
+
+            //Alarm Update Area
+            GUILayout.Label("v2 Alarm Import", KACResources.styleAddSectionHeading);
+
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical();
+            //GUILayout.Label("Written by:", KACResources.styleAddHeading);
+            if (GUILayout.Button("Open Import Tool")){
+                winAlarmImport.Visible = true;
+                _ShowSettings = false;
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+            //GUILayout.Label("Trigger Au",KACResources.styleContent);
+            if (GUILayout.Button("Import Instructions", KACResources.styleContent))
+                Application.OpenURL("http://triggerau.github.io/KerbalAlarmClock/Information");
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

@@ -369,7 +369,9 @@ namespace KerbalAlarmClock
         private static Int32 _WindowQuickAddID = 0;
         private static Rect _WindowQuickAddRect;
 
-        
+
+        private static Windows.AlarmImport winAlarmImport = new Windows.AlarmImport();
+
 
         //Window Size Constants
         private Int32 intMainWindowWidth = 340;
@@ -436,6 +438,9 @@ namespace KerbalAlarmClock
 
             //Now show the window
             WindowPosByActiveScene = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + settings.Version,KACResources.styleWindow);
+
+            if (winAlarmImport.Visible)
+                winAlarmImport.windowRect = GUILayout.Window(winAlarmImport.windowID, winAlarmImport.windowRect, winAlarmImport.FillWindow, "Import v2 Alarm File", KACResources.styleWindow);
 
             //Do we have anything to show in the right pane
             if (_ShowSettings)

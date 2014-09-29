@@ -85,6 +85,8 @@
     <Compile Include="Settings.cs" />
     <Compile Include="TimeObjects.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="UtilitiesLegacy.cs" />
+    <Compile Include="Windows\AlarmImport.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TextFile1.txt" />

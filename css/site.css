@@ -70,6 +70,58 @@ section{
     margin-bottom:25px;
 }
 
+.alarm-details > div  {
+    color: #5d5d5d;
+    background: #f8f8f8;
+    border-bottom: #007acc solid 3px;
+    text-align:center;
+    height:100px;
+    margin:5px;
+    margin:5px;
+    padding-top:10px;
+}
+    .alarm-details  h4 {
+        font-family: 'Droid Sans', Helvetica, Arial, sans-serif;
+        font-weight:bold;
+        text-transform: uppercase;
+        font-size: 14px;
+        margin-top:3px;
+        margin-bottom:3px;
+    }
+    .alarm-details > div {
+        font-size:12px;
+    }
+
+
+    #side-nav .nav>.active>a, #side-nav .nav>.active:hover>a, #side-nav .nav>.active:focus>a {
+        padding-left: 18px;
+        font-weight: 700;
+        color: #563d7c;
+        background-color: transparent;
+        border-left: 2px solid #563d7c;
+    }
+    #side-nav .nav .nav>.active>a, #side-nav .nav .nav>.active:hover>a, #side-nav .nav .nav>.active:focus>a {
+        font-weight: 500;
+        padding-left: 28px;
+    }
+ 
+    #side-nav .nav>li>a {
+        display: block;
+        font-size: 13px;
+        font-weight: 400;
+        color: #999;
+        padding: 4px 20px;
+    }
+    #side-nav .nav .nav {
+        display: none;
+        padding-bottom: 10px;
+    }
+    #side-nav .nav>.active>.nav {
+        display: block;
+        padding-bottom: 10px;
+    }
+
+
 .ShadedBlock {
     margin: 0 auto;
     background: #f8f8f8 url(../images/backgroundpattern.jpg) left top repeat;

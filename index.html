@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Kerbal Alarm Clock by TriggerAu</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet" />
+
+    <!--FontAwesome-->
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+
+    <!--Flexslider-->
+    <link href="css/flexslider.css" rel="stylesheet" />
+    <link href="css/lightbox.css" rel="stylesheet" />
+
+    <link href="css/site.css" rel="stylesheet" />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body role="document">
+
+    <!-- Fixed navbar -->
+    <div class="container">
+        <div class="navbar navbar-default navbar-fixed-top " role="navigation">
+
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html"><img src="images/TriggerTechLogo.png" alt="TriggerTech" /></a>
+            </div>
+            <!--<div class="navbar-collapse collapse navbar-left">
+                            <p class="navbar-text" style="font-size:30px;margin:0px;">
+                                <span style="font-weight:bold;font-size:50px;">T</span>ransfer
+                                <span>W</span>indow
+                                <span>P</span>lanner
+            </p>
+                        </div>-->
+            <div class="pull-left" style="font-size:24px;">Kerbal Alarm Clock</div>
+            <div class="navbar-collapse collapse navbar-right" style="padding-right:10px;">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#"><i class="fa fa-home fa-2x"></i><br />Home</a></li>
+                    <li><a href="install.html"><i class="fa fa-gears fa-2x"></i><br />Install</a></li>
+                    <li class="disabled" title="Not Ready Yet"><a href="tutorial.html"><i class="fa fa-book fa-2x"></i><br />Tutorial</a></li>
+                    <li><a href="about.html"><i class="fa fa-info-circle fa-2x"></i><br />About</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+    <!--Version Banner-->
+    <div class="version-banner">
+        Current Version:
+        <span id="lblVersionQuery">Querying...</span>
+        <span id="lblVersionResult" style="display:none;"><a href="https://github.com/TriggerAu/KerbalAlarmClock/releases/latest" style="color:white;"><span id="lblVersionText"></span></a> </span>
+        <span id="lblVersionError" style="display:none;color:#ff8a37;">Unknown</span>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Kerbal Alarm Clock <small> for Kerbal Space Program</small></h2>
+            <h4>An in-game implementation of Alexmun's Launch Window Planner</h4>
+        </div>
+        <p>The Kerbal Alarm Clock is a plugin for Kerbal Space Program that brings some functionality from some great web apps in-game. I wrapped my brain around some orbital maths and Alexmun provided some of the important code to help me show data visualisations of Delta-V required to transfer between planetary bodies in KSP</p>
+
+        <p>Here you will find information and pictures about the Kerbal Alarm Clock plugin.</p>
+    </div>
+
+
+
+    <div class="ShadedBlock">
+        <div class="container" style="padding-top:15px;text-align:right;">
+            <!-- Place somewhere in the <body> of your page -->
+            <div class="flexslider" style="margin-bottom:20px;">
+                <ul class="slides">
+                    <li>
+                        <a href="images/TWPMainWindow.png" data-lightbox="TWPImages" data-title="Kerbal Alarm Clock Main Window Example">
+                            <img src="images/ThumbTWPMainWindow.png" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="images/TWPScreen1.png" data-lightbox="TWPImages" data-title="Opening it up with the instructions">
+                            <img src="images/ThumbTWPScreen1.png" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="images/TWPScreen2.png" data-lightbox="TWPImages" data-title="Plotting a chart">
+                            <img src="images/ThumbTWPScreen2.png" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="images/TWPScreen3.png" data-lightbox="TWPImages" data-title="And heres the result. Clicking around will show the details">
+                            <img src="images/ThumbTWPScreen3.png" />
+                        </a>
+                    </li>
+                    <!--<li>
+                        <a href="images/TWPScreen4.png" data-lightbox="TWPImages" data-title="Kerbal Alarm Clock Main Window Example">
+                            <img src="images/ThumbTWPScreen4.png" />
+                        </a>
+                    </li>-->
+                    <li>
+                        <a href="images/TWPScreen5.png" data-lightbox="TWPImages" data-title="Created an alarm in KAC using the copy functions for Departure time and details">
+                            <img src="images/ThumbTWPScreen5.png" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="images/TWPScreen6.png" data-lightbox="TWPImages" data-title="Warping to the launch window with the Alarm Clock">
+                            <img src="images/ThumbTWPScreen6.png" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="images/TWPScreen7.png" data-lightbox="TWPImages" data-title="Plugging the values in we get an intercept">
+                            <img src="images/ThumbTWPScreen7.png" />
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <span style="position:relative;top:-10px;color:#777;">
+                Click on an image to zoom
+            </span>
+        </div>
+    </div>
+    <div class="container">
+        <h3>What does it do?</h3>
+        <p>Simply put it provides data visualisations of the Δv required for planetary transfers. Hopefully the porkchop plot will help you to find an efficient time/burn to reach your destination.</p>
+        <p>Once you open up the Tool using the AppLauncher of integrated toolbar you select the Origin and Destination for your interplanetary transfer. Review and change any timings you want and Click "Plot".</p>
+        <p>Once the porkchop is plotted it gives you a visualisation of how much Delta-V is required to transfer a vessel from the origin to the destination and where the "sweet spot" is. By clicking on the plot it will show you all the important details about the transfer thats selected and give you the capability to copy these to the clipboard</p>
+    </div>
+    <div class="ShadedBlock">
+        <div class="container">
+            <h3>Further Information and Links</h3>
+            <h4>Licensing</h4>
+            <img src="images/DT-OSILogo16.png" alt="OSI" /> This work is licensed under an MIT license - <a href="https://github.com/TriggerAu/KerbalAlarmClock/blob/master/LICENSE" target="_blank">included in source code</a>
+            <h4>Special Thanks</h4>
+            <ul>
+                <li>
+                    A big thanks to Alexmun for his WebApp that does this and his providing of a lot of the maths code involved
+                </li>
+                <li>
+                    Also thanks to NathanKell for his persistence in explaining Real Solar System to me so I could test with it
+                </li>
+            </ul>
+    <h4>Links</h4>
+    <ul class="list-links">
+        <li>
+            <a href="http://forum.kerbalspaceprogram.com/threads/24786-Kerbal-Alarm-Clock" target="_blank"><i class="fa fa-rocket"></i>Kerbal Alarm Clock Forum Thread</a>
+        </li>
+        <li><a href="https://github.com/TriggerAu/KerbalAlarmClock/releases" target="_blank"><i class="fa fa-download"></i>Downloads on Github</a></li>
+        <li><a href="http://kerbal.curseforge.com/ksp-mods/220289-kerbal-alarm-clock/files" target="_blank"><i class="fa fa-download"></i>Downloads on CurseForge</a></li>
+        <li><a href="https://github.com/TriggerAu/KerbalAlarmClock"><i class="fa fa-github"></i>Source Code and Project on Github</a></li>
+    </ul>
+</div>
+    </div>
+    <!-- Begin footer content -->
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        <p class="navbar-text navbar-left" style="padding-left: 20px;">&copy; 2014 - TriggerTech - 
+            <img src="images/DT-OSILogo16.png" alt="OSI" /> MIT License</p>
+        <p class="navbar-text navbar-right" style="padding-right: 20px;">
+            <a href="http://forum.kerbalspaceprogram.com/threads/24786-Kerbal-Alarm-Clock" target="_blank"><i class="fa fa-rocket"></i>Forum Thread</a>
+            <a href="https://github.com/TriggerAu/KerbalAlarmClock/releases" target="_blank"><i class="fa fa-download"></i>Downloads</a>
+            <a href="https://github.com/TriggerAu/KerbalAlarmClock"><i class="fa fa-github"></i>Source on Github</a>
+        </p>
+    </div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- jQuery (necessary for FlexSlider's JavaScript plugins) -->
+    <script src="js/jquery.flexslider-min.js"></script>
+    <script src="js/lightbox.min.js"></script>
+
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            $('.flexslider').flexslider({
+                animation: "slide",
+                animationLoop: false,
+                itemWidth: 350,
+                itemMargin: 5,
+                slideshow: false
+            });
+
+            $(".disabled").bind("click", false);
+
+            $.get("versioncheck.txt", null, versionGrabComplete).fail(versionGrabFailed);
+        });
+
+        function versionGrabComplete(object, textStatus, jqXHR) {
+            var versionText = object.split("|")[2];
+            $("#lblVersionText").text(versionText);
+
+            $("#lblVersionQuery").hide();
+            $("#lblVersionResult").show();
+        }
+        function versionGrabFailed(jqXHR, textStatus, message) {
+            $("#lblVersionError").attr("title", "Status: " + jqXHR.status + "\r\nMessage: " + message);
+
+            $("#lblVersionQuery").hide();
+            $("#lblVersionError").show();
+        }
+    </script>
+</body>
+</html>

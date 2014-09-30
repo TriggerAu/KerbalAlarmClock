@@ -144,7 +144,7 @@ namespace KerbalAlarmClock
                     break;
                 case 3:
                     WindowLayout_SettingsAbout();
-                    intSettingsHeight = intTestheight; // 294; //306;
+                    intSettingsHeight = 350; // 294; //306;
                     break;
                 default:
                     break;

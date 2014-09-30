@@ -650,7 +650,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             //GUILayout.Label("Trigger Au",KACResources.styleContent);
             if (GUILayout.Button("Import Instructions", KACResources.styleContent))
-                Application.OpenURL("http://triggerau.github.io/KerbalAlarmClock/Install.html#AlarmImport");
+                Application.OpenURL("http://triggerau.github.io/KerbalAlarmClock/install.html#AlarmImport");
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

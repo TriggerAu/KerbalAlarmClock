@@ -3,6 +3,11 @@
     padding-bottom:40px;
 }
 
+section{
+    padding-top: 70px;
+    margin-top: -70px;
+}
+
 .navbar-fixed-top {
     min-height: 79px;
 }

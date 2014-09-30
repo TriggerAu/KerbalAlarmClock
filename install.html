@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title>Transfer Window Planner by TriggerAu</title>
+    <title>Kerbal Alarm Clock by TriggerAu</title>
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/bootstrap-theme.min.css" rel="stylesheet" />
@@ -64,9 +64,9 @@
     </div>
     <!--Version Banner-->
     <div class="version-banner">
-        Current Version: 
+        Current Version:
         <span id="lblVersionQuery">Querying...</span>
-        <span id="lblVersionResult" style="display:none;"><a href="https://github.com/TriggerAu/TransferWindowPlanner/releases/latest" style="color:white;" ><span id="lblVersionText"></span></a> </span>
+        <span id="lblVersionResult" style="display:none;"><a href="https://github.com/TriggerAu/KerbalAlarmClock/releases/latest" style="color:white;"><span id="lblVersionText"></span></a> </span>
         <span id="lblVersionError" style="display:none;color:#ff8a37;">Unknown</span>
     </div>
 
@@ -74,50 +74,112 @@
         <div class="page-header">
             <h2>Installation Instructions</h2>
         </div>
-        
-        <h3>Download</h3>
-        You can download the the Transfer Window Planner from:
-        <ul>
-            <li>From <a href="http://kerbal.curseforge.com/ksp-mods/224116-transfer-window-planner/files" target="_blank">CurseForge</a></li>
-            <li>From <a href="https://github.com/TriggerAu/TransferWindowPlanner/releases" target="_blank">GitHub</a></li>
-        </ul>
-        
-    </div>
-    <div class="ShadedBlock">
-        <div class="container" style="padding-bottom:15px;">
-            <h3>Installation</h3>
-            <h4>1. Extracting the Zip file to a temporary location</h4>
-            <p>Take the downloaded file and extract it to a temporary location. You will end up with a folder that looks like the below:</p>
-            <img src="images/Install1.png" alt="Source Zip" style="box-shadow: 5px 5px 10px #777;" />
-        </div>
-    </div>
-    <div class="container" style="padding-bottom:15px;">
-        <h4>2. Finding the KSP Main Folder</h4>
-        <p>The first step to installing an addon is to locate the KSP folder in your computer. This is where KSP keeps all of its files, including your game saves and screenshots. The KSP folder is located where you unzipped it when you first downloaded the game. The folder looks like the below:</p>
-        <img src="images/Install2.png" alt="Source Zip" style="box-shadow: 5px 5px 10px #777;" />
-    </div>
-    <div class="ShadedBlock">
-        <div class="container" style="padding-bottom:15px;">
-            <h4>3. Installing the Mod</h4>
-            <p>Simply copy the files from the GameData source into the GameData folder in the KSP Game folder. As shown below:</p>
-            <img src="images/Install3.png" alt="Source Zip" style="box-shadow: 5px 5px 10px #777;" />
-        </div>
-    </div>
-    <div class="container" style="padding-bottom:15px;">
-        <h4>4. All Done!!</h4>
-        <p>Your Game folder will now look like this. And you should be able to start KSP and use the Plugin</p>
-        <img src="images/Install4.png" alt="Source Zip" style="box-shadow: 5px 5px 10px #777;" />
-    </div>
 
+        <h3>Download</h3>
+        You can download the the Kerbal Alarm Clock from <i>(in alphabetical order)</i>:
+        <ul>
+            <li>From <a href="http://kerbal.curseforge.com/ksp-mods/220289-kerbal-alarm-clock/files" target="_blank">CurseForge</a></li>
+            <li>From <a href="https://kerbalstuff.com/mod/231/Kerbal%20Alarm%20Clock/download" target="_blank">KerbalStuff</a></li>
+            <li>From <a href="https://github.com/TriggerAu/KerbalAlarmClock/releases" target="_blank">GitHub</a></li>
+        </ul>
+
+    </div>
+    <section id="Installation">
+        <div class="container">
+            <h3>Upgrading from v2 to v3 <span class="label label-danger">Important</span></h3>
+            <p>
+                There are two things that are important to note when upgrading from v2 to v3
+                <ol>
+                    <li>You cannot have both v2 and v3 installed at the same time</li>
+                    <li>It is important to note that v3 of KAC stores the alarms in the save file in a scenario module - no longer in its own Alarms-xxxxx.txt file</li>
+                </ol>
+            </p>
+            <p>If you wish to import your Alarms from v2 then you will need to save the alarms file before removing v2. There is a tool provide in v3 and you will find instructions below under <a href="#AlarmImport">Importing v2 Alarms</a></p>
+        </div>
+        <div class="ShadedBlock">
+            <div class="container" style="padding-bottom:15px;">
+
+                <h3>Installation</h3>
+                <p style="font-weight:bold; color:red;">If you are upgrading from v2 please ensure you read the <a href="#AlarmImport">Importing v2 Alarms Instructions</a> before proceeding so you dont overwrite your alarms file</p>
+                <h4>1. Extracting the Zip file to a temporary location</h4>
+                <p>Take the downloaded file and extract it to a temporary location. You will end up with a folder that looks like the below:</p>
+                <img src="images/Install1.png" alt="Source Zip" style="box-shadow: 5px 5px 10px #777;" />
+            </div>
+        </div>
+        <div class="container" style="padding-bottom:15px;">
+            <h4>2. Finding the KSP Main Folder</h4>
+            <p>The first step to installing an addon is to locate the KSP folder in your computer. This is where KSP keeps all of its files, including your game saves and screenshots. The KSP folder is located where you unzipped it when you first downloaded the game. The folder looks like the below:</p>
+            <img src="images/Install2.png" alt="Source Zip" style="box-shadow: 5px 5px 10px #777;" />
+        </div>
+        <div class="ShadedBlock">
+            <div class="container" style="padding-bottom:15px;">
+                <h4>3. Installing the Mod</h4>
+                <p>Simply copy the files from the GameData source into the GameData folder in the KSP Game folder. As shown below:</p>
+                <img src="images/Install3.png" alt="Source Zip" style="box-shadow: 5px 5px 10px #777;" />
+            </div>
+        </div>
+        <div class="container" style="padding-bottom:15px;">
+            <h4>4. All Done!!</h4>
+            <p>Your Game folder will now look like this. And you should be able to start KSP and use the Plugin</p>
+            <img src="images/Install4.png" alt="Source Zip" style="box-shadow: 5px 5px 10px #777;" />
+        </div>
+    </section>
+
+    <section id="AlarmImport">
+        <div class="ShadedBlock">
+            <div class="container" style="padding-bottom:15px;">
+                <h3>Importing v2 Alarms into v3</h3>
+                <h4>1. Save your old Alarms files</h4>
+                <p>The path they shoudl be in is below, but the easiest way to find these is to search the TriggerTech folder for "Alarms*", and you can then make a copy of these. </p>
+                <pre>&lt;KSP_OS&gt;\GameData\TriggerTech\KerbalAlarmClock\PluginData\KerbalAlarmClock</pre>
+                <p>Copy these somewhere else for now</p>
+            </div>
+        </div>
+        <div class="container" style="padding-bottom:15px;">
+            <h4>2. Remove v2 and Install v3</h4>
+            <p>Delete the existing KerbalAlarmClock Folder in TriggerTech and install v3 - The Steps are above under <a href="#Installation">Installation Instructions</a></p>
+        </div>
+        <div class="ShadedBlock">
+            <div class="container" style="padding-bottom:15px;">
+                <h4>3. Restore your old Alarms files</h4>
+                <p>Place your old alarm files inside the TriggerTech Folder - I just put em in the root to save time</p>
+                <img src="images/ImportV2Alarms0.png" alt="Alarms Files" style="box-shadow: 5px 5px 10px #777;" />
+            </div>
+        </div>
+        <div class="container" style="padding-bottom:15px;">
+            <h4>4. go to the Import Tool</h4>
+            <p>In KSP, load your save file and open the Alarm Clock. Go to Settings and the About tab where you will find an Open Import Tool button</p>
+            <img src="images/ImportV2Alarms1.png" alt="Settings Shot" style="box-shadow: 5px 5px 10px #777;" />
+        </div><div class="ShadedBlock">
+            <div class="container" style="padding-bottom:15px;">
+                <h4>5. Read the Old Alarms File</h4>
+                <p>You shoudl see the name of your save file listed and a Read File button</p>
+                <img src="images/ImportV2Alarms2.png" alt="Initial Screen" style="box-shadow: 5px 5px 10px #777;" />
+            </div>
+        </div>
+        <div class="container" style="padding-bottom:15px;">
+            <h4>5. Review the Alarms and Add/Replace the existing ones</h4>
+            <p>You should see a list of all the alarms that were in the save file before and if you hover over one a tooltip shows the notes.</p>
+            <p>Click on the Add to Alarms button to add to any alarms that you may have made before starting this, or Replace Alarms to replace whats there.</p>
+            <img src="images/ImportV2Alarms3.png" alt="List of alarms from file" style="box-shadow: 5px 5px 10px #777;" />
+        </div>
+        </div><div class="ShadedBlock">
+            <div class="container" style="padding-bottom:15px;">
+                <h4>6. All Done</h4>
+                <p>You should now see the alarms in the state you were after. Dont forget that these are saved in the save file now</p>
+                <img src="images/ImportV2Alarms4.png" alt="All Done" style="box-shadow: 5px 5px 10px #777;" />
+            </div>
+        </div>
+    </section>
 
 
     <!-- Begin footer content -->
     <div class="navbar navbar-default navbar-fixed-bottom">
         <p class="navbar-text navbar-left" style="padding-left: 20px;">&copy; 2014 - TriggerTech</p>
         <p class="navbar-text navbar-right" style="padding-right: 20px;">
-            <a href="http://forum.kerbalspaceprogram.com/threads/93115-Transfer-Window-Planner" target="_blank"><i class="fa fa-rocket"></i>Forum Thread</a>
-            <a href="https://github.com/TriggerAu/TransferWindowPlanner/releases" target="_blank"><i class="fa fa-download"></i>Downloads</a>
-            <a href="https://github.com/TriggerAu/TransferWindowPlanner"><i class="fa fa-github"></i>Source on Github</a>
+            <a href="http://forum.kerbalspaceprogram.com/threads/24786-Kerbal-Alarm-Clock" target="_blank"><i class="fa fa-rocket"></i>Forum Thread</a>
+            <a href="https://github.com/TriggerAu/KerbalAlarmClock/releases" target="_blank"><i class="fa fa-download"></i>Downloads</a>
+            <a href="https://github.com/TriggerAu/KerbalAlarmClock"><i class="fa fa-github"></i>Source on Github</a>
         </p>
     </div>
 

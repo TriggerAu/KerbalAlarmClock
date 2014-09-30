@@ -55,17 +55,12 @@
             <div class="navbar-collapse collapse navbar-right" style="padding-right:10px;">
                 <ul class="nav navbar-nav">
                     <li><a href="index.html"><i class="fa fa-home fa-2x"></i><br />Home</a></li>
-                    <li><a href="install.html"><i class="fa fa-gears fa-2x"></i><br />Install</a></li>
-                    <li><a href="manual.html"><i class="fa fa-book fa-2x"></i><br />Manual</a></li>
+                    <li><a href="#"><i class="fa fa-gears fa-2x"></i><br />Install</a></li>
+                    <li class="active"><a href="manual.html"><i class="fa fa-book fa-2x"></i><br />Manual</a></li>
                     <li><a href="api.html"><i class="fa fa-code fa-2x"></i><br />API</a></li>
-                    <li class="active"><a href="#"><i class="fa fa-info-circle fa-2x"></i><br />About</a></li>
+                    <li><a href="about.html"><i class="fa fa-info-circle fa-2x"></i><br />About</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
-            <!--<div style="position:fixed;right:0px;top:79px;background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%);box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);" >
-                <div style="padding-right:10px;">
-                    Latest Version: 1.0.1.0
-                </div>
-            </div>-->
         </div>
     </div>
     <!--Version Banner-->
@@ -77,63 +72,8 @@
     </div>
 
     <div class="container">
-        <div class="page-header">
-            <h2>About the Kerbal Alarm Clock</h2>
-        </div>
-        <p>As on the front page... The Kerbal Alarm Clock is a plugin to the <a href="www.kerbalspaceprogram.com" target="_blank">Kerbal Space Program</a> game and was created to help me stop missing points of interest as I warped past them unintentionally (a lot). I specifically made this so that it was a clock and not an autopilot as I wanted to survive (and die :) ) based on my skills at piloting, but be able to skip to important times (for some reason space seems to be quite big and it takes a while to get places).</p>
-        <p>This is the first time I have become involved in a game and community in the way that KSP has taken me (I wont tell you my age), and it has been great. The feedback, information, robust discussion and ideas have been great to be a part of and where related to feed back in to this plugin.</p>
-        <p>If you have any feedback or ideas please contribute to the <a href="http://forum.kerbalspaceprogram.com/threads/24786-Kerbal-Alarm-Clock" target="_blank">Kerbal Alarm Clock forum thread</a> which I keep an eye on, or you can PM me via the forum message board.</p>
-        <p>Thanks, Trigger Au</p>
+ 
     </div>
-    <div class="ShadedBlock">
-        <div class="container">
-            <h3>Licensing</h3>
-            <img src="images/DT-OSILogo16.png" alt="OSI" /> This work is licensed under an MIT license - <a href="https://github.com/TriggerAu/KerbalAlarmClock/blob/master/LICENSE" target="_blank">included in source code</a>
-            <h4>Attribution</h4>
-            <ul>
-                <li>
-                    Cybutek-for the use of his AN/DN calculation functions - licensed under the same license model.
-                </li>
-                <li>
-                    Voneiden-for his transfer modelling data and toolkit
-                </li>
-                <li>r4m0n-for the use of part of the timeToClosestApproach function, AN/DN related functions and the LaunchRendezvous stuff under GPLv3</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="container">
-        <h3>
-            Thanks
-        </h3>
-        <p>
-            Thanks to everyone who plays this game and is involved in the community. it is great. Specific thanks to (in no particular order):
-            <ul>
-                <li>
-                    Thanks to Squad for providing KSP and such a great moddable game
-                </li>
-                <li>
-                    Voneiden
-                </li>
-                <li>
-                    Hermes_Jr
-                </li>
-                <li>
-                    Amaroq
-                </li>
-                <li>
-                    Cybutek
-                </li>
-                <li>
-                    r4m0n
-                </li>
-                <li>
-                    And the others whose correspondance I lost in the great forum tradgedy of 2013
-                </li>
-            </ul>
-        </p>
-    </div>
-
 
 
     <!-- Begin footer content -->
@@ -160,7 +100,6 @@
         $(document).ready(function () {
 
             $(".disabled").bind("click", false);
-
             $.get("versioncheck.txt", null, versionGrabComplete).fail(versionGrabFailed);
         });
 
@@ -177,7 +116,6 @@
             $("#lblVersionQuery").hide();
             $("#lblVersionError").show();
         }
-
     </script>
 </body>
 </html>

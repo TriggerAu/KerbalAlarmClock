@@ -108,6 +108,7 @@ namespace KerbalAlarmClock
         [Persistent] internal Double AlarmAutoSOIMargin = 900;
 
         [Persistent] internal Boolean AlarmAddSOIAuto_ExcludeEVA = true;
+        [Persistent] internal Boolean AlarmAddSOIAuto_ExcludeDebris = true;
 
         [Persistent] internal Boolean AlarmSOIRecalc = false;
         [Persistent] internal Double AlarmSOIRecalcThreshold = 180;

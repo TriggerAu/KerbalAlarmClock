@@ -150,10 +150,7 @@ namespace KerbalAlarmClock
                     psm.targetScenes.Add(HighLogic.LoadedScene);
             }
 
-            foreach (AssemblyLoader.LoadedAssembly item in AssemblyLoader.loadedAssemblies )
-            {
-                LogFormatted("A:{0}-{1}.{2}", item.assembly.FullName, item.versionMajor,item.versionMinor);
-            }
+            RemoveInputLock();
         }
 
         //Destroy Event - when the DLL is loaded
@@ -404,7 +401,7 @@ namespace KerbalAlarmClock
                         case GameScenes.SPACECENTER: AddLock = settings.ClickThroughProtect_KSC && !(InputLockManager.GetControlLock("KACControlLock") == ControlTypes.KSC_FACILITIES); break;
                         case GameScenes.EDITOR:
                         case GameScenes.SPH: break;
-                        case GameScenes.FLIGHT: AddLock = settings.ClickThroughProtect_Flight && !(InputLockManager.GetControlLock("KACControlLock") == ControlTypes.All); break;
+                        case GameScenes.FLIGHT: AddLock = settings.ClickThroughProtect_Flight && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
                         case GameScenes.TRACKSTATION: AddLock = settings.ClickThroughProtect_Tracking && !(InputLockManager.GetControlLock("KACControlLock") == ControlTypes.EDITOR_LOCK); break;
                         default:
                             break;
@@ -420,7 +417,7 @@ namespace KerbalAlarmClock
                             case GameScenes.SPH:
                                 break;
                             case GameScenes.FLIGHT:
-                                InputLockManager.SetControlLock(ControlTypes.All, "KACControlLock");
+                                InputLockManager.SetControlLock(ControlTypes.ALL_SHIP_CONTROLS, "KACControlLock");
                                 break;
                             case GameScenes.TRACKSTATION:
                                 InputLockManager.SetControlLock(ControlTypes.TRACKINGSTATION_ALL, "KACControlLock");
@@ -441,9 +438,11 @@ namespace KerbalAlarmClock
 
         internal void RemoveInputLock()
         {
-            if (InputLockManager.GetControlLock("KACControlLock") == ControlTypes.KSC_FACILITIES ||
-                InputLockManager.GetControlLock("KACControlLock") == ControlTypes.TRACKINGSTATION_ALL ||
-                InputLockManager.GetControlLock("KACControlLock") == ControlTypes.All)
+
+            //if (InputLockManager.GetControlLock("KACControlLock") == ControlTypes.KSC_FACILITIES ||
+            //    InputLockManager.GetControlLock("KACControlLock") == ControlTypes.TRACKINGSTATION_ALL ||
+            //    InputLockManager.GetControlLock("KACControlLock") == ControlTypes.All)
+            if (InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None)
             {
                 LogFormatted_DebugOnly("Removing-{0}", "KACControlLock");
                 InputLockManager.RemoveControlLock("KACControlLock");
@@ -683,6 +682,9 @@ namespace KerbalAlarmClock
             //double timeSOIAlarm = 0;
 
             if (settings.AlarmAddSOIAuto_ExcludeEVA && KACWorkerGameState.CurrentVessel.vesselType == VesselType.EVA)
+                return;
+
+            if (settings.AlarmAddSOIAuto_ExcludeDebris && KACWorkerGameState.CurrentVessel.vesselType == VesselType.Debris)
                 return;
 
             if (settings.SOITransitions.Contains(KACWorkerGameState.CurrentVessel.orbit.patchEndTransition))

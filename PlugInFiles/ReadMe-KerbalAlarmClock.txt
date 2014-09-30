@@ -47,6 +47,7 @@ Version 3.0.0.beta		-	KSP Version: 0.24.2
 - F11 keystroke disabled - can be reenabled via settings value
 - Restructure settings
 - Restructure plugin folders
+- Added Alarm Import Tool for v2 Alarms
 
 Version 2.7.8.2		-	KSP Version: 0.24.2
 - Fixed issue with inputlocks not coming off sometimes (Fixes #48)

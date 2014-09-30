@@ -126,7 +126,7 @@ namespace KerbalAlarmClock
                             break;
                         case SettingsAlarmSpecsEnum.SOI:
                             WindowLayout_SettingsSpecifics_SOI();
-                            intSettingsHeight = 358; //288;
+                            intSettingsHeight = 362;// 367; // 358; //288;
                             break;
                         case SettingsAlarmSpecsEnum.Other:
                             WindowLayout_SettingsSpecifics_Other();
@@ -364,6 +364,12 @@ namespace KerbalAlarmClock
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(20);
                 if (DrawCheckbox(ref settings.AlarmAddSOIAuto_ExcludeEVA, new GUIContent("Exclude EVA Kerbals from Auto Alarm", "If an EVA'd Kerbal is on an SOI Path dont create an alarm for this scenario")))
+                    settings.Save();
+                GUILayout.EndHorizontal();
+                GUILayout.Space(-5);
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(20);
+                if (DrawCheckbox(ref settings.AlarmAddSOIAuto_ExcludeDebris, new GUIContent("Exclude Debris from Auto Alarm", "If Debris is on an SOI Path dont create an alarm for this scenario")))
                     settings.Save();
                 GUILayout.EndHorizontal();
                 //GUILayout.BeginHorizontal();
@@ -644,7 +650,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             //GUILayout.Label("Trigger Au",KACResources.styleContent);
             if (GUILayout.Button("Import Instructions", KACResources.styleContent))
-                Application.OpenURL("http://triggerau.github.io/KerbalAlarmClock/Information");
+                Application.OpenURL("http://triggerau.github.io/KerbalAlarmClock/Install.html#AlarmImport");
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

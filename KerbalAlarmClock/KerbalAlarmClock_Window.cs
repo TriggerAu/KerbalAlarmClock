@@ -558,6 +558,13 @@ namespace KerbalAlarmClock
                         {
                             SOITooltip += "-excluding EVA";
                         }
+                        if (settings.AlarmAddSOIAuto_ExcludeDebris)
+                        {
+                            if (!SOITooltip.Contains("-excluding"))
+                                SOITooltip += "-excluding Debris";
+                            else
+                                SOITooltip += "/Debris";
+                        }
                         if (settings.AlarmOnSOIChange_Action == KACAlarm.AlarmActionEnum.PauseGame) SOITooltip += " (Pause Action)";
                         else if (settings.AlarmOnSOIChange_Action != KACAlarm.AlarmActionEnum.MessageOnly) SOITooltip += " (Warp Kill Action)";
                     }

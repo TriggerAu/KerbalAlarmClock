@@ -79,8 +79,27 @@
     <div class="container">
         <div class="page-header">
             <h2>API Information</h2>
-            <h4>aka how to create/delete and modify alamrs from another plugin</h4>
+            <h4>aka how to create/delete and modify alarms from another plugin</h4>
         </div>
+        <p>From v3 and onwards I have provided a wrapper file so that other mods can access the Alarm Clocks alarm list to modify existing alarms, create new alarms and delete alarms. This can be used by other mods to create time based alarms</p>
+
+
+        <h3>Exposed Methods and Properties</h3>
+        <p>The KACWrapper exposes three types - The KAC itself, an KACAlarm (the details of a single alarm object) and a KACAlarmList (a list of all the current alarms). The wrapper has XML commenting throughout so that the autocomplete text should prompt with suitable details, and here's some more detail</p> 
+        <p></p>
+
+
+        <h3>Implementation Details</h3>
+        <p>To access the API from your plugin is a couple of simple (I hope) steps:
+        <ol><li>Add the KACWrapper.cs file to your project<br />
+            http://hjdhjds</li>
+            <li>Edit the Namespace definition at the top of the KACWrapper you have added to be specific to your plugin </li>
+            <li>Add a using statement to the top of your codefile to use your new namespace</li>
+            <li>In the Start Method of your Monobehaviour (or anytime after that) Initialise the wrapper. ie. you need to do this after KSP has awaken all the DLLs, if you try and Init the wrapper in the Awake method then the alphabetical order of loading may cause a failure</li></ol></p>
+
+
+        <h4>Example Plugin</h4>
+        <p>You can see an example of this code in use in the KSPARPAPITester Project, which can be found here: https://kspalternateresourcepanel.codeplex.com/SourceControl/latest#KSPARPAPITester/ </p>
         <p>This page is under construction - the work is done and you can see an example in the API Tester on github if you are super eager</p>
     </div>
 

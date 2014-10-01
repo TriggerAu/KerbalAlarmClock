@@ -21,6 +21,10 @@
     <link href="css/flexslider.css" rel="stylesheet" />
     <link href="css/lightbox.css" rel="stylesheet" />
 
+    <!--SyntaxHighlighter-->
+    <link href="css/shCore.css" rel="stylesheet" />
+    <link href="css/shThemeDefault.css" rel="stylesheet" />
+
     <link href="css/site.css" rel="stylesheet" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -83,24 +87,63 @@
         </div>
         <p>From v3 and onwards I have provided a wrapper file so that other mods can access the Alarm Clocks alarm list to modify existing alarms, create new alarms and delete alarms. This can be used by other mods to create time based alarms</p>
 
+        <p>This page is under construction - the work is done and you can see an example in the API Tester on github if you are super eager</p>
+
 
         <h3>Exposed Methods and Properties</h3>
         <p>The KACWrapper exposes three types - The KAC itself, an KACAlarm (the details of a single alarm object) and a KACAlarmList (a list of all the current alarms). The wrapper has XML commenting throughout so that the autocomplete text should prompt with suitable details, and here's some more detail</p> 
-        <p></p>
+        <p>Type details to go here</p>
 
 
         <h3>Implementation Details</h3>
         <p>To access the API from your plugin is a couple of simple (I hope) steps:
         <ol><li>Add the KACWrapper.cs file to your project<br />
             http://hjdhjds</li>
-            <li>Edit the Namespace definition at the top of the KACWrapper you have added to be specific to your plugin </li>
+            <li>Edit the Namespace definition at the top of the KACWrapper you have added to be specific to your plugin 
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Wrapper Before</h5>
+                    <pre class="brush: csharp;first-line:9;ruler:true;highlight:[12];toolbar:false;" >
+// TODO: Change this namespace to something specific to your plugin here.
+//EG:
+// namespace MyPlugin_KACWrapper
+namespace KACWrapper
+{
+...
+            </pre>
+                </div>
+                <div class="col-md-6">
+                    <h5>Wrapper After</h5>
+                    <pre class="brush: csharp;first-line:9;ruler:true;highlight:[12];toolbar:false;">
+// TODO: Change this namespace to something specific to your plugin here.
+//EG:
+// namespace MyPlugin_KACWrapper
+namespace KACAPITester_KACWrapper
+{
+...
+            </pre>
+                </div>
+            </div>
+            </li>
             <li>Add a using statement to the top of your codefile to use your new namespace</li>
-            <li>In the Start Method of your Monobehaviour (or anytime after that) Initialise the wrapper. ie. you need to do this after KSP has awaken all the DLLs, if you try and Init the wrapper in the Awake method then the alphabetical order of loading may cause a failure</li></ol></p>
+            <li>In the Start Method of your Monobehaviour (or anytime after that) Initialise the wrapper. ie. you need to do this after KSP has awaken all the DLLs, if you try and Init the wrapper in the Awake method then the alphabetical order of loading may cause a failure
+                <pre class="brush: csharp;ruler:true;toolbar:false;">
+internal override void Start()
+{
+    KACWrapper.InitKACWrapper();
+    if (KACWrapper.APIReady)
+    {
+        //All good to go
+        Debug.Log(KACWrapper.KAC.Alarms.Count);
+    }
+}
+</pre>
+            </li></ol></p>
 
 
         <h4>Example Plugin</h4>
-        <p>You can see an example of this code in use in the KSPARPAPITester Project, which can be found here: https://kspalternateresourcepanel.codeplex.com/SourceControl/latest#KSPARPAPITester/ </p>
-        <p>This page is under construction - the work is done and you can see an example in the API Tester on github if you are super eager</p>
+        <p>You can see an example of this code in use in the KACAPITester Project, which can be found here:<br />
+            <a href="https://github.com/TriggerAu/KerbalAlarmClock/tree/feature/v3refresh/KerbalAlarmClock_APITester/" target="_blank">https://github.com/TriggerAu/KerbalAlarmClock/tree/feature/v3refresh/KerbalAlarmClock_APITester/</a> </p>
     </div>
 
 
@@ -124,12 +167,17 @@
     <script src="js/jquery.flexslider-min.js"></script>
     <script src="js/lightbox.min.js"></script>
 
+    <script src="js/shCore.js"></script>
+    <script src="js/shBrushCSharp.js"></script>
+
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function () {
 
             $(".disabled").bind("click", false);
 
             $.get("versioncheck.txt", null, versionGrabComplete).fail(versionGrabFailed);
+
+            SyntaxHighlighter.all();
         });
 
         function versionGrabComplete(object, textStatus, jqXHR) {

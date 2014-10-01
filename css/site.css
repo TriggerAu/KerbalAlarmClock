@@ -8,6 +8,10 @@ section{
     margin-top: -70px;
 }
 
+h5{
+    font-weight:bold;
+}
+
 .navbar-fixed-top {
     min-height: 79px;
 }
@@ -183,4 +187,8 @@ border-color: #3e8f3e;
     /*DropShadow*/
     -webkit-box-shadow: rgba(255, 255, 255, 0) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 1px 5px 0px;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0),0 1px 5px rgba(0,0,0,.2);
+}
+
+.syntaxhighlighter {
+    padding-bottom:3px;
 }

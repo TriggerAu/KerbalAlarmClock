@@ -94,17 +94,20 @@
         <p>The KACWrapper exposes three types - The KAC itself, an KACAlarm (the details of a single alarm object) and a KACAlarmList (a list of all the current alarms). The wrapper has XML commenting throughout so that the autocomplete text should prompt with suitable details, and here's some more detail</p> 
         <p>Type details to go here</p>
 
-        <div>
-            <table>
-                <tr><th><img src="images/apiicons/class.gif" alt="class" /></th><th>KACWrapper</th><th></th></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>APIReady</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AssemblyExists</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>InstanceExists</td><td></td></tr>
-                <tr><td><img src="images/apiicons/method.gif" alt="method" /></td><td>InitKACWrapper</td><td></td></tr>
-                <tr><td><img src="images/apiicons/field.gif" alt="field" /></td><td>KAC</td><td></td></tr>
-            </table>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <img src="images/apiicons/class.gif" alt="class" />KACWrapper
+            </div>
+                <table class="table table-striped">
+                    <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>APIReady</td><td>Boolean</td><td>Whether the object has been wrapped and the APIReady flag is set in the real KAC</td></tr>
+                    <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AssemblyExists</td><td>Boolean</td><td>Whether we found the KerbalAlarmClock assembly in the loadedassemblies</td></tr>
+                    <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>InstanceExists</td><td>Boolean</td><td>Whether we managed to hook the running Instance from the assembly</td></tr>
+                    <tr><td><img src="images/apiicons/method.gif" alt="method" /></td><td>InitKACWrapper</td><td></td><td>This method will set up the KAC object and wrap all the methods/functions</td></tr>
+                    <tr><td><img src="images/apiicons/field.gif" alt="field" /></td><td>KAC</td><td>KACAPI</td><td>This is the Kerbal Alarm Clock object that you can access via the API once wrapped</td></tr>
+                </table>
         </div>
 
+ 
         <div>
             <table>
                 <tr><th><img src="images/apiicons/class.gif" alt="class" /></th><th>KACAPI</th><th></th></tr>

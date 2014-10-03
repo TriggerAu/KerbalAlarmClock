@@ -3,11 +3,6 @@
     padding-bottom:40px;
 }
 
-section{
-    padding-top: 70px;
-    margin-top: -70px;
-}
-
 h5{
     font-weight:bold;
 }
@@ -96,34 +91,76 @@ h5{
         font-size:12px;
     }
 
+.docs-section section {
+    padding-top:80px;
+    margin-top:-80px;
+}
 
-    #side-nav .nav>.active>a, #side-nav .nav>.active:hover>a, #side-nav .nav>.active:focus>a {
-        padding-left: 18px;
+.docs-section section h1 {
+    font-size:30px;
+    border-bottom: 1px solid #eee;
+}
+.docs-section section h2 {
+    font-size:20px;
+}
+.docs-section section h3 {
+    font-size:16px;
+}
+.docs-section h1,.docs-section h2, .docs-section h3 {
+    font-weight: 500;
+}
+
+
+#nav-affix {
+    padding-top:44px;
+}
+#nav-affix .nav>.active>ul {
+display: block;
+}
+#nav-affix     .nav > li.active > a {
+        border-left:#007acc solid 2px; 
+        color:#007acc;
+        padding-left:18px;
         font-weight: 700;
-        color: #563d7c;
-        background-color: transparent;
-        border-left: 2px solid #563d7c;
     }
-    #side-nav .nav .nav>.active>a, #side-nav .nav .nav>.active:hover>a, #side-nav .nav .nav>.active:focus>a {
-        font-weight: 500;
-        padding-left: 28px;
+#nav-affix     .nav > li > a:hover {
+        border-left:#007acc solid 1px; 
+        color:#007acc;
+        padding-left:19px !important;
     }
- 
-    #side-nav .nav>li>a {
-        display: block;
-        font-size: 13px;
-        font-weight: 400;
-        color: #999;
+#nav-affix    .nav .nav > li > a:hover {
+        border-left:#007acc solid 1px; 
+        color:#007acc;
+        padding-left:29px !important;
+    }
+
+#nav-affix         .nav > li> a {
         padding: 4px 20px;
+        font-size: 13px;
+        font-weight: 500;
+        padding-left:20px;
+        color:#999;
     }
-    #side-nav .nav .nav {
-        display: none;
-        padding-bottom: 10px;
-    }
-    #side-nav .nav>.active>.nav {
-        display: block;
-        padding-bottom: 10px;
-    }
+        
+#nav-affix         .nav .nav >li>a {
+            font-size:12px;
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+#nav-affix         .nav .nav > li.active > a {
+            padding-left: 28px;
+        }
+#nav-affix         .nav .nav > li > a {
+            padding-left: 30px;
+        }
+
+#nav-affix         .nav .nav  {
+            padding-bottom: 10px;
+            display:none;
+        }
+
+
 
 
 .ShadedBlock {

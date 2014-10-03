@@ -29,6 +29,9 @@
 						'short sizeof stackalloc static string struct switch this throw true try ' +
 						'typeof uint ulong unchecked unsafe ushort using virtual void while';
 
+        //Add C# Aliases for keywords
+		keywords += ' Object String Boolean Byte SByte Int16 UInt16 Int32 UInt32 Int64 UInt64 Single Double Decimal Char'
+
 		function fixComments(match, regexInfo)
 		{
 			var css = (match[0].indexOf("///") == 0)

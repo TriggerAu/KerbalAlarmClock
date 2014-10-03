@@ -90,60 +90,21 @@
         <p>This page is under construction - the work is done and you can see an example in the API Tester on github if you are super eager</p>
 
 
-        <h3>Exposed Methods and Properties</h3>
-        <p>The KACWrapper exposes three types - The KAC itself, an KACAlarm (the details of a single alarm object) and a KACAlarmList (a list of all the current alarms). The wrapper has XML commenting throughout so that the autocomplete text should prompt with suitable details, and here's some more detail</p> 
-        <p>Type details to go here</p>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <img src="images/apiicons/class.gif" alt="class" />KACWrapper
-            </div>
-                <table class="table table-striped">
-                    <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>APIReady</td><td>Boolean</td><td>Whether the object has been wrapped and the APIReady flag is set in the real KAC</td></tr>
-                    <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AssemblyExists</td><td>Boolean</td><td>Whether we found the KerbalAlarmClock assembly in the loadedassemblies</td></tr>
-                    <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>InstanceExists</td><td>Boolean</td><td>Whether we managed to hook the running Instance from the assembly</td></tr>
-                    <tr><td><img src="images/apiicons/method.gif" alt="method" /></td><td>InitKACWrapper</td><td></td><td>This method will set up the KAC object and wrap all the methods/functions</td></tr>
-                    <tr><td><img src="images/apiicons/field.gif" alt="field" /></td><td>KAC</td><td>KACAPI</td><td>This is the Kerbal Alarm Clock object that you can access via the API once wrapped</td></tr>
-                </table>
-        </div>
-
- 
-        <div>
-            <table>
-                <tr><th><img src="images/apiicons/class.gif" alt="class" /></th><th>KACAPI</th><th></th></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>APIReady</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Alarms</td><td></td></tr>
-                <tr><td><img src="images/apiicons/method.gif" alt="method" /></td><td>CreateAlarm</td><td></td></tr>
-                <tr><td><img src="images/apiicons/method.gif" alt="method" /></td><td>DeleteAlarm</td><td></td></tr>
-                <tr><td><img src="images/apiicons/event.gif" alt="event" /></td><td>onAlarmStateChanged</td><td></td></tr>
-            </table>
-        </div>
-
-        <div>
-            <table>
-                <tr><th><img src="images/apiicons/class.gif" alt="class" /></th><th>KACAlarm</th><th></th></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmAction</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmMargin</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmTime</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmType</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>ID</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Name</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Notes</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Remaining</td><td></td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>VesselID</td><td></td></tr>
-            </table>
-        </div>
-
 
         <h3>Implementation Details</h3>
-        <p>To access the API from your plugin is a couple of simple (I hope) steps:
-        <ol><li>Add the KACWrapper.cs file to your project<br />
-                <a href="https://github.com/TriggerAu/KerbalAlarmClock/blob/feature/v3refresh/KerbalAlarmClock/API/KACWrapper.cs">https://github.com/TriggerAu/KerbalAlarmClock/blob/feature/v3refresh/KerbalAlarmClock/API/KACWrapper.cs</a></li>
-            <li>Edit the Namespace definition at the top of the KACWrapper you have added to be specific to your plugin 
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Wrapper Before</h5>
-                    <pre class="brush: csharp;first-line:9;highlight:[12];toolbar:false;" >
+        <p>
+            To access the API from your plugin is a couple of simple (I hope) steps:
+            <ol>
+                <li>
+                    Add the KACWrapper.cs file to your project<br />
+                    <a href="https://github.com/TriggerAu/KerbalAlarmClock/blob/feature/v3refresh/KerbalAlarmClock/API/KACWrapper.cs">https://github.com/TriggerAu/KerbalAlarmClock/blob/feature/v3refresh/KerbalAlarmClock/API/KACWrapper.cs</a>
+                </li>
+                <li>
+                    Edit the Namespace definition at the top of the KACWrapper you have added to be specific to your plugin
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Wrapper Before</h5>
+                            <pre class="brush: csharp;first-line:9;highlight:[12];toolbar:false;">
 // TODO: Change this namespace to something specific to your plugin here.
 //EG:
 // namespace MyPlugin_KACWrapper
@@ -151,10 +112,10 @@ namespace KACWrapper
 {
 ...
             </pre>
-                </div>
-                <div class="col-md-6">
-                    <h5>Wrapper After</h5>
-                    <pre class="brush: csharp;first-line:9;highlight:[12];toolbar:false;">
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Wrapper After</h5>
+                            <pre class="brush: csharp;first-line:9;highlight:[12];toolbar:false;">
 // TODO: Change this namespace to something specific to your plugin here.
 //EG:
 // namespace MyPlugin_KACWrapper
@@ -162,12 +123,13 @@ namespace KACAPITester_KACWrapper
 {
 ...
             </pre>
-                </div>
-            </div>
-            </li>
-            <li>Add a using statement to the top of your codefile to use your new namespace</li>
-            <li>In the Start Method of your Monobehaviour (or anytime after that) Initialise the wrapper. ie. you need to do this after KSP has awaken all the DLLs, if you try and Init the wrapper in the Awake method then the alphabetical order of loading may cause a failure
-                <pre class="brush: csharp;gutter:false;toolbar:false;">
+                        </div>
+                    </div>
+                </li>
+                <li>Add a using statement to the top of your codefile to use your new namespace</li>
+                <li>
+                    In the Start Method of your Monobehaviour (or anytime after that) Initialise the wrapper. ie. you need to do this after KSP has awaken all the DLLs, if you try and Init the wrapper in the Awake method then the alphabetical order of loading may cause a failure
+                    <pre class="brush: csharp;gutter:false;toolbar:false;">
 internal override void Start()
 {
     KACWrapper.InitKACWrapper();
@@ -178,12 +140,147 @@ internal override void Start()
     }
 }
 </pre>
-            </li></ol></p>
+                </li>
+            </ol>
+        </p>
+
+
+
+        <h3>Exposed Methods and Properties</h3>
+        <p>The KACWrapper exposes three types - The KAC itself, an KACAlarm (the details of a single alarm object) and a KACAlarmList (a list of all the current alarms). The wrapper has XML commenting throughout so that the autocomplete text should prompt with suitable details, and here's some more detail</p>
+        <p>Type details to go here</p>
+
+        <div class="panel panel-default panel-apiclass">
+            <div class="panel-heading">
+                <h4><img src="images/apiicons/class.gif" alt="class" />&nbsp;&nbsp;KACWrapper <small>The hook in to the KAC Assembly</small></h4>
+            </div>
+            <table class="table table-striped">
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>APIReady</td><td>Boolean</td><td>Whether the object has been wrapped and the APIReady flag is set in the real KAC</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AssemblyExists</td><td>Boolean</td><td>Whether we found the KerbalAlarmClock assembly in the loadedassemblies</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>InstanceExists</td><td>Boolean</td><td>Whether we managed to hook the running Instance from the assembly</td></tr>
+                <tr><td><img src="images/apiicons/method.gif" alt="method" /></td><td>InitKACWrapper</td><td></td><td>This method will set up the KAC object and wrap all the methods/functions</td></tr>
+                <tr><td><img src="images/apiicons/field.gif" alt="field" /></td><td>KAC</td><td>KACAPI</td><td>This is the Kerbal Alarm Clock object that you can access via the API once wrapped</td></tr>
+            </table>
+        </div>
+        <div class="panel panel-default panel-apiclass">
+            <div class="panel-heading">
+                <h4><img src="images/apiicons/class.gif" alt="class" />&nbsp;&nbsp;KACAPI <small>The Kerbal Alarm Clock Object with attached props and methods</small></h4>
+            </div>
+            <table class="table table-striped">
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>APIReady</td><td>Boolean</td><td>Whether the APIReady flag is set in the real KAC</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Alarms</td><td>KACAlarmList (List&lt;KACAlarm&gt;)</td><td>The list of Alarms that are currently active in game</td></tr>
+                <tr><td><img src="images/apiicons/method.gif" alt="method" /></td><td>CreateAlarm</td><td>String</td><td>Create a New Alarm<br />Takes an AlarmTypeEnum for the type of alarm, a String for the Name and a Game UT and returns the ID of the newly created alarm</td></tr>
+                <tr><td><img src="images/apiicons/method.gif" alt="method" /></td><td>DeleteAlarm</td><td>Boolean</td><td>Delete an Alarm<br />Takes a String of an Alarms ID and returns A Success Boolean</td></tr>
+                <tr><td><img src="images/apiicons/event.gif" alt="event" /></td><td>onAlarmStateChanged</td><td></td><td>Event that fires when the State of an Alarm changes</td></tr>
+            </table>
+        </div>
+        <div class="panel panel-default panel-apiclass">
+            <div class="panel-heading">
+                <h4><img src="images/apiicons/class.gif" alt="class" />&nbsp;&nbsp;KACAlarm <small>An Alarm and its properties</small></h4>
+            </div>
+            <table class="table table-striped">
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmAction</td><td>AlarmActionEnum</td><td>What should the Alarm Clock do when the alarm fires</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmMargin</td><td>Double</td><td>In game seconds the alarm will fire before the event it is for</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmTime</td><td>Double</td><td>In game UT value of the alarm</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmType</td><td>AlarmTypeEnum</td><td>What type of Alarm is this - affects icon displayed and some calc options</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>ID</td><td>String (Readonly)</td><td>Unique Identifier of this alarm</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Name</td><td>String</td><td>Short Text Name for the Alarm</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Notes</td><td>String</td><td>Longer Text Description for the Alarm</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Remaining</td><td>Double (Readonly)</td><td>How much Game time is left before the alarm fires</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>VesselID</td><td>String</td><td>Unique Identifier of the Vessel that the alarm is attached to</td></tr>
+            </table>
+        </div>
+
+
+        <h4>Example Usage</h4>
+        <p>Below you can see simple examples of ways you can use some of the properties and Methods above</p>
+        <ol>
+            <li>
+                <b>List the current Alarms</b><br />
+<pre class="brush: csharp;gutter:false;toolbar:false;">
+if (KACWrapper.APIReady)
+{
+    //Get the list of alarms from the KAC Object
+    KACWrapper.KACAPI.KACAlarmList alarms = KACWrapper.KAC.Alarms;
+    Debug.Log(String.Format("Alarms Count:{0}", alarms.count ));
+    
+    //Now loop through them to display some details
+    foreach (KACWrapper.KACAPI.KACAlarm a in alarms)
+    {
+        Debug.Log(String.Format("{0}-{1}-{2} ({3})", a.Name, a.AlarmType,a.Notes,a.ID ));
+    }
+}
+</pre>
+            </li>
+            <li>
+                <b>Create a new Alarm</b><br />
+<pre class="brush: csharp;gutter:false;toolbar:false;">
+if (KACWrapper.APIReady)
+{
+    //Create a raw alarm 15 mins from now game time and get the id back
+    String aID = KACWrapper.KAC.CreateAlarm(KACWrapper.KACAPI.AlarmTypeEnum.Raw, "New Alarm", Planetarium.GetUniversalTime() + 900);
+    
+    if (aID !="") {
+        //if the alarm was made get the object so we can update it
+        KACWrapper.KACAPI.KACAlarm a = KACWrapper.KAC.Alarms.First(z=>z.ID==aID);
+        
+        //Now update some of the other properties
+        a.Notes = "This is a test raw alarm with some notes";
+        a.AlarmAction = KACWrapper.KACAPI.AlarmActionEnum.PauseGame;
+        ...
+    }
+}
+</pre>
+            </li>
+            <li>
+                <b>Delete an Alarm</b><br />
+<pre class="brush: csharp;gutter:false;toolbar:false;">
+if (KACWrapper.APIReady)
+{
+    //Get the list of alarms from the KAC Object
+    KACWrapper.KACAPI.KACAlarmList alarms = KACWrapper.KAC.Alarms;
+    if (alarms.count > 0) {
+        //Store the name and ID
+        String aName = alarms[0].Name;
+        String aID = alarms[0].ID;
+
+        //Delete the Alarm using its ID and get the result
+        Boolean result = KACWrapper.KAC.DeleteAlarm(aID);
+
+        //Did it work?
+        Debug.Log(String.Format("Deleted:{0} Result Success:{1}",aName,result));
+    }
+}
+</pre>
+</li>
+            <li>
+                <b>Use Alarm Events</b> - This ones a little more interesting as we need to register for an event<br />
+<pre class="brush: csharp;gutter:false;toolbar:false;">
+    
+    internal override void Start()
+    {
+        Debug.Log("Start the Monobehaviour");
+        KACWrapper.InitKACWrapper();
+
+        //Register the event handler
+        KACWrapper.KAC.onAlarmStateChanged += KAC_onAlarmStateChanged;
+    }
+
+    void KAC_onAlarmStateChanged(KACWrapper.KACAPI.AlarmStateChangedEventArgs e)
+    {
+        //Write out the alarm and event name
+        Debug.Log(String.Format("{0}->{1}", e.alarm.Name, e.eventType));
+    }
+</pre>
+            </li>
+        </ol>
 
 
         <h4>Example Plugin</h4>
-        <p>You can see an example of this code in use in the KACAPITester Project, which can be found here:<br />
-            <a href="https://github.com/TriggerAu/KerbalAlarmClock/tree/feature/v3refresh/KerbalAlarmClock_APITester/" target="_blank">https://github.com/TriggerAu/KerbalAlarmClock/tree/feature/v3refresh/KerbalAlarmClock_APITester/</a> </p>
+        <p>
+            You can see an example of this code in use in the KACAPITester Project, which can be found here:<br />
+            <a href="https://github.com/TriggerAu/KerbalAlarmClock/tree/feature/v3refresh/KerbalAlarmClock_APITester/" target="_blank">https://github.com/TriggerAu/KerbalAlarmClock/tree/feature/v3refresh/KerbalAlarmClock_APITester/</a>
+        </p>
     </div>
 
 

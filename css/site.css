@@ -192,3 +192,9 @@ border-color: #3e8f3e;
 .syntaxhighlighter {
     padding-bottom:3px;
 }
+
+.panel-apiclass > .panel-heading  > h4 {
+    padding:0px;
+    margin:0px;
+    font-weight:bold;
+} 

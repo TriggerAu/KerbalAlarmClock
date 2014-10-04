@@ -91,7 +91,7 @@ h5{
         font-size:12px;
     }
 
-.docs-section section {
+section {
     padding-top:80px;
     margin-top:-80px;
 }
@@ -110,28 +110,57 @@ h5{
     font-weight: 500;
 }
 
+.docs-section a img  {
+    padding:5px;
+        /*Turned corner*/
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;  
+    border-radius: 5px;
+
+    /*DropShadow*/
+    -webkit-box-shadow: rgba(255, 255, 255, 0) 0px 1px 0px 0px inset, rgba(0,0,0,.4) 0px 1px 5px 0px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0),0 1px 5px rgba(0,0,0,.4);
+
+}
+
+.docs-section img{
+    max-width:100%;
+    box-shadow: 5px 5px 10px #777;
+    margin:5px;
+}
 
 #nav-affix {
     padding-top:44px;
 }
-#nav-affix .nav>.active>ul {
+#nav-affix .nav > .active > ul {
 display: block;
 }
-#nav-affix     .nav > li.active > a {
+#nav-affix .nav > li.active > a {
         border-left:#007acc solid 2px; 
         color:#007acc;
         padding-left:18px;
         font-weight: 700;
-    }
+}
+#nav-affix         .nav .nav > li.active > a {
+            padding-left: 28px;
+        }
+#nav-affix         .nav .nav .nav > li.active > a {
+            padding-left: 38px;
+        }
+
+
 #nav-affix     .nav > li > a:hover {
         border-left:#007acc solid 1px; 
         color:#007acc;
         padding-left:19px !important;
     }
 #nav-affix    .nav .nav > li > a:hover {
-        border-left:#007acc solid 1px; 
-        color:#007acc;
         padding-left:29px !important;
+    }
+
+#nav-affix    .nav .nav .nav > li > a:hover {
+        padding-left:39px !important;
     }
 
 #nav-affix         .nav > li> a {
@@ -142,22 +171,24 @@ display: block;
         color:#999;
     }
         
-#nav-affix         .nav .nav >li>a {
+#nav-affix         .nav .nav > li >a {
             font-size:12px;
             padding-top: 1px;
             padding-bottom: 1px;
+            padding-left: 30px;
         }
 
-#nav-affix         .nav .nav > li.active > a {
-            padding-left: 28px;
-        }
-#nav-affix         .nav .nav > li > a {
-            padding-left: 30px;
+#nav-affix         .nav .nav .nav > li > a {
+            padding-left: 40px;
         }
 
 #nav-affix         .nav .nav  {
             padding-bottom: 10px;
             display:none;
+        }
+#nav-affix         .nav .nav .nav {
+            padding-bottom: 0px;
+            display:block;
         }
 
 

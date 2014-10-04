@@ -43,7 +43,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#"><img src="images/TriggerTechLogo.png" alt="TriggerTech" /></a>
+                <a class="navbar-brand" href="index.html"><img src="images/TriggerTechLogo.png" alt="TriggerTech" /></a>
+                <div class="pull-left hidden-sm hidden-xs" style="padding-top:15px;"><img src="images/KACLong.png" alt="KAC" /></div>
+                <div class="pull-left hidden-lg hidden-md" style="padding-top:15px;"><img src="images/KACShort.png" alt="KAC" /></div>
             </div>
             <!--<div class="navbar-collapse collapse navbar-left">
                             <p class="navbar-text" style="font-size:30px;margin:0px;">
@@ -74,97 +76,506 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-xs-9">
+            <div class="col-sm-9">
                 <div class="docs-section">
                     <section id="General">
                         <h1>General Details</h1>
                     </section>
                     <section id="General-Icon">
                         <h2>The Kerbal Alarm Clock Icon</h2>
+                        <p>
+                            You will see this in the upper left of your screen alongside the MET/Warp indicator. You toggle the display of the other parts of the interface by clicking on the icon or pressing Alt+F11. Alarms that are set will fire and display, even if you hide the main window. The color of the icon indicates the state of the alarm clock as below.
+                            <table border="0" style="width:100%">
+                                <tbody>
+                                    <tr>
+                                        <td style="text-align:center">Loaded and no future alarms</td>
+                                        <td style="text-align:center">Visible and no future alarms</td>
+                                        <td style="text-align:center">Loaded and Alarms pending</td>
+                                        <td style="text-align:center">Visible and Alarms Pending</td>
+                                        <td style="text-align:center">Alarm Clock is currently affecting Warp Rate</td>
+                                        <td style="text-align:center">Alarm Has fired and paused game</td>
+                                    </tr>
+                                    <tr>
+                                        <td><img border="0" src="images/manualscreens/KACIcon-Norm.png" style="display:block;margin-left:auto;text-align:center;margin-right:auto"></td>
+                                        <td><img border="0" src="images/manualscreens/KACIcon-NormShow.png" style="display:block;margin-left:auto;text-align:center;margin-right:auto"></td>
+                                        <td><img border="0" src="images/manualscreens/KACIcon-Alarm.png" style="display:block;margin-left:auto;text-align:center;margin-right:auto"></td>
+                                        <td><img border="0" src="images/manualscreens/KACIcon-AlarmShow.png" style="display:block;margin-left:auto;text-align:center;margin-right:auto"></td>
+                                        <td><img border="0" src="images/manualscreens/KACIcon-WarpEffect2_040.png" style="display:block;margin-left:auto;text-align:center;margin-right:auto"></td>
+                                        <td><img border="0" src="images/manualscreens/KACIcon-PauseEffect_100.png" style="display:block;margin-left:auto;text-align:center;margin-right:auto"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </p>
                         <h3 id="General-Icon-Visibility">Icon Visibility</h3>
+                        <p>You are able to interact with the Alarm Clock in Flight, in the Space Center and in the Tracking Station. The default icon location is i the upper left corner</p>
+                        <p>It's position can be adjusted using the Settings->Visibility tab, and in here you can also control the position of the icon on the screen.</p>
                     </section>
                     <section id="General-MainWindow">
                         <h2>Main Window</h2>
+                        <div class="row">
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Normal View<br /><img src="images/manualscreens/AlarmList.png" alt="Alarm List" />
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Time Warp is being affected by the alarm indicated<br /><img src="images/manualscreens/AlarmList_UnderWarp.png" alt="Alarm list under warp" />
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Minimized View showing only next alarm<br /><img src="images/manualscreens/AlarmList_Minimized.png" alt="Alarm List Minimized" />
+                            </div>
+                        </div>
+
+                        <!--<div class="flexslider" style="">
+                    <ul class="slides">
+                        <li>
+                            <a href="images/manualscreens/AlarmList.png" data-lightbox="TWPImages" data-title="Normal View">
+                                <img src="images/manualscreens/AlarmList.png" /><p class="">Normal View</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="images/manualscreens/AlarmList_Minimized.png" data-lightbox="TWPImages" data-title="Plotting a chart">
+                                <img src="images/manualscreens/AlarmList_Minimized.png" />
+                            </a>
+                        </li>
+                        <li>
+                            <a href="images/manualscreens/AlarmList_UnderWarp.png" data-lightbox="TWPImages" data-title="Opening it up with the instructions">
+                                <img src="images/manualscreens/AlarmList_UnderWarp.png" />
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <span style="position:relative;top:-10px;color:#777;">
+                    Click on an image to zoom
+                </span>-->
+
                         <h3 id="General-Main-CommandBar">The Command Bar</h3>
+                        <p>
+                            Across the top of the Main Window you will see the following:
+                            <ul>
+                                <li><b>Orbital Node Recalculation Indicator:</b> when this is on any Orbital Node Alarms that are setup will continually recalculate their alarm time based on the current flight plan;</li>
+                                <li><b>Transfer Recalculation Indicator:</b> when this is on any Transfer Alarms that are setup will continually recalculate their alarm time based on the phase angle between the origin and target bodies. This is important as few bodies have exactly circular orbits, and the maths behind the formula driven transfer windows is based on circles – this is not the case for modelled data;</li>
+                                <li><b>Auto-Add SOI Indicator:</b> When this is enabled the Alarm Clock will monitor the active vessels flight path to detect any SOI Changes, and create alarms automatically. If you adjust the flight path (and the SOI moves) then the Alarm Clock will adjust the alarm. The tooltip on this Indicator lets you know which parts of the SOI Auto alarms are enabled and what the alarm action will be;</li>
+                                <li><b>Minimize/Maxmize Button:</b> Should be self-explanatory, when minimized it will display the next future alarm only;</li>
+                                <li><b>Settings Button:</b> Toggles the Settings window, detailed documentation here;</li>
+                                <li><b>Add Button:</b> Toggles the Add Alarm window, detailed documentation here. Each time you open the Add Alarm window it resets the values to defaults;</li>
+                                <li><b>Quick Add Button:</b> Presents you a drop down menu of context aware alarms to add;</li>
+                            </ul>
+                        </p>
                         <h3 id="General-Main-AlarmList">The Alarm List</h3>
+                        <p>
+                            This portion of the window displays a list of the alarms that have been configured (except in Minimal mode when it only shows the next future alarm).The window has a configured max number of alarms, once this is reached it will stop growing and a scroll bar will appear. Each alarm presents the same details on its row:
+                            <ul>
+                                <li><b>Alarm name:</b> the short text for the alarm. By hovering over this you will see a tooltip that shows the Alarm Message. Also by clicking on this you will open up the Alarm editing window;</li>
+                                <li><b>Edit icon:</b> If you have an alarms edit window open you will see a small pencil icon to indicate which alarm is being edited;</li>
+                                <li><b>Alarm Action Icon:</b> This displays an indicator for the action this alarm will take. A ‘W’ indicates the alarm will cancel any warp acceleration as you approach the alarm, a ‘P’ indicates the game will slow and then be paused at the time of the alarm. When the alarm is affecting the warp rate of the game the indicator will pulse so you can tell which alarm it is;</li>
+                                <li><b>Delete Button:</b>&nbsp;This will delete the associated alarm;</li>
+                            </ul>
+                        </p>
                         <h3 id="General-Main-Footer">The Footer</h3>
+                        <div class="row">
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Normal Footer<br /><img src="images/manualscreens/Footer.png" alt="Footer" />
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Footer also showing Earth time<br /><img src="images/manualscreens/Footer_IncEarth.png" alt="Footer with Earth Time" />
+                            </div>
+                        </div>
+                        <p>This displays the current date in the game universe. Clicking on the date will toggle between the three time formats - UT (raw seconds), KSP formatted dates and standard dates.</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>"Real World" Alarms</h4>
+                                <p>By clicking on the Current Time: text at the bottom you can toggle an extra line of display that will show the current time on your PC. From this line you can then also add an Alarm based on real world time - possibly to remind you its time to take a break :). These alarms will show up in the alarm list as per normal, but obviously will not be affected by time warp.</p>
+                                <p><span style="color:red;font-weight:bold;">Note:</span> When the game is paused the real world alarm will not fire until the game is unpaused</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Add_Earth.png" alt="Add Earth Alarm" />
+                            </div>
+                        </div>
+
                     </section>
                     <section id="General-AddWindow">
                         <h2>Add Alarm Window</h2>
                         <h3 id="General-Add-Common">Common Elements</h3>
+                        <p>This window has some common elements, and then some specifics for each alarm type. The below annotated picture highlights what each is, and the text below describes them:</p>
+                        <img src="images/manualscreens/Add_Common_Example.png" alt="Add Common Elements" />
+                        <ul>
+                            <li><b>Name:</b> Short text – this is shown in the list;</li>
+                            <li><b style="line-height:1.6;font-size:10pt">Action:</b><span style="line-height:1.6;font-size:10pt"> What to do when the alarm fires;</span></li>
+                            <li><b>Margin:</b> For alarms other than the raw time ones how long before the event (Maneuver Node, SOI Change, Transfer Window, etc) do you want to have the alarm fire;</li>
+                            <li><b>Details of Alarm: </b>This section shows you the date of the event (if its event based - like a maneuver), the Time to the event and the tie to the larm after the margin has been applied;</li>
+                            <li><b>Show/Hide Detailed Messages:</b>&nbsp;This button toggles the right hand window to display the detailed notes and attached vessel details. The detailed notes are updated on each change of alarm type/target and can then be edited as well;</li>
+                            <li><b>Attached Vessel: </b>Exactly what it says &nbsp;:)</li>
+                            <li><b>Notes:</b>&nbsp;Details of the alarm – these will show in the tooltips and full message;</li>
+                            <li><b>Add Button:</b> Will create this alarm;</li>
+                        </ul>
                         <h3 id="General-Add-Specific">Specific Alarm Types</h3>
+                        You will find information on the specific alarm type <a href="#Specific">further down the page</a>
                     </section>
                     <section id="General-EditWindow">
                         <h2>Display/Edit Alarm Window</h2>
+                        <p>If you click on the name of an alarm in the list it will open a window with some more details.</p>
                         <h3 id="General-Edit-Display">Display Alarm</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>If the alarm fired in the past then you will simply see some details including time, name and message</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Alarm_Detail_View.png" alt="Display Alarm" />
+                            </div>
+                        </div>
                         <h3 id="General-Edit-Edit">Edit Alarm</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>Will display fields to allow you to edit the name, message, alarm action and margin</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Alarm_Edit_View.png" alt="Edit Alarm" />
+                            </div>
+                        </div>
                         <h3 id="General-Edit-Common">Common Action Buttons</h3>
+                        <p>As well as the close window button you will get a button to Jump to Ship button if the active ship is not the ship the alarm has been attached to</p>
                     </section>
                     <section id="General-AlarmWindow">
                         <h2>Alarm Fired Window</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul>
+                                    <li>This window will display for you the name, message and time details of the alarm that was set up.</li>
+                                    <li>You will also get action buttons where appropriate to jump to another ship, restore a maneuver node or similar where possible.</li>
+                                    <li>Thirdly you have the ability to choose to delete the alarm on close.</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Alarm_Display.png" alt="Edit Alarm" />
+                            </div>
+                        </div>
+
+                        <!--<div class="row">
+                    <div class="col-md-6" style="text-align:center;font-style:italic;">
+                        Manuever alarm triggered with all options to get back to ship and restore the node<br />
+                    </div>
+                    <div class="col-md-6" style="text-align:center;font-style:italic;">
+                        Same alarm, but when the active ship is the one for the alarm and it already has a node on the flight plan<br />
+                    </div>
+                </div>-->
                     </section>
+
                     <section id="Specific">
                         <h1>Adding Specific Alarms</h1>
                     </section>
                     <section id="Specific-Common">
                         <h2>Common Elements</h2>
+                        <p>This window has some common elements, and then some specifics for each alarm type. The below annotated picture highlights what each is, and you can get the details from the <a href="#General-Add-Common">Common Elements section</a> above</p>
+                        <img src="images/manualscreens/Add_Common_Example.png" alt="Add Common Elements">
                     </section>
                     <section id="Specific-Raw">
                         <h2>Raw Alarms</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>Allows you to enter some raw time stuff to create an alarm, you can choose to create this as a Date (time from the beginning of the Kerbin Universe) or an Interval (time from now).</p>
+                                <p>You can choose whether to associate this alarm with the active vessel or not.</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Add_Raw.png" alt="Raw Alarm" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Specific-ManNode">
                         <h2>Maneuver Node</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>Will look at the next Maneuver Node on the flight path and allow you to create an alarm at this point. When you create this alarm type it will store the Maneuver Node’s details and allow you to restore this back at a later time.</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Add_ManNode.png" alt="ManNode" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Specific-ApPe">
                         <h2>Flight Plan Nodes - Apoapsis/Periapsis</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>You can choose to add alarms for any of these nodes on the flight plan. Once created the Alarm Clock will monitor the flight path and adjust the alarm time if the Auto-Recalc switch is on (eg. You burn your engines)</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Add_ApPe.png" alt="ApPe" />
+                            </div>
+                        </div>
+
                     </section>
                     <section id="Specific-ANDN">
                         <h2>Orbit Alignment Nodes - Ascending/Descending Nodes</h2>
+                        <p>You can choose to add alarms for orbit alignment points. When a target vessel is selected it will be for the AN/DN between your active vessel and the target vessel. If there is no selected target it will be the AN/DN of the equator of the body you are orbiting.</p>
+                        <div class="row">
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                AN/DN for Target<br /><img src="images/manualscreens/Add_ANDN.png" alt="ANDN Alarm" />
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Equatorial AN/DN<br /><img src="images/manualscreens/Add_ANDN_Equatorial.png" alt="Equatorial ANDN Alarm" />
+                            </div>
+                        </div>
+
                     </section>
                     <section id="Specific-Launch">
                         <h2>Launch Rendezvous</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                If the active vessel is landed and you select a target vessel the alarm will be for when the position of the landed vessel next passes under the orbit of the selected target. So you can try and launch into the right alignment
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Add_LaunchRendezvous.png" alt="Launch Rendezvous" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Specific-Closest">
                         <h2>Closest Approach</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>This alarm will get you the time of Closest approach between the active vessel and the target vessel. You can use the slider to adjust how many orbits of the Active Vessel to look ahead to find this closest approach.</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Add_Closest.png" alt="Closest Approach" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Specific-Distance">
                         <h2>Target Distance or Altitude</h2>
+                        <p>You can also create alarms based on a target distance - not just closest approach. This alarm type will let you choose from a targetted vessel, the current body you are orbiting and the next body you will orbit (if there is one). The target distance is in meters</p>
+                        <div class="row">
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Target Distance<br /><img src="images/manualscreens/Add_TargetDistance.png" alt="Distance" />
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Target Altitude<br /><img src="images/manualscreens/Add_TargetAltitude.png" alt="Altitude" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Specific-SOI">
                         <h2>Sphere of Influence Change</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>Similar to the Maneuver Node type this will detect the next SOI change on the flight path and create an alarm for that time. Once created the Alarm Clock will monitor the flight path and adjust the alarm time if the SOI point changes (eg. You burn your engines)</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Add_SOI.png" alt="SPI" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Specific-Transfer">
                         <h2>Transfer Window</h2>
+                        <p>
+                            This presents a list of possible interbody transfers around the same parent body and a “best” time to make that interbody burn. Below are some details on the screens and some extra information. For some excellent information on how to make a interplanetary transfer see this <a href="http://forum.kerbalspaceprogram.com/showthread.php/27236-Tutorial-Step-by-step-Interplanetary-Hohmann-transfer-guide-and-tips" target="_blank">Tutorial by Voneiden</a>.
+                            <ul>
+                                <li><b>Calc Type:</b>&nbsp;This gives you the choice to use one of two sets of data to determine the Alarm phase angle/time. You only get the two choices for bodies orbiting Kerbol as in the other cases the orbits are close to circular and the modelled data is not a s necessary. Anyways the two choices are:</li>
+                                <ul>
+                                    <li><i><u>Formula Based</u></i> - as seen in <a href="http://ksp.olex.biz/" target="_blank" rel="nofollow">Olex's excellent calculator</a> - this uses a series of formula that determine the phase angle based on circular orbits with radii oequal to the semi-major axis. The downside to this is obviously that not all planets have a circular orbit, and so sometimes you can attempt and still miss when the phase angle meets the forumla result;</li>
+                                    <li><i><u>Modelled Data</u></i> - This is a list of pre-generated transfer times (for the first 101 years of Kerbol's life) that has been calculated to include the affects of non-circular orbits. These calculations have been done by voneiden and you can see the <a href="http://www.eiden.fi/ksp/" target="_blank" rel="nofollow">raw data here</a>, and there was a forum post about this, but I think it may have been lost.</li>
+                                </ul>
+                                <li><b>Xfer Parent:</b> The body around which the origin and target are orbiting</li>
+                                <li><b>Xfer Origin:</b> Body we are travelling from</li>
+                                <li><b>Target:</b> Body we are travelling to</li>
+                                <li><b>Phase Angle:</b> Details around the phase angle between the Origin and Target. This displays Current Angle (Target Angle) </li>
+                                <li><b>Time to Xfer:</b> How long till the phase angles will match </li>
+                            </ul>
+                            Once created the Alarm Clock will monitor the Phase Angle values and adjust the alarm time if required. In formula mode the majority of these times will drift as the formula’s used are all circle based, while in reality few bodies orbit in a circle.
+                        </p>
+                        <div class="row">
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Transfer List View in Model Mode<br /><img src="images/manualscreens/Add_Transfer_List_Model.png" alt="Distance" />
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Transfer List View in Formula Mode<br /><img src="images/manualscreens/Add_Transfer_List_Formula.png" alt="Distance" />
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Cycle Target View in Model Mode<br /><img src="images/manualscreens/Add_Transfer_Cycle_Model.png" alt="Distance" />
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Cycle Target View in Formula Mode<br /><img src="images/manualscreens/Add_Transfer_Cycle_Formula.png" alt="Distance" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Specific-Crew">
                         <h2>Crew Alarm</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>This alarm will let you choose one of the crew from the active vessel, and when you are ready you can jump back to the Kerbal, regardless of whether he is still in the same vessel.</p>
+                                <p>The Store Man Node/Target option will store the existing vessels nodes with the kerbal alarm. Then you can restore these on another ship - this was requested due to setting/resetting them for docked vessels</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Add_Crew.png" alt="Crew Alarm" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Settings">
-                        <h1>Settings</h1>
+                        <h1>The Settings Window</h1>
+                        <p>To access the settings for the plugin you click on the toolbar icon on the main window. Behind this there are a number of windows as described below.</p>
                     </section>
                     <section id="Settings-General">
-                        <h2>General Elements</h2>
+                        <h2>General Settings</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Plugin Styles</h4>
+                                <ul>
+                                    <li><b>Styling:</b> The visual styling for the Alarm Clock Interface - KSP Stylem Unity Style or something in between</li>
+                                    <li><b>App Button:</b> Whether the Alarm Clock should display its icon via the App Launcher, Blizzy's Toolbar or a Basic Button</li>
+                                </ul>
+                                <h4>Plugin Preferences</h4>
+                                <ul>
+                                    <li><b>Max Alarms before scrolling window:</b> how many alarms does the list grow to before turning on the scroll bar;</li>
+                                    <li><b>Hide Alarm Clock when game is paused:</b> when you open the Pause menu should the alarm windows be hidden – does not affect the F2 behaviour where all the interface is hidden;</li>
+                                    <li><b>Show Tooltips on Mouse Hover</b></li>
+                                    <li><b>Time Format:</b> Toggle the displayed times/dates between UT (raw seconds), KSP formatted dates and standardised date format ("1,234s" or "2h, 10m, 35s" or "02:35:20"). Same as clicking the World Date/Time in the footer;</li>
+                                    <li><b>Allow Ship Jump...:</b>&nbsp;This toggles the visibility of the Jump to Ship buttons in alarms displayed on the Space Center and Tracking Station Screens. <b><u><font color="#cc0000">This option is here as the use of this function saves your game to a temp file then reloads it to start at the new ship. People who are uncomfortable with this functionlity should disable this option.</font></u></b></li>
+                                </ul>
+                                <h4>Save File Backups</h4>
+                                <p>This setting causes the KAC to backup the current saves prior to switching vessels, in all three game modes where jumping can be done. It copies the current persistent.sfs and quicksave.sfs files to KACBACKUPyyyyMMddHHmmss in the current save game, and if any of the backup code fails then the KAC will abort the ship switch.</p>
+                                <p>You can configure how many saves to keep in the archive. And whether to fail the ship jump if the backup fails when in flight mode (in view mdes the backup is part of the jump so if it fails you can't jump)</p>
+                                <h4>Time Warp/Math Checks</h4>
+                                <p>This setting controls how often the alarm clock recalculates and checks for upcoming alarms in the background. You can choose from one of the presets of choose Custom. Custom reads the value from the settings.cfg file as per below (insert line if needed):</p>
+                                <pre>
+BehaviourChecksPerSec_Custom = 40
+</pre>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Settings_General.png" alt="General Settings" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Settings-Specific">
-                        <h2>Alarm Type Specific Settings</h2>
-                        <h3 id="Settings-Specific-Common">Common Elements</h3>
-                        <h3 id="Settings-Specific-ManNode">Maneuver Nodes</h3>
-                        <h3 id="Settings-Specific-SOI">SOI Changes</h3>
-                        <h3 id="Settings-Specific-Other">Other Types</h3>
+                        <h2>Alarm Specific Settings</h2>
+                        <section id="Settings-Specific-Common">
+                            <p>Use the Alarm Type Dropdown to select which type of alarm you wish to affect</p>
+                            <h3>All Alarms</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p>
+                                        Set the Alarm Defaults for all newly created alarms as below:
+                                        <ul>
+                                            <li><b>Alarm Position:</b> where on the screen you want new alarms to be displayed initially;</li>
+                                            <li><b>Alarm Action:</b> When an alarm fires do you want the Alarm Clock to affect the Warp or Pause activities;</li>
+                                            <li><b>Default Margin:</b> Set a default for how long before an event an alarm will fire;</li>
+                                            <li><b>Delete Alarm on Close:</b> Set a default for this checkbox on each new alarm;</li>
+                                        </ul>
+                                    </p>
+                                </div>
+                                <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                    <img src="images/manualscreens/Settings_Specific_All.png" alt="General Settings" />
+                                </div>
+                            </div>
+                        </section>
+                        <section id="Settings-Specific-ManNode">
+                            <h3>Maneuver Nodes</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4>Manual and Auto Alarms</h4>
+                                    <ul>
+                                        <li><b>Detect and Add Alarms for Maneuver Nodes:</b>&nbsp;Will automatically add alarms for any future Man Nodes</li>
+                                        <li><b>Remove Auto Alarms is Man Node Removed:</b> Pretty self explanatory;</li>
+                                        <li><b>Threshold:</b>&nbsp;This setting dictates that if a new man node is discovered within this time period from the current time then it will <u>not</u> create a new alarm</li>
+                                        <li><b>Alarm Action:</b> Action for the Auto-Added Maneuver Node Alarms;</li>
+                                        <li><b>Alarm Margin:</b> Margin for the Auto-Added Maneuver Node Alarms;</li>
+                                    </ul>
+                                    <h4>Quick Add Alarms</h4>
+                                    <ul>
+                                        <li><b>Quick Action:</b> Action for the Quick Added Maneuver Node Alarms;</li>
+                                        <li><b>Quick Margin:</b> Margin for the Quick Added Maneuver Node Alarms;</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                    <img src="images/manualscreens/Settings_Specific_ManNode.png" alt="General Settings" />
+                                </div>
+                            </div>
+                        </section>
+                        <section id="Settings-Specific-SOI">
+                            <h3>SOI Changes</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p>
+                                        <ul>
+                                            <li><b>Auto Recalc of Manual SOI Alarms:</b> Updates the SOI alarms UT if it was added manually and the flight path changes;</li>
+                                            <li><b>Detect and Add Alarms for SOI Change</b></li>
+                                            <li><b>Exclude EVA Kerbals from Auto Alarms:</b> Dont create alarms for EVA Kerbals that have an SOI change on their flight path;</li>
+                                            <li><b>Exclude Debris from Auto Alarms:</b> Dont create alarms for Debris that has an SOI change on their flight path;</li>
+                                            <li><b>Alarm Action:</b> Action for the Auto-Added SOI Alarms;</li>
+                                            <li><b>Alarm Margin:</b> Margin for the Auto-Added SOI Alarms;</li>
+                                        </ul>
+                                    </p>
+                                    <h4>Quick Add Alarms</h4>
+                                    <ul>
+                                        <li><b>Quick Action:</b> Action for the Quick Added SOI Alarms;</li>
+                                        <li><b>Quick Margin:</b> Margin for the Quick Added SOI Alarms;</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                    <img src="images/manualscreens/Settings_Specific_SOI.png" alt="General Settings" />
+                                </div>
+                            </div>
+                        </section>
+                        <section id="Settings-Specific-Other">
+                            <h3>Other Types</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4>Crew Alarms</h4>
+                                    <ul>
+                                        <li><b>Store Man Node/target with Crew Alarm:</b>&nbsp;This sets the default behaviour for any new crew alarms;</li>
+                                    </ul>
+                                    <h4>Orbital Node Alarms</h4>
+                                    <ul>
+                                        <li><b>Auto Recalc of Node Points:</b> This setting causes the Kerbal Alarm Clock to monitor Node point alarms and recalculate the time of the alarm;</li>
+                                    </ul>
+                                    <h5>Quick Add Alarms</h5>
+                                    <ul>
+                                        <li><b>Quick Action:</b> Action for the Quick Added Node Alarms;</li>
+                                        <li><b>Quick Margin:</b> Margin for the Quick Added Node Alarms;</li>
+                                    </ul>
+                                    <h4>Transfer Alarms</h4>
+                                    <ul>
+                                        <li><b>Auto Recalc of Transfer Points:</b> This setting causes the Kerbal Alarm Clock to monitor Transfer alarms and recalculate the time of the target phase angle. This is required as the forumla's are all based on circular orbits, while most are elliptical. I do not recommend turning this off unless you are having issues with these alarms;</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                    <img src="images/manualscreens/Settings_Specific_Other.png" alt="General Settings" />
+                                </div>
+                            </div>
+                        </section>
                     </section>
                     <section id="Settings-Visibility">
                         <h2>Icon Visibility</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Minimal Mode</h4>
+                                <ul>
+                                    <li><b>Minimal Mode:</b> Whether to display the next alarm to fire or the oldest existing alarm when the list is minimized;</li>
+                                </ul>
+                                <h4>Game Scenes</h4>
+                                <p>This tab lets you control on what screens the Alarm Clock will be visible and the location of the icon on each of these. The Window position and state is saved separately for each scene.</p>
+                                <p>NOTE: If you turn off the visiblity in the Space Center or Tracking Station you can always access this tab via Flight mode to reenable the alarm</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Settings_Visibility.png" alt="General Settings" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Settings-About">
                         <h2>About and Version Checker</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>This tab displays the current version and current published versions. It will indicate if you are running a different version through a warning icon and some text. You can configure the Alarm Clock to check once daily, and manually trigger a check from here.</p>
+                                <p>Also has assorted links to this documentation, Doanload page, forum, etc - which will open the browser, and links to other useful pages.</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Settings_About.png" alt="General Settings" />
+                            </div>
+                        </div>
                     </section>
                     <section id="Settings-Import">
                         <h2>v2 Alarm Imports</h2>
+                        <p>On the About tab above you can see a section for importing alarms from a v2 Save file. You can find detailed instructions in the install page under the instructions below under <a href="install.html#AlarmImport">Importing v2 Alarms</a> </p>
                     </section>
-</div>
+                </div>
 
             </div>
-            <div class="col-xs-3" id="nav-affix">
+            <div class="col-sm-3 hidden-xs hidden-print" id="nav-affix">
                 <ul class="nav nav-stacked" data-spy="affix">
                     <li><b>Manual Contents</b></li>
                     <li class="active">
@@ -197,7 +608,15 @@
                         <a href="#Settings">Settings</a>
                         <ul class="nav">
                             <li><a href="#Settings-General">General</a></li>
-                            <li><a href="#Settings-Specific">Specific Types</a></li>
+                            <li>
+                                <a href="#Settings-Specific">Alarm Settings</a>
+                                <ul class="nav">
+                                    <li><a href="#Settings-Specific-Common">All Alarms</a></li>
+                                    <li><a href="#Settings-Specific-ManNode">Maneuver Nodes</a></li>
+                                    <li><a href="#Settings-Specific-SOI">SOI Changes</a></li>
+                                    <li><a href="#Settings-Specific-Other">Other Types</a></li>
+                                </ul>
+                            </li>
                             <li><a href="#Settings-Visibility">Visibility</a></li>
                             <li><a href="#Settings-About">About/Version</a></li>
                             <li><a href="#Settings-Import">Import v2 Alarms</a></li>
@@ -243,8 +662,15 @@
 
             $('body').scrollspy({
                 target: '#nav-affix',
-                offset: 0
+                offset: 3
             });
+
+            //$('.flexslider').flexslider({
+            //    animation: "slide",
+            //    animationLoop: false,
+            //    slideshow: false
+            //});
+
         });
 
         function versionGrabComplete(object, textStatus, jqXHR) {

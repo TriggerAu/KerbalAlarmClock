@@ -230,6 +230,37 @@ namespace KerbalAlarmClock
         //    return (origin.period / 360d) * angleToNode;
         //}
 
+
+        Double UTStart = 0;
+        DateTime TransStart;
+        Boolean warptrans = false;
+
+        Double[] UTChanges = new Double[8];
+
+        void warpchange(){
+            for (int i = 0; i < 8; i++)
+            {
+                UTChanges[i] = CalcUTTaken(TimeWarp.CurrentRateIndex,i);
+            }
+        }
+        Double CalcUTTaken(Int32 StartIndex, Int32 EndIndex)
+        {
+            if (StartIndex == EndIndex)
+                return 0;
+
+            Double StartRate = TimeWarp.fetch.warpRates[StartIndex];
+            Double EndRate = TimeWarp.fetch.warpRates[EndIndex];
+
+            Double TimeAtEach = 1/((EndRate - 1) - StartRate);
+
+            Double UT = 0;
+            for (int interval = (Int32)StartRate + 1; interval < (Int32)EndRate; interval++)
+            {
+                UT += interval * TimeAtEach;
+            }
+            return UT;
+        }
+
         int intTestheight = 0;
         int intTestheight2 = 0;
         int intTestheight3 = 0;
@@ -273,28 +304,65 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
-            if (GUILayout.Button("Load Old Alarm List"))
+            if (GUILayout.Button("Calc Rates"))
             {
-                winAlarmImport.Visible = !winAlarmImport.Visible;
-                //KACAlarmList oldAlarms = UtilitiesLegacy.Loadv2Alarms();
+                warpchange();
+            }
 
-                //if (oldAlarms.Count>0)
-                //{
-                //    //write it out
-                //    foreach (KACAlarm oldAlarm in oldAlarms)
-                //    {
-                //        LogFormatted("{0} @ {1}", oldAlarm.Name, oldAlarm.AlarmTime.UT);
-                //    }
-                //    LogFormatted("{0}", oldAlarms.EncodeToCN().ToString());
+            if (GUILayout.Button("Set Rate to inttest4"))
+            {
 
-                //    alarms = oldAlarms;
-                //}
-                //else
-                //{
-                //    LogFormatted("Could not find alarms file for: {0}", HighLogic.CurrentGame.Title);
-                //}
+                LogFormatted("StartTransition({2}->{3},UT:{0},Time:{1}",Planetarium.GetUniversalTime(),DateTime.Now,TimeWarp.CurrentRateIndex,intTestheight4);
+                TransStart = DateTime.Now;
+                UTStart = Planetarium.GetUniversalTime();
+                warptrans = true;
+                TimeWarp.SetRate(intTestheight4,false);
 
             }
+
+            if (warptrans)
+            {
+                if (TimeWarp.CurrentRate==TimeWarp.fetch.warpRates[intTestheight4]){
+                    warptrans = false;
+                    LogFormatted("EndTransition,UT:{0},Time:{1}", Planetarium.GetUniversalTime(), DateTime.Now);
+                    LogFormatted("Transition,UT:{0},Time:{1}", Planetarium.GetUniversalTime()-UTStart, (DateTime.Now-TransStart).TotalMilliseconds);
+                }
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                GUILayout.Label(String.Format("{0}->{1} : {2}", TimeWarp.CurrentRateIndex,i,UTChanges[i]));
+            }
+
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+            {
+                GUILayout.Label(String.Format("0", TimeWarp.CurrentRate));
+
+            }
+
+
+            //if (GUILayout.Button("Load Old Alarm List"))
+            //{
+            //    winAlarmImport.Visible = !winAlarmImport.Visible;
+            //    //KACAlarmList oldAlarms = UtilitiesLegacy.Loadv2Alarms();
+
+            //    //if (oldAlarms.Count>0)
+            //    //{
+            //    //    //write it out
+            //    //    foreach (KACAlarm oldAlarm in oldAlarms)
+            //    //    {
+            //    //        LogFormatted("{0} @ {1}", oldAlarm.Name, oldAlarm.AlarmTime.UT);
+            //    //    }
+            //    //    LogFormatted("{0}", oldAlarms.EncodeToCN().ToString());
+
+            //    //    alarms = oldAlarms;
+            //    //}
+            //    //else
+            //    //{
+            //    //    LogFormatted("Could not find alarms file for: {0}", HighLogic.CurrentGame.Title);
+            //    //}
+
+            //}
 
             //intMainWindowEarthTimeHeight = intTestheight4;
 
@@ -303,31 +371,31 @@ namespace KerbalAlarmClock
             //    CreateAlarm(KACAlarm.AlarmTypeEnum.Raw, "TEST");
             //}
 
-            if (GUILayout.Button("KSP"))
-            {
-                settings.SelectedSkin = Settings.DisplaySkin.Default;
-                KACResources.SetSkin(settings.SelectedSkin);
-                settings.Save();
-            }
-            if (GUILayout.Button("Unity"))
-            {
-                settings.SelectedSkin = Settings.DisplaySkin.Unity;
-                KACResources.SetSkin(settings.SelectedSkin);
-                settings.Save();
-            }
-            if (GUILayout.Button("Unity w KSP"))
-            {
-                settings.SelectedSkin = Settings.DisplaySkin.UnityWKSPButtons;
-                KACResources.SetSkin(settings.SelectedSkin);
-                settings.Save();
-            }
+            //if (GUILayout.Button("KSP"))
+            //{
+            //    settings.SelectedSkin = Settings.DisplaySkin.Default;
+            //    KACResources.SetSkin(settings.SelectedSkin);
+            //    settings.Save();
+            //}
+            //if (GUILayout.Button("Unity"))
+            //{
+            //    settings.SelectedSkin = Settings.DisplaySkin.Unity;
+            //    KACResources.SetSkin(settings.SelectedSkin);
+            //    settings.Save();
+            //}
+            //if (GUILayout.Button("Unity w KSP"))
+            //{
+            //    settings.SelectedSkin = Settings.DisplaySkin.UnityWKSPButtons;
+            //    KACResources.SetSkin(settings.SelectedSkin);
+            //    settings.Save();
+            //}
 
 
-            GUILayout.Label("MouseAny: " + MouseOverAnyWindow.ToString());
-            GUILayout.Label("MouseSettings: " + MouseOverWindow(_WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings).ToString());
-            GUILayout.Label("MainRect: " + WindowPosByActiveScene.ToString());
-            GUILayout.Label("SettingsRect: " + _WindowSettingsRect.ToString());
-            GUILayout.Label("MousePos: " + Event.current.mousePosition.ToString());
+            //GUILayout.Label("MouseAny: " + MouseOverAnyWindow.ToString());
+            //GUILayout.Label("MouseSettings: " + MouseOverWindow(_WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings).ToString());
+            //GUILayout.Label("MainRect: " + WindowPosByActiveScene.ToString());
+            //GUILayout.Label("SettingsRect: " + _WindowSettingsRect.ToString());
+            //GUILayout.Label("MousePos: " + Event.current.mousePosition.ToString());
 
 
             //GUILayout.Label("button: " + ddlSettingsSkin.rectButton.ToString());

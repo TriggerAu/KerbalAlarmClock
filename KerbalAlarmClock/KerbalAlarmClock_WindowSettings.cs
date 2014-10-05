@@ -615,7 +615,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             //GUILayout.Label("Written by:", KACResources.styleAddHeading);
             GUILayout.Label("Documentation and Links:", KACResources.styleAddHeading);
-            GUILayout.Label("Spaceport Page:", KACResources.styleAddHeading);
+            GUILayout.Label("Source Code / Downloads:", KACResources.styleAddHeading);
             GUILayout.Label("Forum Page:", KACResources.styleAddHeading);
             GUILayout.EndVertical();
 

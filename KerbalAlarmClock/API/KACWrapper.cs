@@ -179,7 +179,9 @@ namespace KACWrapper
             private Object actualAlarms;
             private FieldInfo AlarmsField;
 
-
+            /// <summary>
+            /// The list of Alarms that are currently active in game
+            /// </summary>
             internal KACAlarmList Alarms
             {
                 get
@@ -342,6 +344,9 @@ namespace KACWrapper
                 private Object actualAlarm;
 
                 private FieldInfo VesselIDField;
+                /// <summary>
+                /// Unique Identifier of the Vessel that the alarm is attached to
+                /// </summary>
                 public String VesselID
                 {
                     get { return (String)VesselIDField.GetValue(actualAlarm); }
@@ -349,12 +354,18 @@ namespace KACWrapper
                 }
 
                 private FieldInfo IDField;
+                /// <summary>
+                /// Unique Identifier of this alarm
+                /// </summary>
                 public String ID
                 {
                     get { return (String)IDField.GetValue(actualAlarm); }
                 }
 
                 private FieldInfo NameField;
+                /// <summary>
+                /// Short Text Name for the Alarm
+                /// </summary>
                 public String Name
                 {
                     get { return (String)NameField.GetValue(actualAlarm); }
@@ -362,6 +373,9 @@ namespace KACWrapper
                 }
 
                 private FieldInfo NotesField;
+                /// <summary>
+                /// Longer Text Description for the Alarm
+                /// </summary>
                 public String Notes
                 {
                     get { return (String)NotesField.GetValue(actualAlarm); }
@@ -369,9 +383,15 @@ namespace KACWrapper
                 }
 
                 private FieldInfo AlarmTypeField;
+                /// <summary>
+                /// What type of Alarm is this - affects icon displayed and some calc options
+                /// </summary>
                 public AlarmTypeEnum AlarmType { get { return (AlarmTypeEnum)AlarmTypeField.GetValue(actualAlarm); } }
 
                 private FieldInfo AlarmTimeField;
+                /// <summary>
+                /// In game UT value of the alarm
+                /// </summary>
                 public Double AlarmTime
                 {
                     get { return (Double)AlarmTimeField.GetValue(actualAlarm); }
@@ -379,6 +399,9 @@ namespace KACWrapper
                 }
 
                 private FieldInfo AlarmMarginField;
+                /// <summary>
+                /// In game seconds the alarm will fire before the event it is for
+                /// </summary>
                 public Double AlarmMargin
                 {
                     get { return (Double)AlarmMarginField.GetValue(actualAlarm); }
@@ -386,6 +409,9 @@ namespace KACWrapper
                 }
 
                 private FieldInfo AlarmActionField;
+                /// <summary>
+                /// What should the Alarm Clock do when the alarm fires
+                /// </summary>
                 public AlarmActionEnum AlarmAction
                 {
                     get { return (AlarmActionEnum)AlarmActionField.GetValue(actualAlarm); }
@@ -393,6 +419,9 @@ namespace KACWrapper
                 }
 
                 private FieldInfo RemainingField;
+                /// <summary>
+                /// How much Game time is left before the alarm fires
+                /// </summary>
                 public Double Remaining { get { return (Double)RemainingField.GetValue(actualAlarm); } }
 
                 public enum AlarmStateEventsEnum

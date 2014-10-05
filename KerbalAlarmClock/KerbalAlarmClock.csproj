@@ -91,7 +91,6 @@
   <ItemGroup>
     <Content Include="TextFile1.txt" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rem Set the Variables we need

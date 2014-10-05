@@ -513,7 +513,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             //GUILayout.Label("Written by:", KACResources.styleAddHeading);
             GUILayout.Label("Documentation and Links:", KACResources.styleAddHeading);
-            GUILayout.Label("Spaceport Page:", KACResources.styleAddHeading);
+            GUILayout.Label("Source Code / Downloads:", KACResources.styleAddHeading);
             GUILayout.Label("Forum Page:", KACResources.styleAddHeading);
             GUILayout.EndVertical();
 
@@ -522,7 +522,7 @@ namespace KerbalAlarmClock
             if (GUILayout.Button("Click Here", KACResources.styleContent))
                 Application.OpenURL("https://sites.google.com/site/kerbalalarmclock/");
             if (GUILayout.Button("Click Here", KACResources.styleContent))
-                Application.OpenURL("http://kerbalspaceport.com/kerbal-alarm-clock-2/");
+                Application.OpenURL("http://github.com/TriggerAu/KerbalAlarmClock/");
             if (GUILayout.Button("Click Here", KACResources.styleContent))
                 Application.OpenURL("http://forum.kerbalspaceprogram.com/showthread.php/24786-Kerbal-Alarm-Clock");
 

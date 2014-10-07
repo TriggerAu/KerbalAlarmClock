@@ -304,9 +304,16 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
+            foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w=>w.Index))
+            {
+                GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}",item.Rate,item.Index,item.UTToRateUp,item.UTToRateDown,item.UTTo1Times));
+            }
+
+
             if (GUILayout.Button("Calc Rates"))
             {
                 warpchange();
+                WarpTransitionCalculator.CalcWarpRateTransitions();
             }
 
             if (GUILayout.Button("Set Rate to inttest4"))
@@ -336,7 +343,8 @@ namespace KerbalAlarmClock
 
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
-                GUILayout.Label(String.Format("0", TimeWarp.CurrentRate));
+                GUILayout.Label(String.Format("Rate: {0}", TimeWarp.CurrentRate));
+                GUILayout.Label(String.Format("Text: {0}", TimeWarp.fetch.textDuration));
 
             }
 

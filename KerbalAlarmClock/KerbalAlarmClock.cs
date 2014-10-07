@@ -137,6 +137,8 @@ namespace KerbalAlarmClock
             winAlarmImport.Visible = false;
             winAlarmImport.InitWindow();
 
+            WarpTransitionCalculator.CalcWarpRateTransitions();
+
             APIAwake();
         }
 

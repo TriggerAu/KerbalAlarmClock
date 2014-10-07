@@ -57,7 +57,8 @@ namespace KerbalAlarmClock
         //Behaviours
         [Persistent] internal Int32 BehaviourChecksPerSec = 10;
         [Persistent] internal Int32 BehaviourChecksPerSec_Custom = 40;
-
+        
+        //[Persistent] internal Boolean NewWarpBehaviour = true;
 
         [Persistent] internal Boolean AllowJumpFromViewOnly = true;
         [Persistent] internal Boolean AllowJumpToAsteroid = true;

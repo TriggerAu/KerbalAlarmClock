@@ -28,6 +28,11 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 2.7.9.0		-	KSP Version: 0.25.0
+- Recompiled for 0.25
+- Image size optimisation thanks to dak180
+- removal of last spaceport remains
+
 Version 2.7.8.2		-	KSP Version: 0.24.2
 - Fixed issue with inputlocks not coming off sometimes (Fixes #48)
 

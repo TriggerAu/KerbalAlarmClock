@@ -54,8 +54,10 @@ namespace KACWrapper
         /// <summary>
         /// Whether the object has been wrapped and the APIReady flag is set in the real KAC
         /// </summary>
-        public static Boolean APIReady { get { return _KACWrapped && KAC.APIReady; } }
+        public static Boolean APIReady { get { return _KACWrapped && KAC.APIReady && !NeedUpgrade; } }
 
+
+        public static Boolean NeedUpgrade { get; private set; }
 
         /// <summary>
         /// This method will set up the KAC object and wrap all the methods/functions
@@ -83,6 +85,13 @@ namespace KACWrapper
                 return false;
             }
 
+            LogFormatted_DebugOnly("KAC Version:{0}", KACType.Assembly.GetName().Version.ToString());
+            if (KACType.Assembly.GetName().Version.CompareTo(new Version(3, 0, 0, 5)) < 0)
+            {
+                //No TimeEntry or alarmchoice options = need a newer version
+                NeedUpgrade = true;
+            }
+            
             //now the Alarm Type
             KACAlarmType = AssemblyLoader.loadedAssemblies
                 .Select(a => a.assembly.GetExportedTypes())
@@ -150,6 +159,14 @@ namespace KACWrapper
                 LogFormatted("Getting Delete Method");
                 DeleteAlarmMethod = KACType.GetMethod("DeleteAlarm", BindingFlags.Public | BindingFlags.Instance);
                 LogFormatted_DebugOnly("Success: " + (DeleteAlarmMethod != null).ToString());
+
+                LogFormatted("Getting DrawAlarmAction");
+                DrawAlarmActionChoiceMethod = KACType.GetMethod("DrawAlarmActionChoiceAPI", BindingFlags.Public | BindingFlags.Instance);
+                LogFormatted_DebugOnly("Success: " + (DrawAlarmActionChoiceMethod != null).ToString());
+
+                //LogFormatted("Getting DrawTimeEntry");
+                //DrawTimeEntryMethod = KACType.GetMethod("DrawTimeEntryAPI", BindingFlags.Public | BindingFlags.Instance);
+                //LogFormatted_DebugOnly("Success: " + (DrawTimeEntryMethod != null).ToString());
 
                 MethodInfo[] mis = KACType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
                 foreach (MethodInfo mi in mis)
@@ -313,6 +330,40 @@ namespace KACWrapper
                 return (Boolean)DeleteAlarmMethod.Invoke(actualKAC, new System.Object[] { AlarmID });
             }
 
+
+            private MethodInfo DrawAlarmActionChoiceMethod;
+            /// <summary>
+            /// Delete an Alarm
+            /// </summary>
+            /// <param name="AlarmID">Unique ID of the alarm</param>
+            /// <returns>Success of the deletion</returns>
+            internal Boolean DrawAlarmActionChoice(ref AlarmActionEnum Choice, String LabelText, Int32 LabelWidth, Int32 ButtonWidth)
+            {
+                Int32 InValue = (Int32)Choice;
+                Int32 OutValue = (Int32)DrawAlarmActionChoiceMethod.Invoke(actualKAC, new System.Object[] { InValue, LabelText, LabelWidth, ButtonWidth });
+
+                Choice = (AlarmActionEnum)OutValue;
+                return (InValue != OutValue);
+            }
+
+            //Remmed out due to it borking window layout
+            //private MethodInfo DrawTimeEntryMethod;
+            ///// <summary>
+            ///// Delete an Alarm
+            ///// </summary>
+            ///// <param name="AlarmID">Unique ID of the alarm</param>
+            ///// <returns>Success of the deletion</returns>
+
+            //internal Boolean DrawTimeEntry(ref Double Time, TimeEntryPrecisionEnum Prec, String LabelText, Int32 LabelWidth)
+            //{
+            //    Double InValue = Time;
+            //    Double OutValue = (Double)DrawTimeEntryMethod.Invoke(actualKAC, new System.Object[] { InValue, (Int32)Prec, LabelText, LabelWidth });
+
+            //    Time = OutValue;
+            //    return (InValue != OutValue);
+            //}
+
+
             #endregion
 
             public class KACAlarm
@@ -329,6 +380,10 @@ namespace KACWrapper
                     AlarmMarginField = KACAlarmType.GetField("AlarmMarginSecs");
                     AlarmActionField = KACAlarmType.GetField("AlarmAction");
                     RemainingField = KACAlarmType.GetField("Remaining");
+
+                    XferOriginBodyNameField = KACAlarmType.GetField("XferOriginBodyName");
+                    LogFormatted("XFEROrigin:{0}", XferOriginBodyNameField == null);
+                    XferTargetBodyNameField = KACAlarmType.GetField("XferTargetBodyName");
 
                     //PropertyInfo[] pis = KACAlarmType.GetProperties();
                     //foreach (PropertyInfo pi in pis)
@@ -382,6 +437,26 @@ namespace KACWrapper
                     set { NotesField.SetValue(actualAlarm, value); }
                 }
 
+                private FieldInfo XferOriginBodyNameField;
+                /// <summary>
+                /// Name of the origin body for a transfer
+                /// </summary>
+                public String XferOriginBodyName
+                {
+                    get { return (String)XferOriginBodyNameField.GetValue(actualAlarm); }
+                    set { XferOriginBodyNameField.SetValue(actualAlarm, value); }
+                }
+
+                private FieldInfo XferTargetBodyNameField;
+                /// <summary>
+                /// Name of the destination body for a transfer
+                /// </summary>
+                public String XferTargetBodyName
+                {
+                    get { return (String)XferTargetBodyNameField.GetValue(actualAlarm); }
+                    set { XferTargetBodyNameField.SetValue(actualAlarm, value); }
+                }
+                
                 private FieldInfo AlarmTypeField;
                 /// <summary>
                 /// What type of Alarm is this - affects icon displayed and some calc options
@@ -415,7 +490,7 @@ namespace KACWrapper
                 public AlarmActionEnum AlarmAction
                 {
                     get { return (AlarmActionEnum)AlarmActionField.GetValue(actualAlarm); }
-                    set { AlarmActionField.SetValue(actualAlarm, value); }
+                    set { AlarmActionField.SetValue(actualAlarm, (Int32)value); }
                 }
 
                 private FieldInfo RemainingField;
@@ -460,6 +535,15 @@ namespace KACWrapper
                 [Description("Kill Warp Only-No Message")]          KillWarpOnly,
                 [Description("Kill Warp and Message")]              KillWarp,
                 [Description("Pause Game and Message")]             PauseGame
+            }
+
+            public enum TimeEntryPrecisionEnum
+            {
+                Seconds = 0,
+                Minutes = 1,
+                Hours = 2,
+                Days = 3,
+                Years = 4
             }
 
             public class KACAlarmList : List<KACAlarm>

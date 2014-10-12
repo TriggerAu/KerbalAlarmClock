@@ -123,5 +123,18 @@ namespace KerbalAlarmClock
 
         }
        
+        public Int32 DrawAlarmActionChoiceAPI(Int32 Choice, String LabelText, Int32 LabelWidth, Int32 ButtonWidth){
+            KACAlarm.AlarmActionEnum actionChoice = (KACAlarm.AlarmActionEnum)Choice;
+            DrawAlarmActionChoice3(ref actionChoice, LabelText, LabelWidth, ButtonWidth);
+            return (Int32)actionChoice;
+        }
+
+        //public Double DrawTimeEntryAPI(ref Double time, Int32 Prec, String LabelText, Int32 LabelWidth)
+        //{
+        //    KACTimeStringArray inTime = new KACTimeStringArray(time, (KACTimeStringArray.TimeEntryPrecisionEnum)Prec);
+        //    DrawTimeEntry(ref inTime, (KACTimeStringArray.TimeEntryPrecisionEnum)Prec, LabelText, LabelWidth, 40, 20);
+        //    return inTime.UT;
+        //}
+
     }
 }

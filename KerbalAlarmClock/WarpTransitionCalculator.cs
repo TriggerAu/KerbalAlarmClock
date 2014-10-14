@@ -17,6 +17,23 @@ namespace KerbalAlarmClock
         /// </summary>
         internal static List<WarpTransition> WarpRateTransitionPeriods = new List<WarpTransition>();
 
+        private static String WarpRateHash = "";
+        internal static Boolean CheckForTransitionChanges()
+        {
+            String NewHash = "";
+
+            for (int i = 0; i < TimeWarp.fetch.warpRates.Length; i++) {
+                NewHash += TimeWarp.fetch.warpRates[i].ToString() + "|";
+            }
+
+            if (NewHash == WarpRateHash) {
+                return false;
+            } else {
+                CalcWarpRateTransitions();
+                return true;
+            }
+        }
+
         internal static void CalcWarpRateTransitions()
         {
             MonoBehaviourExtended.LogFormatted("WarpRates:{0}", TimeWarp.fetch.warpRates.Length);

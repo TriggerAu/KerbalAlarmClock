@@ -89,9 +89,6 @@
     <Compile Include="WarpTransitionCalculator.cs" />
     <Compile Include="Windows\AlarmImport.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="TextFile1.txt" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rem Set the Variables we need

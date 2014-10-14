@@ -20,15 +20,18 @@ namespace KerbalAlarmClock
         private static String WarpRateHash = "";
         internal static Boolean CheckForTransitionChanges()
         {
+            //check to see if the warp rates are still the same
             String NewHash = "";
 
             for (int i = 0; i < TimeWarp.fetch.warpRates.Length; i++) {
                 NewHash += TimeWarp.fetch.warpRates[i].ToString() + "|";
             }
-
+            
+            //if not then work out the time to change rates values
             if (NewHash == WarpRateHash) {
                 return false;
             } else {
+                WarpRateHash = NewHash;
                 CalcWarpRateTransitions();
                 return true;
             }

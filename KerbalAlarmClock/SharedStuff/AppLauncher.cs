@@ -39,6 +39,7 @@ namespace KerbalAlarmClock
 
             try
             {
+                LogFormatted("ADDING APP LAUNCHER");
                 retButton = ApplicationLauncher.Instance.AddModApplication(
                     onAppLaunchToggleOn, onAppLaunchToggleOff,
                     onAppLaunchHoverOn, onAppLaunchHoverOff,

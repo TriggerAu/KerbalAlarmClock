@@ -108,14 +108,6 @@ namespace KerbalAlarmClock
             if (settings.XferModelLoadData)
                     settings.XferModelDataLoaded = KACResources.LoadModelPoints();
 
-            //Common Toolbar Code
-            //BlizzyToolbarIsAvailable = HookToolbar();
-
-            //if (BlizzyToolbarIsAvailable && settings.UseBlizzyToolbarIfAvailable)
-            //{
-            //    btnToolbarKAC = InitToolbarButton();
-            //}
-
             //Get whether the toolbar is there
             settings.BlizzyToolbarIsAvailable = ToolbarManager.ToolbarAvailable;
 
@@ -311,7 +303,7 @@ namespace KerbalAlarmClock
             //if we are using the transitions then periodically check the rates in case someone changed em
             if (!settings.WarpTransitions_Instant) {
                 WarpRateWorkerCounter++;
-                if (WarpRateWorkerCounter > settings.WarpTranstions_UpdateSecs / UpdateInterval) {
+                if (WarpRateWorkerCounter > settings.WarpTransitions_UpdateSecs / UpdateInterval) {
                     WarpRateWorkerCounter = 0;
                     WarpTransitionCalculator.CheckForTransitionChanges();
                 }
@@ -479,7 +471,7 @@ namespace KerbalAlarmClock
 
 
         //All persistant stuff is stored in the settings object
-        private long SecondsWarpLightIsShown = 3;
+        //private long SecondsWarpLightIsShown = 3;
 
         //Constructor - link to parent and set up time
         //#region "Constructor"
@@ -620,9 +612,9 @@ namespace KerbalAlarmClock
             }
 
             //Are we adding Contract Alarms
-            if (settings.AlarmAddContractAuto) {
-                MonitorContracts();
-            }
+            //if (settings.AlarmAddContractAuto) {
+            //    MonitorContracts();
+            //}
 
 
             //Do we need to turn off the global warp light
@@ -630,7 +622,7 @@ namespace KerbalAlarmClock
                 KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
             else
                 //has it been on long enough?
-                if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(SecondsWarpLightIsShown) < DateTime.Now)
+                if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(settings.WarpTransitions_ShowIndicatorSecs) < DateTime.Now)
                     KACWorkerGameState.CurrentlyUnderWarpInfluence = false;
 
             //Window Pos Movement Mechanic
@@ -974,20 +966,20 @@ namespace KerbalAlarmClock
 
         internal void MonitorContracts()
         {
-            List<Contracts.Contract> conExpiring = Contracts.ContractSystem.Instance.Contracts.Where(
-                c1 => c1.TimeExpiry > 0 + settings.contractExpiringThreshold).OrderByDescending(
-                c2 => c2.DateExpire).First(settings.contractExpiringNumToDisplay);
+            //List<Contracts.Contract> conExpiring = Contracts.ContractSystem.Instance.Contracts.Where(
+            //    c1 => c1.TimeExpiry > 0 + settings.contractExpiringThreshold).OrderByDescending(
+            //    c2 => c2.DateExpire).First(settings.contractExpiringNumToDisplay);
 
 
-            foreach (Contracts.Contract c in conExpiring)
-	        {
-                if (!alarms.Any(a => a.ContractID == c.ContractID)) {
-                    KACAlarm newAlarm = new KACAlarm(c.Title,c.DateExpire-settings.contractExpiringMargin,
-                        KACAlarm.AlarmTypeEnum.Contract,settings.contractExpiringAction);
-                    newAlarm.ContractID = c.ContractID;
-                    alarms.Add(newAlarm);
-                }
-	        } 
+            //foreach (Contracts.Contract c in conExpiring)
+            //{
+            //    if (!alarms.Any(a => a.ContractID == c.ContractID)) {
+            //        KACAlarm newAlarm = new KACAlarm(c.Title,c.DateExpire-settings.contractExpiringMargin,
+            //            KACAlarm.AlarmTypeEnum.Contract,settings.contractExpiringAction);
+            //        newAlarm.ContractID = c.ContractID;
+            //        alarms.Add(newAlarm);
+            //    }
+            //} 
 
         }
 
@@ -1011,7 +1003,7 @@ namespace KerbalAlarmClock
                     tmpAlarm.WarpInfluence = false;
                 else
                     //if the lights been on long enough
-                    if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(SecondsWarpLightIsShown) < DateTime.Now)
+                    if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(settings.WarpTransitions_ShowIndicatorSecs) < DateTime.Now)
                         tmpAlarm.WarpInfluence = false;
 
                 //Update Remaining interval for each alarm
@@ -1071,33 +1063,41 @@ namespace KerbalAlarmClock
                     //if in the next two updates we would pass the alarm time then slow down the warp
                     if (!tmpAlarm.Actioned && tmpAlarm.Enabled && (tmpAlarm.HaltWarp || tmpAlarm.PauseGame))
                     {
-                        //Do we need to reduce warp - different maths for instant warp reduction
-                        Boolean ReduceWarp = false;
-                        if (settings.WarpTransitions_Instant) {
+                        if (settings.WarpTransitions_Instant)
+                        {
                             Double TimeNext = KACWorkerGameState.CurrentTime.UT + SecondsTillNextUpdate * 2;
                             //LogFormatted(CurrentTime.UT.ToString() + "," + TimeNext.ToString());
-                            if (TimeNext > tmpAlarm.AlarmTime.UT) {
-                                ReduceWarp = true;
-                            }
-                        } else {
-                            if (WarpTransitionCalculator.UTToRateTimesOne < tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT) {
-                                ReduceWarp = true;
+                            if (TimeNext > tmpAlarm.AlarmTime.UT)
+                            {
+                                tmpAlarm.WarpInfluence = true;
+                                KACWorkerGameState.CurrentlyUnderWarpInfluence = true;
+                                KACWorkerGameState.CurrentWarpInfluenceStartTime = DateTime.Now;
+
+                                TimeWarp w = TimeWarp.fetch;
+                                if (w.current_rate_index > 0)
+                                {
+                                    LogFormatted("Reducing Warp");
+                                    TimeWarp.SetRate(w.current_rate_index - 1, true);
+                                }
                             }
                         }
+                        else
+                        {
+                            if (WarpTransitionCalculator.UTToRateTimesOne * settings.WarpTransitions_UTToRateTimesOneTenths / 10 > tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT)
+                            {
+                                tmpAlarm.WarpInfluence = true;
+                                KACWorkerGameState.CurrentlyUnderWarpInfluence = true;
+                                KACWorkerGameState.CurrentWarpInfluenceStartTime = DateTime.Now;
 
-                        if (ReduceWarp) {
-                            //Now reduce it
-                            tmpAlarm.WarpInfluence = true;
-                            KACWorkerGameState.CurrentlyUnderWarpInfluence = true;
-                            KACWorkerGameState.CurrentWarpInfluenceStartTime = DateTime.Now;
-
-                            TimeWarp w = TimeWarp.fetch;
-                            if (w.current_rate_index > 0) {
-                                LogFormatted("Reducing Warp");
-                                TimeWarp.SetRate(w.current_rate_index - 1, !settings.WarpTransitions_Instant);
+                                TimeWarp w = TimeWarp.fetch;
+                                if (w.current_rate_index > 0)
+                                {
+                                    LogFormatted("Reducing Warp");
+                                    TimeWarp.SetRate(w.current_rate_index - 1, false);
+                                }
                             }
-                            
                         }
+                        
                     }
                 //}
             }
@@ -1129,7 +1129,7 @@ namespace KerbalAlarmClock
 
 #if DEBUG
     //This will kick us into the save called default and set the first vessel active
-    //[KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class Debug_AutoLoadPersistentSaveOnStartup : MonoBehaviour
     {
         //use this variable for first run to avoid the issue with when this is true and multiple addons use it

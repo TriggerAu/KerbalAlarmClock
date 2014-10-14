@@ -248,6 +248,8 @@ namespace KerbalAlarmClock
             ddlChecksPerSec.DrawButton();
             GUILayout.EndHorizontal();
 
+            if (DrawCheckbox(ref settings.WarpTransitions_Instant, new GUIContent ("Use Instant Warp Transitions","Slams the transitions between levels - can cause issues for large timewarp factors")))
+                settings.Save();
 
             GUILayout.EndVertical();
 

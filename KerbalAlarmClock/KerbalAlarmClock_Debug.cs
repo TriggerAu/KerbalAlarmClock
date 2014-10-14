@@ -264,7 +264,7 @@ namespace KerbalAlarmClock
         int intTestheight = 0;
         int intTestheight2 = 0;
         int intTestheight3 = 0;
-        int intTestheight4 = 0;
+        int intTestheight4 = 10;
 
         double dblTest = 12;
 
@@ -304,49 +304,58 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
-            foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w=>w.Index))
+
+            //foreach (Contracts.Contract item in Contracts.ContractSystem.Instance.Contracts)
+            //{
+            //    GUILayout.Label(String.Format("{0}-{1}-{2}", item.Title, item.ContractID, item.ContractGuid));
+            //}
+
+
+            foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w => w.Index))
             {
-                GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}",item.Rate,item.Index,item.UTToRateUp,item.UTToRateDown,item.UTTo1Times));
+                GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times));
             }
 
+            if (GUILayout.Button("Add Button"))
+                btnAppLauncher = InitAppLauncherButton();
+            
+            //if (GUILayout.Button("Calc Rates"))
+            //{
+            //    warpchange();
+            //    WarpTransitionCalculator.CalcWarpRateTransitions();
+            //}
 
-            if (GUILayout.Button("Calc Rates"))
-            {
-                warpchange();
-                WarpTransitionCalculator.CalcWarpRateTransitions();
-            }
+            //if (GUILayout.Button("Set Rate to inttest4"))
+            //{
 
-            if (GUILayout.Button("Set Rate to inttest4"))
-            {
+            //    LogFormatted("StartTransition({2}->{3},UT:{0},Time:{1}",Planetarium.GetUniversalTime(),DateTime.Now,TimeWarp.CurrentRateIndex,intTestheight4);
+            //    TransStart = DateTime.Now;
+            //    UTStart = Planetarium.GetUniversalTime();
+            //    warptrans = true;
+            //    TimeWarp.SetRate(intTestheight4,false);
 
-                LogFormatted("StartTransition({2}->{3},UT:{0},Time:{1}",Planetarium.GetUniversalTime(),DateTime.Now,TimeWarp.CurrentRateIndex,intTestheight4);
-                TransStart = DateTime.Now;
-                UTStart = Planetarium.GetUniversalTime();
-                warptrans = true;
-                TimeWarp.SetRate(intTestheight4,false);
+            //}
 
-            }
+            //if (warptrans)
+            //{
+            //    if (TimeWarp.CurrentRate==TimeWarp.fetch.warpRates[intTestheight4]){
+            //        warptrans = false;
+            //        LogFormatted("EndTransition,UT:{0},Time:{1}", Planetarium.GetUniversalTime(), DateTime.Now);
+            //        LogFormatted("Transition,UT:{0},Time:{1}", Planetarium.GetUniversalTime()-UTStart, (DateTime.Now-TransStart).TotalMilliseconds);
+            //    }
+            //}
 
-            if (warptrans)
-            {
-                if (TimeWarp.CurrentRate==TimeWarp.fetch.warpRates[intTestheight4]){
-                    warptrans = false;
-                    LogFormatted("EndTransition,UT:{0},Time:{1}", Planetarium.GetUniversalTime(), DateTime.Now);
-                    LogFormatted("Transition,UT:{0},Time:{1}", Planetarium.GetUniversalTime()-UTStart, (DateTime.Now-TransStart).TotalMilliseconds);
-                }
-            }
+            //for (int i = 0; i < 8; i++)
+            //{
+            //    GUILayout.Label(String.Format("{0}->{1} : {2}", TimeWarp.CurrentRateIndex,i,UTChanges[i]));
+            //}
 
-            for (int i = 0; i < 8; i++)
-            {
-                GUILayout.Label(String.Format("{0}->{1} : {2}", TimeWarp.CurrentRateIndex,i,UTChanges[i]));
-            }
+            //if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+            //{
+            //    GUILayout.Label(String.Format("Rate: {0}", TimeWarp.CurrentRate));
+            //    GUILayout.Label(String.Format("Text: {0}", TimeWarp.fetch.textDuration));
 
-            if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
-            {
-                GUILayout.Label(String.Format("Rate: {0}", TimeWarp.CurrentRate));
-                GUILayout.Label(String.Format("Text: {0}", TimeWarp.fetch.textDuration));
-
-            }
+            //}
 
 
             //if (GUILayout.Button("Load Old Alarm List"))

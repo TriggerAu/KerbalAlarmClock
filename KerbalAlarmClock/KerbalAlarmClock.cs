@@ -303,9 +303,19 @@ namespace KerbalAlarmClock
             }
         }
 
+        private Int32 WarpRateWorkerCounter = 0;
         internal override void RepeatingWorker()
         {
             UpdateDetails();
+
+            //if we are using the transitions then periodically check the rates in case someone changed em
+            if (!settings.WarpTransitions_Instant) {
+                WarpRateWorkerCounter++;
+                if (WarpRateWorkerCounter > settings.WarpTranstions_UpdateSecs / UpdateInterval) {
+                    WarpRateWorkerCounter = 0;
+                    WarpTransitionCalculator.CheckForTransitionChanges();
+                }
+            }
         }
 
         internal override void OnGUIOnceOnly()
@@ -608,6 +618,12 @@ namespace KerbalAlarmClock
                     MonitorManNodeOnPath();
                 }
             }
+
+            //Are we adding Contract Alarms
+            if (settings.AlarmAddContractAuto) {
+                MonitorContracts();
+            }
+
 
             //Do we need to turn off the global warp light
             if (KACWorkerGameState.CurrentWarpInfluenceStartTime == null)
@@ -956,6 +972,25 @@ namespace KerbalAlarmClock
             }
         }
 
+        internal void MonitorContracts()
+        {
+            List<Contracts.Contract> conExpiring = Contracts.ContractSystem.Instance.Contracts.Where(
+                c1 => c1.TimeExpiry > 0 + settings.contractExpiringThreshold).OrderByDescending(
+                c2 => c2.DateExpire).First(settings.contractExpiringNumToDisplay);
+
+
+            foreach (Contracts.Contract c in conExpiring)
+	        {
+                if (!alarms.Any(a => a.ContractID == c.ContractID)) {
+                    KACAlarm newAlarm = new KACAlarm(c.Title,c.DateExpire-settings.contractExpiringMargin,
+                        KACAlarm.AlarmTypeEnum.Contract,settings.contractExpiringAction);
+                    newAlarm.ContractID = c.ContractID;
+                    alarms.Add(newAlarm);
+                }
+	        } 
+
+        }
+
         /// <summary>
         /// Only called when game is in paused state
         /// </summary>
@@ -1036,20 +1071,32 @@ namespace KerbalAlarmClock
                     //if in the next two updates we would pass the alarm time then slow down the warp
                     if (!tmpAlarm.Actioned && tmpAlarm.Enabled && (tmpAlarm.HaltWarp || tmpAlarm.PauseGame))
                     {
-                        Double TimeNext = KACWorkerGameState.CurrentTime.UT + SecondsTillNextUpdate * 2;
-                        //LogFormatted(CurrentTime.UT.ToString() + "," + TimeNext.ToString());
-                        if (TimeNext > tmpAlarm.AlarmTime.UT)
-                        {
+                        //Do we need to reduce warp - different maths for instant warp reduction
+                        Boolean ReduceWarp = false;
+                        if (settings.WarpTransitions_Instant) {
+                            Double TimeNext = KACWorkerGameState.CurrentTime.UT + SecondsTillNextUpdate * 2;
+                            //LogFormatted(CurrentTime.UT.ToString() + "," + TimeNext.ToString());
+                            if (TimeNext > tmpAlarm.AlarmTime.UT) {
+                                ReduceWarp = true;
+                            }
+                        } else {
+                            if (WarpTransitionCalculator.UTToRateTimesOne < tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT) {
+                                ReduceWarp = true;
+                            }
+                        }
+
+                        if (ReduceWarp) {
+                            //Now reduce it
                             tmpAlarm.WarpInfluence = true;
                             KACWorkerGameState.CurrentlyUnderWarpInfluence = true;
                             KACWorkerGameState.CurrentWarpInfluenceStartTime = DateTime.Now;
 
                             TimeWarp w = TimeWarp.fetch;
-                            if (w.current_rate_index > 0)
-                            {
+                            if (w.current_rate_index > 0) {
                                 LogFormatted("Reducing Warp");
-                                TimeWarp.SetRate(w.current_rate_index - 1, true);
+                                TimeWarp.SetRate(w.current_rate_index - 1, !settings.WarpTransitions_Instant);
                             }
+                            
                         }
                     }
                 //}

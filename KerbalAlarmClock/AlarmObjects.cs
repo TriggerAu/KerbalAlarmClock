@@ -29,7 +29,9 @@ namespace KerbalAlarmClock
             TransferModelled,
             Distance,
             Crew,
-            EarthTime
+            EarthTime,
+            Contract,
+            ContractAuto
         }
         internal static Dictionary<AlarmTypeEnum, int> AlarmTypeToButton = new Dictionary<AlarmTypeEnum, int>() {
             {AlarmTypeEnum.Raw, 0},
@@ -182,6 +184,7 @@ namespace KerbalAlarmClock
         private ITargetable _TargetObject = null;                                   //Stored Target Details
         [Persistent] private String TargetObjectStorage;
 
+        [Persistent] public Int64 ContractID;
         //Vessel Target - needs the fancy get routine as the alarms load before the vessels are loaded.
         //This means that each time the object is accessed if its not yet loaded it trys again
         public ITargetable TargetObject

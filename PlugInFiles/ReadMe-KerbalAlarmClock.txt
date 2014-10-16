@@ -28,7 +28,7 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
-Version 3.0.0.beta		-	KSP Version: 0.24.2
+Version 3.0.0.beta		-	KSP Version: 0.25.0
 - Ability to choose from 3 visual Skins
 - Alarm Saving - now in the games save file - only saves and loads on game/save and load
 - QuickAdd option for contextual Alarms
@@ -38,6 +38,7 @@ Version 3.0.0.beta		-	KSP Version: 0.24.2
 - API for Alarm Creation/Modification and events
 - App Launcher integration - this is now the default
 - Has input locking options for when mouse is over the panels - this prevents action groups from occuring when mouse is over windows
+- Changed default Warp affecting to cater to non-instant transitions
 - New Common Toolbar Wrapper - official one
 - Removed periodic save of alarms file now that alarms are in the save files
 - Screen clamping on main window
@@ -48,6 +49,7 @@ Version 3.0.0.beta		-	KSP Version: 0.24.2
 - Restructure settings
 - Restructure plugin folders
 - Added Alarm Import Tool for v2 Alarms
+- Added Flags
 
 Version 2.7.8.2		-	KSP Version: 0.24.2
 - Fixed issue with inputlocks not coming off sometimes (Fixes #48)

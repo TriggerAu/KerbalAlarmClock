@@ -333,10 +333,10 @@ namespace KerbalAlarmClock
             if (DrawAlarmActionChoice3(ref settings.AlarmAddManQuickAction, "Quick Action:", 108, 61))
                 settings.Save();
 
-            if (DrawTimeEntry(ref timeAutoManNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
+            if (DrawTimeEntry(ref timeQuickManNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
             {
                 //convert it and save it in the settings
-                settings.AlarmAddManQuickMargin = timeAutoManNodeMargin.UT;
+                settings.AlarmAddManQuickMargin = timeQuickManNodeMargin.UT;
                 settings.Save();
             }
             GUILayout.EndVertical();
@@ -400,10 +400,10 @@ namespace KerbalAlarmClock
             if (DrawAlarmActionChoice3(ref settings.AlarmAddSOIQuickAction, "Quick Action:", 108, 61))
                 settings.Save();
 
-            if (DrawTimeEntry(ref timeAutoSOIMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
+            if (DrawTimeEntry(ref timeQuickSOIMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
             {
                 //convert it and save it in the settings
-                settings.AlarmAddSOIQuickMargin = timeAutoSOIMargin.UT;
+                settings.AlarmAddSOIQuickMargin = timeQuickSOIMargin.UT;
                 settings.Save();
             }
             GUILayout.EndVertical();

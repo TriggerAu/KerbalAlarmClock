@@ -86,7 +86,7 @@ namespace KACAPITester_KACWrapper
             }
 
             LogFormatted_DebugOnly("KAC Version:{0}", KACType.Assembly.GetName().Version.ToString());
-            if (KACType.Assembly.GetName().Version.CompareTo(new Version(3, 0, 0, 5)) < 0)
+            if (KACType.Assembly.GetName().Version.CompareTo(new System.Version(3, 0, 0, 5)) < 0)
             {
                 //No TimeEntry or alarmchoice options = need a newer version
                 NeedUpgrade = true;
@@ -105,8 +105,14 @@ namespace KACAPITester_KACWrapper
 
             //now grab the running instance
             LogFormatted("Got Assembly Types, grabbing Instance");
-            actualKAC = KACType.GetField("APIInstance", BindingFlags.Public | BindingFlags.Static).GetValue(null);
 
+            try {
+                actualKAC = KACType.GetField("APIInstance", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+            } catch (Exception) {
+                NeedUpgrade = true;
+                LogFormatted("No APIInstance found - most likely you have KAC v2 installed");
+                //throw;
+            }
             if (actualKAC == null)
             {
                 LogFormatted("Failed grabbing Instance");

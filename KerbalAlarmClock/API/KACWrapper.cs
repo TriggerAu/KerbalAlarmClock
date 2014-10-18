@@ -105,8 +105,14 @@ namespace KACWrapper
 
             //now grab the running instance
             LogFormatted("Got Assembly Types, grabbing Instance");
-            actualKAC = KACType.GetField("APIInstance", BindingFlags.Public | BindingFlags.Static).GetValue(null);
 
+            try {
+                actualKAC = KACType.GetField("APIInstance", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+            } catch (Exception) {
+                NeedUpgrade = true;
+                LogFormatted("No APIInstance found - most likely you have KAC v2 installed");
+                //throw;
+            }
             if (actualKAC == null)
             {
                 LogFormatted("Failed grabbing Instance");

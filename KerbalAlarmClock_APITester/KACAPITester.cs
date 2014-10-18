@@ -21,7 +21,8 @@ namespace KerbalAlarmClock_APITester
             KACWrapper.InitKACWrapper();
 
             //Register the event handler
-            KACWrapper.KAC.onAlarmStateChanged += KAC_onAlarmStateChanged;
+            if (KACWrapper.APIReady)
+                KACWrapper.KAC.onAlarmStateChanged += KAC_onAlarmStateChanged;
         }
 
         void KAC_onAlarmStateChanged(KACWrapper.KACAPI.AlarmStateChangedEventArgs e)

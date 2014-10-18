@@ -63,6 +63,7 @@ namespace KerbalAlarmClock
         internal static Texture2D iconClosest = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         internal static Texture2D iconLaunchRendezvous = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         internal static Texture2D iconCrew = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconContract = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         internal static Texture2D iconEarth = new Texture2D(18, 14, TextureFormat.ARGB32, false);
 
         internal static Texture2D iconNone = new Texture2D(18, 14, TextureFormat.ARGB32, false);
@@ -97,6 +98,7 @@ namespace KerbalAlarmClock
         internal static Texture2D btnXfer = new Texture2D(25, 20, TextureFormat.ARGB32, false);
         internal static Texture2D btnClosest = new Texture2D(25, 20, TextureFormat.ARGB32, false);
         internal static Texture2D btnCrew = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnContract = new Texture2D(25, 20, TextureFormat.ARGB32, false);
         
         internal static Texture2D btnChevronUp = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnChevronDown = new Texture2D(17, 16, TextureFormat.ARGB32, false);
@@ -180,6 +182,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref iconXFer, "img_listiconXfer.png");
                 KACUtils.LoadImageFromFile(ref iconClosest, "img_listiconClosest.png");
                 KACUtils.LoadImageFromFile(ref iconCrew, "img_listiconCrew.png");
+                KACUtils.LoadImageFromFile(ref iconContract, "img_listiconContract.png");
                 KACUtils.LoadImageFromFile(ref iconEarth, "img_listiconEarth.png");
                 KACUtils.LoadImageFromFile(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.png");
                 KACUtils.LoadImageFromFile(ref iconWarpList100, "img_listiconWarpList_100.png");
@@ -213,6 +216,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref btnXfer, "img_buttonTypeXfer.png");
                 KACUtils.LoadImageFromFile(ref btnClosest, "img_buttonTypeClosest.png");
                 KACUtils.LoadImageFromFile(ref btnCrew, "img_buttonTypeCrew.png");
+                KACUtils.LoadImageFromFile(ref btnContract, "img_buttonTypeContract.png");
 
                 KACUtils.LoadImageFromFile(ref btnChevronUp, "img_buttonChevronUp.png");
                 KACUtils.LoadImageFromFile(ref btnChevronDown, "img_buttonChevronDown.png");

@@ -304,20 +304,23 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
-
-            //foreach (Contracts.Contract item in Contracts.ContractSystem.Instance.Contracts)
-            //{
-            //    GUILayout.Label(String.Format("{0}-{1}-{2}", item.Title, item.ContractID, item.ContractGuid));
-            //}
-
-
-            foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w => w.Index))
+            if (Contracts.ContractSystem.Instance != null)
             {
-                GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times));
+                foreach (Contracts.Contract item in Contracts.ContractSystem.Instance.Contracts)
+                {
+                    item.Update();
+                    GUILayout.Label(String.Format("{0}\r\n{1}\r\nState:{3}\r\nDate:{4}", item.Title, item.ContractGuid, item.Synopsys, item.ContractState, item.DateNext()));
+                    GUILayout.Label(String.Format("DateExpire:{0}DateDeadline:{1}", item.DateExpire,item.DateDeadline));
+                }
             }
 
-            if (GUILayout.Button("Add Button"))
-                btnAppLauncher = InitAppLauncherButton();
+            //foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w => w.Index))
+            //{
+            //    GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times));
+            //}
+
+            //if (GUILayout.Button("Add Button"))
+            //    btnAppLauncher = InitAppLauncherButton();
             
             //if (GUILayout.Button("Calc Rates"))
             //{

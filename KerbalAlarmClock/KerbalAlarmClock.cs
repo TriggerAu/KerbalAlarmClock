@@ -1141,10 +1141,16 @@ namespace KerbalAlarmClock
             {
                 first = false;
                 HighLogic.SaveFolder = "default";
+                HighLogic.SaveFolder = "Career";
                 Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
 
                 if (game != null && game.flightState != null && game.compatible)
                 {
+                    //straight to spacecenter
+                    HighLogic.CurrentGame = game;
+                    HighLogic.LoadScene(GameScenes.SPACECENTER);
+                    return;
+
                     Int32 FirstVessel;
                     Boolean blnFoundVessel = false;
                     for (FirstVessel = 0; FirstVessel < game.flightState.protoVessels.Count; FirstVessel++)

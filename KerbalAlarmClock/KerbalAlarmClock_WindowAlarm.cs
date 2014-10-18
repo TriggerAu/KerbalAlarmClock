@@ -80,6 +80,9 @@ namespace KerbalAlarmClock
                                     strAlarmText += " - Earth Alarm"; break;
                                 case KACAlarm.AlarmTypeEnum.Crew:
                                     strAlarmText += " - Kerbal Alarm"; break;
+                                case KACAlarm.AlarmTypeEnum.Contract:
+                                case KACAlarm.AlarmTypeEnum.ContractAuto:
+                                    strAlarmText += " - Contract"; break;
                                 default:
                                     strAlarmText+= " - Manual";break;
                             }

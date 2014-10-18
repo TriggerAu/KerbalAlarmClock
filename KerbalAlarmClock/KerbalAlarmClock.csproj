@@ -55,6 +55,7 @@
     <Compile Include="API.cs" />
     <Compile Include="API\KACWrapper.cs" />
     <Compile Include="FrameworkExt\Extensions.cs" />
+    <Compile Include="FrameworkExt\ExtensionsKSP.cs" />
     <Compile Include="Framework\ConfigNodeStorage.cs" />
     <Compile Include="Framework\ExtensionsUnity.cs" />
     <Compile Include="Framework\MonoBehaviourExtended.cs" />

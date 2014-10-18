@@ -472,6 +472,9 @@ namespace KerbalAlarmClock
                         AddWindowHeight = intAddDistanceHeight; break;
                     case KACAlarm.AlarmTypeEnum.Crew:
                         AddWindowHeight = intAddCrewHeight; break;
+                    case KACAlarm.AlarmTypeEnum.Contract:
+                    case KACAlarm.AlarmTypeEnum.ContractAuto:
+                        AddWindowHeight = intTestheight4; break;
                     default: AddWindowHeight = 250; break;
                 }
                 AddWindowHeight += intHeight_AddWindowCommon;
@@ -848,6 +851,10 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmTypeEnum.EarthTime:
                     GUILayout.Label(KACResources.iconEarth, KACResources.styleAlarmIcon);
                     break;
+                case KACAlarm.AlarmTypeEnum.Contract:
+                case KACAlarm.AlarmTypeEnum.ContractAuto:
+                    GUILayout.Label(KACResources.iconContract, KACResources.styleAlarmIcon);
+                    break;
                 default:
                     GUILayout.Label(KACResources.iconNone, KACResources.styleAlarmIcon);
                     break;
@@ -1038,6 +1045,7 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmTypeEnum.Distance: strTitle = "Target Distance"; break;
                 case KACAlarm.AlarmTypeEnum.Crew: strTitle = "Crew"; break;
                 case KACAlarm.AlarmTypeEnum.EarthTime: strTitle = "Earth Time"; break;
+                case KACAlarm.AlarmTypeEnum.Contract: strTitle = "Contract"; break;
                 default: strTitle = "Raw Time"; break;
             }
             strTitle += " Alarm - Common Properties";

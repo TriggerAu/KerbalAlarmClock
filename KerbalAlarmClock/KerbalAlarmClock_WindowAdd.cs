@@ -8,6 +8,8 @@ using UnityEngine;
 using KSP;
 using KSPPluginFramework;
 
+using Contracts;
+
 namespace KerbalAlarmClock
 {
     public partial class KerbalAlarmClock
@@ -99,7 +101,9 @@ namespace KerbalAlarmClock
             KACAlarm.AlarmTypeEnum.Raw,
             KACAlarm.AlarmTypeEnum.Transfer,
             KACAlarm.AlarmTypeEnum.TransferModelled,
-            KACAlarm.AlarmTypeEnum.Crew
+            KACAlarm.AlarmTypeEnum.Crew,
+            KACAlarm.AlarmTypeEnum.Contract,
+            KACAlarm.AlarmTypeEnum.ContractAuto,
         };
 
         private String strAlarmEventName = "Alarm";
@@ -126,6 +130,8 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmTypeEnum.Closest: strAlarmEventName = "Closest"; break;
                 case KACAlarm.AlarmTypeEnum.Distance: strAlarmEventName = "Target Distance"; break;
                 case KACAlarm.AlarmTypeEnum.Crew: strAlarmEventName = "Crew"; break;
+                case KACAlarm.AlarmTypeEnum.Contract: 
+                case KACAlarm.AlarmTypeEnum.ContractAuto: strAlarmEventName = "Contract"; break;
                 default:
                     strAlarmEventName = "Alarm"; 
                     break;
@@ -178,6 +184,10 @@ namespace KerbalAlarmClock
                     case KACAlarm.AlarmTypeEnum.Crew:
                         BuildCrewStrings();
                         CrewAlarmStoreNode = settings.AlarmCrewDefaultStoreNode;
+                        break;
+                    case KACAlarm.AlarmTypeEnum.Contract:
+                    case KACAlarm.AlarmTypeEnum.ContractAuto:
+                        BuildContractStrings();
                         break;
                     default:
                         break;
@@ -238,6 +248,21 @@ namespace KerbalAlarmClock
             }
         }
 
+        private void BuildContractStrings()
+        {
+            strAlarmEventName = "Contract";
+            if (ContractSystem.Instance == null || ContractSystem.Instance.Contracts.Count == 0)
+            {
+                strAlarmName = "Contract alarm";
+                strAlarmNotes = "No Contracts Available";
+            }
+            else
+            {
+                strAlarmName = ContractSystem.Instance.Contracts[intSelectedContract].Title;
+                strAlarmNotes = String.Format("{1}", ContractSystem.Instance.Contracts[intSelectedContract].Title, ContractSystem.Instance.Contracts[intSelectedContract].Synopsys);
+            }
+        }
+
         //String[] strAddTypes = new String[] { "Raw", "Maneuver","SOI","Transfer" };
         private String[] strAddTypes = new String[] { "R", "M", "A", "P", "A", "D", "S", "X" };
 
@@ -254,7 +279,8 @@ namespace KerbalAlarmClock
                 new GUIContent(KACResources.btnClosest,"Closest/Target Distance"),
                 new GUIContent(KACResources.btnSOI,"SOI Change"),
                 new GUIContent(KACResources.btnXfer,"Transfer Window"),
-                new GUIContent(KACResources.btnCrew,"Kerbal Crew")
+                new GUIContent(KACResources.btnCrew,"Kerbal Crew"),
+                new GUIContent(KACResources.btnContract,"Contract")
             };
 
         private GUIContent[] guiTypesView = new GUIContent[]
@@ -265,7 +291,8 @@ namespace KerbalAlarmClock
         private GUIContent[] guiTypesSpaceCenter = new GUIContent[]
             {
                 new GUIContent(KACResources.btnRaw,"Raw Time Alarm"),
-                new GUIContent(KACResources.btnXfer,"Transfer Window")
+                new GUIContent(KACResources.btnXfer,"Transfer Window"),
+                new GUIContent(KACResources.btnContract,"Contract")
             };
         private GUIContent[] guiTypesTrackingStation = new GUIContent[]
             {
@@ -273,7 +300,9 @@ namespace KerbalAlarmClock
                 new GUIContent(KACResources.btnMNode,"Maneuver Node"),
                 new GUIContent(KACResources.btnApPe,"Apoapsis / Periapsis"),
                 new GUIContent(KACResources.btnSOI,"SOI Change"),
-                new GUIContent(KACResources.btnXfer,"Transfer Window")
+                new GUIContent(KACResources.btnXfer,"Transfer Window"),
+                new GUIContent(KACResources.btnCrew,"Kerbal Crew"),
+                new GUIContent(KACResources.btnContract,"Contract")
             };
 
         private GameScenes[] ScenesForAttachOption = new GameScenes[] 
@@ -286,7 +315,9 @@ namespace KerbalAlarmClock
             { 
                 KACAlarm.AlarmTypeEnum.Raw, 
                 KACAlarm.AlarmTypeEnum.Transfer, 
-                KACAlarm.AlarmTypeEnum.TransferModelled 
+                KACAlarm.AlarmTypeEnum.TransferModelled,
+                KACAlarm.AlarmTypeEnum.Contract, 
+                KACAlarm.AlarmTypeEnum.ContractAuto
             };
 
         private KACAlarm.AlarmTypeEnum[] TypesWithNoEvent = new KACAlarm.AlarmTypeEnum[] 
@@ -433,6 +464,10 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmTypeEnum.Crew:
                     WindowLayout_AddPane_Crew();
                     break;
+                case KACAlarm.AlarmTypeEnum.Contract:
+                case KACAlarm.AlarmTypeEnum.ContractAuto:
+                    WindowLayout_AddPane_Contract();
+                    break;
                 default:
                     break;
             }
@@ -561,121 +596,204 @@ namespace KerbalAlarmClock
         {
             intAddCrewHeight = 322;
             GUILayout.Label("Select Crew...", KACResources.styleAddSectionHeading);
-
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            //get the kerbals in the current vessel
-            List<ProtoCrewMember> pCM = KACWorkerGameState.CurrentVessel.GetVesselCrew();
-            intAddCrewHeight += (pCM.Count * 30);
-            if(pCM.Count==0)
+            if (KACWorkerGameState.CurrentVessel == null)
             {
-                //Draw something about no crew present
-                GUILayout.Label("No Kerbals present in this vessel", KACResources.styleContent, GUILayout.ExpandWidth(true));
-            } else {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("Kerbal Name", KACResources.styleAddSectionHeading, GUILayout.Width(267));
-                GUILayout.Label("Add", KACResources.styleAddSectionHeading);//, GUILayout.Width(30));
-                GUILayout.EndHorizontal();
+                GUILayout.Label("No Active Vessel");
+            }
+            else
+            {
+                GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-                for (int intTarget = 0; intTarget < pCM.Count; intTarget++)
+                //get the kerbals in the current vessel
+                List<ProtoCrewMember> pCM = KACWorkerGameState.CurrentVessel.GetVesselCrew();
+                intAddCrewHeight += (pCM.Count * 30);
+                if (pCM.Count == 0)
                 {
-                    //LogFormatted("{2}", pCM[intTarget].name);
+                    //Draw something about no crew present
+                    GUILayout.Label("No Kerbals present in this vessel", KACResources.styleContent, GUILayout.ExpandWidth(true));
+                }
+                else
+                {
                     GUILayout.BeginHorizontal();
-            //        //draw a line and a radio button for selecting Crew
-                    GUILayout.Space(20);
-                    GUILayout.Label(pCM[intTarget].name, KACResources.styleAddXferName, GUILayout.Width(240), GUILayout.Height(20));
+                    GUILayout.Label("Kerbal Name", KACResources.styleAddSectionHeading, GUILayout.Width(267));
+                    GUILayout.Label("Add", KACResources.styleAddSectionHeading);//, GUILayout.Width(30));
+                    GUILayout.EndHorizontal();
 
-            //        //when they are selected adjust message to have a name of the crew member, and message of vessel when alarm was set
-                    Boolean blnSelected = (intSelectedCrew == intTarget);
-                    if (DrawToggle(ref blnSelected, "", KACResources.styleCheckbox, GUILayout.Width(40)))
+                    for (int intTarget = 0; intTarget < pCM.Count; intTarget++)
+                    {
+                        //LogFormatted("{2}", pCM[intTarget].name);
+                        GUILayout.BeginHorizontal();
+                        //        //draw a line and a radio button for selecting Crew
+                        GUILayout.Space(20);
+                        GUILayout.Label(pCM[intTarget].name, KACResources.styleAddXferName, GUILayout.Width(240), GUILayout.Height(20));
+
+                        //        //when they are selected adjust message to have a name of the crew member, and message of vessel when alarm was set
+                        Boolean blnSelected = (intSelectedCrew == intTarget);
+                        if (DrawToggle(ref blnSelected, "", KACResources.styleCheckbox, GUILayout.Width(40)))
+                        {
+                            if (blnSelected)
+                            {
+                                intSelectedCrew = intTarget;
+                                BuildCrewStrings();
+                            }
+                        }
+                        GUILayout.EndHorizontal();
+                    }
+
+                    DrawCheckbox(ref CrewAlarmStoreNode, "Store Man Node/Target with Crew Alarm");
+
+                }
+                GUILayout.EndVertical();
+
+                if (pCM.Count > 0)
+                {
+                    //Now the time entry area
+                    GUILayout.Label("Enter Time Values...", KACResources.styleAddSectionHeading);
+
+                    GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("Time type:", KACResources.styleAddHeading, GUILayout.Width(90));
+                    if (DrawRadioList(ref intCrewType, new string[] { "Date", "Time Interval" }))
+                    {
+                        if (intRawType == 0)
+                        {
+                            rawEntry = new KACTimeStringArray(Planetarium.GetUniversalTime() + 600, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
+                        }
+                    }
+                    GUILayout.EndHorizontal();
+
+                    if (intCrewType == 0)
+                    {
+                        //date
+                        KACTimeStringArray CrewDate = new KACTimeStringArray(CrewEntry.UT + KACTime.timeDateOffest.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
+                        if (DrawTimeEntry(ref CrewDate, KACTimeStringArray.TimeEntryPrecisionEnum.Years, "Time:", 50, 35, 15))
+                        {
+                            rawEntry.BuildFromUT(CrewDate.UT - KACTime.timeDateOffest.UT);
+                        }
+                    }
+                    else
+                    {
+                        //interval
+                        if (DrawTimeEntry(ref CrewEntry, KACTimeStringArray.TimeEntryPrecisionEnum.Years, "Time:", 50, 35, 15))
+                        {
+
+                        }
+                    }
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label("UT (raw seconds):", KACResources.styleAddHeading, GUILayout.Width(100));
+                    strCrewUT = GUILayout.TextField(strCrewUT, KACResources.styleAddField);
+                    GUILayout.EndHorizontal();
+                    GUILayout.EndVertical();
+
+                    try
+                    {
+                        if (strCrewUT != "")
+                            CrewTime.UT = Convert.ToDouble(strCrewUT);
+                        else
+                            CrewTime.UT = CrewEntry.UT;
+
+                        //If its an interval add the interval to the current time
+                        if (intCrewType == 1)
+                            CrewTime = new KACTime(KACWorkerGameState.CurrentTime.UT + CrewTime.UT);
+
+                        CrewTimeToAlarm = new KACTime(CrewTime.UT - KACWorkerGameState.CurrentTime.UT);
+
+                        //Draw the Add Alarm details at the bottom
+                        if (DrawAddAlarm(CrewTime, null, CrewTimeToAlarm))
+                        {
+                            //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
+                            KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmTypeEnum.Crew,
+                                AddAction);
+                            if (CrewAlarmStoreNode)
+                            {
+                                if (KACWorkerGameState.ManeuverNodeExists) addAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
+                                if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
+                            }
+                            alarms.Add(addAlarm);
+                            settings.Save();
+                            _ShowAddPane = false;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //    LogFormatted(ex.Message);
+                        GUILayout.Label("Unable to combine all text fields to date", GUILayout.ExpandWidth(true));
+                    }
+                }
+            }
+        }
+
+        Vector2 scrollContract = new Vector2(0, 0);
+        Int32 intSelectedContract = 0;
+        private KACTime ContractTime = new KACTime(600);
+        private KACTime ContractTimeToAlarm = new KACTime();
+
+        private void WindowLayout_AddPane_Contract()
+        {
+            GUILayout.Label("Select Contract...", KACResources.styleAddSectionHeading);
+            if (Contracts.ContractSystem.Instance == null)
+            {
+                GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+                GUILayout.Label("Jebediah digs around in the Sandbox, but can't find any contracts in this game mode", KACResources.styleContent);
+                GUILayout.EndVertical();
+            }
+            else
+            {
+
+                //GUILayout.BeginHorizontal();
+                ////GUILayout.Label("Active", KACResources.styleAddSectionHeading, GUILayout.Width(intTestheight));
+                //GUILayout.Space(33);
+                //GUILayout.Label("Contract", KACResources.styleAddSectionHeading, GUILayout.ExpandWidth(true));
+                //GUILayout.Label("Add", KACResources.styleAddSectionHeading, GUILayout.Width(40));
+                //GUILayout.EndHorizontal();
+
+                scrollContract = GUILayout.BeginScrollView(scrollContract, KACResources.styleAddFieldAreas);
+
+                for (Int32 intTarget=0;intTarget< ContractSystem.Instance.Contracts.Count;intTarget++)
+                {
+                    Contract c = ContractSystem.Instance.Contracts[intTarget];
+
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(5);
+                    if(c.ContractState==Contract.State.Active) {
+                        GUILayout.Label(new GUIContent(KACResources.iconContract,"Active"),GUILayout.Width(20),GUILayout.Height(25));
+                    } else {
+                        GUILayout.Space(24);
+                    }
+                    GUILayout.Label(c.Title, KACResources.styleLabel, GUILayout.Width(243));
+
+                    //        //when they are selected adjust message to have a name of the crew member, and message of vessel when alarm was set
+                    Boolean blnSelected = (intSelectedContract == intTarget);
+                    if (DrawToggle(ref blnSelected, "", KACResources.styleCheckbox, GUILayout.Width(20)))
                     {
                         if (blnSelected)
                         {
-                            intSelectedCrew = intTarget;
-                            BuildCrewStrings();
+                            intSelectedContract = intTarget;
+                            BuildContractStrings();
                         }
                     }
                     GUILayout.EndHorizontal();
                 }
-
-                DrawCheckbox(ref CrewAlarmStoreNode, "Store Man Node/Target with Crew Alarm");
+                GUILayout.EndScrollView();
                 
-            }
-            GUILayout.EndVertical();
+                //Draw the Add Alarm details at the bottom
+                //If its an interval add the interval to the current time
+                ContractTime = new KACTime(ContractSystem.Instance.Contracts[intSelectedContract].DateNext());
 
-            if (pCM.Count > 0)
-            {
-                //Now the time entry area
-                GUILayout.Label("Enter Time Values...", KACResources.styleAddSectionHeading);
+                ContractTimeToAlarm = new KACTime(ContractSystem.Instance.Contracts[intSelectedContract].DateNext()-KACWorkerGameState.CurrentTime.UT);
 
-                GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("Time type:", KACResources.styleAddHeading, GUILayout.Width(90));
-                if (DrawRadioList(ref intCrewType, new string[] { "Date", "Time Interval" })) {
-                    if (intRawType == 0)
-                    {
-                        rawEntry = new KACTimeStringArray(Planetarium.GetUniversalTime() + 600, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
-                    }
-                }
-                GUILayout.EndHorizontal();
-
-                if (intCrewType == 0)
+                if (DrawAddAlarm(rawTime, null, rawTimeToAlarm))
                 {
-                    //date
-                    KACTimeStringArray CrewDate = new KACTimeStringArray(CrewEntry.UT + KACTime.timeDateOffest.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
-                    if (DrawTimeEntry(ref CrewDate, KACTimeStringArray.TimeEntryPrecisionEnum.Years, "Time:", 50, 35, 15))
-                    {
-                        rawEntry.BuildFromUT(CrewDate.UT - KACTime.timeDateOffest.UT);
-                    }
-                }
-                else
-                {
-                    //interval
-                    if (DrawTimeEntry(ref CrewEntry, KACTimeStringArray.TimeEntryPrecisionEnum.Years, "Time:", 50, 35, 15))
-                    {
-
-                    }
-                }
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("UT (raw seconds):", KACResources.styleAddHeading, GUILayout.Width(100));
-                strCrewUT = GUILayout.TextField(strCrewUT, KACResources.styleAddField);
-                GUILayout.EndHorizontal();
-                GUILayout.EndVertical();
-
-                try
-                {
-                    if (strCrewUT != "")
-                        CrewTime.UT = Convert.ToDouble(strCrewUT);
-                    else
-                        CrewTime.UT = CrewEntry.UT;
-
-                    //If its an interval add the interval to the current time
-                    if (intCrewType == 1)
-                        CrewTime = new KACTime(KACWorkerGameState.CurrentTime.UT + CrewTime.UT);
-
-                    CrewTimeToAlarm = new KACTime(CrewTime.UT - KACWorkerGameState.CurrentTime.UT);
-
-                    //Draw the Add Alarm details at the bottom
-                    if (DrawAddAlarm(CrewTime, null, CrewTimeToAlarm))
-                    {
-                        //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
-                        KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmTypeEnum.Crew,
-                            AddAction);
-                        if (CrewAlarmStoreNode)
-                        {
-                            if (KACWorkerGameState.ManeuverNodeExists) addAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
-                            if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
-                        }
-                        alarms.Add(addAlarm);
-                        settings.Save();
-                        _ShowAddPane = false;
-                    }
-                }
-                catch (Exception)
-                {
-                //    LogFormatted(ex.Message);
-                    GUILayout.Label("Unable to combine all text fields to date", GUILayout.ExpandWidth(true));
+                    //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
+                    String strVesselID = "";
+                    if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+                    alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, ContractTime.UT, 0, KACAlarm.AlarmTypeEnum.Contract,
+                        AddAction));
+                    settings.Save();
+                    _ShowAddPane = false;
                 }
             }
+            
         }
 
         private Boolean DrawAddAlarm(KACTime AlarmDate, KACTime TimeToEvent, KACTime TimeToAlarm)

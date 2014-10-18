@@ -48,7 +48,9 @@ namespace KerbalAlarmClock
             {AlarmTypeEnum.SOIChangeAuto , 5},
             {AlarmTypeEnum.Transfer , 6},
             {AlarmTypeEnum.TransferModelled , 6},
-            {AlarmTypeEnum.Crew , 7}
+            {AlarmTypeEnum.Crew , 7},
+            {AlarmTypeEnum.Contract , 8},
+            {AlarmTypeEnum.ContractAuto , 8}
         };
         internal static Dictionary<int, AlarmTypeEnum> AlarmTypeFromButton = new Dictionary<int, AlarmTypeEnum>() {
             {0,AlarmTypeEnum.Raw},
@@ -58,7 +60,8 @@ namespace KerbalAlarmClock
             {4,AlarmTypeEnum.Closest },
             {5,AlarmTypeEnum.SOIChange },
             {6,AlarmTypeEnum.Transfer },
-            {7,AlarmTypeEnum.Crew }
+            {7,AlarmTypeEnum.Crew },
+            {8,AlarmTypeEnum.Contract }
         };
         
         public static Dictionary<AlarmTypeEnum, int> AlarmTypeToButtonTS = new Dictionary<AlarmTypeEnum, int>() {
@@ -71,6 +74,9 @@ namespace KerbalAlarmClock
             {AlarmTypeEnum.SOIChangeAuto , 3},
             {AlarmTypeEnum.Transfer , 4},
             {AlarmTypeEnum.TransferModelled , 4},
+            {AlarmTypeEnum.Crew , 5},
+            {AlarmTypeEnum.Contract , 6},
+            {AlarmTypeEnum.ContractAuto , 6}
         };
         internal static Dictionary<int, AlarmTypeEnum> AlarmTypeFromButtonTS = new Dictionary<int, AlarmTypeEnum>() {
             {0,AlarmTypeEnum.Raw},
@@ -78,16 +84,21 @@ namespace KerbalAlarmClock
             {2,AlarmTypeEnum.Apoapsis },
             {3,AlarmTypeEnum.SOIChange },
             {4,AlarmTypeEnum.Transfer },
+            {5,AlarmTypeEnum.Crew },
+            {6,AlarmTypeEnum.Contract }
         };
 
         public static Dictionary<AlarmTypeEnum, int> AlarmTypeToButtonSC = new Dictionary<AlarmTypeEnum, int>() {
             {AlarmTypeEnum.Raw, 0},
             {AlarmTypeEnum.Transfer , 1},
             {AlarmTypeEnum.TransferModelled , 1},
+            {AlarmTypeEnum.Contract , 2},
+            {AlarmTypeEnum.ContractAuto , 2}
         };
         public static Dictionary<int, AlarmTypeEnum> AlarmTypeFromButtonSC = new Dictionary<int, AlarmTypeEnum>() {
             {0,AlarmTypeEnum.Raw},
             {1,AlarmTypeEnum.Transfer },
+            {2,AlarmTypeEnum.Contract },
         };
 
         public enum AlarmActionEnum

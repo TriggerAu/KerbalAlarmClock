@@ -26,10 +26,10 @@ namespace KerbalAlarmClock
                 if (KACWorkerGameState.SOIPointExists )
                     lstQuickButtons.Add(new QuickAddItem(String.Format("SOI Change Alarm ({0})", (new KACTime(settings.AlarmAddSOIQuickMargin).IntervalString())), KACResources.iconSOI, QuickAddSOI));
 
-                if (KACWorkerGameState.ApPointExists)
+                if (KACWorkerGameState.ApPointExists && !KACWorkerGameState.CurrentVessel.LandedOrSplashed)
                     lstQuickButtons.Add(new QuickAddItem(String.Format("Apoapsis Alarm ({0})", (new KACTime(settings.AlarmAddNodeQuickMargin).IntervalString())), KACResources.iconAp, QuickAddAp));
 
-                if (KACWorkerGameState.PePointExists)
+                if (KACWorkerGameState.PePointExists && !KACWorkerGameState.CurrentVessel.LandedOrSplashed)
                     lstQuickButtons.Add(new QuickAddItem(String.Format("Periapsis Alarm ({0})", (new KACTime(settings.AlarmAddNodeQuickMargin).IntervalString())), KACResources.iconPe, QuickAddPe));
 
                 if (KACWorkerGameState.CurrentVesselTarget != null) { 

@@ -27,6 +27,10 @@ namespace KerbalAlarmClock
         private KACTimeStringArray timeQuickManNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeQuickSOIMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeQuickNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+
+        private KACTimeStringArray timeContractExpireMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        private KACTimeStringArray timeContractDeadlineMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+
         //private KACTimeStringArray timeQuickApNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         //private KACTimeStringArray timeQuickPeNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         //private KACTimeStringArray timeQuickANNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
@@ -55,6 +59,10 @@ namespace KerbalAlarmClock
             timeQuickManNodeMargin.BuildFromUT(settings.AlarmAddManQuickMargin);
             timeQuickSOIMargin.BuildFromUT(settings.AlarmAddSOIQuickMargin);
             timeQuickNodeMargin.BuildFromUT(settings.AlarmAddNodeQuickMargin);
+
+            timeContractExpireMargin.BuildFromUT(settings.AlarmOnContractExpireMargin);
+            timeContractDeadlineMargin.BuildFromUT(settings.AlarmOnContractDeadlineMargin);
+            
             //timeQuickApNodeMargin.BuildFromUT(settings.AlarmAddApQuickMargin);
             //timeQuickPeNodeMargin.BuildFromUT(settings.AlarmAddPeQuickMargin);
             //timeQuickANNodeMargin.BuildFromUT(settings.AlarmAddANQuickMargin);
@@ -127,6 +135,10 @@ namespace KerbalAlarmClock
                         case SettingsAlarmSpecsEnum.SOI:
                             WindowLayout_SettingsSpecifics_SOI();
                             intSettingsHeight = 362;// 367; // 358; //288;
+                            break;
+                        case SettingsAlarmSpecsEnum.Contract:
+                            WindowLayout_SettingsSpecifics_Contract();
+                            intSettingsHeight = intTestheight4;
                             break;
                         case SettingsAlarmSpecsEnum.Other:
                             WindowLayout_SettingsSpecifics_Other();
@@ -409,6 +421,35 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
 
         }
+
+        private void WindowLayout_SettingsSpecifics_Contract() {
+            GUILayout.Label("Offered Contract Alarm Settings", KACResources.styleAddSectionHeading);
+            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108, 61))
+            {
+                settings.Save();
+            }
+            if (DrawTimeEntry(ref timeContractExpireMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Days, "Alarm Margin:", 100))
+            {
+                //convert it and save it in the settings
+                settings.AlarmOnContractExpireMargin = timeContractExpireMargin.UT;
+                settings.Save();
+            }
+            GUILayout.Label("Active Contract Alarm Settings", KACResources.styleAddSectionHeading);
+            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractDeadline_Action, "On Alarm:", 108, 61))
+            {
+                settings.Save();
+            }
+            if (DrawTimeEntry(ref timeContractDeadlineMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Days, "Alarm Margin:", 100))
+            {
+                //convert it and save it in the settings
+                settings.AlarmOnContractDeadlineMargin = timeContractDeadlineMargin.UT;
+                settings.Save();
+            }
+
+
+
+        }
+
         private void WindowLayout_SettingsSpecifics_Other()
         {
             //Crew Alarm Stuff

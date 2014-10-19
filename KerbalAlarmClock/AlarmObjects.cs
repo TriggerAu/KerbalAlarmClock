@@ -110,6 +110,12 @@ namespace KerbalAlarmClock
             [Description("Pause Game and Message")]             PauseGame
         }
 
+        public enum ContractAlarmTypeEnum
+        {
+            [Description("Contract Offer will Expire")] Expire,
+            [Description("Contract Deadline will occur")] Deadline,
+        }
+
 
                 #region "Constructors"
         public KACAlarm()
@@ -195,7 +201,9 @@ namespace KerbalAlarmClock
         private ITargetable _TargetObject = null;                                   //Stored Target Details
         [Persistent] private String TargetObjectStorage;
 
-        [Persistent] public Int64 ContractID;
+        [Persistent] public Guid ContractGUID;
+        [Persistent] public ContractAlarmTypeEnum ContractAlarmType;
+
         //Vessel Target - needs the fancy get routine as the alarms load before the vessels are loaded.
         //This means that each time the object is accessed if its not yet loaded it trys again
         public ITargetable TargetObject

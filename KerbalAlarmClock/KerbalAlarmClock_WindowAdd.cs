@@ -93,7 +93,8 @@ namespace KerbalAlarmClock
             SetupXFerTargets();
             intXferCurrentTarget = 0;
 
-            intSelectedCrew=0;
+            intSelectedCrew = 0;
+            intSelectedContract = 0;
             strCrewUT = "";
         }
 
@@ -193,6 +194,8 @@ namespace KerbalAlarmClock
                         break;
                 }
             }
+            if (AddType== KACAlarm.AlarmTypeEnum.Contract || AddType== KACAlarm.AlarmTypeEnum.ContractAuto)
+                BuildContractStrings();
         }
 
         private void BuildTransferStrings()
@@ -251,15 +254,19 @@ namespace KerbalAlarmClock
         private void BuildContractStrings()
         {
             strAlarmEventName = "Contract";
-            if (ContractSystem.Instance == null || ContractSystem.Instance.Contracts.Count == 0)
+            if (ContractSystem.Instance == null || lstContracts.Count == 0)
             {
                 strAlarmName = "Contract alarm";
                 strAlarmNotes = "No Contracts Available";
             }
             else
             {
-                strAlarmName = ContractSystem.Instance.Contracts[intSelectedContract].Title;
-                strAlarmNotes = String.Format("{1}", ContractSystem.Instance.Contracts[intSelectedContract].Title, ContractSystem.Instance.Contracts[intSelectedContract].Synopsys);
+                strAlarmName = lstContracts[intSelectedContract].Title;
+                strAlarmNotes = String.Format("{0}\r\nName: {1}\r\nParameters:", lstContracts[intSelectedContract].AlarmType().Description(), lstContracts[intSelectedContract].Synopsys);
+                foreach (ContractParameter cp in lstContracts[intSelectedContract].AllParameters)
+                {
+                    strAlarmNotes += String.Format("\r\n    * {0}",cp.Title);
+                }
             }
         }
 
@@ -726,8 +733,11 @@ namespace KerbalAlarmClock
         Vector2 scrollContract = new Vector2(0, 0);
         Int32 intSelectedContract = 0;
         private KACTime ContractTime = new KACTime(600);
+        private KACTime ContractTimeToEvent = new KACTime();
         private KACTime ContractTimeToAlarm = new KACTime();
 
+        internal List<Contract> lstContracts;
+        
         private void WindowLayout_AddPane_Contract()
         {
             GUILayout.Label("Select Contract...", KACResources.styleAddSectionHeading);
@@ -740,57 +750,104 @@ namespace KerbalAlarmClock
             else
             {
 
-                //GUILayout.BeginHorizontal();
-                ////GUILayout.Label("Active", KACResources.styleAddSectionHeading, GUILayout.Width(intTestheight));
-                //GUILayout.Space(33);
-                //GUILayout.Label("Contract", KACResources.styleAddSectionHeading, GUILayout.ExpandWidth(true));
-                //GUILayout.Label("Add", KACResources.styleAddSectionHeading, GUILayout.Width(40));
-                //GUILayout.EndHorizontal();
-
-                scrollContract = GUILayout.BeginScrollView(scrollContract, KACResources.styleAddFieldAreas);
-
-                for (Int32 intTarget=0;intTarget< ContractSystem.Instance.Contracts.Count;intTarget++)
+                if (lstContracts.Count == 0)
                 {
-                    Contract c = ContractSystem.Instance.Contracts[intTarget];
+                    GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+                    GUILayout.Label("No Contracts Offered or Active", KACResources.styleContent);
+                    GUILayout.EndVertical();
+                }
+                else
+                {
 
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Space(5);
-                    if(c.ContractState==Contract.State.Active) {
-                        GUILayout.Label(new GUIContent(KACResources.iconContract,"Active"),GUILayout.Width(20),GUILayout.Height(25));
-                    } else {
-                        GUILayout.Space(24);
-                    }
-                    GUILayout.Label(c.Title, KACResources.styleLabel, GUILayout.Width(243));
+                    scrollContract = GUILayout.BeginScrollView(scrollContract, KACResources.styleAddFieldAreas);
 
-                    //        //when they are selected adjust message to have a name of the crew member, and message of vessel when alarm was set
-                    Boolean blnSelected = (intSelectedContract == intTarget);
-                    if (DrawToggle(ref blnSelected, "", KACResources.styleCheckbox, GUILayout.Width(20)))
-                    {
-                        if (blnSelected)
-                        {
-                            intSelectedContract = intTarget;
-                            BuildContractStrings();
+                    //If the selected contract is already an alarm then move the selected one
+                    if (intSelectedContract == -1  || alarms.Any(a => a.ContractGUID == lstContracts[intSelectedContract].ContractGuid)){
+                        intSelectedContract = -1;
+                        for (int i = 0; i < lstContracts.Count; i++) {
+                            if(!alarms.Any(a => a.ContractGUID == lstContracts[i].ContractGuid)){
+                                intSelectedContract = i;
+                                BuildContractStrings();
+                                break;
+                            }
                         }
                     }
-                    GUILayout.EndHorizontal();
-                }
-                GUILayout.EndScrollView();
-                
-                //Draw the Add Alarm details at the bottom
-                //If its an interval add the interval to the current time
-                ContractTime = new KACTime(ContractSystem.Instance.Contracts[intSelectedContract].DateNext());
+                    
+                    //Loop through the contracts to draw the lines
+                    for (Int32 intTarget = 0; intTarget < lstContracts.Count; intTarget++)
+                    {
+                        Contract c = lstContracts[intTarget];
+                        Boolean AlarmExists = alarms.Any(a => a.ContractGUID == c.ContractGuid);
 
-                ContractTimeToAlarm = new KACTime(ContractSystem.Instance.Contracts[intSelectedContract].DateNext()-KACWorkerGameState.CurrentTime.UT);
+                        GUILayout.BeginHorizontal();
+                        //Appropriate icon
+                        GUILayout.Space(5);
+                        if (AlarmExists) {
+                            GUILayout.Label(new GUIContent(KACResources.iconRaw, "Alarm Exists"), GUILayout.Width(20), GUILayout.Height(25));
+                        } else if (c.ContractState == Contract.State.Active) {
+                            GUILayout.Label(new GUIContent(KACResources.iconContract, "Active"), GUILayout.Width(20), GUILayout.Height(25));
+                        } else {
+                            GUILayout.Space(24);
+                        }
 
-                if (DrawAddAlarm(rawTime, null, rawTimeToAlarm))
-                {
-                    //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
-                    String strVesselID = "";
-                    if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                    alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, ContractTime.UT, 0, KACAlarm.AlarmTypeEnum.Contract,
-                        AddAction));
-                    settings.Save();
-                    _ShowAddPane = false;
+                        //What style should the name be
+                        GUIStyle styleContLabel = KACResources.styleContractLabelOffer;
+                        if (c.ContractState == Contract.State.Active)
+                            styleContLabel = KACResources.styleContractLabelActive;
+                        else if (AlarmExists)
+                            styleContLabel = KACResources.styleContractLabelAlarmExists;
+
+                        if (GUILayout.Button(c.Title, styleContLabel, GUILayout.Width(243)))
+                        {
+                            if (!AlarmExists)
+                            {
+                                intSelectedContract = intTarget;
+                                BuildContractStrings();
+                            }
+                        };
+
+                        //Is the check box on?
+                        Boolean blnSelected = (intSelectedContract == intTarget);
+
+                        if (!AlarmExists)
+                        {
+                            if (DrawToggle(ref blnSelected, "", KACResources.styleCheckbox, GUILayout.Width(20)))
+                            {
+                                if (blnSelected)
+                                {
+                                    intSelectedContract = intTarget;
+                                    BuildContractStrings();
+                                }
+                            }
+                        } GUILayout.EndHorizontal();
+                    }
+                    GUILayout.EndScrollView();
+
+                    if (intSelectedContract < 0) {
+                        GUILayout.Label("All Contracts Have alarms set already", KACResources.styleContent);
+                    } else { 
+                        //Draw the Add Alarm details at the bottom
+                        //If its an interval add the interval to the current time
+                        ContractTime = new KACTime(lstContracts[intSelectedContract].DateNext());
+                        ContractTimeToEvent = new KACTime(lstContracts[intSelectedContract].DateNext() - KACWorkerGameState.CurrentTime.UT);
+                        ContractTimeToAlarm = new KACTime(ContractTimeToEvent.UT - timeMargin.UT);
+
+                        if (DrawAddAlarm(ContractTime, ContractTimeToEvent, ContractTimeToAlarm))
+                        {
+                            //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
+                            String strVesselID = "";
+                            if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+                            KACAlarm tmpAlarm = new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, KACWorkerGameState.CurrentTime.UT + ContractTimeToAlarm.UT, 0, KACAlarm.AlarmTypeEnum.Contract,
+                                AddAction);
+                            tmpAlarm.AlarmMarginSecs = timeMargin.UT;
+                            tmpAlarm.ContractGUID = lstContracts[intSelectedContract].ContractGuid;
+                            tmpAlarm.ContractAlarmType = lstContracts[intSelectedContract].AlarmType();
+
+                            alarms.Add(tmpAlarm);
+                            settings.Save();
+                            _ShowAddPane = false;
+                        }
+                    }
                 }
             }
             

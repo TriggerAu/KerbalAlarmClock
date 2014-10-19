@@ -133,6 +133,13 @@ namespace KerbalAlarmClock
         [Persistent] internal Double AlarmAddNodeQuickMargin = 60;
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddNodeQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
 
+
+        [Persistent] internal Double AlarmOnContractExpireMargin = 3600;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnContractExpire_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal Double AlarmOnContractDeadlineMargin = 86400;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnContractDeadline_Action = KACAlarm.AlarmActionEnum.KillWarp;
+
+
         //[Persistent] internal Double AlarmAddApQuickMargin = 60;
         //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddApQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
         //[Persistent] internal Double AlarmAddPeQuickMargin = 60;

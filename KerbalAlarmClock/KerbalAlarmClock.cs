@@ -300,6 +300,13 @@ namespace KerbalAlarmClock
         {
             UpdateDetails();
 
+            //Contract stuff
+            if (Contracts.ContractSystem.Instance)
+            {
+                UpdateContractDetails();
+            }
+
+
             //if we are using the transitions then periodically check the rates in case someone changed em
             if (!settings.WarpTransitions_Instant) {
                 WarpRateWorkerCounter++;
@@ -308,6 +315,12 @@ namespace KerbalAlarmClock
                     WarpTransitionCalculator.CheckForTransitionChanges();
                 }
             }
+        }
+
+        private void UpdateContractDetails()
+        {
+            lstContracts = Contracts.ContractSystem.Instance.Contracts.Where(c => c.DateNext() > 0).OrderBy(c => c.DateNext()).ToList();
+
         }
 
         internal override void OnGUIOnceOnly()

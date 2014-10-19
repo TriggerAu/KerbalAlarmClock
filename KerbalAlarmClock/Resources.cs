@@ -671,6 +671,7 @@ namespace KerbalAlarmClock
         internal static GUIStyle styleAddHeading;
         internal static GUIStyle styleAddField;
         internal static GUIStyle styleAddFieldError;
+        
         //internal static GUIStyle styleAddFieldErorOverlay;
         internal static GUIStyle styleAddFieldGreen;
         internal static GUIStyle styleAddFieldAreas;
@@ -679,6 +680,10 @@ namespace KerbalAlarmClock
         internal static GUIStyle styleAddXferButton;
         internal static GUIStyle styleAddXferOriginButton;
         internal static GUIStyle styleAddMessageField;
+
+        internal static GUIStyle styleContractLabelOffer;
+        internal static GUIStyle styleContractLabelActive;
+        internal static GUIStyle styleContractLabelAlarmExists;
 
         //AlarmMessage Styles
         internal static GUIStyle styleAlarmMessage;
@@ -929,6 +934,14 @@ namespace KerbalAlarmClock
             styleAddXferOriginButton.fixedHeight = 20;
             styleAddXferOriginButton.fontSize = 11;
             styleAddXferOriginButton.alignment = TextAnchor.MiddleCenter;
+
+
+            styleContractLabelOffer = new GUIStyle(styleLabel);
+            //styleContractLabelOffer.normal.textColor = Color.yellow;
+            styleContractLabelActive = new GUIStyle(styleLabel);
+            styleContractLabelActive.normal.textColor = new Color32(183, 254, 0, 255);
+            styleContractLabelAlarmExists = new GUIStyle(styleLabel);
+            styleContractLabelAlarmExists.normal.textColor = new Color32(128,128,128,255);
 
 
             styleAlarmMessage = new GUIStyle(styleDefLabel);

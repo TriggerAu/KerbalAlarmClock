@@ -474,7 +474,7 @@ namespace KerbalAlarmClock
                         AddWindowHeight = intAddCrewHeight; break;
                     case KACAlarm.AlarmTypeEnum.Contract:
                     case KACAlarm.AlarmTypeEnum.ContractAuto:
-                        AddWindowHeight = intTestheight4; break;
+                        AddWindowHeight = 400; break;
                     default: AddWindowHeight = 250; break;
                 }
                 AddWindowHeight += intHeight_AddWindowCommon;
@@ -1005,7 +1005,9 @@ namespace KerbalAlarmClock
 
             GUILayout.BeginVertical(GUILayout.Width(260), GUILayout.MaxWidth(260));
             strName = GUILayout.TextField(strName, KACResources.styleAddField).Replace("|", "");
-            strMessage = GUILayout.TextArea(strMessage, KACResources.styleAddField).Replace("|", "");
+
+            GUIStyle styleAddWrap = new GUIStyle(KACResources.styleAddField) { wordWrap = true };
+            strMessage = GUILayout.TextArea(strMessage, styleAddWrap).Replace("|", "");
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

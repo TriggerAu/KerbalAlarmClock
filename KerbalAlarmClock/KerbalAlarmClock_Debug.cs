@@ -304,13 +304,24 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
-            if (Contracts.ContractSystem.Instance != null)
+            if (Contracts.ContractSystem.Instance != null && lstContracts!=null)
             {
-                foreach (Contracts.Contract item in Contracts.ContractSystem.Instance.Contracts)
+                GUILayout.Label(String.Format("Title: {0}", lstContracts[intSelectedContract].Title));
+                GUILayout.Label(String.Format("Syn: {0}", lstContracts[intSelectedContract].Synopsys));
+                GUILayout.Label(String.Format("Desc: {0}", lstContracts[intSelectedContract].Description));
+
+                foreach (Contracts.ContractParameter cp in lstContracts[intSelectedContract].AllParameters)
+	            {
+                    GUILayout.Label(String.Format("Param: {0}={1}", cp.Title,cp.Optional));
+	            }
+                GUILayout.Label(String.Format("GUID: {0}", lstContracts[intSelectedContract].ContractGuid));
+                GUILayout.Label(String.Format("State: {0}", lstContracts[intSelectedContract].ContractState));
+                GUILayout.Label(String.Format("Notes: {0}", lstContracts[intSelectedContract].Notes));
+
+                foreach (Contracts.Contract item in lstContracts)
                 {
-                    item.Update();
-                    GUILayout.Label(String.Format("{0}\r\n{1}\r\nState:{3}\r\nDate:{4}", item.Title, item.ContractGuid, item.Synopsys, item.ContractState, item.DateNext()));
-                    GUILayout.Label(String.Format("DateExpire:{0}DateDeadline:{1}", item.DateExpire,item.DateDeadline));
+                    GUILayout.Label(String.Format("{0}\r\nState:{3}  Date:{4}", item.Title, item.ContractGuid, item.Synopsys, item.ContractState, item.DateNext()));
+                    //GUILayout.Label(String.Format("DateExpire:{0}DateDeadline:{1}", item.DateExpire,item.DateDeadline));
                 }
             }
 

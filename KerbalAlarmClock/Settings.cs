@@ -139,6 +139,16 @@ namespace KerbalAlarmClock
         [Persistent] internal Double AlarmOnContractDeadlineMargin = 86400;
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnContractDeadline_Action = KACAlarm.AlarmActionEnum.KillWarp;
 
+        internal enum AutoContractBehaviorEnum
+        {
+            [Description("No Alarms")] None,
+            [Description("Next Contract Only")] Next,
+            [Description("All Contracts")] All,
+        }
+        [Persistent] internal AutoContractBehaviorEnum AlarmAddContractAutoOffered = AutoContractBehaviorEnum.None;
+        [Persistent] internal AutoContractBehaviorEnum AlarmAddContractAutoActive = AutoContractBehaviorEnum.None;
+        [Persistent] internal Boolean ContractDeadlineDelete = true;
+        [Persistent] internal Boolean ContractExpireDelete = true;
 
         //[Persistent] internal Double AlarmAddApQuickMargin = 60;
         //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddApQuickAction = KACAlarm.AlarmActionEnum.KillWarp;

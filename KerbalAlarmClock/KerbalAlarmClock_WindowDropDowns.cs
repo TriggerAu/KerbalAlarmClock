@@ -20,6 +20,10 @@ namespace KerbalAlarmClock
 
         private DropDownList ddlSettingsAlarmSpecs;
 
+        private DropDownList ddlSettingsContractAutoOffered;
+        private DropDownList ddlSettingsContractAutoActive;
+
+
         private SettingsAlarmSpecsEnum SettingsAlarmSpecSelected = SettingsAlarmSpecsEnum.Default;
         internal enum SettingsAlarmSpecsEnum
         {
@@ -46,11 +50,17 @@ namespace KerbalAlarmClock
             ddlSettingsAlarmSpecs = new DropDownList(EnumExtensions.ToEnumDescriptions<SettingsAlarmSpecsEnum>(), (int)SettingsAlarmSpecSelected, _WindowSettingsRect);
             ddlSettingsAlarmSpecs.OnSelectionChanged += ddlSettingsAlarmSpecs_OnSelectionChanged;
 
+            ddlSettingsContractAutoOffered = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.AutoContractBehaviorEnum>(), (Int32)settings.AlarmAddContractAutoOffered, _WindowSettingsRect);
+            ddlSettingsContractAutoOffered.OnSelectionChanged += ddlSettingsContractAutoOffered_OnSelectionChanged;
+            ddlSettingsContractAutoActive = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.AutoContractBehaviorEnum>(), (Int32)settings.AlarmAddContractAutoActive, _WindowSettingsRect);
+            ddlSettingsContractAutoActive.OnSelectionChanged += ddlSettingsContractAutoActive_OnSelectionChanged;
+
             ddlManager.AddDDL(ddlChecksPerSec);
             ddlManager.AddDDL(ddlSettingsSkin);
             ddlManager.AddDDL(ddlSettingsButtonStyle);
             ddlManager.AddDDL(ddlSettingsAlarmSpecs);
-
+            ddlManager.AddDDL(ddlSettingsContractAutoOffered);
+            ddlManager.AddDDL(ddlSettingsContractAutoActive);
         }
 
         internal void DestroyDropDowns()
@@ -59,6 +69,8 @@ namespace KerbalAlarmClock
             ddlSettingsSkin.OnSelectionChanged -= ddlSettingsSkin_OnSelectionChanged;
             ddlSettingsButtonStyle.OnSelectionChanged -= ddlSettingsButtonStyle_OnSelectionChanged;
             ddlSettingsAlarmSpecs.OnSelectionChanged -= ddlSettingsAlarmSpecs_OnSelectionChanged;
+            ddlSettingsContractAutoOffered.OnSelectionChanged -= ddlSettingsContractAutoOffered_OnSelectionChanged;
+            ddlSettingsContractAutoActive.OnSelectionChanged -= ddlSettingsContractAutoActive_OnSelectionChanged;
         }
 
         internal void SetDDLWindowPositions()
@@ -121,6 +133,18 @@ namespace KerbalAlarmClock
         void ddlSettingsAlarmSpecs_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
         {
             SettingsAlarmSpecSelected = (SettingsAlarmSpecsEnum)NewIndex;
+        }
+
+        void ddlSettingsContractAutoActive_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
+        {
+            settings.AlarmAddContractAutoActive =  (Settings.AutoContractBehaviorEnum)NewIndex;
+            settings.Save();
+        }
+
+        void ddlSettingsContractAutoOffered_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
+        {
+            settings.AlarmAddContractAutoOffered = (Settings.AutoContractBehaviorEnum)NewIndex;
+            settings.Save();
         }
 
 

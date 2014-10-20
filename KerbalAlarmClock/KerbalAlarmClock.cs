@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEngine;
 using KSP;
 using KSPPluginFramework;
+using Contracts;
 
 using KACToolbarWrapper;
 
@@ -979,6 +980,44 @@ namespace KerbalAlarmClock
 
         internal void MonitorContracts()
         {
+            //check for expired/dead contracts
+            if (settings.ContractExpireDelete) {
+                List<KACAlarm> ToDelete = new List<KACAlarm>();
+                foreach (KACAlarm tmpAlarm in alarms.Where(a=>a.ContractAlarmType== KACAlarm.ContractAlarmTypeEnum.Expire)) {
+                    if (!lstContracts.Any(c=>c.ContractGuid==tmpAlarm.ContractGUID)){
+                        ToDelete.Add(tmpAlarm);
+                    }
+                }
+                foreach (KACAlarm a in ToDelete) {
+		            alarms.Remove(a);
+	            }
+            }
+
+            if (settings.ContractDeadlineDelete) {
+                List<KACAlarm> ToDelete = new List<KACAlarm>();
+                foreach (KACAlarm tmpAlarm in alarms.Where(a=>a.ContractAlarmType== KACAlarm.ContractAlarmTypeEnum.Deadline)) {
+                    if (!lstContracts.Any(c=>c.ContractGuid==tmpAlarm.ContractGUID)){
+                        ToDelete.Add(tmpAlarm);
+                    }
+                }
+                foreach (KACAlarm a in ToDelete) {
+		            alarms.Remove(a);
+	            }
+            }
+
+            //Now are we monitoring for alarms
+            if (settings.AlarmAddContractAutoOffered!= Settings.AutoContractBehaviorEnum.None) {
+                foreach (Contract c in lstContracts.Where(ci=>ci.ContractState == Contract.State.Offered).OrderBy(ci=>ci.DateExpire)) {
+                    //if no alarm then add one.....
+
+
+                    //only do one if thats what we are on
+                    if (settings.AlarmAddContractAutoOffered== Settings.AutoContractBehaviorEnum.Next)
+                        break;
+                }
+            }
+            
+            
             //List<Contracts.Contract> conExpiring = Contracts.ContractSystem.Instance.Contracts.Where(
             //    c1 => c1.TimeExpiry > 0 + settings.contractExpiringThreshold).OrderByDescending(
             //    c2 => c2.DateExpire).First(settings.contractExpiringNumToDisplay);

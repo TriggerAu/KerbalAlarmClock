@@ -532,6 +532,24 @@ namespace KerbalAlarmClock
             //hide this stuff when not in alarm edit mode/flight mode
             //if (!ViewAlarmsOnly)
             //{
+            if (settings.AlarmAddContractAutoOffered!= Settings.AutoContractBehaviorEnum.None || 
+                settings.AlarmAddContractAutoActive!= Settings.AutoContractBehaviorEnum.None )
+                {
+                    String ContractTip = "Auto Contracts Enabled\r\n";
+                    if (settings.AlarmAddContractAutoOffered == Settings.AutoContractBehaviorEnum.Next)
+                        ContractTip += "Next Contract Offer";
+                    else if (settings.AlarmAddContractAutoOffered == Settings.AutoContractBehaviorEnum.All)
+                        ContractTip += "All Contract Offers";
+
+                    if (settings.AlarmAddContractAutoActive == Settings.AutoContractBehaviorEnum.Next)
+                        ContractTip += (ContractTip.Contains("\r\n")?" and ":"") + "Next Active Contract";
+                    else if (settings.AlarmAddContractAutoActive == Settings.AutoContractBehaviorEnum.All)
+                        ContractTip += (ContractTip.Contains("\r\n") ? " and " : "") + "All Active Contracts";
+                    
+                    GUIContent XferIcon = new GUIContent(KACResources.iconContract, ContractTip);
+                    GUILayout.Label(XferIcon, KACResources.styleFlagIcon);
+                }
+
                 if (settings.AlarmNodeRecalc)
                 {
                     GUIContent XferIcon = new GUIContent(KACResources.iconAp, "Orbit Node (Ap,Pe,AN,DN) Recalculation is enabled");

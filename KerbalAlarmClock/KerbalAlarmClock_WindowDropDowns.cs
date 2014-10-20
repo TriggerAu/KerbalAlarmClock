@@ -79,6 +79,8 @@ namespace KerbalAlarmClock
             ddlSettingsSkin.WindowRect = _WindowSettingsRect;
             ddlSettingsButtonStyle.WindowRect = _WindowSettingsRect;
             ddlSettingsAlarmSpecs.WindowRect = _WindowSettingsRect;
+            ddlSettingsContractAutoOffered.WindowRect = _WindowSettingsRect;
+            ddlSettingsContractAutoActive.WindowRect = _WindowSettingsRect;
         }
 
         #region DDLEvents code

@@ -438,7 +438,7 @@ namespace KerbalAlarmClock
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Auto Create Active Alarms:");
-            ddlSettingsContractAutoOffered.DrawButton();
+            ddlSettingsContractAutoActive.DrawButton();
             GUILayout.EndHorizontal();
 
             if (DrawCheckbox(ref settings.ContractDeadlineDelete, "Delete Contract Alarm on Deadline passing"));

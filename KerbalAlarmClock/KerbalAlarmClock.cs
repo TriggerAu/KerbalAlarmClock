@@ -625,10 +625,8 @@ namespace KerbalAlarmClock
                 }
             }
 
-            //Are we adding Contract Alarms
-            //if (settings.AlarmAddContractAuto) {
-            //    MonitorContracts();
-            //}
+            // Check for contract adjustments
+            MonitorContracts();
 
 
             //Do we need to turn off the global warp light
@@ -980,59 +978,101 @@ namespace KerbalAlarmClock
 
         internal void MonitorContracts()
         {
+            if(lstContracts==null) return;
+             
             //check for expired/dead contracts
-            if (settings.ContractExpireDelete) {
+            if (settings.ContractExpireDelete)
+            {
                 List<KACAlarm> ToDelete = new List<KACAlarm>();
-                foreach (KACAlarm tmpAlarm in alarms.Where(a=>a.ContractAlarmType== KACAlarm.ContractAlarmTypeEnum.Expire)) {
-                    if (!lstContracts.Any(c=>c.ContractGuid==tmpAlarm.ContractGUID)){
+                foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.TypeOfAlarm== KACAlarm.AlarmTypeEnum.Contract || a.TypeOfAlarm== KACAlarm.AlarmTypeEnum.ContractAuto) && 
+                                                                a.ContractAlarmType == KACAlarm.ContractAlarmTypeEnum.Expire))
+                {
+                    if (!lstContracts.Any(c => c.ContractGuid == tmpAlarm.ContractGUID))
+                    {
+                        LogFormatted("Found an Expired Contract Alarm to Delete:{0}", tmpAlarm.Name);
                         ToDelete.Add(tmpAlarm);
                     }
                 }
-                foreach (KACAlarm a in ToDelete) {
-		            alarms.Remove(a);
-	            }
+                foreach (KACAlarm a in ToDelete)
+                {
+                    alarms.Remove(a);
+                }
             }
-
-            if (settings.ContractDeadlineDelete) {
+            
+            if (settings.ContractDeadlineDelete)
+            {
                 List<KACAlarm> ToDelete = new List<KACAlarm>();
-                foreach (KACAlarm tmpAlarm in alarms.Where(a=>a.ContractAlarmType== KACAlarm.ContractAlarmTypeEnum.Deadline)) {
-                    if (!lstContracts.Any(c=>c.ContractGuid==tmpAlarm.ContractGUID)){
+                foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Contract || a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.ContractAuto) &&
+                                                                a.ContractAlarmType == KACAlarm.ContractAlarmTypeEnum.Deadline))
+                {
+                    if (!lstContracts.Any(c => c.ContractGuid == tmpAlarm.ContractGUID))
+                    {
+                        LogFormatted("Found a Completed/Failed Contract Alarm to Delete:{0}", tmpAlarm.Name);
                         ToDelete.Add(tmpAlarm);
                     }
                 }
-                foreach (KACAlarm a in ToDelete) {
-		            alarms.Remove(a);
-	            }
+                foreach (KACAlarm a in ToDelete)
+                {
+                    alarms.Remove(a);
+                }
             }
 
             //Now are we monitoring for alarms
-            if (settings.AlarmAddContractAutoOffered!= Settings.AutoContractBehaviorEnum.None) {
-                foreach (Contract c in lstContracts.Where(ci=>ci.ContractState == Contract.State.Offered).OrderBy(ci=>ci.DateExpire)) {
-                    //if no alarm then add one.....
+            if (settings.AlarmAddContractAutoOffered != Settings.AutoContractBehaviorEnum.None)
+            {
+                foreach (Contract c in lstContracts.Where(ci => ci.ContractState == Contract.State.Offered).OrderBy(ci => ci.DateExpire))
+                {
+                    if (!alarms.Any(a => a.ContractGUID == c.ContractGuid && a.AlarmTime.UT < KACWorkerGameState.CurrentTime.UT))
+                    {
+                        //if no alarm then add one.....
+                        if (!alarms.Any(a => a.ContractGUID == c.ContractGuid))
+                        {
+                            String AlarmName, AlarmNotes;
+                            GenerateContractStringsFromContract(c, out AlarmName, out AlarmNotes);
 
+                            KACAlarm tmpAlarm = new KACAlarm("", AlarmName, AlarmNotes, c.DateExpire - settings.AlarmOnContractExpireMargin, settings.AlarmOnContractExpireMargin,
+                                KACAlarm.AlarmTypeEnum.ContractAuto, settings.AlarmOnContractExpire_Action);
 
-                    //only do one if thats what we are on
-                    if (settings.AlarmAddContractAutoOffered== Settings.AutoContractBehaviorEnum.Next)
-                        break;
+                            tmpAlarm.ContractGUID = c.ContractGuid;
+                            tmpAlarm.ContractAlarmType = c.AlarmType();
+
+                            alarms.Add(tmpAlarm);
+                        }
+
+                        //only do one if thats what we are on
+                        if (settings.AlarmAddContractAutoOffered == Settings.AutoContractBehaviorEnum.Next)
+                            break;
+                    }
                 }
             }
-            
-            
-            //List<Contracts.Contract> conExpiring = Contracts.ContractSystem.Instance.Contracts.Where(
-            //    c1 => c1.TimeExpiry > 0 + settings.contractExpiringThreshold).OrderByDescending(
-            //    c2 => c2.DateExpire).First(settings.contractExpiringNumToDisplay);
 
+            if (settings.AlarmAddContractAutoActive != Settings.AutoContractBehaviorEnum.None)
+            {
+                foreach (Contract c in lstContracts.Where(ci => ci.ContractState == Contract.State.Active).OrderBy(ci => ci.DateDeadline))
+                {
+                    if (!alarms.Any(a => a.ContractGUID == c.ContractGuid && a.AlarmTime.UT < KACWorkerGameState.CurrentTime.UT))
+                    {
+                        //if no alarm then add one.....
+                        if (!alarms.Any(a => a.ContractGUID == c.ContractGuid))
+                        {
+                            String AlarmName, AlarmNotes;
+                            GenerateContractStringsFromContract(c, out AlarmName, out AlarmNotes);
 
-            //foreach (Contracts.Contract c in conExpiring)
-            //{
-            //    if (!alarms.Any(a => a.ContractID == c.ContractID)) {
-            //        KACAlarm newAlarm = new KACAlarm(c.Title,c.DateExpire-settings.contractExpiringMargin,
-            //            KACAlarm.AlarmTypeEnum.Contract,settings.contractExpiringAction);
-            //        newAlarm.ContractID = c.ContractID;
-            //        alarms.Add(newAlarm);
-            //    }
-            //} 
+                            KACAlarm tmpAlarm = new KACAlarm("", AlarmName, AlarmNotes, c.DateDeadline - settings.AlarmOnContractDeadlineMargin, settings.AlarmOnContractDeadlineMargin,
+                                KACAlarm.AlarmTypeEnum.ContractAuto, settings.AlarmOnContractDeadline_Action);
 
+                            tmpAlarm.ContractGUID = c.ContractGuid;
+                            tmpAlarm.ContractAlarmType = c.AlarmType();
+
+                            alarms.Add(tmpAlarm);
+                        }
+
+                        //only do one if thats what we are on
+                        if (settings.AlarmAddContractAutoActive == Settings.AutoContractBehaviorEnum.Next)
+                            break;
+                    }
+                }
+            }
         }
 
         /// <summary>

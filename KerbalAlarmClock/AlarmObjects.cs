@@ -10,8 +10,13 @@ using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public class KACAlarm:ConfigNodeStorage
+    public class KACAlarm:ConfigNodeStorage,ICloneable
     {
+        public System.Object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
         public enum AlarmTypeEnum
         {
             Raw,
@@ -465,12 +470,23 @@ namespace KerbalAlarmClock
     {
         new internal void Add(KACAlarm item)
         {
-            KerbalAlarmClock.APIInstance.APIInstance_AlarmStateChanged(item, KerbalAlarmClock.AlarmStateEventsEnum.Created);
+            try {
+                KerbalAlarmClock.APIInstance.APIInstance_AlarmStateChanged(item, KerbalAlarmClock.AlarmStateEventsEnum.Created);
+            } catch (Exception ex) {
+                MonoBehaviourExtended.LogFormatted("Error Raising API Event-Created Alarm: {0}\r\n{1}", ex.Message, ex.StackTrace);
+            } 
             base.Add(item);
         }
         new internal void Remove(KACAlarm item)
         {
-            KerbalAlarmClock.APIInstance.APIInstance_AlarmStateChanged(item, KerbalAlarmClock.AlarmStateEventsEnum.Deleted);
+            //Make a copy to pass to the API as we will have deleted the source object before the event subscription gets the event
+            KACAlarm CopyForAPI = (KACAlarm)item.Clone();
+
+            try {
+                KerbalAlarmClock.APIInstance.APIInstance_AlarmStateChanged(CopyForAPI, KerbalAlarmClock.AlarmStateEventsEnum.Deleted);
+            } catch (Exception ex) {
+                MonoBehaviourExtended.LogFormatted("Error Raising API Event-Deleted Alarm: {0}\r\n{1}", ex.Message, ex.StackTrace);
+            } 
             base.Remove(item);
         }
 

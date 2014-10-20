@@ -1080,7 +1080,12 @@ namespace KerbalAlarmClock
 
                         LogFormatted("Triggering Alarm - " + tmpAlarm.Name);
                         tmpAlarm.Triggered = true;
-                        APIInstance_AlarmStateChanged(tmpAlarm, AlarmStateEventsEnum.Triggered);
+
+                        try {
+                            APIInstance_AlarmStateChanged(tmpAlarm, AlarmStateEventsEnum.Triggered);
+                        } catch (Exception ex) {
+                            LogFormatted("Error Raising API Event-Triggered Alarm: {0}\r\n{1}", ex.Message, ex.StackTrace);
+                        } 
 
                         //If we are simply past the time make sure we halt the warp
                         //only do this in flight mode

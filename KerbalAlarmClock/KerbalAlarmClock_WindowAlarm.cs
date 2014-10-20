@@ -28,7 +28,12 @@ namespace KerbalAlarmClock
                             tmpAlarm.Actioned = true;
                             if (tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.KillWarpOnly) {
                                 tmpAlarm.AlarmWindowClosed = true;
-                                APIInstance_AlarmStateChanged(tmpAlarm, AlarmStateEventsEnum.Closed);
+                                try { 
+                                    APIInstance_AlarmStateChanged(tmpAlarm, AlarmStateEventsEnum.Closed);
+                                } catch (Exception ex) {
+                                    LogFormatted("Error Raising API Event-Closed Alarm: {0}\r\n{1}", ex.Message, ex.StackTrace);
+                                } 
+
                             }
                             LogFormatted("Actioning Alarm");
                         }
@@ -156,8 +161,12 @@ namespace KerbalAlarmClock
                 if (tmpAlarm.PauseGame)
                     FlightDriver.SetPause(false);
 
-                APIInstance_AlarmStateChanged(tmpAlarm, AlarmStateEventsEnum.Closed);
-                
+                try { 
+                    APIInstance_AlarmStateChanged(tmpAlarm, AlarmStateEventsEnum.Closed);
+                } catch (Exception ex) {
+                    MonoBehaviourExtended.LogFormatted("Error Raising API Event-Closed Alarm: {0}\r\n{1}", ex.Message, ex.StackTrace);
+                } 
+
                 if (tmpAlarm.DeleteOnClose)
                     alarms.Remove(tmpAlarm);
                 //settings.SaveAlarms();

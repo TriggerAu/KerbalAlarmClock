@@ -423,18 +423,8 @@ namespace KerbalAlarmClock
         }
 
         private void WindowLayout_SettingsSpecifics_Contract() {
-            GUILayout.Label("Offered Contract Alarm Settings", KACResources.styleAddSectionHeading);
-            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108, 61))
-            {
-                settings.Save();
-            }
-            if (DrawTimeEntry(ref timeContractExpireMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Days, "Alarm Margin:", 100))
-            {
-                //convert it and save it in the settings
-                settings.AlarmOnContractExpireMargin = timeContractExpireMargin.UT;
-                settings.Save();
-            }
             GUILayout.Label("Active Contract Alarm Settings", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
             if (DrawAlarmActionChoice3(ref settings.AlarmOnContractDeadline_Action, "On Alarm:", 108, 61))
             {
                 settings.Save();
@@ -446,8 +436,37 @@ namespace KerbalAlarmClock
                 settings.Save();
             }
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Auto Create Active Alarms:");
+            ddlSettingsContractAutoOffered.DrawButton();
+            GUILayout.EndHorizontal();
+
+            if (DrawCheckbox(ref settings.ContractDeadlineDelete, "Delete Contract Alarm on Deadline passing"));
+                settings.Save();
+
+            GUILayout.EndVertical();
 
 
+            GUILayout.Label("Offered Contract Alarm Settings", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108, 61)) {
+                settings.Save();
+            }
+            if (DrawTimeEntry(ref timeContractExpireMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Days, "Alarm Margin:", 100)) {
+                //convert it and save it in the settings
+                settings.AlarmOnContractExpireMargin = timeContractExpireMargin.UT;
+                settings.Save();
+            }
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Auto Create Offered Alarms:");
+            ddlSettingsContractAutoOffered.DrawButton();
+            GUILayout.EndHorizontal();
+            
+            if (DrawCheckbox(ref settings.ContractExpireDelete, "Delete Contract Alarm on Expiry passing"));
+                settings.Save();
+
+            GUILayout.EndVertical();
         }
 
         private void WindowLayout_SettingsSpecifics_Other()

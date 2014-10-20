@@ -359,6 +359,19 @@ namespace KerbalAlarmClock
                     DrawStoredVesselIDMissing(alarmEdit.VesselID);
                 GUILayout.EndVertical();
 
+                //Draw the old and new times
+                GUILayout.BeginHorizontal();
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew) {
+                    GUILayout.Label("Time To Alarm:", KACResources.styleContent);
+                    GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT), settings.TimeFormat), KACResources.styleAddHeading);
+                }
+                GUILayout.Label("Time To Event:", KACResources.styleContent);
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
+                    GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT + alarmEdit.AlarmMarginSecs - KACWorkerGameState.CurrentTime.UT), settings.TimeFormat), KACResources.styleAddHeading);
+                else
+                    GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.Remaining.UT), KACTime.PrintTimeFormat.DateTimeString), KACResources.styleAddHeading);
+                GUILayout.EndHorizontal();
+
                 int intNoOfActionButtons = 0;
                 int intNoOfActionButtonsDoubleLine = 0;
                 //if the alarm has a vessel ID/Kerbal associated

@@ -188,14 +188,18 @@ namespace KerbalAlarmClock
                         break;
                     case KACAlarm.AlarmTypeEnum.Contract:
                     case KACAlarm.AlarmTypeEnum.ContractAuto:
-                        BuildContractStrings();
+                        BuildContractStringsAndMargin();
                         break;
                     default:
                         break;
                 }
             }
-            if (AddType== KACAlarm.AlarmTypeEnum.Contract || AddType== KACAlarm.AlarmTypeEnum.ContractAuto)
-                BuildContractStrings();
+
+            //If the type is a contract then theressome margin adjustments to do
+            if (AddType == KACAlarm.AlarmTypeEnum.Contract || AddType == KACAlarm.AlarmTypeEnum.ContractAuto)
+                BuildContractStringsAndMargin();
+            else
+                timeMargin.BuildFromUT(settings.AlarmDefaultMargin);
         }
 
         private void BuildTransferStrings()
@@ -251,7 +255,7 @@ namespace KerbalAlarmClock
             }
         }
 
-        private void BuildContractStrings()
+        private void BuildContractStringsAndMargin()
         {
             strAlarmEventName = "Contract";
             if (ContractSystem.Instance == null || lstContracts.Count == 0)
@@ -261,17 +265,21 @@ namespace KerbalAlarmClock
             }
             else
             {
-                GenerateContractStringsFromContract(lstContracts[intSelectedContract],out strAlarmName, out strAlarmNotes);
+                strAlarmName = lstContracts[intSelectedContract].Title;
+                strAlarmNotes = String.Format("{0}\r\nName: {1}\r\nParameters:", lstContracts[intSelectedContract].AlarmType().Description(), lstContracts[intSelectedContract].Synopsys);
+                foreach (ContractParameter cp in lstContracts[intSelectedContract].AllParameters)
+                {
+                    strAlarmNotes += String.Format("\r\n    * {0}",cp.Title);
+                }
             }
-        }
 
-        private void GenerateContractStringsFromContract(Contract c, out String AlarmName, out String AlarmNotes)
-        {
-            AlarmName = c.Title;
-            AlarmNotes = String.Format("{0}\r\nName: {1}\r\nParameters:", c.AlarmType().Description(), c.Synopsys);
-            foreach (ContractParameter cp in c.AllParameters)
-            {
-                AlarmNotes += String.Format("\r\n    * {0}", cp.Title);
+            if (contractLastState != lstContracts[intSelectedContract].ContractState){
+                if (lstContracts[intSelectedContract].ContractState == Contract.State.Active)
+                    timeMargin.BuildFromUT(settings.AlarmOnContractDeadlineMargin);
+                else
+                    timeMargin.BuildFromUT(settings.AlarmOnContractExpireMargin);
+
+                contractLastState = lstContracts[intSelectedContract].ContractState;
             }
         }
 
@@ -722,7 +730,7 @@ namespace KerbalAlarmClock
                                 if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                             }
                             alarms.Add(addAlarm);
-                            //settings.Save();
+                            settings.Save();
                             _ShowAddPane = false;
                         }
                     }
@@ -742,6 +750,7 @@ namespace KerbalAlarmClock
         private KACTime ContractTimeToAlarm = new KACTime();
 
         internal List<Contract> lstContracts;
+        internal Contract.State contractLastState = Contract.State.Offered;
         
         private void WindowLayout_AddPane_Contract()
         {
@@ -772,7 +781,7 @@ namespace KerbalAlarmClock
                         for (int i = 0; i < lstContracts.Count; i++) {
                             if(!alarms.Any(a => a.ContractGUID == lstContracts[i].ContractGuid)){
                                 intSelectedContract = i;
-                                BuildContractStrings();
+                                BuildContractStringsAndMargin();
                                 break;
                             }
                         }
@@ -807,7 +816,7 @@ namespace KerbalAlarmClock
                             if (!AlarmExists)
                             {
                                 intSelectedContract = intTarget;
-                                BuildContractStrings();
+                                BuildContractStringsAndMargin();
                             }
                         };
 
@@ -821,7 +830,7 @@ namespace KerbalAlarmClock
                                 if (blnSelected)
                                 {
                                     intSelectedContract = intTarget;
-                                    BuildContractStrings();
+                                    BuildContractStringsAndMargin();
                                 }
                             }
                         } GUILayout.EndHorizontal();
@@ -842,14 +851,14 @@ namespace KerbalAlarmClock
                             //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
                             String strVesselID = "";
                             if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                            KACAlarm tmpAlarm = new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, KACWorkerGameState.CurrentTime.UT + ContractTimeToAlarm.UT, 
-                                timeMargin.UT, KACAlarm.AlarmTypeEnum.Contract, AddAction);
-
+                            KACAlarm tmpAlarm = new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, KACWorkerGameState.CurrentTime.UT + ContractTimeToAlarm.UT, 0, KACAlarm.AlarmTypeEnum.Contract,
+                                AddAction);
+                            tmpAlarm.AlarmMarginSecs = timeMargin.UT;
                             tmpAlarm.ContractGUID = lstContracts[intSelectedContract].ContractGuid;
                             tmpAlarm.ContractAlarmType = lstContracts[intSelectedContract].AlarmType();
 
                             alarms.Add(tmpAlarm);
-                            
+                            settings.Save();
                             _ShowAddPane = false;
                         }
                     }

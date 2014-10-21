@@ -441,7 +441,7 @@ namespace KerbalAlarmClock
             ddlSettingsContractAutoActive.DrawButton();
             GUILayout.EndHorizontal();
 
-            if (DrawCheckbox(ref settings.ContractDeadlineDelete, "Delete Contract Alarm on Deadline passing"));
+            if (DrawCheckbox(ref settings.ContractDeadlineDelete, "Delete Contract Alarm on Deadline passing"))
                 settings.Save();
 
             GUILayout.EndVertical();
@@ -463,7 +463,7 @@ namespace KerbalAlarmClock
             ddlSettingsContractAutoOffered.DrawButton();
             GUILayout.EndHorizontal();
             
-            if (DrawCheckbox(ref settings.ContractExpireDelete, "Delete Contract Alarm on Expiry passing"));
+            if (DrawCheckbox(ref settings.ContractExpireDelete, "Delete Contract Alarm on Expiry passing"))
                 settings.Save();
 
             GUILayout.EndVertical();

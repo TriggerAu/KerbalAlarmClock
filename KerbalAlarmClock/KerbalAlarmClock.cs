@@ -966,7 +966,7 @@ namespace KerbalAlarmClock
                         //or are we setting a new one
                         alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin, KACAlarm.AlarmTypeEnum.ManeuverAuto,
                             settings.AlarmAddManAuto_Action , manNodesToStore));
-                        settings.Save();
+                        //settings.Save();
                     }
                 }
             }
@@ -1027,6 +1027,7 @@ namespace KerbalAlarmClock
                         //if no alarm then add one.....
                         if (!alarms.Any(a => a.ContractGUID == c.ContractGuid))
                         {
+                            LogFormatted("Adding new Offered Contract Alarm for: {0}({1})-{2}", c.Title, c.ContractGuid, c.DateExpire);
                             String AlarmName, AlarmNotes;
                             GenerateContractStringsFromContract(c, out AlarmName, out AlarmNotes);
 
@@ -1055,6 +1056,7 @@ namespace KerbalAlarmClock
                         //if no alarm then add one.....
                         if (!alarms.Any(a => a.ContractGUID == c.ContractGuid))
                         {
+                            LogFormatted("Adding new Active Contract Alarm for: {0}({1})-{2}",c.Title,c.ContractGuid,c.DateDeadline);
                             String AlarmName, AlarmNotes;
                             GenerateContractStringsFromContract(c, out AlarmName, out AlarmNotes);
 

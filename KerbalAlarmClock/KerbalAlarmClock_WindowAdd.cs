@@ -188,16 +188,16 @@ namespace KerbalAlarmClock
                         break;
                     case KACAlarm.AlarmTypeEnum.Contract:
                     case KACAlarm.AlarmTypeEnum.ContractAuto:
-                        BuildContractStringsAndMargin();
+                        //BuildContractStringsAndMargin();
                         break;
                     default:
                         break;
                 }
             }
 
-            //If the type is a contract then theressome margin adjustments to do
+            //If the type is a contract then theres some margin adjustments to do
             if (AddType == KACAlarm.AlarmTypeEnum.Contract || AddType == KACAlarm.AlarmTypeEnum.ContractAuto)
-                BuildContractStringsAndMargin();
+                BuildContractStringsAndMargin(true);
             else
                 timeMargin.BuildFromUT(settings.AlarmDefaultMargin);
         }
@@ -255,7 +255,7 @@ namespace KerbalAlarmClock
             }
         }
 
-        private void BuildContractStringsAndMargin()
+        private void BuildContractStringsAndMargin(Boolean ForceUpdateMargin=false)
         {
             strAlarmEventName = "Contract";
             if (ContractSystem.Instance == null || lstContracts.Count == 0)
@@ -265,15 +265,11 @@ namespace KerbalAlarmClock
             }
             else
             {
-                strAlarmName = lstContracts[intSelectedContract].Title;
-                strAlarmNotes = String.Format("{0}\r\nName: {1}\r\nParameters:", lstContracts[intSelectedContract].AlarmType().Description(), lstContracts[intSelectedContract].Synopsys);
-                foreach (ContractParameter cp in lstContracts[intSelectedContract].AllParameters)
-                {
-                    strAlarmNotes += String.Format("\r\n    * {0}",cp.Title);
-                }
+                GenerateContractStringsFromContract(lstContracts[intSelectedContract], out strAlarmName, out strAlarmNotes);
             }
 
-            if (contractLastState != lstContracts[intSelectedContract].ContractState){
+            if (ForceUpdateMargin || contractLastState != lstContracts[intSelectedContract].ContractState)
+            {
                 if (lstContracts[intSelectedContract].ContractState == Contract.State.Active)
                     timeMargin.BuildFromUT(settings.AlarmOnContractDeadlineMargin);
                 else
@@ -282,6 +278,17 @@ namespace KerbalAlarmClock
                 contractLastState = lstContracts[intSelectedContract].ContractState;
             }
         }
+
+        private void GenerateContractStringsFromContract(Contract c, out String AlarmName, out String AlarmNotes)
+        {
+            AlarmName = c.Title;
+            AlarmNotes = String.Format("{0}\r\nName: {1}\r\nParameters:", c.AlarmType().Description(), c.Synopsys);
+            foreach (ContractParameter cp in c.AllParameters)
+            {
+                AlarmNotes += String.Format("\r\n    * {0}", cp.Title);
+            }
+        }
+
 
         //String[] strAddTypes = new String[] { "Raw", "Maneuver","SOI","Transfer" };
         private String[] strAddTypes = new String[] { "R", "M", "A", "P", "A", "D", "S", "X" };
@@ -593,7 +600,7 @@ namespace KerbalAlarmClock
                     if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
                     alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmTypeEnum.Raw, 
                         AddAction));
-                    settings.Save();
+                    //settings.Save();
                     _ShowAddPane = false;
                 }
             }
@@ -730,7 +737,7 @@ namespace KerbalAlarmClock
                                 if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                             }
                             alarms.Add(addAlarm);
-                            settings.Save();
+                            //settings.Save();
                             _ShowAddPane = false;
                         }
                     }
@@ -851,14 +858,14 @@ namespace KerbalAlarmClock
                             //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
                             String strVesselID = "";
                             if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                            KACAlarm tmpAlarm = new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, KACWorkerGameState.CurrentTime.UT + ContractTimeToAlarm.UT, 0, KACAlarm.AlarmTypeEnum.Contract,
-                                AddAction);
-                            tmpAlarm.AlarmMarginSecs = timeMargin.UT;
+                            KACAlarm tmpAlarm = new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, KACWorkerGameState.CurrentTime.UT + ContractTimeToAlarm.UT,
+                                timeMargin.UT, KACAlarm.AlarmTypeEnum.Contract, AddAction);
+
                             tmpAlarm.ContractGUID = lstContracts[intSelectedContract].ContractGuid;
                             tmpAlarm.ContractAlarmType = lstContracts[intSelectedContract].AlarmType();
 
                             alarms.Add(tmpAlarm);
-                            settings.Save();
+                            //settings.Save();
                             _ShowAddPane = false;
                         }
                     }
@@ -958,7 +965,7 @@ namespace KerbalAlarmClock
 
                                 alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmTypeEnum.Maneuver,
                                     AddAction, manNodesToStore));
-                                settings.Save();
+                                //settings.Save();
                                 _ShowAddPane = false;
                             }
                             blnFoundNode = true;
@@ -1035,7 +1042,7 @@ namespace KerbalAlarmClock
                                 newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
 
                             alarms.Add(newAlarm);
-                            settings.Save();
+                            //settings.Save();
                             _ShowAddPane = false;
                         }
                     }
@@ -1327,7 +1334,7 @@ namespace KerbalAlarmClock
                         alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
                             (KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.Transfer,
                             AddAction, XferTargetBodies[intXferCurrentTarget]));
-                        settings.Save();
+                        //settings.Save();
                         _ShowAddPane = false;
                     }
                 }
@@ -1345,7 +1352,7 @@ namespace KerbalAlarmClock
                             alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
                                 (XferCurrentTargetEventTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.Transfer,
                                 AddAction, XferTargetBodies[intXferCurrentTarget]));
-                            settings.Save();
+                            //settings.Save();
                             _ShowAddPane = false;
                         }
                     }

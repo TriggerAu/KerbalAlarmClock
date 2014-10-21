@@ -122,7 +122,7 @@ namespace KerbalAlarmClock
                             newAlarm.ManNodes = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes;
 
                             alarms.Add(newAlarm);
-                            settings.Save();
+                            //settings.Save();
                             _ShowAddPane = false;
                         }
                     }
@@ -320,7 +320,7 @@ namespace KerbalAlarmClock
                     newAlarm.ManNodes = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes;
 
                     alarms.Add(newAlarm);
-                    settings.Save();
+                    //settings.Save();
                     _ShowAddPane = false;
                 }
             }

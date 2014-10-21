@@ -206,7 +206,8 @@ namespace KerbalAlarmClock
         private ITargetable _TargetObject = null;                                   //Stored Target Details
         [Persistent] private String TargetObjectStorage;
 
-        [Persistent] public Guid ContractGUID;
+        public Guid ContractGUID;
+        [Persistent] public String ContractGUIDStorage;
         [Persistent] public ContractAlarmTypeEnum ContractAlarmType;
 
         //Vessel Target - needs the fancy get routine as the alarms load before the vessels are loaded.
@@ -276,6 +277,7 @@ namespace KerbalAlarmClock
         {
             NotesStorage = KACUtils.EncodeVarStrings(Notes);
             AlarmTimeStorage = AlarmTime.UT;
+            ContractGUIDStorage = ContractGUID.ToString();
             TargetObjectStorage = TargetSerialize(TargetObject);
             ManNodesStorage = ManNodeSerializeList(ManNodes);
         }
@@ -283,6 +285,10 @@ namespace KerbalAlarmClock
         {
             Notes = KACUtils.DecodeVarStrings(NotesStorage);
             AlarmTime=new KACTime(AlarmTimeStorage);
+
+            //dont try and create a GUID from null or empty :)
+            if (ContractGUIDStorage!=null && ContractGUIDStorage!="")
+                ContractGUID = new Guid(ContractGUIDStorage);
             _TargetObject = TargetDeserialize(TargetObjectStorage);
             ManNodes = ManNodeDeserializeList( ManNodesStorage);
         }

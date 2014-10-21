@@ -28,7 +28,7 @@ namespace KerbalAlarmClock
         internal enum SettingsAlarmSpecsEnum
         {
             [Description("All Alarm Defaults")] Default,
-            [Description("Manuever Node Alarms")] ManNode,
+            [Description("Maneuver Node Alarms")] ManNode,
             [Description("Sphere Of Influence Alarms")] SOI,
             [Description("Contract Alarms")] Contract,
             [Description("Other Alarms")]Other

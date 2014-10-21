@@ -63,7 +63,7 @@ namespace KerbalAlarmClock
 
 
             //write orbit, next orbit, patchedconicsolver nodes?
-            //see what we need to store for a manuever node
+            //see what we need to store for a Maneuver node
 
             //FlightGlobals.Vessels[0].patchedConicSolver.maneuverNodes[0]
 

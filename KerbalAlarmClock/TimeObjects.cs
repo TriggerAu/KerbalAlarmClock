@@ -637,7 +637,7 @@ namespace KerbalAlarmClock
 
     //    public String SerializeString2()
     //    {
-    //        //"VesselID, Name, Notes, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Manuever/Xfer"
+    //        //"VesselID, Name, Notes, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Maneuver/Xfer"
     //        String strReturn = "";
     //        strReturn += VesselID + "|";
     //        strReturn += KACUtils.PipeSepVariables(Name, Notes, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame);
@@ -659,10 +659,10 @@ namespace KerbalAlarmClock
     //        return strReturn;
     //    }
 
-    //    //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Manuever|Xfer|Target|Options|<ENDLINE>");
+    //    //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Maneuver|Xfer|Target|Options|<ENDLINE>");
     //    public String SerializeString3()
     //    {
-    //        //"VesselID, Name, Notes, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Manuever/Xfer"
+    //        //"VesselID, Name, Notes, AlarmTime.UT, AlarmMarginSecs, Type, Enabled,  HaltWarp, PauseGame, Maneuver/Xfer"
     //        String strReturn = "";
     //        strReturn += VesselID + "|";
     //        strReturn += KACUtils.PipeSepVariables(Name, Notes, AlarmTime.UT, AlarmMarginSecs, TypeOfAlarm, Enabled, HaltWarp, PauseGame,ActionedAt);
@@ -767,7 +767,7 @@ namespace KerbalAlarmClock
 
     //    public void LoadFromString3(String AlarmDetails,Double CurrentUT)
     //    {
-    //        //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Manuever|Xfer|Target|Options|<ENDLINE>");
+    //        //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Maneuver|Xfer|Target|Options|<ENDLINE>");
 
     //        String[] vars = AlarmDetails.Split("|".ToCharArray(), StringSplitOptions.None);
     //        this.SaveName = HighLogic.CurrentGame.Title;

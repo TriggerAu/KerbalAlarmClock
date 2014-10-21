@@ -595,7 +595,7 @@ namespace KerbalAlarmClock
                 //Draw the Add Alarm details at the bottom
                 if (DrawAddAlarm(rawTime,null,rawTimeToAlarm))
                 {
-                    //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
+                    //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Maneuver"
                     String strVesselID = "";
                     if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
                     alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmTypeEnum.Raw, 
@@ -728,7 +728,7 @@ namespace KerbalAlarmClock
                         //Draw the Add Alarm details at the bottom
                         if (DrawAddAlarm(CrewTime, null, CrewTimeToAlarm))
                         {
-                            //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
+                            //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Maneuver"
                             KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmTypeEnum.Crew,
                                 AddAction);
                             if (CrewAlarmStoreNode)
@@ -855,7 +855,7 @@ namespace KerbalAlarmClock
 
                         if (DrawAddAlarm(ContractTime, ContractTimeToEvent, ContractTimeToAlarm))
                         {
-                            //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Manuever"
+                            //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Maneuver"
                             String strVesselID = "";
                             if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
                             KACAlarm tmpAlarm = new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, KACWorkerGameState.CurrentTime.UT + ContractTimeToAlarm.UT,

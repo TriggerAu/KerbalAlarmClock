@@ -65,7 +65,7 @@ namespace KerbalAlarmClock
             }
         }
 
-        //Does the active vessel have any manuever nodes
+        //Does the active vessel have any Maneuver nodes
         internal static Boolean ManeuverNodeExists
         {
             get

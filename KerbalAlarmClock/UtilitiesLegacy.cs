@@ -207,7 +207,7 @@ namespace KerbalAlarmClock
 
         internal static KACAlarm LoadFromString3(String AlarmDetails, Double CurrentUT)
         {
-            //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Manuever|Xfer|Target|Options|<ENDLINE>");
+            //String is "VesselID|Name|Notes|AlarmTime.UT|AlarmMarginSecs|Type|Enabled|HaltWarp|PauseGame|ActionedAt|Maneuver|Xfer|Target|Options|<ENDLINE>");
 
             String[] vars = AlarmDetails.Split("|".ToCharArray(), StringSplitOptions.None);
 

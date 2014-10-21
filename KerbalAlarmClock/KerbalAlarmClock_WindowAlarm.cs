@@ -403,7 +403,7 @@ namespace KerbalAlarmClock
                 if ((tmpAlarm.ManNodes != null) && tmpAlarm.ManNodes.Count > 0)
                 //if ((tmpAlarm.ManNodes != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
                 {
-                    //Check if theres a manuever node and if so put a label saying that it already exists
+                    //Check if theres a Maneuver node and if so put a label saying that it already exists
                     //only display this node button if its the active ship
                     //Add this sae functionality to the alarm triggered window
                     //Add a jump to ship button if not the active ship

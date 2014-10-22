@@ -970,7 +970,7 @@ namespace KerbalAlarmClock
                     }
                 }
             }
-            else if (settings.AlarmAddManAuto_andRemove && !KACWorkerGameState.ManeuverNodeExists)
+            else if (tmpAlarm!=null && settings.AlarmAddManAuto_andRemove && !KACWorkerGameState.ManeuverNodeExists)
             {
                 alarms.Remove(tmpAlarm);
             }
@@ -1240,15 +1240,15 @@ namespace KerbalAlarmClock
             {
                 first = false;
                 HighLogic.SaveFolder = "default";
-                HighLogic.SaveFolder = "Career";
+                //HighLogic.SaveFolder = "Career";
                 Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
 
                 if (game != null && game.flightState != null && game.compatible)
                 {
                     //straight to spacecenter
                     HighLogic.CurrentGame = game;
-                    HighLogic.LoadScene(GameScenes.SPACECENTER);
-                    return;
+                    //HighLogic.LoadScene(GameScenes.SPACECENTER);
+                    //return;
 
                     Int32 FirstVessel;
                     Boolean blnFoundVessel = false;

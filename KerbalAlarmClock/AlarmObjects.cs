@@ -486,10 +486,10 @@ namespace KerbalAlarmClock
         new internal void Remove(KACAlarm item)
         {
             //Make a copy to pass to the API as we will have deleted the source object before the event subscription gets the event
-            KACAlarm CopyForAPI = (KACAlarm)item.Clone();
+            //KACAlarm CopyForAPI = (KACAlarm)item.Clone();
 
             try {
-                KerbalAlarmClock.APIInstance.APIInstance_AlarmStateChanged(CopyForAPI, KerbalAlarmClock.AlarmStateEventsEnum.Deleted);
+                KerbalAlarmClock.APIInstance.APIInstance_AlarmStateChanged(item, KerbalAlarmClock.AlarmStateEventsEnum.Deleted);
             } catch (Exception ex) {
                 MonoBehaviourExtended.LogFormatted("Error Raising API Event-Deleted Alarm: {0}\r\n{1}", ex.Message, ex.StackTrace);
             } 

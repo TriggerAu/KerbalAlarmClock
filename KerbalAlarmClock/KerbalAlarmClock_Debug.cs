@@ -332,7 +332,10 @@ namespace KerbalAlarmClock
             //    GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times));
             //}
 
-            //if (GUILayout.Button("Add Button"))
+            if (GUILayout.Button("SetTrue"))
+                btnAppLauncher.SetTrue();
+            if (GUILayout.Button("SetFalse"))
+                btnAppLauncher.SetFalse();
             //    btnAppLauncher = InitAppLauncherButton();
             
             //if (GUILayout.Button("Calc Rates"))

@@ -79,12 +79,14 @@ namespace KerbalAlarmClock
             MonoBehaviourExtended.LogFormatted_DebugOnly("TOn");
 
             WindowVisibleByActiveScene = true;
+            settings.Save();
             MonoBehaviourExtended.LogFormatted_DebugOnly("{0}",WindowVisibleByActiveScene);
         }
         void onAppLaunchToggleOff() {
             MonoBehaviourExtended.LogFormatted_DebugOnly("TOff");
 
             WindowVisibleByActiveScene = false;
+            settings.Save();
             MonoBehaviourExtended.LogFormatted_DebugOnly("{0}", WindowVisibleByActiveScene);
         }
         void onAppLaunchHoverOn() {

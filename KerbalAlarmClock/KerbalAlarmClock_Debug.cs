@@ -264,7 +264,7 @@ namespace KerbalAlarmClock
         int intTestheight = 0;
         int intTestheight2 = 0;
         int intTestheight3 = 0;
-        int intTestheight4 = 10;
+        static int intTestheight4 = 0;
 
         double dblTest = 12;
 

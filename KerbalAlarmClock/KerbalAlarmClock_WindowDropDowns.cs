@@ -532,10 +532,10 @@ namespace KerbalAlarmClock
             //Draw the hovering dropdown
             internal void DrawDropDownList()
             {
-                GUI.depth = 0;
-
                 if (ListVisible)
                 {
+                    GUI.depth = 0;
+
                     if (styleListBoxToDraw == null) styleListBoxToDraw = GUI.skin.box;
                     if (styleListItemToDraw == null) styleListItemToDraw = GUI.skin.label;
 
@@ -579,6 +579,7 @@ namespace KerbalAlarmClock
                         if (i == SelectedIndex)
                             GUI.Label(new Rect(ListButtonRect) { x = ListButtonRect.x + ListButtonRect.width - 20 }, "✔");
                     }
+
                     CloseOnOutsideClick();
                 }
 

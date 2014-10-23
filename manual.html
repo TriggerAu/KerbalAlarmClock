@@ -126,27 +126,27 @@
                         </div>
 
                         <!--<div class="flexslider" style="">
-                    <ul class="slides">
-                        <li>
-                            <a href="images/manualscreens/AlarmList.png" data-lightbox="TWPImages" data-title="Normal View">
-                                <img src="images/manualscreens/AlarmList.png" /><p class="">Normal View</p>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="images/manualscreens/AlarmList_Minimized.png" data-lightbox="TWPImages" data-title="Plotting a chart">
-                                <img src="images/manualscreens/AlarmList_Minimized.png" />
-                            </a>
-                        </li>
-                        <li>
-                            <a href="images/manualscreens/AlarmList_UnderWarp.png" data-lightbox="TWPImages" data-title="Opening it up with the instructions">
-                                <img src="images/manualscreens/AlarmList_UnderWarp.png" />
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <span style="position:relative;top:-10px;color:#777;">
-                    Click on an image to zoom
-                </span>-->
+                            <ul class="slides">
+                                <li>
+                                    <a href="images/manualscreens/AlarmList.png" data-lightbox="TWPImages" data-title="Normal View">
+                                        <img src="images/manualscreens/AlarmList.png" /><p class="">Normal View</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="images/manualscreens/AlarmList_Minimized.png" data-lightbox="TWPImages" data-title="Plotting a chart">
+                                        <img src="images/manualscreens/AlarmList_Minimized.png" />
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="images/manualscreens/AlarmList_UnderWarp.png" data-lightbox="TWPImages" data-title="Opening it up with the instructions">
+                                        <img src="images/manualscreens/AlarmList_UnderWarp.png" />
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <span style="position:relative;top:-10px;color:#777;">
+                            Click on an image to zoom
+                        </span>-->
 
                         <h3 id="General-Main-CommandBar">The Command Bar</h3>
                         <p>
@@ -193,13 +193,14 @@
                         </div>
 
                     </section>
-                    <h3 id="General-QuickAdd">Quick Add Menu</h3>
-                    <div>
-                        <p>Clicking the Plus next to add will give you the option to quickly add, and warp if you want, to a contextually related alarm to the situation you/your vessel are in. Below you can see more details:</p>
-                        <img src="images/manualscreens/Add_Quick_Example.png" alt="Add Quick Example" />
+                    <section id="General-QuickAdd">
+                        <h3 d="General-QuickAdd">Quick Add Menu</h3>
+                        <div>
+                            <p>Clicking the Plus next to add will give you the option to quickly add, and warp if you want, to a contextually related alarm to the situation you/your vessel are in. Below you can see more details:</p>
+                            <img src="images/manualscreens/Add_Quick_Example.png" alt="Add Quick Example" />
 
-                    </div>
-
+                        </div>
+                    </section>
                     <section id="General-AddWindow">
                         <h2>Add Alarm Window</h2>
                         <h3 id="General-Add-Common">Common Elements</h3>
@@ -258,13 +259,13 @@
                         </div>
 
                         <!--<div class="row">
-                    <div class="col-md-6" style="text-align:center;font-style:italic;">
-                        Manuever alarm triggered with all options to get back to ship and restore the node<br />
-                    </div>
-                    <div class="col-md-6" style="text-align:center;font-style:italic;">
-                        Same alarm, but when the active ship is the one for the alarm and it already has a node on the flight plan<br />
-                    </div>
-                </div>-->
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Manuever alarm triggered with all options to get back to ship and restore the node<br />
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                Same alarm, but when the active ship is the one for the alarm and it already has a node on the flight plan<br />
+                            </div>
+                        </div>-->
                     </section>
 
                     <section id="Specific">
@@ -539,7 +540,8 @@ BehaviourChecksPerSec_Custom = 40
                                         <ul>
                                             <li><b>Alarm Action:</b> Action for the Auto-Added SOI Alarms;</li>
                                             <li><b>Alarm Margin:</b> Margin for the Auto-Added SOI Alarms;</li>
-                                            <li><b>Auto Create <i>xxxxxxx</i> Alarms:</b> Two optione here - next and All;
+                                            <li>
+                                                <b>Auto Create <i>xxxxxxx</i> Alarms:</b> Two optione here - next and All;
                                                 <ul>
                                                     <li>Next: Will create and maintain alarms for the next expiring/deadline contract</li>
                                                     <li>All: Will create and maintain alarms for the all contracts of this type</li>

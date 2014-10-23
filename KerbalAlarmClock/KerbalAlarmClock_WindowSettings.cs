@@ -85,7 +85,8 @@ namespace KerbalAlarmClock
                 new GUIContent("General","Global Settings"), 
                 //new GUIContent("Specifics-1","SOI, Ap, Pe, AN, DN Specific Settings" ), 
                 //new GUIContent("Specifics-2","Man Node Specific Settings"), 
-                new GUIContent("Alarm Settings","Specific Settings for Alarm Types"), 
+                //new GUIContent("Alarm Settings","Specific Settings for Alarm Types"), 
+                new GUIContent("Specifics","Specific Settings for Alarm Types"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
                 new GUIContent("About") 
             };
@@ -94,7 +95,8 @@ namespace KerbalAlarmClock
                 new GUIContent("All Alarms","Global Settings"), 
                 //new GUIContent("Specifics-1","SOI, Ap, Pe, AN, DN Specific Settings" ), 
                 //new GUIContent("Specifics-2","Man Node Specific Settings"), 
-                new GUIContent("Alarm Specifics","Specific Settings for Alarm Types"), 
+                //new GUIContent("Alarm Specifics","Specific Settings for Alarm Types"), 
+                new GUIContent("Specifics","Specific Settings for Alarm Types"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
                 new GUIContent(" About", KACResources.btnSettingsAttention) 
             };
@@ -441,6 +443,8 @@ namespace KerbalAlarmClock
             ddlSettingsContractAutoActive.DrawButton();
             GUILayout.EndHorizontal();
 
+            if (DrawCheckbox(ref settings.ContractDeadlineDontCreateInsideMargin, "Dont Auto Create Alarm if inside Margin"))
+                settings.Save();
             if (DrawCheckbox(ref settings.ContractDeadlineDelete, "Delete Contract Alarm on Deadline passing"))
                 settings.Save();
 
@@ -462,7 +466,9 @@ namespace KerbalAlarmClock
             GUILayout.Label("Auto Create Offered Alarms:");
             ddlSettingsContractAutoOffered.DrawButton();
             GUILayout.EndHorizontal();
-            
+
+            if (DrawCheckbox(ref settings.ContractExpireDontCreateInsideMargin, "Dont Auto Create Alarm if inside Margin"))
+                settings.Save();
             if (DrawCheckbox(ref settings.ContractExpireDelete, "Delete Contract Alarm on Expiry passing"))
                 settings.Save();
 

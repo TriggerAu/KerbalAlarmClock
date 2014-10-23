@@ -320,11 +320,11 @@ namespace KerbalAlarmClock
                 //GUILayout.Label(String.Format("State: {0}", lstContracts[intSelectedContract].ContractState));
                 //GUILayout.Label(String.Format("Notes: {0}", lstContracts[intSelectedContract].Notes));
 
-                //foreach (Contracts.Contract item in lstContracts)
-                //{
-                //    GUILayout.Label(String.Format("{0}\r\nState:{3}  Date:{4}", item.Title, item.ContractGuid, item.Synopsys, item.ContractState, item.DateNext()));
+                foreach (Contracts.Contract item in lstContracts.Where(ci => ci.ContractState == Contracts.Contract.State.Offered).OrderBy(ci => ci.DateNext()))
+                {
+                    GUILayout.Label(String.Format("{0}\r\nDate:{1}, Date-margin:{2}", item.Title, item.DateNext(), item.DateNext()-settings.AlarmOnContractExpireMargin));
                 //    //GUILayout.Label(String.Format("DateExpire:{0}DateDeadline:{1}", item.DateExpire,item.DateDeadline));
-                //}
+                }
             }
 
             //foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w => w.Index))

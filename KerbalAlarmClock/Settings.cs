@@ -149,6 +149,9 @@ namespace KerbalAlarmClock
         [Persistent] internal AutoContractBehaviorEnum AlarmAddContractAutoActive = AutoContractBehaviorEnum.None;
         [Persistent] internal Boolean ContractDeadlineDelete = true;
         [Persistent] internal Boolean ContractExpireDelete = true;
+        [Persistent] internal Boolean ContractDeadlineDontCreateInsideMargin = true;
+        [Persistent] internal Boolean ContractExpireDontCreateInsideMargin = true;
+        
 
         //[Persistent] internal Double AlarmAddApQuickMargin = 60;
         //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddApQuickAction = KACAlarm.AlarmActionEnum.KillWarp;

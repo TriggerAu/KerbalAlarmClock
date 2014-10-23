@@ -224,18 +224,12 @@ namespace KerbalAlarmClock
             //    Settings.Load();
 
             //If we have paused the game via an alarm and the menu is not visible, then unpause so the menu will display
-            try
-            {
+            try {
                 if (Input.GetKey(KeyCode.Escape) && !PauseMenu.isOpen && FlightDriver.Pause)
                 {
                     FlightDriver.SetPause(false);
                 }
-
-            }
-            catch (Exception)
-            {
-                LogFormatted("PauseMenu Object Not ready");
-            }
+            } catch (Exception) { }//LogFormatted("PauseMenu Object Not ready");
         }
 
         private void CheckForFlightChanges()

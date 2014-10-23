@@ -224,9 +224,17 @@ namespace KerbalAlarmClock
             //    Settings.Load();
 
             //If we have paused the game via an alarm and the menu is not visible, then unpause so the menu will display
-            if (Input.GetKey(KeyCode.Escape) && !PauseMenu.isOpen && FlightDriver.Pause)
+            try
             {
-                FlightDriver.SetPause(false);
+                if (Input.GetKey(KeyCode.Escape) && !PauseMenu.isOpen && FlightDriver.Pause)
+                {
+                    FlightDriver.SetPause(false);
+                }
+
+            }
+            catch (Exception)
+            {
+                LogFormatted("PauseMenu Object Not ready");
             }
         }
 
@@ -1018,63 +1026,71 @@ namespace KerbalAlarmClock
             }
 
             //Now are we monitoring for alarms
+
             if (settings.AlarmAddContractAutoOffered != Settings.AutoContractBehaviorEnum.None)
             {
-                foreach (Contract c in lstContracts.Where(ci => ci.ContractState == Contract.State.Offered).OrderBy(ci => ci.DateExpire))
-                {
-                    if (!alarms.Any(a => a.ContractGUID == c.ContractGuid && a.AlarmTime.UT < KACWorkerGameState.CurrentTime.UT))
-                    {
-                        //if no alarm then add one.....
-                        if (!alarms.Any(a => a.ContractGUID == c.ContractGuid))
-                        {
-                            LogFormatted("Adding new Offered Contract Alarm for: {0}({1})-{2}", c.Title, c.ContractGuid, c.DateExpire);
-                            String AlarmName, AlarmNotes;
-                            GenerateContractStringsFromContract(c, out AlarmName, out AlarmNotes);
-
-                            KACAlarm tmpAlarm = new KACAlarm("", AlarmName, AlarmNotes, c.DateExpire - settings.AlarmOnContractExpireMargin, settings.AlarmOnContractExpireMargin,
-                                KACAlarm.AlarmTypeEnum.ContractAuto, settings.AlarmOnContractExpire_Action);
-
-                            tmpAlarm.ContractGUID = c.ContractGuid;
-                            tmpAlarm.ContractAlarmType = c.AlarmType();
-
-                            alarms.Add(tmpAlarm);
-                        }
-
-                        //only do one if thats what we are on
-                        if (settings.AlarmAddContractAutoOffered == Settings.AutoContractBehaviorEnum.Next)
-                            break;
-                    }
-                }
+                CreateAutoContracts(settings.AlarmAddContractAutoOffered,Contract.State.Offered,settings.ContractExpireDontCreateInsideMargin,settings.AlarmOnContractExpireMargin,settings.AlarmOnContractExpire_Action);
             }
-
             if (settings.AlarmAddContractAutoActive != Settings.AutoContractBehaviorEnum.None)
             {
-                foreach (Contract c in lstContracts.Where(ci => ci.ContractState == Contract.State.Active).OrderBy(ci => ci.DateDeadline))
+                CreateAutoContracts(settings.AlarmAddContractAutoActive, Contract.State.Active, settings.ContractDeadlineDontCreateInsideMargin, settings.AlarmOnContractDeadlineMargin, settings.AlarmOnContractDeadline_Action);
+            }
+        }
+
+        private void CreateAutoContracts(Settings.AutoContractBehaviorEnum TypeOfAuto, Contract.State state, Boolean DontCreateAlarmsInsideMargin, Double margin, KACAlarm.AlarmActionEnum action)
+        {
+            if (TypeOfAuto == Settings.AutoContractBehaviorEnum.Next && DontCreateAlarmsInsideMargin)
+            {
+                //find the next valid contract to have an alarm for
+                Contract conNext = lstContracts.Where(ci => ci.ContractState == state &&
+                                            ci.DateNext() > KACWorkerGameState.CurrentTime.UT + margin)
+                                            .OrderBy(ci => ci.DateNext())
+                                            .FirstOrDefault();
+
+                if (conNext != null)
                 {
-                    if (!alarms.Any(a => a.ContractGUID == c.ContractGuid && a.AlarmTime.UT < KACWorkerGameState.CurrentTime.UT))
-                    {
-                        //if no alarm then add one.....
-                        if (!alarms.Any(a => a.ContractGUID == c.ContractGuid))
-                        {
-                            LogFormatted("Adding new Active Contract Alarm for: {0}({1})-{2}",c.Title,c.ContractGuid,c.DateDeadline);
-                            String AlarmName, AlarmNotes;
-                            GenerateContractStringsFromContract(c, out AlarmName, out AlarmNotes);
-
-                            KACAlarm tmpAlarm = new KACAlarm("", AlarmName, AlarmNotes, c.DateDeadline - settings.AlarmOnContractDeadlineMargin, settings.AlarmOnContractDeadlineMargin,
-                                KACAlarm.AlarmTypeEnum.ContractAuto, settings.AlarmOnContractDeadline_Action);
-
-                            tmpAlarm.ContractGUID = c.ContractGuid;
-                            tmpAlarm.ContractAlarmType = c.AlarmType();
-
-                            alarms.Add(tmpAlarm);
-                        }
-
-                        //only do one if thats what we are on
-                        if (settings.AlarmAddContractAutoActive == Settings.AutoContractBehaviorEnum.Next)
-                            break;
-                    }
+                    AddContractAutoAlarm(conNext, margin, action);
                 }
             }
+            else if (TypeOfAuto == Settings.AutoContractBehaviorEnum.All || TypeOfAuto == Settings.AutoContractBehaviorEnum.Next)
+            {
+                Boolean FirstOutsideMargin = false;
+                foreach (Contract c in lstContracts.Where(ci => ci.ContractState == state &&
+                                            ci.DateNext() > KACWorkerGameState.CurrentTime.UT).OrderBy(ci => ci.DateNext()))
+                {
+                    AddContractAutoAlarm(c, margin, action);
+
+                    FirstOutsideMargin = (c.DateNext() > KACWorkerGameState.CurrentTime.UT + margin);
+
+                    if (TypeOfAuto == Settings.AutoContractBehaviorEnum.Next && FirstOutsideMargin)
+                        break;
+                }
+            }
+        }
+
+        private void AddContractAutoAlarm(Contract contract, Double margin, KACAlarm.AlarmActionEnum action)
+        {
+            //If theres already an alarm then leave it alone
+            if (alarms.Any(a => a.ContractGUID == contract.ContractGuid))
+                return;
+
+            //log
+            LogFormatted("Adding new {3} Contract Alarm for: {0}({1})-{2}", contract.Title, contract.ContractGuid, contract.DateExpire, contract.ContractState);
+
+            //gen the text
+            String AlarmName, AlarmNotes;
+            GenerateContractStringsFromContract(contract, out AlarmName, out AlarmNotes);
+
+            //create the alarm
+            KACAlarm tmpAlarm = new KACAlarm("", AlarmName, AlarmNotes, contract.DateNext() - margin, margin,
+                KACAlarm.AlarmTypeEnum.ContractAuto, action);
+
+            //add the contract specifics
+            tmpAlarm.ContractGUID = contract.ContractGuid;
+            tmpAlarm.ContractAlarmType = contract.AlarmType();
+
+            //add it to the list
+            alarms.Add(tmpAlarm);
         }
 
         /// <summary>
@@ -1240,15 +1256,15 @@ namespace KerbalAlarmClock
             {
                 first = false;
                 HighLogic.SaveFolder = "default";
-                //HighLogic.SaveFolder = "Career";
+                HighLogic.SaveFolder = "Career";
                 Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
 
                 if (game != null && game.flightState != null && game.compatible)
                 {
                     //straight to spacecenter
                     HighLogic.CurrentGame = game;
-                    //HighLogic.LoadScene(GameScenes.SPACECENTER);
-                    //return;
+                    HighLogic.LoadScene(GameScenes.SPACECENTER);
+                    return;
 
                     Int32 FirstVessel;
                     Boolean blnFoundVessel = false;

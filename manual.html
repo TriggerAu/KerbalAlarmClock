@@ -193,6 +193,13 @@
                         </div>
 
                     </section>
+                    <h3 id="General-QuickAdd">Quick Add Menu</h3>
+                    <div>
+                        <p>Clicking the Plus next to add will give you the option to quickly add, and warp if you want, to a contextually related alarm to the situation you/your vessel are in. Below you can see more details:</p>
+                        <img src="images/manualscreens/Add_Quick_Example.png" alt="Add Quick Example" />
+
+                    </div>
+
                     <section id="General-AddWindow">
                         <h2>Add Alarm Window</h2>
                         <h3 id="General-Add-Common">Common Elements</h3>
@@ -406,6 +413,18 @@
                             </div>
                         </div>
                     </section>
+                    <section id="Specific-Contract">
+                        <h2>Contract Alarm</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>This alarm will let you choose a contract to create an alarm for it. Active Contracts show up in green and if there is already an alarm for them they you wont be able to add another.</p>
+                                <p>The attach to Active vessel option will let you jump back to this vessel for the alarm</p>
+                            </div>
+                            <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                <img src="images/manualscreens/Add_Contract.png" alt="Contract Alarm" />
+                            </div>
+                        </div>
+                    </section>
                     <section id="Settings">
                         <h1>The Settings Window</h1>
                         <p>To access the settings for the plugin you click on the toolbar icon on the main window. Behind this there are a number of windows as described below.</p>
@@ -511,6 +530,31 @@ BehaviourChecksPerSec_Custom = 40
                                 </div>
                             </div>
                         </section>
+                        <section id="Settings-Specific-Contract">
+                            <h3>Contracts</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    Two sections in here with the same settings for each - Active Contracts (Ones you have accepted) and Offered Contracts (Ones that are waiting for you)
+                                    <p>
+                                        <ul>
+                                            <li><b>Alarm Action:</b> Action for the Auto-Added SOI Alarms;</li>
+                                            <li><b>Alarm Margin:</b> Margin for the Auto-Added SOI Alarms;</li>
+                                            <li><b>Auto Create <i>xxxxxxx</i> Alarms:</b> Two optione here - next and All;
+                                                <ul>
+                                                    <li>Next: Will create and maintain alarms for the next expiring/deadline contract</li>
+                                                    <li>All: Will create and maintain alarms for the all contracts of this type</li>
+                                                </ul>
+                                            </li>
+                                            <li><b>Dont Auto Create Alarms inside margin:</b> If the contract event is in the future, but within the margin period dont create/maintain alarms;</li>
+                                            <li><b>Delete contract on <i>xxxxxxx</i> passing:</b> If there is a contract alarm, when the contract expires/passes delete the alarm;</li>
+                                        </ul>
+                                    </p>
+                                </div>
+                                <div class="col-md-6" style="text-align:center;font-style:italic;">
+                                    <img src="images/manualscreens/Settings_Specific_Contract.png" alt="General Settings" />
+                                </div>
+                            </div>
+                        </section>
                         <section id="Settings-Specific-Other">
                             <h3>Other Types</h3>
                             <div class="row">
@@ -583,6 +627,7 @@ BehaviourChecksPerSec_Custom = 40
                         <ul class="nav">
                             <li><a href="#General-Icon">Icon</a></li>
                             <li><a href="#General-MainWindow">Main Window</a></li>
+                            <li><a href="#General-QuickAdd">Quick Add Menu</a></li>
                             <li><a href="#General-AddWindow">Add Window</a></li>
                             <li><a href="#General-EditWindow">Display/Edit Window</a></li>
                             <li><a href="#General-AlarmWindow">Alarm Window</a></li>
@@ -602,6 +647,7 @@ BehaviourChecksPerSec_Custom = 40
                             <li><a href="#Specific-SOI">SOI</a></li>
                             <li><a href="#Specific-Transfer">Transfer Window</a></li>
                             <li><a href="#Specific-Crew">Crew</a></li>
+                            <li><a href="#Specific-Contract">Contracts</a></li>
                         </ul>
                     </li>
                     <li>
@@ -614,6 +660,7 @@ BehaviourChecksPerSec_Custom = 40
                                     <li><a href="#Settings-Specific-Common">All Alarms</a></li>
                                     <li><a href="#Settings-Specific-ManNode">Maneuver Nodes</a></li>
                                     <li><a href="#Settings-Specific-SOI">SOI Changes</a></li>
+                                    <li><a href="#Settings-Specific-Contract">Contracts</a></li>
                                     <li><a href="#Settings-Specific-Other">Other Types</a></li>
                                 </ul>
                             </li>

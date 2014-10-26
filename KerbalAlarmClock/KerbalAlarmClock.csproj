@@ -51,9 +51,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlarmObjects.cs" />
+    <Compile Include="API.cs" />
+    <Compile Include="API\KACWrapper.cs" />
+    <Compile Include="FrameworkExt\Extensions.cs" />
+    <Compile Include="FrameworkExt\ExtensionsKSP.cs" />
+    <Compile Include="Framework\ConfigNodeStorage.cs" />
+    <Compile Include="Framework\ExtensionsUnity.cs" />
+    <Compile Include="Framework\MonoBehaviourExtended.cs" />
+    <Compile Include="KerbalAlarmClock_WindowQuick.cs" />
+    <Compile Include="SharedStuff\AppLauncher.cs" />
+    <Compile Include="SharedStuff\ToolbarWrapper.cs" />
+    <Compile Include="KerbalAlarmClock_WindowDropDowns.cs" />
     <Compile Include="KerbalAlarmClock_GameState.cs" />
+    <Compile Include="KerbalAlarmClock_ScenarioModule.cs" />
     <Compile Include="KerbalAlarmClock_ToolbarButtons.cs" />
-    <Compile Include="KerbalAlarmClock_ViewWorker.cs" />
     <Compile Include="KerbalAlarmClock_WindowAdd_AscDescNodes.cs" />
     <Compile Include="KerbalAlarmClock_WindowAdd_Distance.cs" />
     <Compile Include="KerbalAlarmClock_WindowEarth.cs" />
@@ -69,10 +81,11 @@
     <Compile Include="Resources.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TimeObjects.cs" />
-    <Compile Include="ToolbarWrapper.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="UtilitiesLegacy.cs" />
+    <Compile Include="WarpTransitionCalculator.cs" />
+    <Compile Include="Windows\AlarmImport.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rem Set the Variables we need
@@ -91,7 +104,7 @@ if exist "D:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
 )
 
 echo Gamepath: %25GAMEPATH%25
-set DestPath="%25GAMEPATH%25\GameData\TriggerTech"
+set DestPath="%25GAMEPATH%25\GameData\TriggerTech\KerbalAlarmClock"
 set Binary="%25GAMEPATH%25\KSP.exe"
 
 if not $(ConfigurationName)==Debug goto DEBUGREBUILDCONFIG

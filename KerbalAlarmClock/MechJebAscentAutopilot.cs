@@ -12,7 +12,7 @@ namespace KerbalAlarmClock
         //If the latitude is too high for the launch location to ever actually rotate under the target plane,
         //returns the time of closest approach to the target plane.
         //I have a wonderful proof of this formula which this comment is too short to contain.
-        public static double TimeToPlane(CelestialBody launchBody, double launchLatitude, double launchLongitude, Orbit target)
+        internal static double TimeToPlane(CelestialBody launchBody, double launchLatitude, double launchLongitude, Orbit target)
         {
             double inc = Math.Abs(Vector3d.Angle(target.SwappedOrbitNormal(), launchBody.angularVelocity));
             Vector3d b = Vector3d.Exclude(launchBody.angularVelocity, -target.SwappedOrbitNormal()).normalized;

@@ -6,12 +6,13 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker
+    public partial class KerbalAlarmClock
     {
-        public void WindowLayout_AddTypeANDN()
+        internal void WindowLayout_AddTypeANDN()
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label("Node Type:", KACResources.styleAddHeading);
@@ -20,27 +21,27 @@ namespace KerbalAlarmClock
             {
                 int intTemp=0;
                 DrawRadioList(ref intTemp, "Launch Rendezvous");
-                if (AddType!= KACAlarm.AlarmType.LaunchRendevous)
+                if (AddType!= KACAlarm.AlarmTypeEnum.LaunchRendevous)
                 {
-                    AddType = KACAlarm.AlarmType.LaunchRendevous;
+                    AddType = KACAlarm.AlarmTypeEnum.LaunchRendevous;
                     AddTypeChanged();
                 }
             }
             else
             {
                 int intOption = 0;
-                if (AddType == KACAlarm.AlarmType.LaunchRendevous)
+                if (AddType == KACAlarm.AlarmTypeEnum.LaunchRendevous)
                 {
-                    AddType = KACAlarm.AlarmType.AscendingNode;
+                    AddType = KACAlarm.AlarmTypeEnum.AscendingNode;
                     AddTypeChanged();
                 }
-                if (AddType != KACAlarm.AlarmType.AscendingNode) intOption = 1;
+                if (AddType != KACAlarm.AlarmTypeEnum.AscendingNode) intOption = 1;
                 if (DrawRadioList(ref intOption, "Ascending", "Descending"))
                 {
                     if (intOption == 0)
-                        AddType = KACAlarm.AlarmType.AscendingNode;
+                        AddType = KACAlarm.AlarmTypeEnum.AscendingNode;
                     else
-                        AddType = KACAlarm.AlarmType.DescendingNode;
+                        AddType = KACAlarm.AlarmTypeEnum.DescendingNode;
                     AddTypeChanged();
                 }
             }
@@ -49,8 +50,8 @@ namespace KerbalAlarmClock
             //if (KACWorkerGameState.CurrentVesselTarget is Vessel || KACWorkerGameState.CurrentVesselTarget is CelestialBody)
             //{
             //    GUILayout.BeginHorizontal();
-            //    GUILayout.Label("Target:",KACResources.styleAddHeading, GUILayout.Width(100));
-            //    GUILayout.Label(string.Format("{0} ({1})", KACWorkerGameState.CurrentVesselTarget.GetName(), KACWorkerGameState.CurrentVesselTarget.GetType()),KACResources.styleContent);
+            //    GUILayout.Label("Target:",KACStyles.styleAddHeading, GUILayout.Width(100));
+            //    GUILayout.Label(string.Format("{0} ({1})", KACWorkerGameState.CurrentVesselTarget.GetName(), KACWorkerGameState.CurrentVesselTarget.GetType()),KACStyles.styleContent);
             //    GUILayout.EndHorizontal();
             //}
         }

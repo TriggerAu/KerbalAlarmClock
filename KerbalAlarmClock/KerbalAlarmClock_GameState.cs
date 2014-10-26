@@ -3,42 +3,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using KSPPluginFramework;
+
 namespace KerbalAlarmClock
 {
-    public static class KACWorkerGameState
+    internal static class KACWorkerGameState
     {
-        public static String LastSaveGameName = "";
-        public static GameScenes LastGUIScene = GameScenes.LOADING;
-        public static Vessel LastVessel = null;
-        public static CelestialBody LastSOIBody = null;
-        public static ITargetable LastVesselTarget = null;
+        internal static String LastSaveGameName = "";
+        internal static GameScenes LastGUIScene = GameScenes.LOADING;
+        internal static Vessel LastVessel = null;
+        internal static CelestialBody LastSOIBody = null;
+        internal static ITargetable LastVesselTarget = null;
 
-        public static String CurrentSaveGameName = "";
-        public static GameScenes CurrentGUIScene = GameScenes.LOADING;
-        public static Vessel CurrentVessel = null;
-        public static CelestialBody CurrentSOIBody = null;
-        public static ITargetable CurrentVesselTarget = null;
+        internal static String CurrentSaveGameName = "";
+        internal static GameScenes CurrentGUIScene = GameScenes.LOADING;
+        internal static Vessel CurrentVessel = null;
+        internal static CelestialBody CurrentSOIBody = null;
+        internal static ITargetable CurrentVesselTarget = null;
 
-        public static Boolean ChangedSaveGameName { get { return (LastSaveGameName != CurrentSaveGameName); } }
-        public static Boolean ChangedGUIScene { get { return (LastGUIScene != CurrentGUIScene); } }
-        public static Boolean ChangedVessel { get { if (LastVessel == null) return true; else return (LastVessel != CurrentVessel); } }
-        public static Boolean ChangedSOIBody { get { if (LastSOIBody == null) return true; else return (LastSOIBody != CurrentSOIBody); } }
-        public static Boolean ChangedVesselTarget { get { if (LastVesselTarget == null) return true; else return (LastVesselTarget != CurrentVesselTarget); } }
+        internal static Boolean ChangedSaveGameName { get { return (LastSaveGameName != CurrentSaveGameName); } }
+        internal static Boolean ChangedGUIScene { get { return (LastGUIScene != CurrentGUIScene); } }
+        internal static Boolean ChangedVessel { get { if (LastVessel == null) return true; else return (LastVessel != CurrentVessel); } }
+        internal static Boolean ChangedSOIBody { get { if (LastSOIBody == null) return true; else return (LastSOIBody != CurrentSOIBody); } }
+        internal static Boolean ChangedVesselTarget { get { if (LastVesselTarget == null) return true; else return (LastVesselTarget != CurrentVesselTarget); } }
 
         //The current UT time - for alarm comparison
-        public static KACTime CurrentTime = new KACTime();
-        public static KACTime LastTime = new KACTime();
+        internal static KACTime CurrentTime = new KACTime();
+        internal static KACTime LastTime = new KACTime();
 
-        public static Boolean CurrentlyUnderWarpInfluence = false;
-        public static DateTime CurrentWarpInfluenceStartTime;
+        internal static Boolean CurrentlyUnderWarpInfluence = false;
+        internal static DateTime CurrentWarpInfluenceStartTime;
 
         //Are we flying any ship?
-        public static Boolean IsVesselActive
+        internal static Boolean IsVesselActive
         {
             get { return FlightGlobals.fetch != null && CurrentVessel != null; }
         }
 
-        public static Boolean PauseMenuOpen
+        internal static Boolean PauseMenuOpen
         {
             get
             {
@@ -51,7 +53,7 @@ namespace KerbalAlarmClock
             }
         }
 
-        public static Boolean FlightResultsDialogOpen
+        internal static Boolean FlightResultsDialogOpen
         {
             get
             {
@@ -63,8 +65,8 @@ namespace KerbalAlarmClock
             }
         }
 
-        //Does the active vessel have any manuever nodes
-        public static Boolean ManeuverNodeExists
+        //Does the active vessel have any Maneuver nodes
+        internal static Boolean ManeuverNodeExists
         {
             get
             {
@@ -86,7 +88,7 @@ namespace KerbalAlarmClock
             }
         }
 
-        public static ManeuverNode ManeuverNodeFuture
+        internal static ManeuverNode ManeuverNodeFuture
         {
             get
             {
@@ -94,16 +96,16 @@ namespace KerbalAlarmClock
             }
         }
 
-        public static List<ManeuverNode> ManeuverNodesFuture
+        internal static List<ManeuverNode> ManeuverNodesFuture
         {
             get
             {
-                return ( CurrentVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).SkipWhile(x => x.UT < KACWorkerGameState.CurrentTime.UT).ToList<ManeuverNode>());
+                return (CurrentVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).SkipWhile(x => x.UT < KACWorkerGameState.CurrentTime.UT).ToList<ManeuverNode>());
             }
         }
 
 
-        public static Boolean SOIPointExists
+        internal static Boolean SOIPointExists
         {
             get
             {
@@ -122,7 +124,7 @@ namespace KerbalAlarmClock
             }
         }
 
-        public static Boolean ApPointExists
+        internal static Boolean ApPointExists
         {
             get
             {
@@ -140,7 +142,7 @@ namespace KerbalAlarmClock
                 return blnReturn;
             }
         }
-        public static Boolean PePointExists
+        internal static Boolean PePointExists
         {
             get
             {
@@ -160,48 +162,51 @@ namespace KerbalAlarmClock
         }
 
         //do null checks on all these!!!!!
-        public static void SetCurrentGUIStates()
+        internal static void SetCurrentGUIStates()
         {
-            KACWorkerGameState.CurrentGUIScene = HighLogic.LoadedScene;
+           KACWorkerGameState.CurrentGUIScene = HighLogic.LoadedScene;
         }
 
-        public static void SetLastGUIStatesToCurrent()
+        internal static void SetLastGUIStatesToCurrent()
         {
-            KACWorkerGameState.LastGUIScene = KACWorkerGameState.CurrentGUIScene;
+           KACWorkerGameState.LastGUIScene =KACWorkerGameState.CurrentGUIScene;
         }
 
-        public static void SetCurrentFlightStates()
+        internal static void SetCurrentFlightStates()
         {
             if (HighLogic.CurrentGame != null)
-                KACWorkerGameState.CurrentSaveGameName = HighLogic.CurrentGame.Title;
+               KACWorkerGameState.CurrentSaveGameName = HighLogic.CurrentGame.Title;
             else
-                KACWorkerGameState.CurrentSaveGameName = "";
+               KACWorkerGameState.CurrentSaveGameName = "";
 
-            try { KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime(); }
+            try {KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime(); }
             catch (Exception) { }
-            //if (Planetarium.fetch!=null) KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime();
+            //if (Planetarium.fetch!=null)KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime();
 
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             {
-                KACWorkerGameState.CurrentVessel = FlightGlobals.ActiveVessel;
-                KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
-                KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
+               KACWorkerGameState.CurrentVessel = FlightGlobals.ActiveVessel;
+               KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
+               KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
             }
             else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
             {
-                SpaceTracking st = (SpaceTracking) KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
-                if (st.mainCamera.target != null && st.mainCamera.target.type== MapObject.MapObjectType.VESSEL) {
+                SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
+                if (st.mainCamera.target != null && st.mainCamera.target.type == MapObject.MapObjectType.VESSEL)
+                {
                     KACWorkerGameState.CurrentVessel = st.mainCamera.target.vessel;
                     KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
                     KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
-                } else {
+                }
+                else
+                {
                     KACWorkerGameState.CurrentVessel = null;
                     KACWorkerGameState.CurrentSOIBody = null;
                     KACWorkerGameState.CurrentVesselTarget = null;
                 }
             }
-            //else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && 
-            //        MapView.MapCamera.target.type== MapObject.MapObjectType.VESSEL)
+            //else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION &&
+            //        MapView.MapCamera.target.type == MapObject.MapObjectType.VESSEL)
             //{
             //    KACWorkerGameState.CurrentVessel = MapView.MapCamera.target.vessel;
             //    KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
@@ -209,20 +214,20 @@ namespace KerbalAlarmClock
             //}
             else
             {
-                KACWorkerGameState.CurrentVessel = null;
-                KACWorkerGameState.CurrentSOIBody = null;
-                KACWorkerGameState.CurrentVesselTarget = null;
+               KACWorkerGameState.CurrentVessel = null;
+               KACWorkerGameState.CurrentSOIBody = null;
+               KACWorkerGameState.CurrentVesselTarget = null;
             }
         }
 
-        public static void SetLastFlightStatesToCurrent()
+        internal static void SetLastFlightStatesToCurrent()
         {
-            KACWorkerGameState.LastSaveGameName = KACWorkerGameState.CurrentSaveGameName;
-            KACWorkerGameState.LastTime = KACWorkerGameState.CurrentTime;
-            if (LastVessel != CurrentVessel) { if (VesselChanged != null) VesselChanged(LastVessel, CurrentVessel); }
-            KACWorkerGameState.LastVessel = KACWorkerGameState.CurrentVessel;
-            KACWorkerGameState.LastSOIBody = KACWorkerGameState.CurrentSOIBody;
-            KACWorkerGameState.LastVesselTarget = KACWorkerGameState.CurrentVesselTarget;
+           KACWorkerGameState.LastSaveGameName =KACWorkerGameState.CurrentSaveGameName;
+           KACWorkerGameState.LastTime =KACWorkerGameState.CurrentTime;
+           if (LastVessel != CurrentVessel) { if (VesselChanged != null) VesselChanged(LastVessel, CurrentVessel); }
+           KACWorkerGameState.LastVessel = KACWorkerGameState.CurrentVessel;
+           KACWorkerGameState.LastSOIBody =KACWorkerGameState.CurrentSOIBody;
+           KACWorkerGameState.LastVesselTarget =KACWorkerGameState.CurrentVesselTarget;
         }
 
         internal delegate void VesselChangedHandler(Vessel OldVessel, Vessel NewVessel);

@@ -7,117 +7,169 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public static class KACResources
+    internal static class KACResources
     {
         #region "Textures"
 
         //Clock Icons
-        public static Texture2D iconNorm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconNormShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconAlarm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconAlarmShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconNorm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconNormShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconAlarm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconAlarmShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+
+        //Clock toolbaricons
+        internal static Texture2D toolbariconNorm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconNormShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconAlarm = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconAlarmShow = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconWarpEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D toolbariconPauseEffect000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
         //Alarm List icons
-        public static Texture2D iconRaw = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconMNode = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconSOI = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconAp = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconPe = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconAN  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconDN  = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconXFer = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconClosest = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconLaunchRendezvous = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconCrew = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconEarth = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconRaw = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconMNode = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconSOI = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconAp = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPe = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconAN = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconDN = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconXFer = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconClosest = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconLaunchRendezvous = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconCrew = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconContract = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconEarth = new Texture2D(18, 14, TextureFormat.ARGB32, false);
 
-        public static Texture2D iconNone = new Texture2D(18, 14, TextureFormat.ARGB32, false);
-        public static Texture2D iconEdit = new Texture2D(16, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D iconNone = new Texture2D(18, 14, TextureFormat.ARGB32, false);
+        internal static Texture2D iconEdit = new Texture2D(16, 16, TextureFormat.ARGB32, false);
 
-        public static Texture2D iconWarpList100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpList080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpList060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpList040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconWarpList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
-        public static Texture2D iconPauseList100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseList080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseList060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseList040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-        public static Texture2D iconPauseList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList040 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList020 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        internal static Texture2D iconPauseList000 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
-        //public static Texture2D iconstatusSOI = new Texture2D(14, 11, TextureFormat.ARGB32, false);
+        //internal static Texture2D iconstatusSOI = new Texture2D(14, 11, TextureFormat.ARGB32, false);
 
 
-        public static Texture2D btnRaw = new Texture2D(20, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnMNode = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnAp = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnPe = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnApPe  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnAN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnDN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnANDN  = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnSOI = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnXfer = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnClosest = new Texture2D(25, 20, TextureFormat.ARGB32, false);
-        public static Texture2D btnCrew = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnRaw = new Texture2D(20, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnMNode = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnAp = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnPe = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnApPe = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnAN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnDN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnANDN = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnSOI = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnXfer = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnClosest = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnCrew = new Texture2D(25, 20, TextureFormat.ARGB32, false);
+        internal static Texture2D btnContract = new Texture2D(25, 20, TextureFormat.ARGB32, false);
         
-        public static Texture2D btnChevronUp = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnChevronDown = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnChevLeft = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnChevRight = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnChevronUp = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnChevronDown = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnChevLeft = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnChevRight = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
-        public static Texture2D btnRedCross = new Texture2D(16, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnSettings = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnSettingsAttention = new Texture2D(17, 16, TextureFormat.ARGB32, false);
-        public static Texture2D btnAdd = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnRedCross = new Texture2D(16, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnSettings = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnSettingsAttention = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnAdd = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
-        public static Texture2D txtTooltipBackground = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
-        //public static Texture2D txtRedTint = new Texture2D(16, 16); //, TextureFormat.ARGB32, false);
-        //public static Texture2D txtBlackSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
-        //public static Texture2D txtWhiteSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionWarp = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionWarpMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionPause = new Texture2D(32, 16, TextureFormat.ARGB32, false);
 
-        public static Texture2D txtUIBlocker = new Texture2D(1, 1, TextureFormat.ARGB32, false); 
+        internal static Texture2D btnDropDown = new Texture2D(10,10, TextureFormat.ARGB32, false);
+        internal static Texture2D btnPlay = new Texture2D(10, 10, TextureFormat.ARGB32, false);
+        internal static Texture2D btnStop = new Texture2D(10, 10, TextureFormat.ARGB32, false);
 
-        public static void loadGUIAssets()
+        internal static Texture2D texBox = new Texture2D(9,9, TextureFormat.ARGB32, false);
+        internal static Texture2D texBoxUnity = new Texture2D(9, 9, TextureFormat.ARGB32, false);
+        internal static Texture2D texTooltip = new Texture2D(9, 9, TextureFormat.ARGB32, false);
+
+        internal static Texture2D texSeparatorV = new Texture2D(6, 2, TextureFormat.ARGB32, false);
+        internal static Texture2D texSeparatorH = new Texture2D(2, 20, TextureFormat.ARGB32, false);
+
+        //internal static Texture2D txtTooltipBackground = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
+        //internal static Texture2D txtRedTint = new Texture2D(16, 16); //, TextureFormat.ARGB32, false);
+        //internal static Texture2D txtBlackSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
+        //internal static Texture2D txtWhiteSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
+
+        internal static void loadGUIAssets()
         {
-            KACWorker.DebugLogFormatted("Loading Textures");
+            MonoBehaviourExtended.LogFormatted("Loading Textures");
 
             try
             {
-                KACUtils.LoadImageFromFile(ref iconNorm, "img_iconNorm.png");
-                KACUtils.LoadImageFromFile(ref iconNormShow, "img_iconNormShow.png");
-                KACUtils.LoadImageFromFile(ref iconAlarm, "img_iconAlarm.png");
-                KACUtils.LoadImageFromFile(ref iconAlarmShow, "img_iconAlarmShow.png");
-                KACUtils.LoadImageFromFile(ref iconWarpEffect100, "img_iconWarpEffect2_100.png");
-                KACUtils.LoadImageFromFile(ref iconWarpEffect080, "img_iconWarpEffect2_080.png");
-                KACUtils.LoadImageFromFile(ref iconWarpEffect060, "img_iconWarpEffect2_060.png");
-                KACUtils.LoadImageFromFile(ref iconWarpEffect040, "img_iconWarpEffect2_040.png");
-                KACUtils.LoadImageFromFile(ref iconWarpEffect020, "img_iconWarpEffect2_020.png");
-                KACUtils.LoadImageFromFile(ref iconWarpEffect000, "img_iconWarpEffect2_000.png");
-                KACUtils.LoadImageFromFile(ref iconPauseEffect100, "img_iconPauseEffect_100.png");
-                KACUtils.LoadImageFromFile(ref iconPauseEffect080, "img_iconPauseEffect_080.png");
-                KACUtils.LoadImageFromFile(ref iconPauseEffect060, "img_iconPauseEffect_060.png");
-                KACUtils.LoadImageFromFile(ref iconPauseEffect040, "img_iconPauseEffect_040.png");
-                KACUtils.LoadImageFromFile(ref iconPauseEffect020, "img_iconPauseEffect_020.png");
-                KACUtils.LoadImageFromFile(ref  iconPauseEffect000, "img_iconPauseEffect_000.png");
+                KACUtils.LoadImageFromFile(ref iconNorm, "KACIcon-Norm.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconNormShow, "KACIcon-NormShow.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconAlarm, "KACIcon-Alarm.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconAlarmShow, "KACIcon-AlarmShow.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect100, "KACIcon-WarpEffect2_100.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect080, "KACIcon-WarpEffect2_080.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect060, "KACIcon-WarpEffect2_060.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect040, "KACIcon-WarpEffect2_040.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect020, "KACIcon-WarpEffect2_020.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconWarpEffect000, "KACIcon-WarpEffect2_000.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect100, "KACIcon-PauseEffect_100.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect080, "KACIcon-PauseEffect_080.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect060, "KACIcon-PauseEffect_060.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect040, "KACIcon-PauseEffect_040.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect020, "KACIcon-PauseEffect_020.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref iconPauseEffect000, "KACIcon-PauseEffect_000.png", KACUtils.PathToolbarIcons);
+
+                KACUtils.LoadImageFromFile(ref toolbariconNorm, "KACIconBig-Norm.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconNormShow, "KACIconBig-NormShow.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconAlarm, "KACIconBig-Alarm.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconAlarmShow, "KACIconBig-AlarmShow.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect100, "KACIconBig-WarpEffect2_100.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect080, "KACIconBig-WarpEffect2_080.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect060, "KACIconBig-WarpEffect2_060.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect040, "KACIconBig-WarpEffect2_040.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect020, "KACIconBig-WarpEffect2_020.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconWarpEffect000, "KACIconBig-WarpEffect2_000.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect100, "KACIconBig-PauseEffect_100.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect080, "KACIconBig-PauseEffect_080.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect060, "KACIconBig-PauseEffect_060.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect040, "KACIconBig-PauseEffect_040.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect020, "KACIconBig-PauseEffect_020.png", KACUtils.PathToolbarIcons);
+                KACUtils.LoadImageFromFile(ref toolbariconPauseEffect000, "KACIconBig-PauseEffect_000.png", KACUtils.PathToolbarIcons);
 
 
                 KACUtils.LoadImageFromFile(ref iconRaw, "img_listiconRaw.png");
@@ -130,6 +182,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref iconXFer, "img_listiconXfer.png");
                 KACUtils.LoadImageFromFile(ref iconClosest, "img_listiconClosest.png");
                 KACUtils.LoadImageFromFile(ref iconCrew, "img_listiconCrew.png");
+                KACUtils.LoadImageFromFile(ref iconContract, "img_listiconContract.png");
                 KACUtils.LoadImageFromFile(ref iconEarth, "img_listiconEarth.png");
                 KACUtils.LoadImageFromFile(ref iconLaunchRendezvous, "img_listiconLaunchRendezvous.png");
                 KACUtils.LoadImageFromFile(ref iconWarpList100, "img_listiconWarpList_100.png");
@@ -163,6 +216,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref btnXfer, "img_buttonTypeXfer.png");
                 KACUtils.LoadImageFromFile(ref btnClosest, "img_buttonTypeClosest.png");
                 KACUtils.LoadImageFromFile(ref btnCrew, "img_buttonTypeCrew.png");
+                KACUtils.LoadImageFromFile(ref btnContract, "img_buttonTypeContract.png");
 
                 KACUtils.LoadImageFromFile(ref btnChevronUp, "img_buttonChevronUp.png");
                 KACUtils.LoadImageFromFile(ref btnChevronDown, "img_buttonChevronDown.png");
@@ -174,7 +228,20 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
                 KACUtils.LoadImageFromFile(ref btnAdd, "img_buttonAdd.png");
 
-                KACUtils.LoadImageFromFile(ref txtTooltipBackground, "txt_TooltipBackground.png");
+                KACUtils.LoadImageFromFile(ref btnActionMsg, "img_buttonActionMsg.png");
+                KACUtils.LoadImageFromFile(ref btnActionWarp, "img_buttonActionWarp.png");
+                KACUtils.LoadImageFromFile(ref btnActionWarpMsg, "img_buttonActionWarpMsg.png");
+                KACUtils.LoadImageFromFile(ref btnActionPause, "img_buttonActionPause.png");
+
+                KACUtils.LoadImageFromFile(ref btnDropDown, "img_DropDown.png");
+                KACUtils.LoadImageFromFile(ref btnPlay, "img_Play.png");
+                KACUtils.LoadImageFromFile(ref btnStop, "img_Stop.png");
+
+                KACUtils.LoadImageFromFile(ref texBox, "tex_Box.png");
+                KACUtils.LoadImageFromFile(ref texBoxUnity, "tex_BoxUnity.png");
+
+                KACUtils.LoadImageFromFile(ref texSeparatorH, "img_SeparatorHorizontal.png");
+                KACUtils.LoadImageFromFile(ref texSeparatorV, "img_SeparatorVertical.png");
 
 
                 //KACUtils.LoadImageFromFile(ref txtRedTint, "Textures", "RedOverlay.png");
@@ -182,23 +249,17 @@ namespace KerbalAlarmClock
                 //KACUtils.LoadImageFromFile(ref txtBlackSquare, "Textures", "BlackSquare.png");
                 //KACUtils.LoadImageFromFile(ref txtWhiteSquare, "Textures", "WhiteSquare.png");
 
-                txtUIBlocker.SetPixels(new Color[] { new Color(1f, 1f, 1f, 0.0f) }); // white, but transparent 
-#if DEBUG
-                txtUIBlocker.SetPixels(new Color[] { new Color(1f, 0f, 0f, 0.1f) }); // red to find it for debugging
-#endif
-                txtUIBlocker.Apply();
-
-                KACWorker.DebugLogFormatted("Loaded Textures");
+                MonoBehaviourExtended.LogFormatted("Loaded Textures");
             }
             catch (Exception)
             {
-                KACWorker.DebugLogFormatted("Failed to Load Textures - are you missing a file?");
+                MonoBehaviourExtended.LogFormatted("Failed to Load Textures - are you missing a file?");
             }
 
 
         }
 
-        public static Texture2D GetSettingsButtonIcon(Boolean AttentionRequired)
+        internal static Texture2D GetSettingsButtonIcon(Boolean AttentionRequired)
         {
             Texture2D textureReturn;
 
@@ -210,7 +271,7 @@ namespace KerbalAlarmClock
 
             return textureReturn;
         }
-        public static Texture2D GetWarpIcon()
+        internal static Texture2D GetWarpIcon(Boolean AppLauncherVersion = false)
         {
             Texture2D textureReturn;
 
@@ -218,35 +279,35 @@ namespace KerbalAlarmClock
             switch (Convert.ToInt64(intHundredth))
             {
                 case 0:
-                    textureReturn = KACResources.iconWarpEffect100;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect100 : KACResources.iconWarpEffect100;
                     break;
                 case 1:
                 case 9:
-                    textureReturn = KACResources.iconWarpEffect080;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect080 : KACResources.iconWarpEffect080;
                     break;
                 case 2:
                 case 8:
-                    textureReturn = KACResources.iconWarpEffect060;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect060 : KACResources.iconWarpEffect060;
                     break;
                 case 3:
                 case 7:
-                    textureReturn = KACResources.iconWarpEffect040;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect040 : KACResources.iconWarpEffect040;
                     break;
                 case 4:
                 case 6:
-                    textureReturn = KACResources.iconWarpEffect020;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect020 : KACResources.iconWarpEffect020;
                     break;
                 case 5:
-                    textureReturn = KACResources.iconWarpEffect000;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect000 : KACResources.iconWarpEffect000;
                     break;
                 default:
-                    textureReturn = KACResources.iconWarpEffect100;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconWarpEffect100 : KACResources.iconWarpEffect100;
                     break;
             }
             return textureReturn;
         }
 
-        public static Texture2D GetPauseIcon()
+        internal static Texture2D GetPauseIcon(Boolean AppLauncherVersion=false)
         {
             Texture2D textureReturn;
 
@@ -254,26 +315,26 @@ namespace KerbalAlarmClock
             switch (Convert.ToInt64(intHundredth))
             {
                 case 0:
-                    textureReturn = KACResources.iconPauseEffect100;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect100 : KACResources.iconPauseEffect100;
                     break;
                 case 1:
                 case 9:
-                    textureReturn = KACResources.iconPauseEffect080;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect080 : KACResources.iconPauseEffect080;
                     break;
                 case 2:
                 case 8:
-                    textureReturn = KACResources.iconPauseEffect060;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect060 : KACResources.iconPauseEffect060;
                     break;
                 case 3:
                 case 7:
-                    textureReturn = KACResources.iconPauseEffect040;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect040 : KACResources.iconPauseEffect040;
                     break;
                 case 4:
                 case 6:
-                    textureReturn = KACResources.iconPauseEffect020;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect020 : KACResources.iconPauseEffect020;
                     break;
                 case 5:
-                    textureReturn = KACResources.iconPauseEffect000;
+                    textureReturn = AppLauncherVersion ? KACResources.toolbariconPauseEffect000 : KACResources.iconPauseEffect000;
                     break;
                 default:
                     textureReturn = KACResources.iconPauseEffect100;
@@ -282,17 +343,17 @@ namespace KerbalAlarmClock
             return textureReturn;
         }
 
-        public static String GetWarpIconTexturePath()
+        internal static String GetWarpIconTexturePath()
         {
-            String textureReturn = "TriggerTech/ToolbarIcons/KACIcon-WarpEffect2_";
+            String textureReturn = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-WarpEffect2_";
 
             textureReturn = GetIconPercentageFromTime(textureReturn);
             return textureReturn;
         }
 
-        public static String GetPauseIconTexturePath()
+        internal static String GetPauseIconTexturePath()
         {
-            String textureReturn = "TriggerTech/ToolbarIcons/KACIcon-PauseEffect_";
+            String textureReturn = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-PauseEffect_";
 
             textureReturn = GetIconPercentageFromTime(textureReturn);
             return textureReturn;
@@ -325,7 +386,7 @@ namespace KerbalAlarmClock
             return textureReturn;
         }
 
-        public static Texture2D GetWarpListIcon(Boolean blnWarpInfluence)
+        internal static Texture2D GetWarpListIcon(Boolean blnWarpInfluence)
         {
             Texture2D textureReturn;
 
@@ -368,7 +429,7 @@ namespace KerbalAlarmClock
             return textureReturn;
         }
 
-        public static Texture2D GetPauseListIcon(Boolean blnPauseInfluence)
+        internal static Texture2D GetPauseListIcon(Boolean blnPauseInfluence)
         {
             Texture2D textureReturn;
 
@@ -413,116 +474,292 @@ namespace KerbalAlarmClock
         #endregion
 
 
-        #region "Styles"
-        //Styles for windows - Cant initialize the objects here as the GUIStyle Constructor cannot be called outside of OnGUI
-
-        public static GUIStyle styleWindow;
-        public static GUIStyle styleTooltipStyle;
-
-        public static GUIStyle styleIconStyle;
-        public static GUIStyle styleHeading;
-        public static GUIStyle styleContent;
-
-        public static GUIStyle styleHeadingEarth;
-        public static GUIStyle styleContentEarth;
-
-        public static GUIStyle styleButton;
-
-        public static GUIStyle styleLabel;
-        public static GUIStyle styleLabelWarning;
-        public static GUIStyle styleLabelError;
-
-        public static GUIStyle styleCheckbox;
-        public static GUIStyle styleCheckboxLabel;
-
-        public static GUIStyle styleButtonList;
-
-        public static GUIStyle styleSmallButton;
-
-        public static GUIStyle styleFlagIcon;
-
-        //List Styles
-        public static GUIStyle styleAlarmListArea;
-        public static GUIStyle styleAlarmText;
-        //public static GUIStyle styleAlarmTextGrayed;
-        public static GUIStyle styleAlarmIcon;
-        public static GUIStyle styleLabelWarp;
-        public static GUIStyle styleLabelWarpGrayed;
-        public static GUIStyle styleSOIIndicator;
-        public static GUIStyle styleSOIIcon;
-
-        //Add Alarm Styles
-        public static GUIStyle styleAddSectionHeading;
-        public static GUIStyle styleAddHeading;
-        public static GUIStyle styleAddField;
-        public static GUIStyle styleAddFieldError;
-        //public static GUIStyle styleAddFieldErorOverlay;
-        public static GUIStyle styleAddFieldGreen;
-        public static GUIStyle styleAddFieldAreas;
-        public static GUIStyle styleAddAlarmArea;
-        public static GUIStyle styleAddXferName;
-        public static GUIStyle styleAddXferButton;
-        public static GUIStyle styleAddXferOriginButton;
-        public static GUIStyle styleAddMessageField;
-
-        //AlarmMessage Styles
-        public static GUIStyle styleAlarmMessage;
-        public static GUIStyle styleAlarmMessageTime;
-        public static GUIStyle styleAlarmMessageAction;
-        public static GUIStyle styleAlarmMessageActionPause;
-
-        public static GUIStyle styleVersionHighlight;
+        #region Skins
 
         /// <summary>
-        /// Sets up the styles for the different parts of the drawing
-        /// Should only be called once
+        /// This is a copy of the default Unity skin
         /// </summary>
-        public static void SetStyles()
+        internal static GUISkin DefUnitySkin { get; private set; }
+        /// <summary>
+        /// This is a copy of the default KSP skin
+        /// </summary>
+        internal static GUISkin DefKSPSkin { get; private set; }
+
+        private static GUISkin _CurrentSkin;
+        /// <summary>
+        /// Will return the current Skin as controlled by the SetSkin() Methods
+        /// </summary>
+        internal static GUISkin CurrentSkin { get { return _CurrentSkin; } }
+
+
+        internal static void InitSkins()
+        {
+            DefUnitySkin = GUI.skin;
+            DefKSPSkin = HighLogic.Skin;
+
+            SetSkin(KerbalAlarmClock.settings.SelectedSkin);
+        }
+
+        internal static void SetSkin(Settings.DisplaySkin SkinToSet)
+        {
+            switch (SkinToSet)
+            {
+                case Settings.DisplaySkin.Default:
+                    _CurrentSkin = DefKSPSkin;
+                    _CurrentSkin.font = DefUnitySkin.font;
+                    SetStyleDefaults();
+                    SetKSPStyles();
+                    SetKSPButtons();
+                    break;
+                case Settings.DisplaySkin.Unity:
+                    _CurrentSkin = DefUnitySkin;
+                    SetStyleDefaults(); //was 12
+                    SetUnityStyles();
+                    SetUnityButtons();
+                    break;
+                case Settings.DisplaySkin.UnityWKSPButtons:
+                    _CurrentSkin = DefUnitySkin;
+                    SetStyleDefaults();
+                    SetUnityStyles();
+                    SetKSPButtons();
+                    break;
+                default:
+                    _CurrentSkin = DefKSPSkin;
+                    SetStyleDefaults();
+                    SetKSPStyles();
+                    SetKSPButtons();
+                    break;
+            }
+
+            SetStyles();
+
+            //this throws an error
+            if (OnSkinChanged!=null)
+                OnSkinChanged();
+        }
+
+        internal delegate void SkinChangedEvent();
+        internal static event SkinChangedEvent OnSkinChanged;
+
+        static GUIStyle styleDefLabel, styleDefTextField, styleDefTextArea, styleDefToggle, styleDefButton;
+        static int intFontSizeDefault;
+        private static void SetStyleDefaults(Int32 FontSize=12)
         {
             Color32 colLabelText = new Color32(220, 220, 220, 255);
-            int intFontSizeDefault = 13;
+            intFontSizeDefault = FontSize;
 
             //Common starting points
-            GUIStyle styleDefLabel = new GUIStyle(GUI.skin.label);
+            styleDefLabel = new GUIStyle(CurrentSkin.label);
             styleDefLabel.fontSize = intFontSizeDefault;
             styleDefLabel.fontStyle = FontStyle.Normal;
             styleDefLabel.normal.textColor = colLabelText;
             styleDefLabel.hover.textColor = Color.blue;
 
-            GUIStyle styleDefTextField = new GUIStyle(GUI.skin.textField);
+            styleDefTextField = new GUIStyle(CurrentSkin.textField);
             styleDefTextField.fontSize = intFontSizeDefault;
             styleDefTextField.fontStyle = FontStyle.Normal;
-            GUIStyle styleDefTextArea = new GUIStyle(GUI.skin.textArea);
+            styleDefTextArea = new GUIStyle(CurrentSkin.textArea);
             styleDefTextArea.fontSize = intFontSizeDefault;
             styleDefTextArea.fontStyle = FontStyle.Normal;
-            GUIStyle styleDefToggle = new GUIStyle(GUI.skin.toggle);
+            styleDefToggle = new GUIStyle(CurrentSkin.toggle);
             styleDefToggle.fontSize = intFontSizeDefault;
             styleDefToggle.fontStyle = FontStyle.Normal;
-            GUIStyle styleDefButton = new GUIStyle(GUI.skin.button);
-            styleDefToggle.fontSize = intFontSizeDefault;
-            styleDefToggle.fontStyle = FontStyle.Normal;
+            styleDefToggle.stretchWidth = false;
 
-            //Set up the used styles
-            styleIconStyle = new GUIStyle();
-
-            styleWindow = new GUIStyle(GUI.skin.window);
+            styleWindow = new GUIStyle(CurrentSkin.window);
             styleWindow.padding = KACUtils.SetWindowRectOffset(styleWindow.padding, 4);
+
+
+            //styleWindowQuickAdd = new GUIStyle(styleWindow);
             //styleWindow.normal.background = KACResources.txtWhiteSquare;
             //styleWindow.normal.textColor = new Color32(183, 254, 0, 255);
             //styleWindow.normal.textColor = Color.red;
+
+        }
+        private static void SetKSPStyles()
+        {
+            texTooltip = texBox;
+
+            styleDropDownListBox = new GUIStyle();
+            styleDropDownListBox.normal.background = texBox;
+            //Extra border to prevent bleed of color - actual border is only 1 pixel wide
+            styleDropDownListBox.border = new RectOffset(3, 3, 3, 3);
+
+        }
+        private static void SetUnityStyles()
+        {
+            texTooltip = texBoxUnity;
+
+            styleDropDownListBox = new GUIStyle();
+            styleDropDownListBox.normal.background = texBoxUnity;
+            //Extra border to prevent bleed of color - actual border is only 1 pixel wide
+            styleDropDownListBox.border = new RectOffset(3, 3, 3, 3);
+        }
+        private static void SetKSPButtons()
+        {
+            styleDefButton = new GUIStyle(DefKSPSkin.button);
+            styleDefToggle.fontSize = intFontSizeDefault;
+            styleDefToggle.fontStyle = FontStyle.Normal;
+
+            styleDropDownButton = new GUIStyle(styleDefButton);
+            styleDropDownButton.fontSize = intFontSizeDefault;
+            styleDropDownButton.fixedHeight = 20;
+            if (KerbalAlarmClock.settings.SelectedSkin== Settings.DisplaySkin.UnityWKSPButtons)
+                styleDropDownButton.padding.top = 4;
+            else
+                styleDropDownButton.padding.top = 8;
+            styleDropDownButton.padding.right = 20;
+
+        }
+        private static void SetUnityButtons()
+        {
+            styleDefButton = new GUIStyle(DefUnitySkin.button);
+            styleDefToggle.fontSize = intFontSizeDefault;
+            styleDefToggle.fontStyle = FontStyle.Normal;
+
+            styleDropDownButton = new GUIStyle(styleDefButton);
+            styleDropDownButton.fontSize = intFontSizeDefault;
+            styleDropDownButton.fixedHeight = 20;
+            styleDropDownButton.padding.top = 4;
+            styleDropDownButton.padding.right = 20;
+        }
+
+
+        #endregion
+
+        #region "Styles"
+        //Styles for windows - Cant initialize the objects here as the GUIStyle Constructor cannot be called outside of OnGUI
+
+        internal static GUIStyle styleWindow;//, styleWindowQuickAdd;
+        internal static GUIStyle styleTooltipStyle;
+
+        internal static GUIStyle styleIconStyle;
+        internal static GUIStyle styleHeading;
+        internal static GUIStyle styleContent;
+
+        internal static GUIStyle styleHeadingEarth;
+        internal static GUIStyle styleContentEarth;
+
+        internal static GUIStyle styleButton;
+
+        internal static GUIStyle styleLabel;
+        internal static GUIStyle styleLabelWarning;
+        internal static GUIStyle styleLabelError;
+
+        internal static GUIStyle styleCheckbox;
+        internal static GUIStyle styleCheckboxLabel;
+
+        internal static GUIStyle styleButtonList;
+        internal static GUIStyle styleButtonListAlarmActions;
+
+        internal static GUIStyle styleSmallButton, styleQAButton, styleQAListButton;
+
+        internal static GUIStyle styleFlagIcon;
+
+        //List Styles
+        internal static GUIStyle styleAlarmListArea;
+        internal static GUIStyle styleAlarmText;
+        //internal static GUIStyle styleAlarmTextGrayed;
+        internal static GUIStyle styleAlarmIcon;
+        internal static GUIStyle styleLabelWarp;
+        internal static GUIStyle styleLabelWarpGrayed;
+        //internal static GUIStyle styleSOIIndicator;
+        //internal static GUIStyle styleSOIIcon;
+
+        //Add Alarm Styles
+        internal static GUIStyle styleAddSectionHeading;
+        internal static GUIStyle styleAddHeading;
+        internal static GUIStyle styleAddField;
+        internal static GUIStyle styleAddFieldError;
+        
+        //internal static GUIStyle styleAddFieldErorOverlay;
+        internal static GUIStyle styleAddFieldGreen;
+        internal static GUIStyle styleAddFieldAreas;
+        internal static GUIStyle styleAddAlarmArea;
+        internal static GUIStyle styleAddXferName;
+        internal static GUIStyle styleAddXferButton;
+        internal static GUIStyle styleAddXferOriginButton;
+        internal static GUIStyle styleAddMessageField;
+
+        internal static GUIStyle styleContractLabelOffer;
+        internal static GUIStyle styleContractLabelActive;
+        internal static GUIStyle styleContractLabelAlarmExists;
+
+        //AlarmMessage Styles
+        internal static GUIStyle styleAlarmMessage;
+        internal static GUIStyle styleAlarmMessageTime;
+        internal static GUIStyle styleAlarmMessageAction;
+        internal static GUIStyle styleAlarmMessageActionPause;
+
+        internal static GUIStyle styleVersionHighlight;
+
+        #region DropdownStuff
+        internal static GUIStyle styleDropDownButton;
+        internal static GUIStyle styleDropDownListBox;
+        internal static GUIStyle styleDropDownListItem;
+
+        internal static GUIStyle styleDropDownGlyph;
+
+        internal static GUIStyle styleSeparatorV;
+        internal static GUIStyle styleSeparatorH;
+        #endregion
+
+        internal static List<GUIContent> lstAlarmChoices;
+
+        /// <summary>
+        /// Sets up the styles for the different parts of the drawing
+        /// Should only be called once
+        /// </summary>
+        internal static void SetStyles()
+        {
+            //Color32 colLabelText = new Color32(220, 220, 220, 255);
+            //int intFontSizeDefault = 13;
+
+            ////Common starting points
+            //GUIStyle styleDefLabel = new GUIStyle(CurrentSkin.label);
+            //styleDefLabel.fontSize = intFontSizeDefault;
+            //styleDefLabel.fontStyle = FontStyle.Normal;
+            //styleDefLabel.normal.textColor = colLabelText;
+            //styleDefLabel.hover.textColor = Color.blue;
+
+            //GUIStyle styleDefTextField = new GUIStyle(CurrentSkin.textField);
+            //styleDefTextField.fontSize = intFontSizeDefault;
+            //styleDefTextField.fontStyle = FontStyle.Normal;
+            //GUIStyle styleDefTextArea = new GUIStyle(CurrentSkin.textArea);
+            //styleDefTextArea.fontSize = intFontSizeDefault;
+            //styleDefTextArea.fontStyle = FontStyle.Normal;
+            //GUIStyle styleDefToggle = new GUIStyle(CurrentSkin.toggle);
+            //styleDefToggle.fontSize = intFontSizeDefault;
+            //styleDefToggle.fontStyle = FontStyle.Normal;
+            //GUIStyle styleDefButton = new GUIStyle(CurrentSkin.button);
+            //styleDefToggle.fontSize = intFontSizeDefault;
+            //styleDefToggle.fontStyle = FontStyle.Normal;
+
+            //Set up the used styles
+            styleIconStyle = new GUIStyle(styleDefButton);
+            styleIconStyle.fixedHeight = 32;
+            styleIconStyle.fixedWidth = 32;
+            styleIconStyle.padding = new RectOffset(0, 0, 0, 0);
+
+            //styleWindow = new GUIStyle(CurrentSkin.window);
+            //styleWindow.padding = KACUtils.SetWindowRectOffset(styleWindow.padding, 4);
+            ////styleWindow.normal.background = KACResources.txtWhiteSquare;
+            ////styleWindow.normal.textColor = new Color32(183, 254, 0, 255);
+            ////styleWindow.normal.textColor = Color.red;
 
             styleTooltipStyle = new GUIStyle(styleDefLabel);
             styleTooltipStyle.fontSize = 12;
             styleTooltipStyle.normal.textColor = new Color32(207, 207, 207, 255);
             styleTooltipStyle.stretchHeight = true;
             styleTooltipStyle.wordWrap = true;
-            styleTooltipStyle.normal.background = txtTooltipBackground;
+            styleTooltipStyle.normal.background = texTooltip;
             //Extra border to prevent bleed of color - actual border is only 1 pixel wide
             styleTooltipStyle.border = new RectOffset(3, 3, 3, 3);
             styleTooltipStyle.padding = new RectOffset(4, 4, 6, 4);
             styleTooltipStyle.alignment = TextAnchor.MiddleCenter;
 
             styleHeading = new GUIStyle(styleDefLabel);
+            styleHeading.fontSize = styleDefLabel.fontSize + 1;
             styleHeading.normal.textColor = Color.white;
             styleHeading.fontStyle = FontStyle.Bold;
 
@@ -530,11 +767,6 @@ namespace KerbalAlarmClock
             styleContent.normal.textColor = new Color32(183, 254, 0, 255);
             styleContent.alignment = TextAnchor.MiddleRight;
             styleContent.stretchWidth = true;
-
-            styleHeadingEarth = new GUIStyle(styleHeading);
-            styleHeadingEarth.normal.textColor = new Color32(0 , 173, 236, 255);
-            styleContentEarth = new GUIStyle(styleContent);
-            styleContentEarth.normal.textColor = new Color32(0, 173, 236, 255);
 
             styleButton = new GUIStyle(styleDefButton);
             styleButton.hover.textColor = Color.yellow;
@@ -554,21 +786,56 @@ namespace KerbalAlarmClock
             styleCheckboxLabel = new GUIStyle(styleDefLabel);
             //styleCheckboxLabel.hover.textColor = Color.red;
             //styleCheckboxLabel.onHover.textColor = Color.red;
+            styleCheckboxLabel.stretchWidth=false;
+            styleCheckboxLabel.alignment = TextAnchor.MiddleLeft;
 
             styleButtonList = new GUIStyle(styleDefButton);
             styleButtonList.fixedHeight = 26;
             styleButtonList.padding = KACUtils.SetRectOffset(styleButtonList.padding, 0);
+            styleButtonList.onNormal.background = styleButtonList.active.background;
 
-            styleSmallButton = new GUIStyle(GUI.skin.button);
+            styleButtonListAlarmActions = new GUIStyle(styleDefButton);
+            styleButtonListAlarmActions.fixedHeight = 22;
+            styleButtonListAlarmActions.fixedWidth = 40;
+            styleButtonListAlarmActions.padding = KACUtils.SetRectOffset(styleButtonList.padding, 0);
+            styleButtonListAlarmActions.onNormal.background = styleButtonListAlarmActions.active.background;
+
+            styleSmallButton = new GUIStyle(styleDefButton);
             styleSmallButton.alignment = TextAnchor.MiddleCenter;
             styleSmallButton.fixedWidth = 30;
             styleSmallButton.fixedHeight = 20;
             styleSmallButton.fontSize = intFontSizeDefault;
             styleSmallButton.fontStyle = FontStyle.Normal;
             styleSmallButton.padding = KACUtils.SetRectOffset(styleSmallButton.padding, 0);
+            styleSmallButton.onNormal.background = styleSmallButton.active.background;
+
+            styleQAButton = new GUIStyle(styleSmallButton);
+            if (KerbalAlarmClock.settings.SelectedSkin == Settings.DisplaySkin.Default)
+            {
+                styleQAButton.padding.left = -1;
+                styleQAButton.padding.top = 1;
+            }
+            else
+            {
+                styleQAButton.padding.right = 1;
+                styleQAButton.padding.top = 1;
+            }
+            styleQAButton.fixedWidth = 18;
+            styleQAButton.normal.textColor = new Color32(177, 193, 205, 255);
+            styleQAButton.fontStyle = FontStyle.Bold;
+            styleQAButton.fontSize=16;
+
+            styleQAListButton = new GUIStyle(styleDefButton);
+            styleQAListButton.normal.textColor = new Color32(177, 193, 205, 255);
+            styleQAListButton.fixedHeight = 20;
+            styleQAListButton.alignment = TextAnchor.MiddleCenter;
+            if (KerbalAlarmClock.settings.SelectedSkin== Settings.DisplaySkin.Default)
+                styleQAListButton.padding = new RectOffset(4, 4, 4, 6);
+            else
+                styleQAListButton.padding = styleDefButton.padding;
 
             styleFlagIcon = new GUIStyle(styleDefLabel);
-            styleFlagIcon.padding = KACUtils.SetRectOffset(styleFlagIcon.padding, 0);
+            styleFlagIcon.padding = KACUtils.SetRectOffset(styleFlagIcon.padding, 0,0,4,0);
             styleFlagIcon.alignment = TextAnchor.MiddleLeft;
             styleFlagIcon.fixedWidth = 20;
 
@@ -593,21 +860,23 @@ namespace KerbalAlarmClock
 
             styleAlarmIcon = new GUIStyle(styleDefLabel);
             styleAlarmIcon.alignment = TextAnchor.UpperCenter;
+            styleAlarmIcon.fixedWidth = 18;
 
             styleLabelWarp = new GUIStyle(styleDefLabel);
             styleLabelWarp.alignment = TextAnchor.MiddleRight;
+            styleLabelWarp.fixedWidth = 18;
             styleLabelWarpGrayed = new GUIStyle(styleLabelWarp);
             styleLabelWarpGrayed.normal.textColor = Color.gray;
 
 
 
-            styleSOIIndicator = new GUIStyle(styleDefLabel);
-            styleSOIIndicator.alignment = TextAnchor.MiddleLeft;
-            //styleSOIIndicator.fontSize = 11;
-            styleSOIIndicator.normal.textColor = new Color32(0, 112, 227, 255);
-            styleSOIIndicator.padding = KACUtils.SetRectOffset(styleSOIIndicator.padding, 0);
+            //styleSOIIndicator = new GUIStyle(styleDefLabel);
+            //styleSOIIndicator.alignment = TextAnchor.MiddleLeft;
+            ////styleSOIIndicator.fontSize = 11;
+            //styleSOIIndicator.normal.textColor = new Color32(0, 112, 227, 255);
+            //styleSOIIndicator.padding = KACUtils.SetRectOffset(styleSOIIndicator.padding, 0);
 
-            styleSOIIcon = new GUIStyle(styleSOIIndicator);
+            //styleSOIIcon = new GUIStyle(styleSOIIndicator);
 
 
             styleAddSectionHeading = new GUIStyle(styleDefLabel);
@@ -667,6 +936,14 @@ namespace KerbalAlarmClock
             styleAddXferOriginButton.alignment = TextAnchor.MiddleCenter;
 
 
+            styleContractLabelOffer = new GUIStyle(styleLabel);
+            //styleContractLabelOffer.normal.textColor = Color.yellow;
+            styleContractLabelActive = new GUIStyle(styleLabel);
+            styleContractLabelActive.normal.textColor = new Color32(183, 254, 0, 255);
+            styleContractLabelAlarmExists = new GUIStyle(styleLabel);
+            styleContractLabelAlarmExists.normal.textColor = new Color32(128,128,128,255);
+
+
             styleAlarmMessage = new GUIStyle(styleDefLabel);
             //styleAlarmMessage.normal.textColor = colLabelText;
             styleAlarmMessageTime = new GUIStyle(styleDefLabel);
@@ -685,12 +962,61 @@ namespace KerbalAlarmClock
             styleVersionHighlight.fontStyle = FontStyle.Bold;
             styleVersionHighlight.alignment = TextAnchor.MiddleRight;
             styleVersionHighlight.stretchWidth = true;
+
+
+            styleHeadingEarth = new GUIStyle(styleHeading);
+            styleHeadingEarth.normal.textColor = new Color32(0, 173, 236, 255);
+            styleContentEarth = new GUIStyle(styleContent);
+            styleContentEarth.normal.textColor = new Color32(0, 173, 236, 255);
+
+
+            styleDropDownListItem = new GUIStyle();
+            styleDropDownListItem.normal.textColor = new Color(207, 207, 207);
+            Texture2D texBack = CreateColorPixel(new Color(207, 207, 207));
+            styleDropDownListItem.hover.background = texBack;
+            styleDropDownListItem.onHover.background = texBack;
+            styleDropDownListItem.hover.textColor = Color.black;
+            styleDropDownListItem.onHover.textColor = Color.black;
+            styleDropDownListItem.padding = new RectOffset(4, 4, 3, 4);
+
+            styleDropDownGlyph = new GUIStyle();
+            styleDropDownGlyph.alignment = TextAnchor.MiddleCenter;
+
+            styleSeparatorV = new GUIStyle();
+            styleSeparatorV.normal.background = texSeparatorV;
+            styleSeparatorV.border = new RectOffset(0, 0, 6, 6);
+            styleSeparatorV.fixedWidth = 2;
+
+            styleSeparatorH = new GUIStyle();
+            styleSeparatorH.normal.background = texSeparatorH;
+            styleSeparatorH.border = new RectOffset(6, 6, 0, 0);
+            styleSeparatorH.fixedHeight = 2;
+
+            lstAlarmChoices = new List<GUIContent>();
+            lstAlarmChoices.Add(new GUIContent(btnActionMsg, KACAlarm.AlarmActionEnum.MessageOnly.Description()));
+            lstAlarmChoices.Add(new GUIContent(btnActionWarp, KACAlarm.AlarmActionEnum.KillWarpOnly.Description()));
+            lstAlarmChoices.Add(new GUIContent(btnActionWarpMsg, KACAlarm.AlarmActionEnum.KillWarp.Description()));
+            lstAlarmChoices.Add(new GUIContent(btnActionPause, KACAlarm.AlarmActionEnum.PauseGame.Description()));
         }
+
+        /// <summary>
+        /// Creates a 1x1 texture
+        /// </summary>
+        /// <param name="Background">Color of the texture</param>
+        /// <returns></returns>
+        internal static Texture2D CreateColorPixel(Color32 Background)
+        {
+            Texture2D retTex = new Texture2D(1, 1);
+            retTex.SetPixel(0, 0, Background);
+            retTex.Apply();
+            return retTex;
+        }
+
         #endregion
 
 
         #region "Functions"
-        //public static Color PulseColor(Color Start, Color Dest)
+        //internal static Color PulseColor(Color Start, Color Dest)
         //{
         //    Color colReturn = Start;
         //    Double intHundredth = Math.Truncate(DateTime.Now.Millisecond / 100d);
@@ -735,18 +1061,19 @@ namespace KerbalAlarmClock
         #endregion
 
         #region "Data"
-        public static List<KACXFerModelPoint> lstXferModelPoints;
+        internal static List<KACXFerModelPoint> lstXferModelPoints;
 
-        public static Boolean LoadModelPoints()
+        internal static Boolean LoadModelPoints()
         {
-            KACWorker.DebugLogFormatted("Loading Transfer Modelling Data");
+            MonoBehaviourExtended.LogFormatted("Loading Transfer Modelling Data");
             Boolean blnReturn = false;
             try
             {
                 lstXferModelPoints = new List<KACXFerModelPoint>();
 
                 //read in the data file
-                String strData = KSP.IO.File.ReadAllText<KerbalAlarmClock>("data_TransferModelData.csv");
+                //String strData = KSP.IO.File.ReadAllText<KerbalAlarmClock>("data_TransferModelData.csv");
+                String strData = System.IO.File.ReadAllText(KACUtils.PathPluginData + "/data_TransferModelData.csv");
                 //split to lines
                 String[] strLines = strData.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                 String[] strFields;
@@ -761,11 +1088,11 @@ namespace KerbalAlarmClock
                         ));
                 }
                 blnReturn = true;
-                KACWorker.DebugLogFormatted("Transfer Modelling Data Load Complete");
+                MonoBehaviourExtended.LogFormatted("Transfer Modelling Data Load Complete");
             }
             catch (Exception ex)
             {
-                KACWorker.DebugLogFormatted("Transfer Modelling Data Failed - is the data file there and correct\r\n{0}", ex.Message);
+                MonoBehaviourExtended.LogFormatted("Transfer Modelling Data Failed - is the data file there and correct\r\n{0}", ex.Message);
             }
             return blnReturn;
         }

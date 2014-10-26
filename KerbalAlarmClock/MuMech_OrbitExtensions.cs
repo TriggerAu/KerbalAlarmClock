@@ -12,16 +12,16 @@ using KSP;
 
 namespace KerbalAlarmClock
 {
-    public static class MuUtils
+    internal static class MuUtils
     {
         //acosh(x) = log(x + sqrt(x^2 - 1))
-        public static double Acosh(double x)
+        internal static double Acosh(double x)
         {
             return Math.Log(x + Math.Sqrt(x * x - 1));
         }
 
         //keeps angles in the range 0 to 360
-        public static double ClampDegrees360(double angle)
+        internal static double ClampDegrees360(double angle)
         {
             angle = angle % 360.0;
             if (angle < 0) return angle + 360.0;
@@ -29,14 +29,14 @@ namespace KerbalAlarmClock
         }
 
         //keeps angles in the range -180 to 180
-        public static double ClampDegrees180(double angle)
+        internal static double ClampDegrees180(double angle)
         {
             angle = ClampDegrees360(angle);
             if (angle > 180) angle -= 360;
             return angle;
         }
 
-        public static double ClampRadiansTwoPi(double angle)
+        internal static double ClampRadiansTwoPi(double angle)
         {
             angle = angle % (2 * Math.PI);
             if (angle < 0) return angle + 2 * Math.PI;
@@ -44,9 +44,9 @@ namespace KerbalAlarmClock
         }
     }
 
-    public static class VectorExtensions
+    internal static class VectorExtensions
     {
-        public static Vector3d Reorder(this Vector3d vector, int order)
+        internal static Vector3d Reorder(this Vector3d vector, int order)
         {
             switch (order)
             {
@@ -67,10 +67,10 @@ namespace KerbalAlarmClock
         }
     }
 
-    public static class MuMech_OrbitExtensions
+    internal static class MuMech_OrbitExtensions
     {
         //can probably be replaced with Vector3d.xzy?
-        public static Vector3d SwapYZ(Vector3d v)
+        internal static Vector3d SwapYZ(Vector3d v)
         {
             return v.Reorder(132);
         }
@@ -83,13 +83,13 @@ namespace KerbalAlarmClock
 
         //normalized vector perpendicular to the orbital plane
         //convention: as you look down along the orbit normal, the satellite revolves counterclockwise
-        public static Vector3d SwappedOrbitNormal(this Orbit o)
+        internal static Vector3d SwappedOrbitNormal(this Orbit o)
         {
             return -SwapYZ(o.GetOrbitNormal()).normalized;
         }
 
         //mean motion is rate of increase of the mean anomaly
-        public static double MeanMotion(this Orbit o)
+        internal static double MeanMotion(this Orbit o)
         {
             return Math.Sqrt(o.referenceBody.gravParameter / Math.Abs(Math.Pow(o.semiMajorAxis, 3)));
         }
@@ -97,7 +97,7 @@ namespace KerbalAlarmClock
         //The mean anomaly of the orbit.
         //For elliptical orbits, the value return is always between 0 and 2pi
         //For hyperbolic orbits, the value can be any number.
-        public static double MeanAnomalyAtUT(this Orbit o, double UT)
+        internal static double MeanAnomalyAtUT(this Orbit o, double UT)
         {
             double ret = o.meanAnomalyAtEpoch + o.MeanMotion() * (UT - o.epoch);
             if (o.eccentricity < 1) ret = MuUtils.ClampRadiansTwoPi(ret);
@@ -108,7 +108,7 @@ namespace KerbalAlarmClock
         //For elliptical orbits, this will be a time between UT and UT + o.period
         //For hyperbolic orbits, this can be any time, including a time in the past, if
         //the given mean anomaly occurred in the past
-        public static double UTAtMeanAnomaly(this Orbit o, double meanAnomaly, double UT)
+        internal static double UTAtMeanAnomaly(this Orbit o, double meanAnomaly, double UT)
         {
             double currentMeanAnomaly = o.MeanAnomalyAtUT(UT);
             double meanDifference = meanAnomaly - currentMeanAnomaly;
@@ -119,7 +119,7 @@ namespace KerbalAlarmClock
         //Gives the true anomaly (in a's orbit) at which a crosses its ascending node 
         //with b's orbit.
         //The returned value is always between 0 and 360.
-        public static double AscendingNodeTrueAnomaly(this Orbit a, Orbit b)
+        internal static double AscendingNodeTrueAnomaly(this Orbit a, Orbit b)
         {
             Vector3d vectorToAN = Vector3d.Cross(a.SwappedOrbitNormal(), b.SwappedOrbitNormal());
             return a.TrueAnomalyFromVector(vectorToAN);
@@ -128,7 +128,7 @@ namespace KerbalAlarmClock
         //Gives the true anomaly (in a's orbit) at which a crosses its descending node 
         //with b's orbit.
         //The returned value is always between 0 and 360.
-        public static double DescendingNodeTrueAnomaly(this Orbit a, Orbit b)
+        internal static double DescendingNodeTrueAnomaly(this Orbit a, Orbit b)
         {
             return MuUtils.ClampDegrees360(a.AscendingNodeTrueAnomaly(b) + 180);
         }
@@ -136,7 +136,7 @@ namespace KerbalAlarmClock
         //Gives the true anomaly at which o crosses the equator going northwards, if o is east-moving,
         //or southwards, if o is west-moving.
         //The returned value is always between 0 and 360.
-        public static double AscendingNodeEquatorialTrueAnomaly(this Orbit o)
+        internal static double AscendingNodeEquatorialTrueAnomaly(this Orbit o)
         {
             Vector3d vectorToAN = Vector3d.Cross(o.referenceBody.transform.up, o.SwappedOrbitNormal());
             return o.TrueAnomalyFromVector(vectorToAN);
@@ -145,14 +145,14 @@ namespace KerbalAlarmClock
         //Gives the true anomaly at which o crosses the equator going southwards, if o is east-moving,
         //or northwards, if o is west-moving.
         //The returned value is always between 0 and 360.
-        public static double DescendingNodeEquatorialTrueAnomaly(this Orbit o)
+        internal static double DescendingNodeEquatorialTrueAnomaly(this Orbit o)
         {
             return MuUtils.ClampDegrees360(o.AscendingNodeEquatorialTrueAnomaly() + 180);
         }
 
         //For hyperbolic orbits, the true anomaly only takes on values in the range
         // -M < true anomaly < +M for some M. This function computes M.
-        public static double MaximumTrueAnomaly(this Orbit o)
+        internal static double MaximumTrueAnomaly(this Orbit o)
         {
             if (o.eccentricity < 1) return 180;
             else return 180 / Math.PI * Math.Acos(-1 / o.eccentricity);
@@ -161,7 +161,7 @@ namespace KerbalAlarmClock
         //Returns whether a has an ascending node with b. This can be false
         //if a is hyperbolic and the would-be ascending node is within the opening
         //angle of the hyperbola.
-        public static bool AscendingNodeExists(this Orbit a, Orbit b)
+        internal static bool AscendingNodeExists(this Orbit a, Orbit b)
         {
             return Math.Abs(MuUtils.ClampDegrees180(a.AscendingNodeTrueAnomaly(b))) <= a.MaximumTrueAnomaly();
         }
@@ -169,7 +169,7 @@ namespace KerbalAlarmClock
         //Returns whether a has a descending node with b. This can be false
         //if a is hyperbolic and the would-be descending node is within the opening
         //angle of the hyperbola.
-        public static bool DescendingNodeExists(this Orbit a, Orbit b)
+        internal static bool DescendingNodeExists(this Orbit a, Orbit b)
         {
             return Math.Abs(MuUtils.ClampDegrees180(a.DescendingNodeTrueAnomaly(b))) <= a.MaximumTrueAnomaly();
         }
@@ -177,7 +177,7 @@ namespace KerbalAlarmClock
         //Returns whether o has an ascending node with the equator. This can be false
         //if o is hyperbolic and the would-be ascending node is within the opening
         //angle of the hyperbola.
-        public static bool AscendingNodeEquatorialExists(this Orbit o)
+        internal static bool AscendingNodeEquatorialExists(this Orbit o)
         {
             return Math.Abs(MuUtils.ClampDegrees180(o.AscendingNodeEquatorialTrueAnomaly())) <= o.MaximumTrueAnomaly();
         }
@@ -185,7 +185,7 @@ namespace KerbalAlarmClock
         //Returns whether o has a descending node with the equator. This can be false
         //if o is hyperbolic and the would-be descending node is within the opening
         //angle of the hyperbola.
-        public static bool DescendingNodeEquatorialExists(this Orbit o)
+        internal static bool DescendingNodeEquatorialExists(this Orbit o)
         {
             return Math.Abs(MuUtils.ClampDegrees180(o.DescendingNodeEquatorialTrueAnomaly())) <= o.MaximumTrueAnomaly();
         }
@@ -194,7 +194,7 @@ namespace KerbalAlarmClock
         //The vector is projected into the orbital plane and then the true anomaly is
         //computed as the angle this vector makes with the vector pointing to the periapsis.
         //The returned value is always between 0 and 360.
-        public static double TrueAnomalyFromVector(this Orbit o, Vector3d vec)
+        internal static double TrueAnomalyFromVector(this Orbit o, Vector3d vec)
         {
             Vector3d projected = Vector3d.Exclude(o.SwappedOrbitNormal(), vec);
             Vector3d vectorToPe = SwapYZ(o.eccVec);
@@ -221,7 +221,7 @@ namespace KerbalAlarmClock
         //For hyperbolic orbits the returned value can be any number.
         //NOTE: For a hyperbolic orbit, if a true anomaly is requested that does not exist (a true anomaly
         //past the true anomaly of the asymptote) then an ArgumentException is thrown
-        public static double GetEccentricAnomalyAtTrueAnomaly(this Orbit o, double trueAnomaly)
+        internal static double GetEccentricAnomalyAtTrueAnomaly(this Orbit o, double trueAnomaly)
         {
             double e = o.eccentricity;
             trueAnomaly = MuUtils.ClampDegrees360(trueAnomaly);
@@ -251,7 +251,7 @@ namespace KerbalAlarmClock
         //Converts an eccentric anomaly into a mean anomaly.
         //For an elliptical orbit, the returned value is between 0 and 2pi
         //For a hyperbolic orbit, the returned value is any number
-        public static double GetMeanAnomalyAtEccentricAnomaly(this Orbit o, double E)
+        internal static double GetMeanAnomalyAtEccentricAnomaly(this Orbit o, double E)
         {
             double e = o.eccentricity;
             if (e < 1) //elliptical orbits
@@ -269,14 +269,14 @@ namespace KerbalAlarmClock
         //For hyperbolic orbits, the output can be any number
         //NOTE: For a hyperbolic orbit, if a true anomaly is requested that does not exist (a true anomaly
         //past the true anomaly of the asymptote) then an ArgumentException is thrown
-        public static double GetMeanAnomalyAtTrueAnomaly(this Orbit o, double trueAnomaly)
+        internal static double GetMeanAnomalyAtTrueAnomaly(this Orbit o, double trueAnomaly)
         {
             return o.GetMeanAnomalyAtEccentricAnomaly(o.GetEccentricAnomalyAtTrueAnomaly(trueAnomaly));
         }
 
         //NOTE: this function can throw an ArgumentException, if o is a hyperbolic orbit with an eccentricity
         //large enough that it never attains the given true anomaly
-        public static double TimeOfTrueAnomaly(this Orbit o, double trueAnomaly, double UT)
+        internal static double TimeOfTrueAnomaly(this Orbit o, double trueAnomaly, double UT)
         {
             return o.UTAtMeanAnomaly(o.GetMeanAnomalyAtEccentricAnomaly(o.GetEccentricAnomalyAtTrueAnomaly(trueAnomaly)), UT);
         }
@@ -287,7 +287,7 @@ namespace KerbalAlarmClock
         //the ascending node is in the past.
         //NOTE: this function will throw an ArgumentException if a is a hyperbolic orbit and the "ascending node"
         //occurs at a true anomaly that a does not actually ever attain
-        public static double TimeOfAscendingNode(this Orbit a, Orbit b, double UT)
+        internal static double TimeOfAscendingNode(this Orbit a, Orbit b, double UT)
         {
             return a.TimeOfTrueAnomaly(a.AscendingNodeTrueAnomaly(b), UT);
         }
@@ -298,7 +298,7 @@ namespace KerbalAlarmClock
         //the descending node is in the past.
         //NOTE: this function will throw an ArgumentException if a is a hyperbolic orbit and the "descending node"
         //occurs at a true anomaly that a does not actually ever attain
-        public static double TimeOfDescendingNode(this Orbit a, Orbit b, double UT)
+        internal static double TimeOfDescendingNode(this Orbit a, Orbit b, double UT)
         {
             return a.TimeOfTrueAnomaly(a.DescendingNodeTrueAnomaly(b), UT);
         }
@@ -310,7 +310,7 @@ namespace KerbalAlarmClock
         //ascending node is in the past.
         //NOTE: this function will throw an ArgumentException if o is a hyperbolic orbit and the
         //"ascending node" occurs at a true anomaly that o does not actually ever attain.
-        public static double TimeOfAscendingNodeEquatorial(this Orbit o, double UT)
+        internal static double TimeOfAscendingNodeEquatorial(this Orbit o, double UT)
         {
             return o.TimeOfTrueAnomaly(o.AscendingNodeEquatorialTrueAnomaly(), UT);
         }
@@ -322,7 +322,7 @@ namespace KerbalAlarmClock
         //descending node is in the past.
         //NOTE: this function will throw an ArgumentException if o is a hyperbolic orbit and the
         //"descending node" occurs at a true anomaly that o does not actually ever attain.
-        public static double TimeOfDescendingNodeEquatorial(this Orbit o, double UT)
+        internal static double TimeOfDescendingNodeEquatorial(this Orbit o, double UT)
         {
             return o.TimeOfTrueAnomaly(o.DescendingNodeEquatorialTrueAnomaly(), UT);
         }

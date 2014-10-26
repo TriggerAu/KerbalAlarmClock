@@ -5,7 +5,8 @@ How to stop Jeb from flying past his destination at Warp speed.
 By Trigger Au
 
 Forum Thread for latest: http://forum.kerbalspaceprogram.com/showthread.php/24786-Kerbal-Alarm-Clock
-Documentation Site: https://sites.google.com/site/kerbalalarmclock
+Documentation Site: http://triggerau.github.io/KerbalAlarmClock/
+Install Instructions: http://triggerau.github.io/KerbalAlarmClock/install.html
 
 INSTALLATION
 ******************* NOTE  ******************* NOTE ******************* NOTE *******************
@@ -22,12 +23,40 @@ Installing the plugin involves copying the plugin files into the correct locatio
 
 TROUBLESHOOTING
 The plugin records troubleshooting data in the "<KSP_OS>\KSP_Data\output_log.txt".
-If there are errors in loading the config you can delete the "<KSP_OS>\GameData\TriggerTech\PluginData\KerbalAlarmClock\config.xml" and restart the game
+If there are errors in loading the config you can delete the "<KSP_OS>\GameData\TriggerTech\KerbalAlarmClock\settings.cfg" and restart the game
 
 LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.0.1.0		-	KSP Version: 0.25.0
+- Rework of majority of code base
+- Ability to choose from 3 visual Skins
+- Added Contract Alarms for Expiry and Deadlines
+- Added Alarm Repeats for Raw, Crew and Model Transfer alarms
+- QuickAdd option for contextual Alarms
+- QuickAdd and Warp option
+- Added Kill Warp with No Message action and restructured buttons/code behind
+- Alarm Saving - now in the games save file - only saves and loads on game/save and load
+- Adjusted settings tabs to better layout options
+- API for Alarm Creation/Modification and events
+- App Launcher integration - this is now the default
+- Has input locking options for when mouse is over the panels - this prevents action groups from occuring when mouse is over windows
+- Changed default Warp affecting to cater to non-instant transitions
+- New Common Toolbar Wrapper - official one
+- Removed periodic save of alarms file now that alarms are in the save files
+- Screen clamping on main window
+- Sorted the multiline alarm display stuff
+- Window Resizing for better display
+- Font changes to make more readable
+- F11 keystroke disabled - can be reenabled via settings value
+- Restructure settings
+- Restructure plugin folders
+- Added Alarm Import Tool for v2 Alarms
+- Added Flags
+- New documentation site - http://triggerau.github.io/KerbalAlarmClock/
+- New versioncheck location on Github
+
 Version 2.7.9.0		-	KSP Version: 0.25.0
 - Recompiled for 0.25
 - Image size optimisation thanks to dak180

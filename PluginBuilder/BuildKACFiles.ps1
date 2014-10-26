@@ -55,7 +55,7 @@ if($ChoiceRtn -eq 0)
     #Copy the items 
     "Copying Plugin..."
     Copy-Item "$SourcePath\PluginFiles" "$($DestFullPath)\$($PluginName)_$($VersionString)" -Recurse
-    Copy-Item "$SourcePath\$($GitHubName)\bin\Release\$($PluginName).dll" "$($DestFullPath)\$($PluginName)_$($VersionString)\GameData\TriggerTech" 
+    Copy-Item "$SourcePath\$($GitHubName)\bin\Release\$($PluginName).dll" "$($DestFullPath)\$($PluginName)_$($VersionString)\GameData\TriggerTech\$($PluginName)" 
     #Update the Text files with the version String
     (Get-Content "$($DestFullPath)\$($PluginName)_$($VersionString)\info.txt") |
         ForEach-Object {$_ -replace "%VERSIONSTRING%",$VersionString} |
@@ -63,7 +63,7 @@ if($ChoiceRtn -eq 0)
     (Get-Content "$($DestFullPath)\$($PluginName)_$($VersionString)\ReadMe-$($PluginName).txt") |
         ForEach-Object {$_ -replace "%VERSIONSTRING%",$VersionString} |
             Set-Content "$($DestFullPath)\$($PluginName)_$($VersionString)\ReadMe-$($PluginName).txt"
-	Move-Item "$($DestFullPath)\$($PluginName)_$($VersionString)\ReadMe-$($PluginName).txt" "$($DestFullPath)\$($PluginName)_$($VersionString)\GameData\TriggerTech\"
+	Move-Item "$($DestFullPath)\$($PluginName)_$($VersionString)\ReadMe-$($PluginName).txt" "$($DestFullPath)\$($PluginName)_$($VersionString)\GameData\TriggerTech\$($PluginName)\"
 
     #Copy the source files
     "Copying Source..."

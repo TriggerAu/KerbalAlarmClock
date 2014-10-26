@@ -6,31 +6,32 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker
+    public partial class KerbalAlarmClock
     {
 
-        public void WindowLayout_AddTypeDistanceChoice()
+        internal void WindowLayout_AddTypeDistanceChoice()
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label("Distance Type:", KACResources.styleAddHeading);
             int intOption = 0;
-            if (AddType != KACAlarm.AlarmType.Closest) intOption = 1;
+            if (AddType != KACAlarm.AlarmTypeEnum.Closest) intOption = 1;
             if (DrawRadioList(ref intOption, "Closest", "Target Distance"))
             {
                 if (intOption == 0)
-                    AddType = KACAlarm.AlarmType.Closest;
+                    AddType = KACAlarm.AlarmTypeEnum.Closest;
                 else
-                    AddType = KACAlarm.AlarmType.Distance;
+                    AddType = KACAlarm.AlarmTypeEnum.Distance;
                 AddTypeChanged();
             }
             GUILayout.EndHorizontal();
         }
 
-        int intOrbits;
-        float fltOrbits = 6;
+        private Int32 intOrbits;
+        private Single fltOrbits = 6;
         private void WindowLayout_AddPane_ClosestApproach()
         {
             GUILayout.BeginVertical();
@@ -116,12 +117,12 @@ namespace KerbalAlarmClock
                         {
                             KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes,
                                 eventAlarm.UT, timeMargin.UT, AddType,
-                                (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame));
+                                AddAction);
                             newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                             newAlarm.ManNodes = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes;
 
-                            Settings.Alarms.Add(newAlarm);
-                            Settings.Save();
+                            alarms.Add(newAlarm);
+                            //settings.Save();
                             _ShowAddPane = false;
                         }
                     }
@@ -144,16 +145,16 @@ namespace KerbalAlarmClock
 
 
 
-        int intOrbits_Distance;
-        float fltOrbits_Distance = 6;
-        int intSelectediTarget = 0;
-        ITargetable tgtSelectedDistance = null;
-        double dblTargetDistance = 100000;
-        
-        int intAddDistanceHeight=272;
+        private Int32 intOrbits_Distance;
+        private Single fltOrbits_Distance = 6;
+        private Int32 intSelectediTarget = 0;
+        private ITargetable tgtSelectedDistance = null;
+        private Double dblTargetDistance = 100000;
+
+        private Int32 intAddDistanceHeight = 272;
         private void WindowLayout_AddPane_TargetDistance()
         {
-            intAddDistanceHeight = 272;
+            intAddDistanceHeight = 262;// 272;
             GUILayout.BeginVertical();
             GUILayout.Label(strAlarmEventName + " Details...", KACResources.styleAddSectionHeading);
 
@@ -179,7 +180,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("Select Target:",KACResources.styleAddXferName);
             if (DrawRadioListVertical(ref intSelectediTarget, iTargets.Select(x => x.GetName()).ToArray()))
             {
-                DebugLogFormatted("Distance Target is:{0}", iTargets[intSelectediTarget].GetName());
+                LogFormatted("Distance Target is:{0}", iTargets[intSelectediTarget].GetName());
             }
             GUILayout.EndHorizontal();
 
@@ -314,12 +315,12 @@ namespace KerbalAlarmClock
                 {
                     KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes,
                         eventAlarm.UT, timeMargin.UT, AddType,
-                        (AddAction == KACAlarm.AlarmAction.KillWarp), (AddAction == KACAlarm.AlarmAction.PauseGame));
+                        AddAction);
                     newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                     newAlarm.ManNodes = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes;
 
-                    Settings.Alarms.Add(newAlarm);
-                    Settings.Save();
+                    alarms.Add(newAlarm);
+                    //settings.Save();
                     _ShowAddPane = false;
                 }
             }

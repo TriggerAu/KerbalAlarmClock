@@ -6,14 +6,15 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker
+    public partial class KerbalAlarmClock
     {
         private void NewEarthAlarm()
         {
-            AddType = KACAlarm.AlarmType.EarthTime;
+            AddType = KACAlarm.AlarmTypeEnum.EarthTime;
 
             strAlarmName="Earth Calling...";
             strAlarmNotes="";
@@ -23,10 +24,10 @@ namespace KerbalAlarmClock
             strAlarmEarthHour = DateTime.Now.AddHours(2).Hour.ToString();
             strAlarmEarthMin = DateTime.Now.Minute.ToString();
 
-            AddAction= KACAlarm.AlarmAction.PauseGame;
+            AddAction= KACAlarm.AlarmActionEnum.PauseGame;
         }
 
-        public void FillEarthAlarmWindow(int WindowID)
+        internal void FillEarthAlarmWindow(int WindowID)
         {
             GUILayout.BeginVertical();
 
@@ -85,13 +86,13 @@ namespace KerbalAlarmClock
                 int intButtonHeight = 36;
                 if (GUILayout.Button("Add Alarm", KACResources.styleButton, GUILayout.Width(90), GUILayout.Height(intButtonHeight)))
                 {
-                    Settings.Alarms.Add(
+                    alarms.Add(
                         new KACAlarm(null,strAlarmName,strAlarmNotes,
                             EarthTimeEncode(DateTime.Now + tmAlarm),
-                            0, KACAlarm.AlarmType.EarthTime,
-                            (AddAction== KACAlarm.AlarmAction.KillWarp), (AddAction== KACAlarm.AlarmAction.PauseGame))
+                            0, KACAlarm.AlarmTypeEnum.EarthTime,
+                            AddAction)
                         );
-                    Settings.SaveAlarms();
+                    //settings.SaveAlarms();
                     _ShowEarthAlarm = false;
                 }
                 GUILayout.EndHorizontal();
@@ -108,9 +109,9 @@ namespace KerbalAlarmClock
         }
 
 
-        DateTime EarthTimeRoot = new DateTime(2013, 1, 1);
+        private DateTime EarthTimeRoot = new DateTime(2013, 1, 1);
 
-        public Double EarthTimeEncode(DateTime Input)
+        internal Double EarthTimeEncode(DateTime Input)
         {
             Double dblReturn;
 
@@ -119,7 +120,7 @@ namespace KerbalAlarmClock
             return dblReturn;
         }
 
-        public DateTime EarthTimeDecode(Double Input)
+        internal DateTime EarthTimeDecode(Double Input)
         {
             DateTime dteReturn;
 

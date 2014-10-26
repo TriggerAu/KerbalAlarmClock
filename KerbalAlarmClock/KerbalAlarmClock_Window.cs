@@ -6,24 +6,25 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker
+    public partial class KerbalAlarmClock
     {
 
 
         #region "OnGUI Stuff"
         System.Random rnd = new System.Random();
-        public void SetupDrawStuff()
-        {
-            GUI.skin = HighLogic.Skin;
-            if (KACResources.styleWindow == null)
-            {
-                KACResources.SetStyles();
-                //styleWindow = new GUIStyle(GUI.skin.window);
-            }
-        }
+        //public void SetupDrawStuff()
+        //{
+        //    GUI.skin = HighLogic.Skin;
+        //    if (KACResources.styleWindow == null)
+        //    {
+        //        KACResources.SetStyles();
+        //        //styleWindow = new GUIStyle(GUI.skin.window);
+        //    }
+        //}
 
         #region "Tooltip Work"
         //Tooltip variables
@@ -33,8 +34,8 @@ namespace KerbalAlarmClock
         //is it displayed and where
         Boolean blnToolTipDisplayed = false;
         Rect rectToolTipPosition;
-        int intTooltipVertOffset = 12;
-        int intTooltipMaxWidth = 250;
+        Int32 intTooltipVertOffset = 12;
+        Int32 intTooltipMaxWidth = 250;
         //timer so it only displays for a preriod of time
         float fltTooltipTime = 0f;
         float fltMaxToolTipTime = 15f;
@@ -76,7 +77,7 @@ namespace KerbalAlarmClock
             strLastTooltipText = strToolTipText;
         }
 
-        public void SetTooltipText()
+        internal void SetTooltipText()
         {
             if (Event.current.type == EventType.Repaint)
             {
@@ -92,8 +93,8 @@ namespace KerbalAlarmClock
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: return Settings.IconShow_SpaceCenter;
-                    case GameScenes.TRACKSTATION: return Settings.IconShow_TrackingStation;
+                    case GameScenes.SPACECENTER: return settings.IconShow_SpaceCenter;
+                    case GameScenes.TRACKSTATION: return settings.IconShow_TrackingStation;
                     default: return true;
                 }
             }
@@ -101,8 +102,8 @@ namespace KerbalAlarmClock
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: Settings.IconShow_SpaceCenter = value; break;
-                    case GameScenes.TRACKSTATION: Settings.IconShow_TrackingStation = value; break;
+                    case GameScenes.SPACECENTER: settings.IconShow_SpaceCenter = value; break;
+                    case GameScenes.TRACKSTATION: settings.IconShow_TrackingStation = value; break;
                     default: 
                         //Settings.WindowVisible = value; 
                         break;
@@ -116,18 +117,18 @@ namespace KerbalAlarmClock
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: return Settings.IconPos_SpaceCenter;
-                    case GameScenes.TRACKSTATION: return Settings.IconPos_TrackingStation;
-                    default: return Settings.IconPos;
+                    case GameScenes.SPACECENTER: return settings.IconPos_SpaceCenter;
+                    case GameScenes.TRACKSTATION: return settings.IconPos_TrackingStation;
+                    default: return settings.IconPos;
                 }
             }
             set
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: Settings.IconPos_SpaceCenter = value; break;
-                    case GameScenes.TRACKSTATION: Settings.IconPos_TrackingStation = value; break;
-                    default: Settings.IconPos = value; break;
+                    case GameScenes.SPACECENTER: settings.IconPos_SpaceCenter = value; break;
+                    case GameScenes.TRACKSTATION: settings.IconPos_TrackingStation = value; break;
+                    default: settings.IconPos = value; break;
                 }
             }
         }
@@ -139,18 +140,18 @@ namespace KerbalAlarmClock
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: return Settings.WindowVisible_SpaceCenter;
-                    case GameScenes.TRACKSTATION: return Settings.WindowVisible_TrackingStation;
-                    default: return Settings.WindowVisible;
+                    case GameScenes.SPACECENTER: return settings.WindowVisible_SpaceCenter;
+                    case GameScenes.TRACKSTATION: return settings.WindowVisible_TrackingStation;
+                    default: return settings.WindowVisible;
                 }
             }
             set
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: Settings.WindowVisible_SpaceCenter = value; break;
-                    case GameScenes.TRACKSTATION: Settings.WindowVisible_TrackingStation = value; break;
-                    default: Settings.WindowVisible = value; break;
+                    case GameScenes.SPACECENTER: settings.WindowVisible_SpaceCenter = value; break;
+                    case GameScenes.TRACKSTATION: settings.WindowVisible_TrackingStation = value; break;
+                    default: settings.WindowVisible = value; break;
                 }
             }
         }
@@ -161,18 +162,18 @@ namespace KerbalAlarmClock
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: return Settings.WindowMinimized_SpaceCenter;
-                    case GameScenes.TRACKSTATION: return Settings.WindowMinimized_TrackingStation;
-                    default: return Settings.WindowMinimized;
+                    case GameScenes.SPACECENTER: return settings.WindowMinimized_SpaceCenter;
+                    case GameScenes.TRACKSTATION: return settings.WindowMinimized_TrackingStation;
+                    default: return settings.WindowMinimized;
                 }
             }
             set
             {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER: Settings.WindowMinimized_SpaceCenter = value; break;
-                    case GameScenes.TRACKSTATION: Settings.WindowMinimized_TrackingStation = value; break;
-                    default: Settings.WindowMinimized = value; break;
+                    case GameScenes.SPACECENTER: settings.WindowMinimized_SpaceCenter = value; break;
+                    case GameScenes.TRACKSTATION: settings.WindowMinimized_TrackingStation = value; break;
+                    default: settings.WindowMinimized = value; break;
                 }
             }
         }
@@ -182,17 +183,17 @@ namespace KerbalAlarmClock
             get {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER:    return Settings.WindowPos_SpaceCenter;
-                    case GameScenes.TRACKSTATION:   return Settings.WindowPos_TrackingStation;
-                    default:                        return Settings.WindowPos;
+                    case GameScenes.SPACECENTER:    return settings.WindowPos_SpaceCenter;
+                    case GameScenes.TRACKSTATION:   return settings.WindowPos_TrackingStation;
+                    default:                        return settings.WindowPos;
                 }
             }
             set {
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
-                    case GameScenes.SPACECENTER:    Settings.WindowPos_SpaceCenter = value;         break;
-                    case GameScenes.TRACKSTATION:   Settings.WindowPos_TrackingStation = value;     break;
-                    default:                        Settings.WindowPos = value;                     break;
+                    case GameScenes.SPACECENTER:    settings.WindowPos_SpaceCenter = value;         break;
+                    case GameScenes.TRACKSTATION:   settings.WindowPos_TrackingStation = value;     break;
+                    default:                        settings.WindowPos = value;                     break;
                 }
             }
         }
@@ -201,9 +202,10 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Draw the icon on the screen
         /// </summary>
-        public void DrawIcons()
+        internal void DrawIcons()
         {
-            if (!Settings.UseBlizzyToolbarIfAvailable || btnToolbarKAC == null)
+            //if (!settings.UseBlizzyToolbarIfAvailable || btnToolbarKAC == null)
+            if (settings.ButtonStyleToDisplay == Settings.ButtonStyleEnum.Basic)
             {
             Texture2D iconToShow;
             //Replace this with workerstate object that can test for pause and catch errors - is it doing this in flight mode??
@@ -219,7 +221,7 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
-                    if (Settings.Alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
+                    if (alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
                     {
                         if (WindowVisibleByActiveScene)
                             iconToShow = KACResources.iconAlarmShow;
@@ -247,16 +249,16 @@ namespace KerbalAlarmClock
                         //    default: Settings.WindowVisible = !Settings.WindowVisible;break;
                         //}
                         WindowVisibleByActiveScene = !WindowVisibleByActiveScene;
-                        Settings.Save();
+                        settings.Save();
                     }
                     //GUI.Label(new Rect(152,32,200,20), GUI.tooltip,KACResources.styleTooltipStyle);
                 }
             }
         }
-            else
-            {
+            else if (btnToolbarKAC != null) { 
+            //{
                 //Do for Blizzies Toolbar
-                if (btnToolbarKAC != null) { 
+                //if (btnToolbarKAC != null) { 
                     String TexturePath = "";
                     if (!(KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT) || (!KACWorkerGameState.PauseMenuOpen && !KACWorkerGameState.FlightResultsDialogOpen))
                     {
@@ -270,246 +272,124 @@ namespace KerbalAlarmClock
                         }
                         else
                         {
-                            if (Settings.Alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
+                            if (alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
                             {
                                 if (WindowVisibleByActiveScene)
-                                    TexturePath = "TriggerTech/ToolbarIcons/KACIcon-AlarmShow";
+                                    TexturePath = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-AlarmShow";
                                 else
-                                    TexturePath = "TriggerTech/ToolbarIcons/KACIcon-Alarm";
+                                    TexturePath = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-Alarm";
                             }
                             else
                             {
                                 if (WindowVisibleByActiveScene)
-                                    TexturePath = "TriggerTech/ToolbarIcons/KACIcon-NormShow";
+                                    TexturePath = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-NormShow";
                                 else
-                                    TexturePath = "TriggerTech/ToolbarIcons/KACIcon-Norm";
+                                    TexturePath = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-Norm";
                             }
                         }
 
                         btnToolbarKAC.TexturePath = TexturePath;
                     }
+                //}
+            }
+            else if (btnAppLauncher != null)
+            {
+                Texture2D iconToShow;
+                //Replace this with workerstate object that can test for pause and catch errors - is it doing this in flight mode??
+                if (!(KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT) || (!KACWorkerGameState.PauseMenuOpen && !KACWorkerGameState.FlightResultsDialogOpen))
+                {
+                    if (FlightDriver.Pause)
+                    {
+                        iconToShow = KACResources.GetPauseIcon(true);
+                    }
+                    else if (KACWorkerGameState.CurrentlyUnderWarpInfluence)
+                    {
+                        iconToShow = KACResources.GetWarpIcon(true);
+                    }
+                    else
+                    {
+                        if (alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
+                        {
+                            if (WindowVisibleByActiveScene)
+                                iconToShow = KACResources.toolbariconAlarmShow;
+                            else
+                                iconToShow = KACResources.toolbariconAlarm;
+                        }
+                        else
+                        {
+                            if (WindowVisibleByActiveScene)
+                                iconToShow = KACResources.toolbariconNormShow;
+                            else
+                                iconToShow = KACResources.toolbariconNorm;
+                        }
+                    }
+                    btnAppLauncher.SetTexture(iconToShow);
                 }
             }
         }
 
-//        internal Camera EZGUICamera;
 
-//        internal UIButton UIBlockerMain;
-//        internal UIButton UIBlockerSettings;
-//        internal UIButton UIBlockerAdd;
-//        internal UIButton UIBlockerAddMessages;
-//        internal UIButton UIBlockerEdit;
-//        internal UIButton UIBlockerEarthAlarm;
-
-//        public void InitBlockers()
-//        {
-//            //Get the EZGUI Cam
-//            DebugLogFormatted("Get Cam");
-//            EZGUICamera = Camera.allCameras.ToList().Find(c => c.name == "EZGUI Cam");
-
-//            Settings.UIBlockersRunning = true;
-//            UIBlockerMain = CreateUIBlocker("UIBlockerMain");
-//            UIBlockerSettings = CreateUIBlocker("UIBlockerSettings");
-//            UIBlockerAdd = CreateUIBlocker("UIBlockerAdd");
-//            UIBlockerAddMessages = CreateUIBlocker("UIBlockerAddMessages");
-//            UIBlockerEdit = CreateUIBlocker("UIBlockerEdit");
-//            UIBlockerEarthAlarm = CreateUIBlocker("UIBlockerEarthAlarm");
-//        }
-
-//        private UIButton CreateUIBlocker(String Name)
-//        {
-//            UIButton retUIBlocker=null;
-
-//            try
-//            {
-//                //Create the UI Blockers
-//                DebugLogFormatted("Create Blocker: {0}",Name);
-//                retUIBlocker = UIButton.Create(Name, Vector3.zero);
-//                retUIBlocker.renderCamera = EZGUICamera;
-//                retUIBlocker.gameObject.layer = LayerMask.NameToLayer("EzGUI_UI");
-//                retUIBlocker.SetAnchor(SpriteRoot.ANCHOR_METHOD.UPPER_LEFT);
-//                //just a default size to start with
-//                retUIBlocker.Setup(100, 100, new Material(Shader.Find("Sprite/Vertex Colored")) { mainTexture = KACResources.txtUIBlocker });
-
-//#if DEBUG
-//                retUIBlocker.AddValueChangedDelegate(delegate(IUIObject obj) { ScreenMessages.PostScreenMessage(Name + " Blocker Clicked", 2f); });
-//#endif
-//            }
-//            catch (Exception ex)
-//            {
-//                DebugLogFormatted("ERROR: Unable to set up UIBlocker-Disabling Blocking Functionality-{0}",ex.Message);
-//                Settings.UIBlockersRunning = false;                
-//            } return retUIBlocker;
-//        }
-
-//        public void PositionBlockers()
-//        {
-//            PositionBlocker(UIBlockerMain, WindowPosByActiveScene, WindowVisibleByActiveScene);
-//            PositionBlocker(UIBlockerSettings, _WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings);
-//            PositionBlocker(UIBlockerAdd, _WindowAddRect, WindowVisibleByActiveScene && _ShowAddPane);
-//            PositionBlocker(UIBlockerAddMessages, _WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
-//            PositionBlocker(UIBlockerEdit, _WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
-//            PositionBlocker(UIBlockerEarthAlarm, _WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
-//        }
-
-        //private void PositionBlocker(UIButton uiBlocker,Rect WindowToBlock,Boolean Visible)
-        //{
-        //    if (uiBlocker != null)
-        //    {
-        //        //get the top left corner of the window
-        //        Vector3 uiBlockerPos = EZGUICamera.ScreenToWorldPoint(new Vector3(WindowToBlock.x, Screen.height - WindowToBlock.y, 0));
-        //        if (Visible && Settings.UIBlockersEnabled)
-        //            uiBlockerPos.z = 0;
-        //        else
-        //            uiBlockerPos.z = -100;
-        //        uiBlocker.transform.position = uiBlockerPos;
-
-        //        if (uiBlocker.width != WindowToBlock.width ||
-        //            uiBlocker.height != WindowToBlock.height)
-        //        {
-        //            DebugLogFormatted("Resizing UIBlocker:{0}",uiBlocker.name);
-        //            uiBlocker.Setup(WindowToBlock.width, WindowToBlock.height);
-        //        }
-        //    }
-        //}
-
-
-        internal void KSCInputLocking()
-        {
-            Boolean MouseOverAnyWindow = false;
-
-            //Check if the mouse is over any KAC window
-            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(WindowPosByActiveScene, WindowVisibleByActiveScene);
-            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowAddRect, WindowVisibleByActiveScene && _ShowAddPane);
-            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings);
-            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
-            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
-            MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(_WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
-            foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
-            {
-                if (tmpAlarm.AlarmWindowID != 0 && tmpAlarm.Actioned)
-                {
-                    MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(tmpAlarm.AlarmWindow, !tmpAlarm.AlarmWindowClosed);
-                }
-            }
-
-            //If the setting is on and the mouse is over any window then lock it
-            if (Settings.KSCUIBlockersEnabled && MouseOverAnyWindow)
-            {
-                if (!(InputLockManager.GetControlLock("KACLockOfKSCFacilities") == ControlTypes.KSC_FACILITIES))
-                {
-#if DEBUG
-                    DebugLogFormatted("AddingLock-{0}", "KACLockOfKSCFacilities");
-#endif
-                    InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, "KACLockOfKSCFacilities");
-                }
-            }
-                //Otherwise make sure the lock is removed
-            else
-            {
-                if (InputLockManager.GetControlLock("KACLockOfKSCFacilities") == ControlTypes.KSC_FACILITIES)
-                {
-#if DEBUG 
-                    DebugLogFormatted("Removing-{0}", "KACLockOfKSCFacilities"); 
-#endif
-                    InputLockManager.RemoveControlLock("KACLockOfKSCFacilities");
-                }
-            }
-            
-            //LockKSCIfMouseOver("windowMainLock", WindowPosByActiveScene, WindowVisibleByActiveScene);
-            //LockKSCIfMouseOver("windowAddLock", _WindowAddRect, WindowVisibleByActiveScene && _ShowAddPane);
-            //LockKSCIfMouseOver("windowSettingsLock", _WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings);
-            //LockKSCIfMouseOver("windowAddMessagesLock", _WindowAddMessagesRect, WindowVisibleByActiveScene && _ShowAddMessages);
-            //LockKSCIfMouseOver("windowEditLock", _WindowEditRect, WindowVisibleByActiveScene && _ShowEditPane);
-            //LockKSCIfMouseOver("windowEarthLock", _WindowEarthAlarmRect, WindowVisibleByActiveScene && _ShowEarthAlarm);
-
-            //foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
-            //{
-            //    if (tmpAlarm.AlarmWindowID != 0 && tmpAlarm.Actioned )
-            //    {
-            //        LockKSCIfMouseOver(tmpAlarm.AlarmWindowID + "Lock", tmpAlarm.AlarmWindow, !tmpAlarm.AlarmWindowClosed);
-            //    }
-            //}
-        }
-
-        private Boolean MouseOverWindow(Rect WindowRect, Boolean WindowVisible)
-        {
-            return WindowVisible && WindowRect.Contains(Event.current.mousePosition);
-        }
-
-//        private void LockKSCIfMouseOver(String LockName,Rect WindowRect,Boolean WindowVisible)
-//        {
-//            if (Settings.KSCUIBlockersEnabled && WindowVisible && WindowRect.Contains(Event.current.mousePosition))
-//            {
-//                if (!(InputLockManager.GetControlLock(LockName) == ControlTypes.KSC_FACILITIES)) {
-//#if DEBUG 
-//                    DebugLogFormatted("AddingLock-{0}", LockName); 
-//#endif
-//                    InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, LockName);
-//                }
-//            }
-//            else
-//            {
-//                if (InputLockManager.GetControlLock(LockName) == ControlTypes.KSC_FACILITIES) {
-//#if DEBUG 
-//                    DebugLogFormatted("Removing-{0}", LockName); 
-//#endif
-//                    InputLockManager.RemoveControlLock(LockName);
-//                }
-//            }
-//        }
 
         //Basic setup of draw stuff
-        private static int _WindowMainID = 0;
+        internal static Int32 _WindowMainID = 0;
 
         //is the add pane visible
         private Boolean _ShowAddPane = false;
-        private static int _WindowAddID = 0;
-        static Rect _WindowAddRect;
+        private static Int32 _WindowAddID = 0;
+        private static Rect _WindowAddRect;
 
         //is the add pane messages pane visible
         private Boolean _ShowAddMessages = false;
-        private static int _WindowAddMessagesID = 0;
-        static Rect _WindowAddMessagesRect;
+        private static Int32 _WindowAddMessagesID = 0;
+        private static Rect _WindowAddMessagesRect;
 
         //Settings Window
         private Boolean _ShowSettings = false;
-        private static int _WindowSettingsID = 0;
+        private static Int32 _WindowSettingsID = 0;
         private static Rect _WindowSettingsRect;
 
         //Edit Window
         private Boolean _ShowEditPane = false;
-        private static int _WindowEditID = 0;
+        private static Int32 _WindowEditID = 0;
         private static Rect _WindowEditRect;
 
         //Earth Alarm Window
         private Boolean _ShowEarthAlarm = false;
-        private static int _WindowEarthAlarmID = 0;
+        private static Int32 _WindowEarthAlarmID = 0;
         private static Rect _WindowEarthAlarmRect;
 
         //Earth Alarm Window
         private Boolean _ShowBackupFailedMessage = false;
         private DateTime _ShowBackupFailedMessageAt = DateTime.Now;
-        private int _ShowBackupFailedMessageForSecs=10;
-        private static int _WindowBackupFailedID = 0;
+        private Int32 _ShowBackupFailedMessageForSecs=10;
+        private static Int32 _WindowBackupFailedID = 0;
         private static Rect _WindowBackupFailedRect;
 
+        private Boolean _ShowQuickAdd = false;
+        private static Int32 _WindowQuickAddID = 0;
+        private static Rect _WindowQuickAddRect;
+
+
+        private static Windows.AlarmImport winAlarmImport = new Windows.AlarmImport();
+
+
         //Window Size Constants
-        int intMainWindowWidth = 300;
-        int intMainWindowMinHeight = 114;
-        int intMainWindowBaseHeight = 114;
+        private Int32 intMainWindowWidth = 340;
+        private Int32 intMainWindowMinHeight = 110;
+        private Int32 intMainWindowBaseHeight = 111;
 
-        int intMainWindowAlarmListItemHeight = 26;
-        int intMainWindowAlarmListScrollPad = 3;
-        int intMainWindowEarthTimeHeight = 26;
+        private Int32 intMainWindowAlarmListItemHeight = 26;
+        private Int32 intMainWindowAlarmListScrollPad = 3;
+        private Int32 intMainWindowEarthTimeHeight = 25;
 
-        int intPaneWindowWidth = 380;
-        int intAddPaneWindowWidth = 320;
-        long AddWindowHeight;
+        private Int32 intPaneWindowWidth = 380;
+        private Int32 intAddPaneWindowWidth = 340;
+        private Int32 AddWindowHeight;
 
-        long EarthWindowHeight = 216;
+        private Int32 EarthWindowHeight = 216;
+        private Int32 QuickWindowHeight = 28;
 
-        public void DrawWindows()
+        internal void DrawWindows()
         {
 #if DEBUG
             if (_ShowDebugPane)
@@ -523,36 +403,44 @@ namespace KerbalAlarmClock
             //Min or normal window
             if (WindowMinimizedByActiveScene)
             {
-                MainWindowPos.height = intMainWindowMinHeight + 2;
+                MainWindowPos.height = intMainWindowMinHeight-2;
             }
             else
             {
                 MainWindowPos.height = intMainWindowBaseHeight;
                 //Work out the number of alarms and therefore the height of the window
-                if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count > 1)
+                if (alarms.Count > 1)
                 {
-                    if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count<2)
-                        MainWindowPos.height = intMainWindowBaseHeight;
-                    else if (Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count <= Settings.AlarmListMaxAlarmsInt)
+                    //if (alarms.Count<2)
+                    //    MainWindowPos.height = intMainWindowBaseHeight;
+                    //else 
+                    if (alarms.Count < settings.AlarmListMaxAlarmsInt)
                         MainWindowPos.height = intMainWindowBaseHeight + 
-                            ((Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count - 1) * intMainWindowAlarmListItemHeight) +
-                            Settings.Alarms.Sum(x=>x.AlarmLineHeightExtra);
+                            ((alarms.Count - 1) * intMainWindowAlarmListItemHeight) +
+                            alarms.Sum(x=>x.AlarmLineHeightExtra);
                     else
                         //this is scrolling
-                        MainWindowPos.height = (intMainWindowBaseHeight -3) + 
-                            ((Settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) +
-                            Settings.Alarms.Take(Settings.AlarmListMaxAlarmsInt).Sum(x => x.AlarmLineHeightExtra) +
+                        MainWindowPos.height = (intMainWindowBaseHeight -3 )  +
+                            ((settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) + 
+                            alarms.Take(settings.AlarmListMaxAlarmsInt).Sum(x=>x.AlarmLineHeightExtra) +
                             intMainWindowAlarmListScrollPad;
                 }
-                else MainWindowPos.height = intMainWindowBaseHeight+2;
+                else MainWindowPos.height = intMainWindowBaseHeight;
             }
-            if (Settings.ShowEarthTime)
+            if (KerbalAlarmClock.settings.SelectedSkin != Settings.DisplaySkin.Default)
+                MainWindowPos.height -= 8;
+
+            if (settings.ShowEarthTime)
             {
                 MainWindowPos.height += intMainWindowEarthTimeHeight;
             }
+            MainWindowPos = MainWindowPos.ClampToScreen();
 
             //Now show the window
-            WindowPosByActiveScene = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + Settings.Version,KACResources.styleWindow);
+            WindowPosByActiveScene = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + settings.Version,KACResources.styleWindow);
+
+            if (winAlarmImport.Visible)
+                winAlarmImport.windowRect = GUILayout.Window(winAlarmImport.windowID, winAlarmImport.windowRect, winAlarmImport.FillWindow, "Import v2 Alarm File", KACResources.styleWindow);
 
             //Do we have anything to show in the right pane
             if (_ShowSettings)
@@ -563,30 +451,34 @@ namespace KerbalAlarmClock
             {
                 switch (AddType)
                 {
-                    case KACAlarm.AlarmType.Raw: 
-                        AddWindowHeight = 250; break;
-                    case KACAlarm.AlarmType.Maneuver:
-                    case KACAlarm.AlarmType.SOIChange:
-                        AddWindowHeight = 182; break;
-                    case KACAlarm.AlarmType.Apoapsis:
-                    case KACAlarm.AlarmType.Periapsis:
-                        AddWindowHeight = 208; break;
-                    case KACAlarm.AlarmType.AscendingNode:
-                    case KACAlarm.AlarmType.DescendingNode:
-                    case KACAlarm.AlarmType.LaunchRendevous:
-                        AddWindowHeight = 234; break;
-                    case KACAlarm.AlarmType.Transfer:                        
-                    case KACAlarm.AlarmType.TransferModelled:
+                    case KACAlarm.AlarmTypeEnum.Raw:
+                        AddWindowHeight = 234; break; // 250;
+                    case KACAlarm.AlarmTypeEnum.Maneuver:
+                    case KACAlarm.AlarmTypeEnum.SOIChange:
+                        AddWindowHeight = 170; break; // 182;
+                    case KACAlarm.AlarmTypeEnum.Apoapsis:
+                    case KACAlarm.AlarmTypeEnum.Periapsis:
+                        AddWindowHeight = 200; break;// 208; 
+                    case KACAlarm.AlarmTypeEnum.AscendingNode:
+                    case KACAlarm.AlarmTypeEnum.DescendingNode:
+                    case KACAlarm.AlarmTypeEnum.LaunchRendevous:
+                        AddWindowHeight = 226; break;// 234; 
+                    case KACAlarm.AlarmTypeEnum.Transfer:                        
+                    case KACAlarm.AlarmTypeEnum.TransferModelled:
                         AddWindowHeight = intAddXferHeight; break;
-                    case KACAlarm.AlarmType.Closest:
-                        AddWindowHeight = 230; break;
-                    case KACAlarm.AlarmType.Distance:
+                    case KACAlarm.AlarmTypeEnum.Closest:
+                        AddWindowHeight = 252; break; //230;
+                    case KACAlarm.AlarmTypeEnum.Distance:
                         AddWindowHeight = intAddDistanceHeight; break;
-                    case KACAlarm.AlarmType.Crew:
+                    case KACAlarm.AlarmTypeEnum.Crew:
                         AddWindowHeight = intAddCrewHeight; break;
+                    case KACAlarm.AlarmTypeEnum.Contract:
+                    case KACAlarm.AlarmTypeEnum.ContractAuto:
+                        AddWindowHeight = 400; break;
                     default: AddWindowHeight = 250; break;
                 }
                 AddWindowHeight += intHeight_AddWindowCommon;
+                AddWindowHeight += intHeight_AddWindowRepeat;
                 _WindowAddRect = GUILayout.Window(_WindowAddID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, intAddPaneWindowWidth, AddWindowHeight), FillAddWindow, "Add New Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
 
                 if (_ShowAddMessages)
@@ -608,6 +500,10 @@ namespace KerbalAlarmClock
             {
                 _WindowEditRect = GUILayout.Window(_WindowEditID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, intPaneWindowWidth, intAlarmEditHeight), FillEditWindow, "Editing Alarm", KACResources.styleWindow);
             }
+            else if (_ShowQuickAdd)
+            {
+                _WindowQuickAddRect = GUILayout.Window(_WindowQuickAddID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, 300, QuickWindowHeight), FillQuickWindow, "Quick Add", KACResources.styleWindow);
+            }
 
             if (_ShowBackupFailedMessage)
             {
@@ -616,12 +512,16 @@ namespace KerbalAlarmClock
                     ResetBackupFailedWindow();
             }
 
-            DrawToolTip();
+            //Set DDL Window Positions
+            SetDDLWindowPositions();
+
+            if (settings.ShowTooltips)
+                DrawToolTip();
         }
 
 
         //Now the layout
-        public void FillWindow(int intWindowID)
+        internal void FillWindow(Int32 intWindowID)
         {
             GUILayout.BeginVertical();
 
@@ -629,50 +529,75 @@ namespace KerbalAlarmClock
             GUILayout.BeginHorizontal();
             GUILayout.Label("Alarm List", KACResources.styleHeading, GUILayout.ExpandWidth(true));
 
-            //No longer relevant
+            //No Longer Relevant
             //hide this stuff when not in alarm edit mode/flight mode
-            //if (!parentBehaviour.ViewAlarmsOnly)
+            //if (!ViewAlarmsOnly)
             //{
-                if (Settings.AlarmNodeRecalc)
+            if (settings.AlarmAddContractAutoOffered!= Settings.AutoContractBehaviorEnum.None || 
+                settings.AlarmAddContractAutoActive!= Settings.AutoContractBehaviorEnum.None )
+                {
+                    String ContractTip = "Auto Contracts Enabled\r\n";
+                    if (settings.AlarmAddContractAutoOffered == Settings.AutoContractBehaviorEnum.Next)
+                        ContractTip += "Next Contract Offer";
+                    else if (settings.AlarmAddContractAutoOffered == Settings.AutoContractBehaviorEnum.All)
+                        ContractTip += "All Contract Offers";
+
+                    if (settings.AlarmAddContractAutoActive == Settings.AutoContractBehaviorEnum.Next)
+                        ContractTip += (ContractTip.Contains("\r\n")?" and ":"") + "Next Active Contract";
+                    else if (settings.AlarmAddContractAutoActive == Settings.AutoContractBehaviorEnum.All)
+                        ContractTip += (ContractTip.Contains("\r\n") ? " and " : "") + "All Active Contracts";
+                    
+                    GUIContent XferIcon = new GUIContent(KACResources.iconContract, ContractTip);
+                    GUILayout.Label(XferIcon, KACResources.styleFlagIcon);
+                }
+
+                if (settings.AlarmNodeRecalc)
                 {
                     GUIContent XferIcon = new GUIContent(KACResources.iconAp, "Orbit Node (Ap,Pe,AN,DN) Recalculation is enabled");
                     GUILayout.Label(XferIcon, KACResources.styleFlagIcon);
                 }
-                if (Settings.AlarmXferRecalc)
+                if (settings.AlarmXferRecalc)
                 {
                     GUIContent XferIcon = new GUIContent(KACResources.iconXFer, "Transfer Recalculation is enabled");
                     GUILayout.Label(XferIcon, KACResources.styleFlagIcon);
                 }
 
                 //SOI AutoAlarm stuff
-                if (Settings.AlarmAddSOIAuto || Settings.AlarmSOIRecalc)
+                if (settings.AlarmAddSOIAuto || settings.AlarmSOIRecalc)
                 {
                     String SOITooltip = "";
-                    if (Settings.AlarmSOIRecalc)
+                    if (settings.AlarmSOIRecalc)
                         SOITooltip = "SOI Recalculation is enabled";
-                    if (Settings.AlarmAddSOIAuto)
+                    if (settings.AlarmAddSOIAuto)
                     {
                         if (SOITooltip != "") SOITooltip += "\r\n";
                         SOITooltip += "SOI Auto Add Enabled";
-                        if (Settings.AlarmCatchSOIChange)
-                        {
-                            SOITooltip += "-plus catchall";
-                        }
-                        if (Settings.AlarmAddSOIAuto_ExcludeEVA)
+                        //if (settings.AlarmCatchSOIChange)
+                        //{
+                        //    SOITooltip += "-plus catchall";
+                        //}
+                        if (settings.AlarmAddSOIAuto_ExcludeEVA)
                         {
                             SOITooltip += "-excluding EVA";
                         }
-                        if (Settings.AlarmOnSOIChange_Action > 1) SOITooltip += " (Pause Action)";
-                        else if (Settings.AlarmOnSOIChange_Action > 0) SOITooltip += " (Warp Kill Action)";
+                        if (settings.AlarmAddSOIAuto_ExcludeDebris)
+                        {
+                            if (!SOITooltip.Contains("-excluding"))
+                                SOITooltip += "-excluding Debris";
+                            else
+                                SOITooltip += "/Debris";
+                        }
+                        if (settings.AlarmOnSOIChange_Action == KACAlarm.AlarmActionEnum.PauseGame) SOITooltip += " (Pause Action)";
+                        else if (settings.AlarmOnSOIChange_Action != KACAlarm.AlarmActionEnum.MessageOnly) SOITooltip += " (Warp Kill Action)";
                     }
                     GUIContent SOIIcon = new GUIContent(KACResources.iconSOI, SOITooltip);
-                    GUILayout.Label(SOIIcon, KACResources.styleSOIIndicator);
+                    GUILayout.Label(SOIIcon, KACResources.styleFlagIcon);
                 }
 
-                if (Settings.AlarmAddManAuto)
+                if (settings.AlarmAddManAuto)
                 {
                     String strTooltip = "Man Node Auto Add Enabled";
-                    if (Settings.AlarmAddManAuto_andRemove)
+                    if (settings.AlarmAddManAuto_andRemove)
                         strTooltip += " (and Removal)";
 
                     GUIContent ManIcon = new GUIContent(KACResources.iconMNode, strTooltip);
@@ -691,20 +616,21 @@ namespace KerbalAlarmClock
             if (GUILayout.Button(contMaxMin, KACResources.styleSmallButton))
             {
                 WindowMinimizedByActiveScene = !WindowMinimizedByActiveScene;
-                Settings.Save();
+                settings.Save();
             }
 
-            GUIContent contSettings = new GUIContent(KACResources.GetSettingsButtonIcon(Settings.VersionAttentionFlag), "Settings...");
-            if (Settings.VersionAvailable) contSettings.tooltip = "Updated Version Available - Settings...";
+            GUIContent contSettings = new GUIContent(KACResources.GetSettingsButtonIcon(settings.VersionAttentionFlag), "Settings...");
+            if (settings.VersionAvailable) contSettings.tooltip = "Updated Version Available - Settings...";
             if (DrawToggle(ref _ShowSettings, contSettings, KACResources.styleSmallButton) && _ShowSettings)
             {
                 NewSettingsWindow();
                 _ShowAddPane = false;
                 _ShowEditPane = false;
                 _ShowEarthAlarm = false;
+                _ShowQuickAdd = false;
             }
             //No longer relevant
-            //if (!parentBehaviour.ViewAlarmsOnly)
+            //if (!ViewAlarmsOnly)
             //{
 
                 if (DrawToggle(ref _ShowAddPane, new GUIContent(KACResources.btnAdd, "Add New Alarm..."), KACResources.styleSmallButton) && _ShowAddPane)
@@ -714,8 +640,19 @@ namespace KerbalAlarmClock
                     _ShowSettings = false;
                     _ShowEditPane = false;
                     _ShowEarthAlarm = false;
+                    _ShowQuickAdd = false;
                 }
             //}
+            //get this button right up against the add one
+            GUILayout.Space(-5);
+            if (DrawToggle(ref _ShowQuickAdd, new GUIContent("+", "Quick Add..."), KACResources.styleQAButton) && _ShowQuickAdd)
+            {
+                _ShowAddPane = false;
+                _ShowEditPane = false;
+                _ShowEarthAlarm = false;
+                _ShowSettings = false;
+                SetupQuickList();
+            }
 
             GUILayout.EndHorizontal();
 
@@ -735,34 +672,34 @@ namespace KerbalAlarmClock
             //Current Game time at the botttom of the control 
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button(new GUIContent("Current Time:","Toggle Display of time from an alternate galaxy on a planet called \"Earth\""), KACResources.styleHeading))
+            if (GUILayout.Button(new GUIContent("Current Time:", "Toggle Display of time from an alternate galaxy on a planet called \"Earth\""), KACResources.styleAddSectionHeading))
             {
-                Settings.ShowEarthTime = !Settings.ShowEarthTime;
+                settings.ShowEarthTime = !settings.ShowEarthTime;
             }
 
             //Work out the right text and tooltip and display the button as a label
             KACTime.PrintTimeFormat MainClockFormat = KACTime.PrintTimeFormat.DateTimeString;
-            if (Settings.TimeFormat == KACTime.PrintTimeFormat.TimeAsUT) MainClockFormat = KACTime.PrintTimeFormat.TimeAsUT;
+            if (settings.TimeFormat == KACTime.PrintTimeFormat.TimeAsUT) MainClockFormat = KACTime.PrintTimeFormat.TimeAsUT;
             GUIContent contCurrentTime = new GUIContent(KACTime.PrintDate(KACWorkerGameState.CurrentTime, MainClockFormat), "Click to toggle through time formats");
             if (GUILayout.Button(contCurrentTime, KACResources.styleContent))
             {
-                switch (Settings.TimeFormat)
+                switch (settings.TimeFormat)
                 {
-                    case KACTime.PrintTimeFormat.TimeAsUT: Settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
-                    case KACTime.PrintTimeFormat.KSPString: Settings.TimeFormat = KACTime.PrintTimeFormat.DateTimeString; break;
-                    case KACTime.PrintTimeFormat.DateTimeString: Settings.TimeFormat = KACTime.PrintTimeFormat.TimeAsUT; break;
-                    default: Settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
+                    case KACTime.PrintTimeFormat.TimeAsUT: settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
+                    case KACTime.PrintTimeFormat.KSPString: settings.TimeFormat = KACTime.PrintTimeFormat.DateTimeString; break;
+                    case KACTime.PrintTimeFormat.DateTimeString: settings.TimeFormat = KACTime.PrintTimeFormat.TimeAsUT; break;
+                    default: settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
                 }
-                Settings.Save();
+                settings.Save();
             }
             GUILayout.EndHorizontal();
 
-            if (Settings.ShowEarthTime)
+            if (settings.ShowEarthTime)
             {
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button(new GUIContent("Earth Time:", "Hide Display of \"Real\" Time"), KACResources.styleHeadingEarth))
+                if (GUILayout.Button(new GUIContent("Earth Time:", "Hide Display of \"Real\" Time"), KACResources.styleHeadingEarth,GUILayout.Width(80)))
                 {
-                    Settings.ShowEarthTime = !Settings.ShowEarthTime;
+                    settings.ShowEarthTime = !settings.ShowEarthTime;
                 }
                 GUILayout.Label(DateTime.Now.ToLongTimeString(), KACResources.styleContentEarth);
                 if (DrawToggle(ref _ShowEarthAlarm, new GUIContent(KACResources.btnAdd, "Add New Alarm..."), KACResources.styleSmallButton) && _ShowEarthAlarm)
@@ -791,11 +728,11 @@ namespace KerbalAlarmClock
             KACAlarm nextAlarm = null;
 
             //Find the Alarm to display
-            if (Settings.Alarms != null)
+            if (alarms != null)
             {
-                if (Settings.WindowMinimizedType == MiminalDisplayType.NextAlarm)
+                if (settings.WindowMinimizedType == MiminalDisplayType.NextAlarm)
                 {
-                    foreach (KACAlarm tmpAlarm in Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title))
+                    foreach (KACAlarm tmpAlarm in alarms)
                     {
                         Boolean blnSwitch = false;
                         if (tmpAlarm.AlarmTime.UT > KACWorkerGameState.CurrentTime.UT && tmpAlarm.Enabled && !tmpAlarm.Actioned)
@@ -817,7 +754,7 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
-                    nextAlarm = Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).OrderBy(a=>a.AlarmTime.UT).FirstOrDefault();
+                    nextAlarm = alarms.OrderBy(a=>a.AlarmTime.UT).FirstOrDefault();
                 }
             }
 
@@ -830,29 +767,28 @@ namespace KerbalAlarmClock
                 if (Event.current.type == EventType.repaint)
                     rectScrollview = new Rect(0, 0, 0, 0);
                 if (DrawAlarmLine(nextAlarm))
-                    Settings.Alarms.Remove(nextAlarm);
+                    alarms.Remove(nextAlarm);
             }
         }
 
         //Display Full alarm list 
-        public static Rect rectScrollview;
-        Vector2 scrollPosition = Vector2.zero;
+        internal static Rect rectScrollview;
+        internal Vector2 scrollPosition = Vector2.zero;
         private void WindowLayout_AlarmList()
         {
             GUIStyle styleTemp = new GUIStyle();
 
 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, styleTemp);
-            if (Settings.Alarms.CountInSave(HighLogic.CurrentGame.Title) == 0)
+            if (alarms.Count == 0)
             {
                 GUILayout.Label("No Alarms in the List");
             }
             else
             {
+                GUILayout.Space(4);
                 List<KACAlarm> AlarmsToRemove = new List<KACAlarm>();
-                List<KACAlarm> AlarmsToSort = Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title);
-                AlarmsToSort.Sort(KACAlarm.SortByUT);
-                foreach (KACAlarm tmpAlarm in AlarmsToSort)
+                foreach (KACAlarm tmpAlarm in alarms.OrderBy(a => a.AlarmTime.UT).ThenBy(a => a.ID.ToString()))
                 {
                     //Draw a line for each alarm, returns true is person clicked delete
                     if (DrawAlarmLine(tmpAlarm))
@@ -863,11 +799,11 @@ namespace KerbalAlarmClock
                 {
                     foreach (KACAlarm tmpAlarm in AlarmsToRemove)
                     {
-                        Settings.Alarms.Remove(tmpAlarm);
-                        Settings.SaveAlarms();
+                        alarms.Remove(tmpAlarm);
+                        //settings.SaveAlarms();
                     }
                     //is the game paused, yet we deleted any active pause alarms??
-                    if (Settings.Alarms.FirstOrDefault(a => (a.AlarmWindowID != 0 && a.PauseGame == true)) == null)
+                    if (alarms.FirstOrDefault(a => (a.AlarmWindowID != 0 && a.PauseGame == true)) == null)
                     {
                         if (FlightDriver.Pause)
                             FlightDriver.SetPause(false);
@@ -883,7 +819,7 @@ namespace KerbalAlarmClock
 
         }
 
-        private Boolean DrawAlarmLine(KACAlarm tmpAlarm)
+        private Boolean  DrawAlarmLine(KACAlarm tmpAlarm)
         {
             Boolean blnReturn = false;
 
@@ -891,48 +827,52 @@ namespace KerbalAlarmClock
 
             switch (tmpAlarm.TypeOfAlarm)
             {
-                case KACAlarm.AlarmType.Raw:
+                case KACAlarm.AlarmTypeEnum.Raw:
                     GUILayout.Label(KACResources.iconRaw, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Maneuver:
-                case KACAlarm.AlarmType.ManeuverAuto:
+                case KACAlarm.AlarmTypeEnum.Maneuver:
+                case KACAlarm.AlarmTypeEnum.ManeuverAuto:
                     GUILayout.Label(KACResources.iconMNode, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.SOIChange:
-                case KACAlarm.AlarmType.SOIChangeAuto:
+                case KACAlarm.AlarmTypeEnum.SOIChange:
+                case KACAlarm.AlarmTypeEnum.SOIChangeAuto:
                     GUILayout.Label(KACResources.iconSOI, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Transfer:
-                case KACAlarm.AlarmType.TransferModelled:
+                case KACAlarm.AlarmTypeEnum.Transfer:
+                case KACAlarm.AlarmTypeEnum.TransferModelled:
                     GUILayout.Label(KACResources.iconXFer, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Apoapsis:
+                case KACAlarm.AlarmTypeEnum.Apoapsis:
                     GUILayout.Label(KACResources.iconAp, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Periapsis:
+                case KACAlarm.AlarmTypeEnum.Periapsis:
                     GUILayout.Label(KACResources.iconPe, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.AscendingNode:
+                case KACAlarm.AlarmTypeEnum.AscendingNode:
                     GUILayout.Label(KACResources.iconAN, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.DescendingNode:
+                case KACAlarm.AlarmTypeEnum.DescendingNode:
                     GUILayout.Label(KACResources.iconDN, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.LaunchRendevous:
+                case KACAlarm.AlarmTypeEnum.LaunchRendevous:
                     GUILayout.Label(KACResources.iconLaunchRendezvous, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Closest:
+                case KACAlarm.AlarmTypeEnum.Closest:
                     GUILayout.Label(KACResources.iconClosest, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Distance:
+                case KACAlarm.AlarmTypeEnum.Distance:
                     //TODO - SOMETHING HERE MAYBE
                     GUILayout.Label(KACResources.iconClosest, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.Crew:
+                case KACAlarm.AlarmTypeEnum.Crew:
                     GUILayout.Label(KACResources.iconCrew, KACResources.styleAlarmIcon);
                     break;
-                case KACAlarm.AlarmType.EarthTime:
+                case KACAlarm.AlarmTypeEnum.EarthTime:
                     GUILayout.Label(KACResources.iconEarth, KACResources.styleAlarmIcon);
+                    break;
+                case KACAlarm.AlarmTypeEnum.Contract:
+                case KACAlarm.AlarmTypeEnum.ContractAuto:
+                    GUILayout.Label(KACResources.iconContract, KACResources.styleAlarmIcon);
                     break;
                 default:
                     GUILayout.Label(KACResources.iconNone, KACResources.styleAlarmIcon);
@@ -940,7 +880,7 @@ namespace KerbalAlarmClock
             }
 
             //Set the Content up
-            //int intMaxWidth = intTestheight;
+            //Int32 intMaxWidth = intTestheight;
             //String strTimeToAlarm = String.Format(" ({0})",KerbalTime.PrintInterval(tmpAlarm.Remaining, Settings.TimeFormat));
             //float fTimeToAlarmWidth;
             //KACResources.styleAlarmText.CalcMinMaxWidth(new GUIContent(strTimeToAlarm),out fOutMin1,out fOutMax1);
@@ -972,7 +912,7 @@ namespace KerbalAlarmClock
             //KACResources.styleAlarmText.CalcMinMaxWidth(contAlarmTime, out fOutMin, out fOutMax);
             //styleLabel.CalcMinMaxWidth(contAlarmLabel, out fOutMin1, out fOutMax1);
 
-            //int intMaxWidth = intTestheight;
+            //Int32 intMaxWidth = intTestheight;
             //if (fOutMax1 + fOutMax > intMaxWidth)
             //    fOutMax1 = intMaxWidth - fOutMax;
 
@@ -984,7 +924,7 @@ namespace KerbalAlarmClock
             //float width1 = fOutMin1;
 
             String strLabelText = "";
-            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, KACTime.PrintInterval(tmpAlarm.Remaining, Settings.TimeFormat));
+            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, KACTime.PrintInterval(tmpAlarm.Remaining, settings.TimeFormat));
 
             GUIStyle styleLabel = new GUIStyle( KACResources.styleAlarmText);
             if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))
@@ -992,32 +932,28 @@ namespace KerbalAlarmClock
             GUIContent contAlarmLabel = new GUIContent(strLabelText, tmpAlarm.Notes);
 
             //Calc the line height
-            ////////////////////////////////////////////////////
-            //Currently the max width doesnt work out when an alarm is in edit mode correctly in edit mode
-            //Also need to test max list length and when the scrollbar kicks in
-            ///////////////////////////////////////////////////
-            Single sOutMin1,sOutMax1;
-            styleLabel.CalcMinMaxWidth(contAlarmLabel,out sOutMin1, out sOutMax1);
-            tmpAlarm.AlarmLineWidth  = Convert.ToInt32(sOutMax1);
-            Int32 intMaxwidth = 220;// 228;
-            if (_ShowEditPane && (alarmEdit == tmpAlarm)) intMaxwidth = 198;// 216;
-            tmpAlarm.AlarmLineHeight = Convert.ToInt32(styleLabel.CalcHeight(contAlarmLabel, intMaxwidth));
+            Single sOutMin1, sOutMax1;
+            styleLabel.CalcMinMaxWidth(contAlarmLabel, out sOutMin1, out sOutMax1);
+            tmpAlarm.AlarmLineWidth = Convert.ToInt32(sOutMax1);
+            Int32 intMaxwidth = 256;// 220;// 228;
+            if (_ShowEditPane && (alarmEdit == tmpAlarm)) intMaxwidth = 235;// 198;// 216;
+            tmpAlarm.AlarmLineHeight = Convert.ToInt32(styleLabel.CalcHeight(contAlarmLabel, intMaxwidth)); //218
 
             //Draw a button that looks like a label.
-            if (GUILayout.Button(contAlarmLabel, styleLabel, GUILayout.MaxWidth(218)))
+            if (GUILayout.Button(contAlarmLabel, styleLabel, GUILayout.MaxWidth(256)))
             {
                 if (!_ShowSettings)
                 {
                     if (alarmEdit == tmpAlarm)
                     {
                         //If there was an alarm open, then save em again
-                        if (_ShowEditPane) Settings.Save();
+                        if (_ShowEditPane) settings.Save();
                         _ShowEditPane = !_ShowEditPane;
                     }
                     else
                     {
                         //If there was an alarm open, then save em again
-                        if (_ShowEditPane) Settings.Save();
+                        if (_ShowEditPane) settings.Save();
                         alarmEdit = tmpAlarm;
                         _ShowEditPane = true;
                         _ShowSettings = false;
@@ -1036,7 +972,10 @@ namespace KerbalAlarmClock
             }
             else if (tmpAlarm.HaltWarp)
             {
-                GUILayout.Label(new GUIContent(KACResources.GetWarpListIcon(tmpAlarm.WarpInfluence), "Kill Warp"), KACResources.styleLabelWarp);
+                if (tmpAlarm.AlarmAction== KACAlarm.AlarmActionEnum.KillWarp)
+                    GUILayout.Label(new GUIContent(KACResources.GetWarpListIcon(tmpAlarm.WarpInfluence), "Kill Warp and Message"), KACResources.styleLabelWarp);
+                else
+                    GUILayout.Label(new GUIContent(KACResources.GetWarpListIcon(tmpAlarm.WarpInfluence), "Kill Warp Only"), KACResources.styleLabelWarp);
             }
             else
             {
@@ -1051,7 +990,7 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        public void ResetPanes()
+        internal void ResetPanes()
         {
             _ShowAddPane = false;
             _ShowEditPane = false;
@@ -1060,9 +999,9 @@ namespace KerbalAlarmClock
         
         #endregion
 
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref int Action, ref Double Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref Double Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
         {
-            KACTimeStringArray tmpTime = new KACTimeStringArray(Margin,KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+            KACTimeStringArray tmpTime = new KACTimeStringArray(Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
             WindowLayout_CommonFields(ref strName, ref strMessage, ref Action, ref tmpTime, TypeOfAlarm, WindowHeight);
             Margin = tmpTime.UT;
         }
@@ -1070,7 +1009,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref int Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
         {
             //Two Columns
             GUILayout.Label("Common Alarm Properties", KACResources.styleAddSectionHeading);
@@ -1085,15 +1024,17 @@ namespace KerbalAlarmClock
 
             GUILayout.BeginVertical(GUILayout.Width(260), GUILayout.MaxWidth(260));
             strName = GUILayout.TextField(strName, KACResources.styleAddField).Replace("|", "");
-            strMessage = GUILayout.TextArea(strMessage, KACResources.styleAddField).Replace("|", "");
+
+            GUIStyle styleAddWrap = new GUIStyle(KACResources.styleAddField) { wordWrap = true };
+            strMessage = GUILayout.TextArea(strMessage, styleAddWrap).Replace("|", "");
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice(ref Action, "On Alarm:", 90);
+            DrawAlarmActionChoice3(ref Action, "On Alarm:", 100,62);
 
-            if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime && TypeOfAlarm != KACAlarm.AlarmType.Crew)
+            if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {
                 DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Alarm Margin:", 90);
             }
@@ -1105,26 +1046,27 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmAction Action, ref KACTimeStringArray Margin, KACAlarm.AlarmType TypeOfAlarm, int WindowHeight)
+        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
         {
             //Two Columns
             String strTitle = "";
             switch (TypeOfAlarm)
             {
-                case KACAlarm.AlarmType.Raw: strTitle = "Raw Time"; break;
-                case KACAlarm.AlarmType.Maneuver: strTitle = "Maneuver Node"; break;
-                case KACAlarm.AlarmType.SOIChange: strTitle = "SOI Change"; break;
-                case KACAlarm.AlarmType.Transfer: strTitle = "Transfer Window"; break;
-                case KACAlarm.AlarmType.TransferModelled: strTitle = "Transfer Window"; break;
-                case KACAlarm.AlarmType.Apoapsis: strTitle = "Apoapsis"; break;
-                case KACAlarm.AlarmType.Periapsis: strTitle = "Periapsis"; break;
-                case KACAlarm.AlarmType.AscendingNode: strTitle = "Ascending Node"; break;
-                case KACAlarm.AlarmType.DescendingNode: strTitle = "Descending Node"; break;
-                case KACAlarm.AlarmType.LaunchRendevous: strTitle = "Launch Ascent"; break;
-                case KACAlarm.AlarmType.Closest: strTitle = "Closest Approach"; break;
-                case KACAlarm.AlarmType.Distance: strTitle = "Target Distance"; break;
-                case KACAlarm.AlarmType.Crew: strTitle = "Crew"; break;
-                case KACAlarm.AlarmType.EarthTime: strTitle = "Earth Time"; break;
+                case KACAlarm.AlarmTypeEnum.Raw: strTitle = "Raw Time"; break;
+                case KACAlarm.AlarmTypeEnum.Maneuver: strTitle = "Maneuver Node"; break;
+                case KACAlarm.AlarmTypeEnum.SOIChange: strTitle = "SOI Change"; break;
+                case KACAlarm.AlarmTypeEnum.Transfer: strTitle = "Transfer Window"; break;
+                case KACAlarm.AlarmTypeEnum.TransferModelled: strTitle = "Transfer Window"; break;
+                case KACAlarm.AlarmTypeEnum.Apoapsis: strTitle = "Apoapsis"; break;
+                case KACAlarm.AlarmTypeEnum.Periapsis: strTitle = "Periapsis"; break;
+                case KACAlarm.AlarmTypeEnum.AscendingNode: strTitle = "Ascending Node"; break;
+                case KACAlarm.AlarmTypeEnum.DescendingNode: strTitle = "Descending Node"; break;
+                case KACAlarm.AlarmTypeEnum.LaunchRendevous: strTitle = "Launch Ascent"; break;
+                case KACAlarm.AlarmTypeEnum.Closest: strTitle = "Closest Approach"; break;
+                case KACAlarm.AlarmTypeEnum.Distance: strTitle = "Target Distance"; break;
+                case KACAlarm.AlarmTypeEnum.Crew: strTitle = "Crew"; break;
+                case KACAlarm.AlarmTypeEnum.EarthTime: strTitle = "Earth Time"; break;
+                case KACAlarm.AlarmTypeEnum.Contract: strTitle = "Contract"; break;
                 default: strTitle = "Raw Time"; break;
             }
             strTitle += " Alarm - Common Properties";
@@ -1153,7 +1095,7 @@ namespace KerbalAlarmClock
 
 
             if (ScenesForAttachOption.Contains(KACWorkerGameState.CurrentGUIScene) && TypesForAttachOption.Contains(TypeOfAlarm)
-                && KACWorkerGameState.CurrentVessel!=null)
+                && KACWorkerGameState.CurrentVessel != null)
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
@@ -1162,9 +1104,9 @@ namespace KerbalAlarmClock
             }
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice2(ref Action, "Action:", 60);
+            DrawAlarmActionChoice3(ref Action, "Action:", 70 ,56);
 
-            if (TypeOfAlarm != KACAlarm.AlarmType.Raw && TypeOfAlarm != KACAlarm.AlarmType.EarthTime && TypeOfAlarm != KACAlarm.AlarmType.Crew)
+            if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {
                 DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Margin:", 60);
             }
@@ -1181,21 +1123,21 @@ namespace KerbalAlarmClock
         /// <param name="style"></param>
         /// <param name="options"></param>
         /// <returns>True when the button state has changed</returns>
-        public Boolean DrawToggle(ref Boolean blnVar, String ButtonText, GUIStyle style, params GUILayoutOption[] options)
+        internal Boolean DrawToggle(ref Boolean blnVar, String ButtonText, GUIStyle style, params GUILayoutOption[] options)
         {
             Boolean blnReturn = GUILayout.Toggle(blnVar, ButtonText, style, options);
 
             return ToggleResult(ref blnVar, ref  blnReturn);
         }
 
-        public Boolean DrawToggle(ref Boolean blnVar, Texture image, GUIStyle style, params GUILayoutOption[] options)
+        internal Boolean DrawToggle(ref Boolean blnVar, Texture image, GUIStyle style, params GUILayoutOption[] options)
         {
             Boolean blnReturn = GUILayout.Toggle(blnVar, image, style, options);
 
             return ToggleResult(ref blnVar, ref blnReturn);
         }
 
-        public Boolean DrawToggle(ref Boolean blnVar, GUIContent content, GUIStyle style, params GUILayoutOption[] options)
+        internal Boolean DrawToggle(ref Boolean blnVar, GUIContent content, GUIStyle style, params GUILayoutOption[] options)
         {
             Boolean blnReturn = GUILayout.Toggle(blnVar, content, style, options);
 
@@ -1207,7 +1149,7 @@ namespace KerbalAlarmClock
             if (Old != New)
             {
                 Old = New;
-                DebugLogFormatted("Toggle Changed:" + New.ToString());
+                LogFormatted("Toggle Changed:" + New.ToString());
                 return true;
             }
             return false;
@@ -1215,13 +1157,13 @@ namespace KerbalAlarmClock
 
 
 
-        public Boolean DrawTextBox(ref String strVar, GUIStyle style, params GUILayoutOption[] options)
+        internal Boolean DrawTextBox(ref String strVar, GUIStyle style, params GUILayoutOption[] options)
         {
             String strReturn = GUILayout.TextField(strVar, style, options);
             if (strReturn != strVar)
             {
                 strVar = strReturn;
-                DebugLogFormatted("String Changed:" + strVar.ToString());
+                LogFormatted("String Changed:" + strVar.ToString());
                 return true;
             }
             return false;
@@ -1233,15 +1175,15 @@ namespace KerbalAlarmClock
         /// </summary>
         /// <param name="blnVar"></param>
         /// <returns>True when check state has changed</returns>
-        public Boolean DrawCheckbox(ref Boolean blnVar, String strText, params GUILayoutOption[] options)
+        internal Boolean DrawCheckbox(ref Boolean blnVar, String strText, params GUILayoutOption[] options)
         {
             return DrawCheckbox(ref blnVar, new GUIContent(strText),15, options);
         }
-        public Boolean DrawCheckbox(ref Boolean blnVar, GUIContent content, params GUILayoutOption[] options)
+        internal Boolean DrawCheckbox(ref Boolean blnVar, GUIContent content, params GUILayoutOption[] options)
         {
             return DrawCheckbox(ref blnVar, content , 15, options);
         }
-        public Boolean DrawCheckbox(ref Boolean blnVar, String strText, int CheckboxSpace, params GUILayoutOption[] options)
+        internal Boolean DrawCheckbox(ref Boolean blnVar, String strText, Int32 CheckboxSpace, params GUILayoutOption[] options)
         {
             return DrawCheckbox(ref blnVar, new GUIContent(strText), CheckboxSpace, options);
         }
@@ -1251,11 +1193,14 @@ namespace KerbalAlarmClock
         /// </summary>
         /// <param name="blnVar"></param>
         /// <returns>True when check state has changed</returns>
-        public Boolean DrawCheckbox(ref Boolean blnVar,  GUIContent content, int CheckboxSpace , params GUILayoutOption[] options)
+        internal Boolean DrawCheckbox(ref Boolean blnVar, GUIContent content, Int32 CheckboxSpace, params GUILayoutOption[] options)
         {
             // return DrawToggle(ref blnVar, strText, KACResources.styleCheckbox, options);
             Boolean blnReturn = false;
             Boolean blnToggleInitial = blnVar;
+
+            if (settings.SelectedSkin == Settings.DisplaySkin.Default)
+                GUILayout.Space(-3);
 
             GUILayout.BeginHorizontal();
             //Draw the radio
@@ -1268,10 +1213,12 @@ namespace KerbalAlarmClock
             {
                 //if its clicked then toggle the boolean
                 blnVar = !blnVar;
-                KACWorker.DebugLogFormatted("Toggle Changed:" + blnVar);
+                LogFormatted("Toggle Changed:" + blnVar);
             }
 
             GUILayout.EndHorizontal();
+            if (settings.SelectedSkin == Settings.DisplaySkin.Default)
+                GUILayout.Space(-3);
 
             //If output value doesnt = input value
             if (blnToggleInitial != blnVar)
@@ -1282,24 +1229,24 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        public Boolean DrawRadioListVertical(ref int Selected, params String[] Choices)
+        internal Boolean DrawRadioListVertical(ref Int32 Selected, params String[] Choices)
         {
             return DrawRadioList(false, ref Selected, Choices);
         }
-        public Boolean DrawRadioList(ref int Selected, params String[] Choices)
+        internal Boolean DrawRadioList(ref Int32 Selected, params String[] Choices)
         {
             return DrawRadioList(true, ref Selected, Choices);
         }
-        public Boolean DrawRadioList(Boolean Horizontal, ref int Selected, params String[] Choices)
+        internal Boolean DrawRadioList(Boolean Horizontal, ref Int32 Selected, params String[] Choices)
         {
-            int InitialChoice = Selected;
+            Int32 InitialChoice = Selected;
 
             if (Horizontal)
                 GUILayout.BeginHorizontal();
             else
                 GUILayout.BeginVertical();
 
-            for (int intChoice = 0; intChoice < Choices.Length; intChoice++)
+            for (Int32 intChoice = 0; intChoice < Choices.Length; intChoice++)
             {
                 //checkbox
                 GUILayout.BeginHorizontal();
@@ -1316,46 +1263,60 @@ namespace KerbalAlarmClock
                 GUILayout.EndVertical();
 
             if (InitialChoice != Selected)
-                DebugLogFormatted(String.Format("Radio List Changed:{0} to {1}", InitialChoice, Selected));
+                LogFormatted(String.Format("Radio List Changed:{0} to {1}", InitialChoice, Selected));
 
 
             return !(InitialChoice == Selected);
         }
 
-        public Boolean DrawAlarmActionChoice(ref int intChoice, String LabelText, int LabelWidth)
+        //public Boolean DrawAlarmActionChoice(ref Int32 intChoice, String LabelText, Int32 LabelWidth)
+        //{
+        //    Boolean blnReturn = false;
+        //    GUILayout.BeginHorizontal();
+        //    GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth));
+        //    blnReturn = DrawRadioList(ref intChoice, "Message Only", "Kill Time Warp", "Pause Game");
+        //    GUILayout.EndHorizontal();
+        //    return blnReturn;
+        //}
+        //public Boolean DrawAlarmActionChoice2(ref KACAlarm.AlarmActionEnum Choice, String LabelText, Int32 LabelWidth)
+        //{
+        //    Boolean blnReturn = false;
+        //    GUILayout.BeginHorizontal();
+        //    GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth-10));
+        //    Int32 intChoice = (Int32)Choice;
+        //    blnReturn = DrawRadioList(ref intChoice, "Message", "Kill Warp", "Pause");
+        //    Choice = (KACAlarm.AlarmActionEnum)intChoice;
+        //    GUILayout.EndHorizontal();
+        //    return blnReturn;
+        //}
+
+        internal Boolean DrawAlarmActionChoice3(ref KACAlarm.AlarmActionEnum Choice, String LabelText, Int32 LabelWidth, Int32 ButtonWidth)
         {
             Boolean blnReturn = false;
             GUILayout.BeginHorizontal();
-            GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth));
-            blnReturn = DrawRadioList(ref intChoice, "Message Only", "Kill Time Warp", "Pause Game");
-            GUILayout.EndHorizontal();
-            return blnReturn;
-        }
-        public Boolean DrawAlarmActionChoice2(ref KACAlarm.AlarmAction Choice, String LabelText, int LabelWidth)
-        {
-            Boolean blnReturn = false;
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth-10));
-            int intChoice = (int)Choice;
-            blnReturn = DrawRadioList(ref intChoice, "Message", "Kill Warp", "Pause");
-            Choice = (KACAlarm.AlarmAction)intChoice;
+            GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth - 10));
+            Int32 intChoice = (Int32)Choice;
+            GUIStyle styleButton = new GUIStyle(KACResources.styleButtonListAlarmActions) { fixedWidth = ButtonWidth };
+            blnReturn = DrawButtonList(ref intChoice, styleButton, KACResources.lstAlarmChoices.ToArray());
+            //blnReturn = DrawRadioList(ref intChoice, "Message", "Kill Warp", "Pause");
+            Choice = (KACAlarm.AlarmActionEnum)intChoice;
             GUILayout.EndHorizontal();
             return blnReturn;
         }
 
 
 
-        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecisionEnum Prec, params GUILayoutOption[] options)
+        internal Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecisionEnum Prec, params GUILayoutOption[] options)
         {
             return DrawTimeEntry(ref time, Prec, "", 0, 40,20);
         }
 
-        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecisionEnum Prec, String LabelText, int LabelWidth, params GUILayoutOption[] options)
+        internal Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecisionEnum Prec, String LabelText, Int32 LabelWidth, params GUILayoutOption[] options)
         {
             return DrawTimeEntry(ref time, Prec, LabelText, LabelWidth, 40,20);
         }
 
-        public Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecisionEnum Prec, String LabelText, int LabelWidth, int FieldWidth, int SuffixWidth, params GUILayoutOption[] options)
+        internal Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecisionEnum Prec, String LabelText, Int32 LabelWidth, Int32 FieldWidth, Int32 SuffixWidth, params GUILayoutOption[] options)
         {
             Boolean blnReturn = false;
 
@@ -1419,7 +1380,7 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        public Boolean DrawTimeField(ref String Value, String LabelText, int FieldWidth,int SuffixWidth)
+        internal Boolean DrawTimeField(ref String Value, String LabelText, Int32 FieldWidth, Int32 SuffixWidth)
         {
             Boolean blnReturn = false;
             Int32 intParse;
@@ -1446,8 +1407,9 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        public Boolean DrawButtonList(ref KACAlarm.AlarmType selType, params GUIContent[] Choices)
+        internal Boolean DrawButtonList(ref KACAlarm.AlarmTypeEnum selType, params GUIContent[] Choices)
         {
+            //int Selection = (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION) ? KACAlarm.AlarmTypeToButton[selType] : KACAlarm.AlarmTypeToButtonTS[selType];
             int Selection = KACAlarm.AlarmTypeToButton[selType];
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) Selection = KACAlarm.AlarmTypeToButtonTS[selType];
             else if (KACWorkerGameState.CurrentGUIScene == GameScenes.SPACECENTER) Selection = KACAlarm.AlarmTypeToButtonSC[selType];
@@ -1455,7 +1417,7 @@ namespace KerbalAlarmClock
             Boolean blnReturn = DrawButtonList(ref Selection, Choices);
             if (blnReturn)
             {
-                if (KACWorkerGameState.CurrentGUIScene== GameScenes.TRACKSTATION)
+                if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
                     selType = KACAlarm.AlarmTypeFromButtonTS[Selection];
                 else if (KACWorkerGameState.CurrentGUIScene == GameScenes.SPACECENTER)
                     selType = KACAlarm.AlarmTypeFromButtonSC[Selection];
@@ -1465,17 +1427,21 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
-        public Boolean DrawButtonList(ref int Selected, params GUIContent[] Choices)
+        internal Boolean DrawButtonList(ref Int32 Selected, params GUIContent[] Choices)
         {
-            int InitialChoice = Selected;
+            return DrawButtonList(ref Selected, KACResources.styleButtonList, Choices);
+        }
+        internal Boolean DrawButtonList(ref Int32 Selected, GUIStyle ButtonStyle, params GUIContent[] Choices)
+        {
+            Int32 InitialChoice = Selected;
 
             GUILayout.BeginHorizontal();
 
-            for (int intChoice = 0; intChoice < Choices.Length; intChoice++)
+            for (Int32 intChoice = 0; intChoice < Choices.Length; intChoice++)
             {
                 //button
                 Boolean blnResult=(Selected==intChoice);
-                if (DrawToggle(ref blnResult,Choices[intChoice], KACResources.styleButtonList))
+                if (DrawToggle(ref blnResult,Choices[intChoice],ButtonStyle))
                 {
                     if (blnResult)
                         Selected=intChoice;
@@ -1484,7 +1450,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             if (InitialChoice != Selected)
-                DebugLogFormatted(String.Format("Button List Changed:{0} to {1}", InitialChoice, Selected));
+                LogFormatted(String.Format("Button List Changed:{0} to {1}", InitialChoice, Selected));
 
 
             return !(InitialChoice == Selected);

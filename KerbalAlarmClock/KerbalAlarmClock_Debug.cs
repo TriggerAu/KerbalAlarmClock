@@ -5,11 +5,13 @@ using System.Linq;
 
 using UnityEngine;
 using KSP;
+using KSPPluginFramework;
+
 using System.Xml.Serialization;
 
 namespace KerbalAlarmClock
 {
-    public partial class KACWorker 
+    public partial class KerbalAlarmClock 
     {
 #if DEBUG
         //Debug Window
@@ -19,11 +21,11 @@ namespace KerbalAlarmClock
 
         public void DebugActionTimed(GameScenes loadedscene)
         {
-            DebugLogFormatted("Timed Debug Action Initiated");
-            //KACWorker.DebugLogFormatted("Stuff Here");
-            //KACWorker.DebugLogFormatted(FlightGlobals.ActiveVessel.orbit.closestEncounterBody.bodyName);
-            //KACWorker.DebugLogFormatted(FlightGlobals.ActiveVessel.orbit.ClAppr.ToString());
-            //KACWorker.DebugLogFormatted(FlightGlobals.ActiveVessel.orbit.closestEncounterBody.sphereOfInfluence.ToString());
+            LogFormatted("Timed Debug Action Initiated");
+            //LogFormatted("Stuff Here");
+            //LogFormatted(FlightGlobals.ActiveVessel.orbit.closestEncounterBody.bodyName);
+            //LogFormatted(FlightGlobals.ActiveVessel.orbit.ClAppr.ToString());
+            //LogFormatted(FlightGlobals.ActiveVessel.orbit.closestEncounterBody.sphereOfInfluence.ToString());
 
             // how to detect Escape - eg to Solar orbit
 
@@ -31,15 +33,15 @@ namespace KerbalAlarmClock
             //if ((FlightGlobals.ActiveVessel.orbit.closestEncounterBody != null) && (FlightGlobals.ActiveVessel.orbit.ClAppr > 0))
             //{
             //    //Is the closest approach less than the size of the SOI
-            //    KACWorker.DebugLogFormatted(FlightGlobals.ActiveVessel.orbit.referenceBody + "," + FlightGlobals.ActiveVessel.orbit.closestEncounterBody + "," +
+            //    LogFormatted(FlightGlobals.ActiveVessel.orbit.referenceBody + "," + FlightGlobals.ActiveVessel.orbit.closestEncounterBody + "," +
             //         FlightGlobals.ActiveVessel.orbit.nextPatch.referenceBody + "," + FlightGlobals.ActiveVessel.orbit.nextPatch.closestEncounterBody);
             //    if (FlightGlobals.ActiveVessel.orbit.ClAppr < FlightGlobals.ActiveVessel.orbit.closestEncounterBody.sphereOfInfluence)
             //    {
-            //        KACWorker.DebugLogFormatted("SOI Change in :" + (FlightGlobals.ActiveVessel.orbit.nextPatch.StartUT - Planetarium.GetUniversalTime()));
+            //        LogFormatted("SOI Change in :" + (FlightGlobals.ActiveVessel.orbit.nextPatch.StartUT - Planetarium.GetUniversalTime()));
             //    }
             //    else
             //    {
-            //        KACWorker.DebugLogFormatted("Nextpatch in :" + (FlightGlobals.ActiveVessel.orbit.nextPatch.StartUT - Planetarium.GetUniversalTime()));
+            //        LogFormatted("Nextpatch in :" + (FlightGlobals.ActiveVessel.orbit.nextPatch.StartUT - Planetarium.GetUniversalTime()));
             //    }
             //}
 
@@ -61,47 +63,47 @@ namespace KerbalAlarmClock
 
 
             //write orbit, next orbit, patchedconicsolver nodes?
-            //see what we need to store for a manuever node
+            //see what we need to store for a Maneuver node
 
             //FlightGlobals.Vessels[0].patchedConicSolver.maneuverNodes[0]
 
             //if (tmpVessel.orbit.nextPatch == null)
             //{
-            //    DebugLogFormatted(tmpVessel.name + "-No next Patch");
+            //    LogFormatted(tmpVessel.name + "-No next Patch");
             //}
             //else
             //{
-            //    DebugLogFormatted(tmpVessel.name + "-Next patch @ " + (tmpVessel.orbit.nextPatch.StartUT-CurrentTime.UT));
-            //    DebugLogFormatted("Same orbit: " + (tmpVessel.orbit == tmpVessel.orbit.nextPatch));
+            //    LogFormatted(tmpVessel.name + "-Next patch @ " + (tmpVessel.orbit.nextPatch.StartUT-CurrentTime.UT));
+            //    LogFormatted("Same orbit: " + (tmpVessel.orbit == tmpVessel.orbit.nextPatch));
             //}
         }
 
         Boolean blnTriggerFlag = false;
         public void DebugActionTriggered(GameScenes loadedscene)
         {
-            DebugLogFormatted("Manual Debug Action Initiated");
+            LogFormatted("Manual Debug Action Initiated");
 
             blnTriggerFlag = true;
 
             //Kerbal[] KerbalObjects = FlightGlobals.FindObjectsOfType(typeof(Kerbal)) as Kerbal[];
-            //DebugLogFormatted("Kerbal Count: {0}", KerbalObjects.Length);
+            //LogFormatted("Kerbal Count: {0}", KerbalObjects.Length);
             //foreach (Kerbal k in KerbalObjects)
             //{
-            //    DebugLogFormatted("{0}", k.crewMemberName);
+            //    LogFormatted("{0}", k.crewMemberName);
             //}
 
             //KerbalEVA[] KerbalEVAObjects = FlightGlobals.FindObjectsOfType(typeof(KerbalEVA)) as KerbalEVA[];
-            //DebugLogFormatted("Kerbal EVA Count: {0}", KerbalEVAObjects.Length);
+            //LogFormatted("Kerbal EVA Count: {0}", KerbalEVAObjects.Length);
 
 
 
-            //DebugLogFormatted("Vessels Count: {0}", FlightGlobals.Vessels.Count);
+            //LogFormatted("Vessels Count: {0}", FlightGlobals.Vessels.Count);
             //foreach (Vessel v in FlightGlobals.Vessels)
             //{
             //    List<ProtoCrewMember> pCM = v.GetVesselCrew();
             //    foreach (ProtoCrewMember CM in pCM)
             //    {
-            //        DebugLogFormatted("{2}({1})-{0}", CM.name,v.vesselType,v.vesselName);
+            //        LogFormatted("{2}({1})-{0}", CM.name,v.vesselType,v.vesselName);
 
             //    }
             //}
@@ -147,34 +149,34 @@ namespace KerbalAlarmClock
             //    }
             //    catch (Exception) { }
 
-            //    DebugLogFormatted(strLine);
+            //    LogFormatted(strLine);
             //}
 
 
-            //DebugLogFormatted("window textcolor r:{0}", KACResources.styleWindow.normal.textColor.r.ToString());
+            //LogFormatted("window textcolor r:{0}", KACResources.styleWindow.normal.textColor.r.ToString());
             //byte[] b = KSP.IO.IOUtils.SerializeToBinary(FlightGlobals.ActiveVessel.orbit);
             //bw.Write(b);
             //bw.Close();
             //KSP.IO.BinaryWriter bw = KSP.IO.BinaryWriter.CreateForType<KerbalAlarmClock>("testfile.bin");
             
 
-            //DebugLogFormatted(scrollPosition.ToString());
+            //LogFormatted(scrollPosition.ToString());
             //Print each of the vessels UTSOI
             //foreach (Vessel tmpVessel in FlightGlobals.Vessels)
             //{
-            //    DebugLogFormatted("{0}-{1}", tmpVessel.vesselName, tmpVessel.orbit.UTsoi.ToString());            
+            //    LogFormatted("{0}-{1}", tmpVessel.vesselName, tmpVessel.orbit.UTsoi.ToString());            
             //}
 
             
-            //DebugLogFormatted(FlightGlobals.ActiveVessel.id.ToString());
+            //LogFormatted(FlightGlobals.ActiveVessel.id.ToString());
 
-            Orbit o=FlightGlobals.ActiveVessel.orbit;
+            //Orbit o=FlightGlobals.ActiveVessel.orbit;
 
-            WriteOrbitFile(o,"Debug/Orbit.txt");
-            if (o.nextPatch != null)
-                WriteOrbitFile(o.nextPatch, "Debug/OrbitNext.txt");
+            //WriteOrbitFile(o,"Debug/Orbit.txt");
+            //if (o.nextPatch != null)
+            //    WriteOrbitFile(o.nextPatch, "Debug/OrbitNext.txt");
 
-            WriteOrbitFile(tgtSelectedDistance.GetOrbit(),"Debug/OrbitTarget.txt");
+            //WriteOrbitFile(tgtSelectedDistance.GetOrbit(),"Debug/OrbitTarget.txt");
             //WriteManeuverFile(FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes,"Debug/Nodes.txt");
         }
 
@@ -186,7 +188,7 @@ namespace KerbalAlarmClock
             //double ascendingNode = CalcAngleToAscendingNode(activePosition, activeOrbit, targetOrbit);
             //double timeToAN = CalcTimeToNode(activeOrbit, ascendingNode);
 
-            //DebugLogFormatted("AN:{0}", timeToAN.ToString());
+            //LogFormatted("AN:{0}", timeToAN.ToString());
 
 
 
@@ -228,14 +230,45 @@ namespace KerbalAlarmClock
         //    return (origin.period / 360d) * angleToNode;
         //}
 
+
+        Double UTStart = 0;
+        DateTime TransStart;
+        Boolean warptrans = false;
+
+        Double[] UTChanges = new Double[8];
+
+        void warpchange(){
+            for (int i = 0; i < 8; i++)
+            {
+                UTChanges[i] = CalcUTTaken(TimeWarp.CurrentRateIndex,i);
+            }
+        }
+        Double CalcUTTaken(Int32 StartIndex, Int32 EndIndex)
+        {
+            if (StartIndex == EndIndex)
+                return 0;
+
+            Double StartRate = TimeWarp.fetch.warpRates[StartIndex];
+            Double EndRate = TimeWarp.fetch.warpRates[EndIndex];
+
+            Double TimeAtEach = 1/((EndRate - 1) - StartRate);
+
+            Double UT = 0;
+            for (int interval = (Int32)StartRate + 1; interval < (Int32)EndRate; interval++)
+            {
+                UT += interval * TimeAtEach;
+            }
+            return UT;
+        }
+
         int intTestheight = 0;
         int intTestheight2 = 0;
         int intTestheight3 = 0;
-        int intTestheight4 = 0;
-        
+        static int intTestheight4 = 0;
+
+        double dblTest = 12;
 
         int intTestDistance = 710000;
-
         public void FillDebugWindow(int WindowID)
         {
             GUILayout.BeginVertical();
@@ -252,6 +285,9 @@ namespace KerbalAlarmClock
             GUILayout.Label("test3:");
             GUILayout.Label("test4:");
 
+
+            GUILayout.Label("dblTest:");
+
             GUILayout.EndVertical();
             GUILayout.BeginVertical();
 
@@ -260,160 +296,191 @@ namespace KerbalAlarmClock
             intTestheight3 = Convert.ToInt32(GUILayout.TextField(intTestheight3.ToString()));
             intTestheight4 = Convert.ToInt32(GUILayout.TextField(intTestheight4.ToString()));
 
+            dblTest = Convert.ToDouble(GUILayout.TextField(dblTest.ToString()));
+
+            
+
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
-            //var uiCamera = Camera.allCameras.ToList();
-            //foreach (Camera item in uiCamera)
+
+            GUILayout.Label(String.Format("S:{0}", intSelectedContract));
+            GUILayout.Label(String.Format("LastState:{0}", contractLastState));
+            if (Contracts.ContractSystem.Instance != null && lstContracts != null)
+            {
+                GUILayout.Label(String.Format("Title: {0}", lstContracts[intSelectedContract].Title));
+                //GUILayout.Label(String.Format("Syn: {0}", lstContracts[intSelectedContract].Synopsys));
+                //GUILayout.Label(String.Format("Desc: {0}", lstContracts[intSelectedContract].Description));
+
+                //foreach (Contracts.ContractParameter cp in lstContracts[intSelectedContract].AllParameters)
+                //{
+                //    GUILayout.Label(String.Format("Param: {0}={1}", cp.Title,cp.Optional));
+                //}
+                //GUILayout.Label(String.Format("GUID: {0}", lstContracts[intSelectedContract].ContractGuid));
+                //GUILayout.Label(String.Format("State: {0}", lstContracts[intSelectedContract].ContractState));
+                //GUILayout.Label(String.Format("Notes: {0}", lstContracts[intSelectedContract].Notes));
+
+                foreach (Contracts.Contract item in lstContracts.Where(ci => ci.ContractState == Contracts.Contract.State.Offered).OrderBy(ci => ci.DateNext()))
+                {
+                    GUILayout.Label(String.Format("{0}\r\nDate:{1}, Date-margin:{2}", item.Title, item.DateNext(), item.DateNext()-settings.AlarmOnContractExpireMargin));
+                //    //GUILayout.Label(String.Format("DateExpire:{0}DateDeadline:{1}", item.DateExpire,item.DateDeadline));
+                }
+            }
+
+            //foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w => w.Index))
             //{
-            //    GUILayout.Label(string.Format("{0},{1},{2}", item.name, item.enabled, item.transform.position.ToString()));
+            //    GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times));
+            //}
 
-            //    if (item.name == "UI camera")
-            //    {
-            //        GUILayout.Label(string.Format("{0},{1}",
-            //            item.ScreenToWorldPoint(new Vector3(0, 0, 0)),
-            //            item.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0))));
+            if (GUILayout.Button("SetTrue"))
+                btnAppLauncher.SetTrue();
+            if (GUILayout.Button("SetFalse"))
+                btnAppLauncher.SetFalse();
+            //    btnAppLauncher = InitAppLauncherButton();
+            
+            //if (GUILayout.Button("Calc Rates"))
+            //{
+            //    warpchange();
+            //    WarpTransitionCalculator.CalcWarpRateTransitions();
+            //}
 
-            //        //GUILayout.Label(string.Format("{0},{1}",
-            //        //    TriggerUIButtonTest.blocker.transform.position,
-            //        //    TriggerUIButtonTest.blocker.width));
+            //if (GUILayout.Button("Set Rate to inttest4"))
+            //{
 
-            //        //TriggerUIButtonTest.SetPosition(intTestheight, intTestheight2, 0);
+            //    LogFormatted("StartTransition({2}->{3},UT:{0},Time:{1}",Planetarium.GetUniversalTime(),DateTime.Now,TimeWarp.CurrentRateIndex,intTestheight4);
+            //    TransStart = DateTime.Now;
+            //    UTStart = Planetarium.GetUniversalTime();
+            //    warptrans = true;
+            //    TimeWarp.SetRate(intTestheight4,false);
+
+            //}
+
+            //if (warptrans)
+            //{
+            //    if (TimeWarp.CurrentRate==TimeWarp.fetch.warpRates[intTestheight4]){
+            //        warptrans = false;
+            //        LogFormatted("EndTransition,UT:{0},Time:{1}", Planetarium.GetUniversalTime(), DateTime.Now);
+            //        LogFormatted("Transition,UT:{0},Time:{1}", Planetarium.GetUniversalTime()-UTStart, (DateTime.Now-TransStart).TotalMilliseconds);
             //    }
             //}
 
-            //GUILayout.Label(FlightCamera.fetch.transform.position.ToString());
-            //GUILayout.Label(FlightCamera.fetch.mainCamera.transform.position.ToString());
-
-            //GUILayout.Label(FlightCamera.fetch.mainCamera.WorldToScreenPoint(FlightGlobals.ActiveVessel.transform.position).ToString());
-            //GUILayout.Label(FlightGlobals.ActiveVessel.findWorldCenterOfMass().ToString());
-            //GUILayout.Label((FlightCamera.fetch.transform.position - FlightGlobals.ActiveVessel.findWorldCenterOfMass()).ToString());
-            //foreach (Camera item in FlightCamera.fetch.cameras)
+            //for (int i = 0; i < 8; i++)
             //{
-            //    GUILayout.Label(item. item.name + item.transform.position.ToString());
-
+            //    GUILayout.Label(String.Format("{0}->{1} : {2}", TimeWarp.CurrentRateIndex,i,UTChanges[i]));
             //}
-
-            //KACTime tmp = new KACTime(0, 0, 6, 0, 0);
-            //KACTimeStringArray arr = new KACTimeStringArray(tmp.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
-
-            //GUILayout.Label(string.Format("{0},{1},{2},{3},{4},{5}", tmp.UT.ToString(), tmp.Year, tmp.Day, tmp.Hour, tmp.Minute, tmp.Second));
-            //GUILayout.Label(string.Format("{0},{1},{2},{3},{4},{5}", arr.UT.ToString(), arr.Years, arr.Days, arr.Hours, arr.Minutes, arr.Seconds));
-
-
-            //GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosSaved));
-            //GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosMoveDetectedAt));
-            //GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosByActiveScene));
-            //GUILayout.Label(String.Format("{0}", KerbalAlarmClock.WorkerObjectInstance.WindowPosLast));
-
-            //GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.Alarms.BySaveName(HighLogic.CurrentGame.Title).Count));
-            //GUILayout.Label(String.Format("{0}",KerbalAlarmClock.Settings.AlarmListMaxAlarmsInt));
-            //foreach (KACAlarm item in KerbalAlarmClock.Settings.Alarms)
-            //{
-            //    GUILayout.Label(String.Format("{0} ({1},{2})", item.Name, item.AlarmLineWidth, item.AlarmLineHeight));
-            //}
-
-
-            //GUILayout.Label("Time:" + GameSettings.KERBIN_TIME.ToString());
-            //GUILayout.Label("ManMargin:" + KerbalAlarmClock.Settings.AlarmAddManAutoMargin.ToString());
-
-
-            //if (KACWorkerGameState.CurrentVessel == null)
-            //{
-            //    GUILayout.Label(String.Format("No Current Version"));
-            //}
-            //else
-            //{
-            //    GUILayout.Label(String.Format("CurrentV:{0}", KACWorkerGameState.CurrentVessel.name));
-            //}
-
-            //if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
-            //{
-            //    SpaceTracking st = (SpaceTracking)GameObject.FindObjectOfType(typeof(SpaceTracking));
-            //    if (st.mainCamera.target != null)
-            //    {
-            //        if (st.mainCamera.target.type == MapObject.MapObjectType.VESSEL)
-            //        {
-            //            GUILayout.Label(String.Format("CurrentSTV:{0}", st.mainCamera.target.vessel.name));
-            //            GUILayout.Label(String.Format("Controllable:{0}, Command:{1}", st.mainCamera.target.vessel.IsControllable, st.mainCamera.target.vessel.isCommandable));
-            //            GUILayout.Label(String.Format("State:{0}", st.mainCamera.target.vessel.state));
-            //            GUILayout.Label(String.Format("TS:{0}", st.mainCamera.target.vessel.DiscoveryInfo.trackingStatus.Value));
-            //            GUILayout.Label(String.Format("sit:{0}", st.mainCamera.target.vessel.DiscoveryInfo.situation.Value));
-            //            GUILayout.Label(String.Format("type:{0}", st.mainCamera.target.vessel.DiscoveryInfo.type.Value));
-            //            GUILayout.Label(String.Format("life:{0}", st.mainCamera.target.vessel.DiscoveryInfo.referenceLifetime.ToString()));
-            //        }
-            //        else
-            //            GUILayout.Label(String.Format("CurrentSTV:{0}", "Not a vessel"));
-
-            //        //GUILayout.Label(String.Format("Fly:{0}", st.FlyButton.));
-            //    }
-            //}
-
-            //GUILayout.Label(String.Format("FG: {0}", FlightGlobals.fetch != null));
-            //if (FlightGlobals.fetch)
-            //{
-            //    GUILayout.Label(String.Format("FG-AV: {0}", FlightGlobals.fetch.activeVessel != null));
-            //    GUILayout.Label(String.Format("FG-AT: {0}", FlightGlobals.fetch.VesselTarget != null));
-            //}
-
-            //GUILayout.Label(String.Format("MV: {0}", MapView.fetch != null));
-            //if (MapView.fetch)
-            //{
-            //    GUILayout.Label(String.Format("MV: {0}", MapView.fetch.scaledVessel != null));
-            //    GUILayout.Label(String.Format("MV-MC: {0}", MapView.MapCamera != null));
-            //    GUILayout.Label(String.Format("MV-MC-T: {0}", MapView.MapCamera.target != null));
-            //    if (MapView.MapCamera.target != null)
-            //    {
-            //        GUILayout.Label(String.Format("MV-MC-T-n: {0}", MapView.MapCamera.target.name));
-            //        GUILayout.Label(String.Format("MV-MC-T-T: {0}", MapView.MapCamera.target.type));
-            //    }
-            //    if (MapView.MapCamera.targets != null)
-            //    {
-            //        GUILayout.Label(String.Format("MV-MC-Ts: {0}", MapView.MapCamera.targets.Count));
-            //    }
-
-            //}
-
-            //foreach (Vessel item in FlightGlobals.Vessels)
-            //{
-            //    GUILayout.Label(String.Format("{0}-{1}", item.vesselName, item.isActiveVessel));
-            //}
-
-            //if (KACWorkerGameState.CurrentVessel != null)
-            //{
-            //    GUILayout.Label(String.Format("CurrentV:{0}", KACWorkerGameState.CurrentVessel.name));
-            //    GUILayout.Label(String.Format("CurrentSOI:{0}", KACWorkerGameState.CurrentSOIBody.bodyName));
-            //    if (KACWorkerGameState.CurrentVesselTarget!=null)
-            //        GUILayout.Label(String.Format("CurrentT:{0}", KACWorkerGameState.CurrentVesselTarget.GetName()));
-
-            //    if (KACWorkerGameState.CurrentVessel.patchedConicSolver != null)
-            //    {
-            //        if (KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes != null)
-            //        {
-            //            if (KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Count > 0)
-            //            {
-            //                GUILayout.Label(String.Format("CV Node:{0}", "true")); ;
-            //            }
-            //        }
-            //    }
-            //}
-
-
-            //GUILayout.Label(String.Format("Node:{0}", KACWorkerGameState.ManeuverNodeExists));
-            //GUILayout.Label(String.Format("SOI:{0}", KACWorkerGameState.SOIPointExists));
-            //GUILayout.Label(FormatVar("Vessel:{0}", KACWorkerGameState.CurrentVessel.mainBody.ToString()));
-
 
             //if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
             //{
-            //    GUILayout.Label (KACWorkerGameState.ManeuverNodeExists.ToString());
-            //    GUILayout.Label((KACWorkerGameState.ManeuverNodeFuture != null).ToString());
+            //    GUILayout.Label(String.Format("Rate: {0}", TimeWarp.CurrentRate));
+            //    GUILayout.Label(String.Format("Text: {0}", TimeWarp.fetch.textDuration));
+
+            //}
+
+
+            //if (GUILayout.Button("Load Old Alarm List"))
+            //{
+            //    winAlarmImport.Visible = !winAlarmImport.Visible;
+            //    //KACAlarmList oldAlarms = UtilitiesLegacy.Loadv2Alarms();
+
+            //    //if (oldAlarms.Count>0)
+            //    //{
+            //    //    //write it out
+            //    //    foreach (KACAlarm oldAlarm in oldAlarms)
+            //    //    {
+            //    //        LogFormatted("{0} @ {1}", oldAlarm.Name, oldAlarm.AlarmTime.UT);
+            //    //    }
+            //    //    LogFormatted("{0}", oldAlarms.EncodeToCN().ToString());
+
+            //    //    alarms = oldAlarms;
+            //    //}
+            //    //else
+            //    //{
+            //    //    LogFormatted("Could not find alarms file for: {0}", HighLogic.CurrentGame.Title);
+            //    //}
+
+            //}
+
+            //intMainWindowEarthTimeHeight = intTestheight4;
+
+            //if (GUILayout.Button("Create"))
+            //{
+            //    CreateAlarm(KACAlarm.AlarmTypeEnum.Raw, "TEST");
+            //}
+
+            //if (GUILayout.Button("KSP"))
+            //{
+            //    settings.SelectedSkin = Settings.DisplaySkin.Default;
+            //    KACResources.SetSkin(settings.SelectedSkin);
+            //    settings.Save();
+            //}
+            //if (GUILayout.Button("Unity"))
+            //{
+            //    settings.SelectedSkin = Settings.DisplaySkin.Unity;
+            //    KACResources.SetSkin(settings.SelectedSkin);
+            //    settings.Save();
+            //}
+            //if (GUILayout.Button("Unity w KSP"))
+            //{
+            //    settings.SelectedSkin = Settings.DisplaySkin.UnityWKSPButtons;
+            //    KACResources.SetSkin(settings.SelectedSkin);
+            //    settings.Save();
+            //}
+
+
+            //GUILayout.Label("MouseAny: " + MouseOverAnyWindow.ToString());
+            //GUILayout.Label("MouseSettings: " + MouseOverWindow(_WindowSettingsRect, WindowVisibleByActiveScene && _ShowSettings).ToString());
+            //GUILayout.Label("MainRect: " + WindowPosByActiveScene.ToString());
+            //GUILayout.Label("SettingsRect: " + _WindowSettingsRect.ToString());
+            //GUILayout.Label("MousePos: " + Event.current.mousePosition.ToString());
+
+
+            //GUILayout.Label("button: " + ddlSettingsSkin.rectButton.ToString());
+            //GUILayout.Label("list: " + ddlSettingsSkin.rectListBox.ToString());
+
+            //foreach (KACAlarm item in alarms)
+            //{
+            //    GUILayout.Label(String.Format("{0}:{1}", item.Name, item.AlarmAction));
+            //}
+
+            
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+            {
+                //List<Double> LFs = new List<double>();
+                //List<String> Ships=new List<string>();
+                //Double LF = 0;
+                //foreach (Part item in FlightGlobals.ActiveVessel.Parts)
+                //{
+                //    foreach (PartResource pr in item.Resources)
+                //    {
+                //        if (pr.info.name == "ElectricCharge")
+                //            LF += pr.amount;
+                //    }
+                //}
+
+                //foreach (Vessel v in FlightGlobals.Vessels.Where(x=>x.vesselType==VesselType.Ship))
+                //{
+                //    Double LFtemp = 0;
+                //    foreach (Part item in v.Parts)
+                //    {
+                //        foreach (PartResource pr in item.Resources)
+                //        {
+                //            if (pr.info.name == "ElectricCharge")
+                //                LFtemp += pr.amount;
+                //        }
+                //    }
+                //    Ships.Add(v.vesselName);
+                //    LFs.Add(LFtemp);
+                //    GUILayout.Label(String.Format("{0}-{1:0.0}", v.vesselName, LFtemp));
+                //}
+
+                                
+                
+                //GUILayout.Label (KACWorkerGameState.ManeuverNodeExists.ToString());
+                //GUILayout.Label((KACWorkerGameState.ManeuverNodeFuture != null).ToString());
 
 
 
-
-
-
+                
                 //FlightState fs = new FlightState();
                 //GUILayout.Label (fs.activeVesselIdx.ToString());
 
@@ -461,18 +528,14 @@ namespace KerbalAlarmClock
                 //    GUILayout.Label("Equatorial Nodes (No Vessel Target)", KACResources.styleAddXferName, GUILayout.Height(18));
                 //else
                 //{
-                //    if (KACWorkerGameState.CurrentVessel.orbit.referenceBody == KACWorkerGameState.CurrentVesselTarget.GetOrbit().referenceBody)
+                //    if (KACWorkerGameState.CurrentVessel.orbit.referenceBody ==KACWorkerGameState.CurrentVesselTarget.GetOrbit().referenceBody)
                 //    {
                 //        if (KACWorkerGameState.CurrentVesselTarget is Vessel)
                 //            GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName, GUILayout.Height(18));
                 //        else if (KACWorkerGameState.CurrentVesselTarget is CelestialBody)
                 //            GUILayout.Label("Target Body: " + ((CelestialBody)KACWorkerGameState.CurrentVesselTarget).bodyName, KACResources.styleAddXferName, GUILayout.Height(18));
                 //        else
-                //        {
                 //            GUILayout.Label("Object Targeted", KACResources.styleAddXferName, GUILayout.Height(18));
-                //            GUILayout.Label(String.Format("{0}", KACWorkerGameState.CurrentVesselTarget.GetType().Name));
-                //        }
-
                 //        //GUILayout.Label("Target Vessel: " + KACWorkerGameState.CurrentVesselTarget.GetVessel().vesselName, KACResources.styleAddXferName, GUILayout.Height(18));
                 //    }
                 //    else
@@ -865,11 +928,12 @@ namespace KerbalAlarmClock
 
 
                 //GUILayout.Label(blnRecalc.ToString());
-            //}
+            }
             GUILayout.EndVertical();
             GUI.DragWindow();
 
         }
+                
         //bool blnRecalc = false;
 
         //private void GUILabelPhaseApproach(Orbit orbitOrig,Orbit orbitTarget)
@@ -930,61 +994,61 @@ namespace KerbalAlarmClock
         //    return strInfo;
         //}
 
-        public void WriteOrbitFile(Orbit o, String FileName)
-        {
+        //public void WriteOrbitFile(Orbit o, String FileName)
+        //{
 
-            KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(FileName);
-            tw.WriteLine("ClAppr:" + o.ClAppr);
-            tw.WriteLine("ClEctr1:" + o.ClEctr1);
-            tw.WriteLine("ClEctr2:" + o.ClEctr2);
-            tw.WriteLine("closestEncounterBody:" + o.closestEncounterBody);
-            tw.WriteLine("closestEncounterLevel:" + o.closestEncounterLevel);
-            tw.WriteLine("closestEncounterPatch:" + o.closestEncounterPatch);
-            tw.WriteLine("closestTgtApprUT:" + o.closestTgtApprUT);
-            tw.WriteLine("CrAppr:" + o.CrAppr);
+        //    KSP.IO.TextWriter tw = KSP.IO.TextWriter.CreateForType<KerbalAlarmClock>(FileName);
+        //    tw.WriteLine("ClAppr:" + o.ClAppr);
+        //    tw.WriteLine("ClEctr1:" + o.ClEctr1);
+        //    tw.WriteLine("ClEctr2:" + o.ClEctr2);
+        //    tw.WriteLine("closestEncounterBody:" + o.closestEncounterBody);
+        //    tw.WriteLine("closestEncounterLevel:" + o.closestEncounterLevel);
+        //    tw.WriteLine("closestEncounterPatch:" + o.closestEncounterPatch);
+        //    tw.WriteLine("closestTgtApprUT:" + o.closestTgtApprUT);
+        //    tw.WriteLine("CrAppr:" + o.CrAppr);
 
-            tw.WriteLine("EndUT:" + o.EndUT);
-            tw.WriteLine("epoch:" + o.epoch);
-            tw.WriteLine("FEVp:" + o.FEVp);
-            tw.WriteLine("FEVs:" + o.FEVs);
-            tw.WriteLine("fromE:" + o.fromE);
-            tw.WriteLine("fromV:" + o.fromV);
-            tw.WriteLine("h:" + o.h);
-            tw.WriteLine("inclination:" + o.inclination);
-            tw.WriteLine("LAN:" + o.LAN);
-            tw.WriteLine("mag:" + o.mag);
-            tw.WriteLine("meanAnomaly:" + o.meanAnomaly);
-            tw.WriteLine("meanAnomalyAtEpoch:" + o.meanAnomalyAtEpoch);
-            tw.WriteLine("nearestTT:" + o.nearestTT);
-            tw.WriteLine("nextPatch:" + o.nextPatch);
-            tw.WriteLine("nextTT:" + o.nextTT);
-            tw.WriteLine("nextPatch:" + o.nextPatch);
-            tw.WriteLine("ObT:" + o.ObT);
-            tw.WriteLine("ObTAtEpoch:" + o.ObTAtEpoch);
-            tw.WriteLine("orbitalEnergy:" + o.orbitalEnergy);
-            tw.WriteLine("orbitalSpeed:" + o.orbitalSpeed);
-            tw.WriteLine("orbitPercent:" + o.orbitPercent);
-            tw.WriteLine("patchEndTransition:" + o.patchEndTransition);
-            tw.WriteLine("patchStartTransition:" + o.patchStartTransition);
-            tw.WriteLine("period:" + o.period);
-            tw.WriteLine("pos:" + o.pos);
-            tw.WriteLine("previousPatch:" + o.previousPatch);
-            tw.WriteLine("radius:" + o.radius);
-            tw.WriteLine("referenceBody:" + o.referenceBody);
-            tw.WriteLine("SEVp:" + o.SEVp);
-            tw.WriteLine("SEVs:" + o.SEVs);
-            tw.WriteLine("StartUT:" + o.StartUT);
-            tw.WriteLine("timeToTransition1:" + o.timeToTransition1);
-            tw.WriteLine("timeToTransition2:" + o.timeToTransition2);
-            tw.WriteLine("toE:" + o.toE);
-            tw.WriteLine("toV:" + o.toV);
-            tw.WriteLine("trueAnomaly:" + o.trueAnomaly);
-            tw.WriteLine("UTappr:" + o.UTappr);
-            tw.WriteLine("UTsoi:" + o.UTsoi);
-            tw.WriteLine("V:" + o.V);
-            tw.WriteLine("vel:" + o.vel);
-            tw.Close();
-        }
+        //    tw.WriteLine("EndUT:" + o.EndUT);
+        //    tw.WriteLine("epoch:" + o.epoch);
+        //    tw.WriteLine("FEVp:" + o.FEVp);
+        //    tw.WriteLine("FEVs:" + o.FEVs);
+        //    tw.WriteLine("fromE:" + o.fromE);
+        //    tw.WriteLine("fromV:" + o.fromV);
+        //    tw.WriteLine("h:" + o.h);
+        //    tw.WriteLine("inclination:" + o.inclination);
+        //    tw.WriteLine("LAN:" + o.LAN);
+        //    tw.WriteLine("mag:" + o.mag);
+        //    tw.WriteLine("meanAnomaly:" + o.meanAnomaly);
+        //    tw.WriteLine("meanAnomalyAtEpoch:" + o.meanAnomalyAtEpoch);
+        //    tw.WriteLine("nearestTT:" + o.nearestTT);
+        //    tw.WriteLine("nextPatch:" + o.nextPatch);
+        //    tw.WriteLine("nextTT:" + o.nextTT);
+        //    tw.WriteLine("nextPatch:" + o.nextPatch);
+        //    tw.WriteLine("ObT:" + o.ObT);
+        //    tw.WriteLine("ObTAtEpoch:" + o.ObTAtEpoch);
+        //    tw.WriteLine("orbitalEnergy:" + o.orbitalEnergy);
+        //    tw.WriteLine("orbitalSpeed:" + o.orbitalSpeed);
+        //    tw.WriteLine("orbitPercent:" + o.orbitPercent);
+        //    tw.WriteLine("patchEndTransition:" + o.patchEndTransition);
+        //    tw.WriteLine("patchStartTransition:" + o.patchStartTransition);
+        //    tw.WriteLine("period:" + o.period);
+        //    tw.WriteLine("pos:" + o.pos);
+        //    tw.WriteLine("previousPatch:" + o.previousPatch);
+        //    tw.WriteLine("radius:" + o.radius);
+        //    tw.WriteLine("referenceBody:" + o.referenceBody);
+        //    tw.WriteLine("SEVp:" + o.SEVp);
+        //    tw.WriteLine("SEVs:" + o.SEVs);
+        //    tw.WriteLine("StartUT:" + o.StartUT);
+        //    tw.WriteLine("timeToTransition1:" + o.timeToTransition1);
+        //    tw.WriteLine("timeToTransition2:" + o.timeToTransition2);
+        //    tw.WriteLine("toE:" + o.toE);
+        //    tw.WriteLine("toV:" + o.toV);
+        //    tw.WriteLine("trueAnomaly:" + o.trueAnomaly);
+        //    tw.WriteLine("UTappr:" + o.UTappr);
+        //    tw.WriteLine("UTsoi:" + o.UTsoi);
+        //    tw.WriteLine("V:" + o.V);
+        //    tw.WriteLine("vel:" + o.vel);
+        //    tw.Close();
+        //}
 		
 		
 #endif

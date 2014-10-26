@@ -10,13 +10,8 @@ using KSPPluginFramework;
 
 namespace KerbalAlarmClock
 {
-    public class KACAlarm:ConfigNodeStorage,ICloneable
+    public class KACAlarm:ConfigNodeStorage
     {
-        public System.Object Clone()
-        {
-            return this.MemberwiseClone();
-        }
-
         public enum AlarmTypeEnum
         {
             Raw,
@@ -69,7 +64,7 @@ namespace KerbalAlarmClock
             {8,AlarmTypeEnum.Contract }
         };
         
-        public static Dictionary<AlarmTypeEnum, int> AlarmTypeToButtonTS = new Dictionary<AlarmTypeEnum, int>() {
+        internal static Dictionary<AlarmTypeEnum, int> AlarmTypeToButtonTS = new Dictionary<AlarmTypeEnum, int>() {
             {AlarmTypeEnum.Raw, 0},
             {AlarmTypeEnum.Maneuver , 1},
             {AlarmTypeEnum.ManeuverAuto , 1},
@@ -93,18 +88,32 @@ namespace KerbalAlarmClock
             {6,AlarmTypeEnum.Contract }
         };
 
-        public static Dictionary<AlarmTypeEnum, int> AlarmTypeToButtonSC = new Dictionary<AlarmTypeEnum, int>() {
+        internal static Dictionary<AlarmTypeEnum, int> AlarmTypeToButtonSC = new Dictionary<AlarmTypeEnum, int>() {
             {AlarmTypeEnum.Raw, 0},
             {AlarmTypeEnum.Transfer , 1},
             {AlarmTypeEnum.TransferModelled , 1},
             {AlarmTypeEnum.Contract , 2},
             {AlarmTypeEnum.ContractAuto , 2}
         };
-        public static Dictionary<int, AlarmTypeEnum> AlarmTypeFromButtonSC = new Dictionary<int, AlarmTypeEnum>() {
+        internal static Dictionary<int, AlarmTypeEnum> AlarmTypeFromButtonSC = new Dictionary<int, AlarmTypeEnum>() {
             {0,AlarmTypeEnum.Raw},
             {1,AlarmTypeEnum.Transfer },
             {2,AlarmTypeEnum.Contract },
         };
+
+
+
+        internal static List<AlarmTypeEnum> AlarmTypeSupportsRepeat = new List<AlarmTypeEnum>() {
+            AlarmTypeEnum.Raw,
+            AlarmTypeEnum.Crew,
+            AlarmTypeEnum.TransferModelled
+        };
+        internal static List<AlarmTypeEnum> AlarmTypeSupportsRepeatPeriod = new List<AlarmTypeEnum>() {
+            AlarmTypeEnum.Raw,
+            AlarmTypeEnum.Crew
+        };
+
+
 
         public enum AlarmActionEnum
         {
@@ -186,7 +195,7 @@ namespace KerbalAlarmClock
         public String Notes = "";                                                   //Entered extra details
         [Persistent] private String NotesStorage = "";                              //Entered extra details
         
-        [Persistent] public AlarmTypeEnum TypeOfAlarm = AlarmTypeEnum.Raw;                  //What Type of Alarm
+        [Persistent] public AlarmTypeEnum TypeOfAlarm = AlarmTypeEnum.Raw;          //What Type of Alarm
 
         public KACTime AlarmTime = new KACTime();                                   //UT of the alarm
         [Persistent] private Double AlarmTimeStorage;
@@ -201,8 +210,13 @@ namespace KerbalAlarmClock
 
         [Persistent] public String XferOriginBodyName = "";                         //Stored orbital transfer details
         [Persistent] public String XferTargetBodyName = "";
-        [Persistent] public Boolean RepeatAlarm = false;
 
+        [Persistent] public Boolean RepeatAlarm = false;
+        public KACTime RepeatAlarmPeriod = new KACTime();                           //Repeat how often - for non event driven stuff
+        [Persistent] private Double RepeatAlarmPeriodStorage;
+
+        public Boolean SupportsRepeat { get { return AlarmTypeSupportsRepeat.Contains(this.TypeOfAlarm); } }
+        public Boolean SupportsRepeatPeriod { get { return AlarmTypeSupportsRepeatPeriod.Contains(this.TypeOfAlarm); } }
 
         //Have to generate these details when the target object is set
         private ITargetable _TargetObject = null;                                   //Stored Target Details
@@ -279,6 +293,7 @@ namespace KerbalAlarmClock
         {
             NotesStorage = KACUtils.EncodeVarStrings(Notes);
             AlarmTimeStorage = AlarmTime.UT;
+            RepeatAlarmPeriodStorage = RepeatAlarmPeriod.UT;
             ContractGUIDStorage = ContractGUID.ToString();
             TargetObjectStorage = TargetSerialize(TargetObject);
             ManNodesStorage = ManNodeSerializeList(ManNodes);
@@ -288,9 +303,13 @@ namespace KerbalAlarmClock
             Notes = KACUtils.DecodeVarStrings(NotesStorage);
             AlarmTime=new KACTime(AlarmTimeStorage);
 
+            if (RepeatAlarmPeriodStorage != null && RepeatAlarmPeriodStorage != 0)
+                RepeatAlarmPeriod = new KACTime(RepeatAlarmPeriodStorage);
+
             //dont try and create a GUID from null or empty :)
             if (ContractGUIDStorage!=null && ContractGUIDStorage!="")
                 ContractGUID = new Guid(ContractGUIDStorage);
+
             _TargetObject = TargetDeserialize(TargetObjectStorage);
             ManNodes = ManNodeDeserializeList( ManNodesStorage);
         }
@@ -413,11 +432,28 @@ namespace KerbalAlarmClock
 
             return blnReturn;
         }
-        //internal static int SortByUT(KACAlarm c1, KACAlarm c2)
-        //{
-        //    return c1.Remaining.UT.CompareTo(c2.Remaining.UT);
-        //}
 
+        public KACAlarm Duplicate(Double newUT)
+        {
+            KACAlarm newAlarm = Duplicate();
+            newAlarm.AlarmTime = new KACTime(newUT);
+            return newAlarm;
+        }
+        public KACAlarm Duplicate()
+        {
+            KACAlarm newAlarm = new KACAlarm(this.VesselID, this.Name, this.Notes, this.AlarmTime.UT, this.AlarmMarginSecs, this.TypeOfAlarm, this.AlarmAction); ;
+            newAlarm.ContractAlarmType = this.ContractAlarmType;
+            newAlarm.ContractGUID = this.ContractGUID;
+            newAlarm.DeleteOnClose = this.DeleteOnClose;
+            newAlarm.ManNodes = this.ManNodes;
+            newAlarm.RepeatAlarm = this.RepeatAlarm;
+            newAlarm.RepeatAlarmPeriod = this.RepeatAlarmPeriod;
+            newAlarm.TargetObject = this.TargetObject;
+            newAlarm.XferOriginBodyName = this.XferOriginBodyName;
+            newAlarm.XferTargetBodyName= this.XferTargetBodyName;
+
+            return newAlarm;
+        }
     }
 
     //public class ManeuverNodeStorageList:List<ManeuverNodeStorage>

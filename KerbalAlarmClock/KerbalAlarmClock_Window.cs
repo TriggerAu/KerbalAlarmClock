@@ -451,23 +451,23 @@ namespace KerbalAlarmClock
             {
                 switch (AddType)
                 {
-                    case KACAlarm.AlarmTypeEnum.Raw: 
-                        AddWindowHeight = 250; break;
+                    case KACAlarm.AlarmTypeEnum.Raw:
+                        AddWindowHeight = 234; break; // 250;
                     case KACAlarm.AlarmTypeEnum.Maneuver:
                     case KACAlarm.AlarmTypeEnum.SOIChange:
-                        AddWindowHeight = 182; break;
+                        AddWindowHeight = 170; break; // 182;
                     case KACAlarm.AlarmTypeEnum.Apoapsis:
                     case KACAlarm.AlarmTypeEnum.Periapsis:
-                        AddWindowHeight = 208; break;
+                        AddWindowHeight = 200; break;// 208; 
                     case KACAlarm.AlarmTypeEnum.AscendingNode:
                     case KACAlarm.AlarmTypeEnum.DescendingNode:
                     case KACAlarm.AlarmTypeEnum.LaunchRendevous:
-                        AddWindowHeight = 234; break;
+                        AddWindowHeight = 226; break;// 234; 
                     case KACAlarm.AlarmTypeEnum.Transfer:                        
                     case KACAlarm.AlarmTypeEnum.TransferModelled:
                         AddWindowHeight = intAddXferHeight; break;
                     case KACAlarm.AlarmTypeEnum.Closest:
-                        AddWindowHeight = 230; break;
+                        AddWindowHeight = 252; break; //230;
                     case KACAlarm.AlarmTypeEnum.Distance:
                         AddWindowHeight = intAddDistanceHeight; break;
                     case KACAlarm.AlarmTypeEnum.Crew:
@@ -478,6 +478,7 @@ namespace KerbalAlarmClock
                     default: AddWindowHeight = 250; break;
                 }
                 AddWindowHeight += intHeight_AddWindowCommon;
+                AddWindowHeight += intHeight_AddWindowRepeat;
                 _WindowAddRect = GUILayout.Window(_WindowAddID, new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width, WindowPosByActiveScene.y, intAddPaneWindowWidth, AddWindowHeight), FillAddWindow, "Add New Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
 
                 if (_ShowAddMessages)

@@ -250,9 +250,11 @@ namespace KerbalAlarmClock
         }
 
         #region Static Properties
-        public Double HoursPerDay { get { return GameSettings.KERBIN_TIME ? HoursPerDayKerbin : HoursPerDayEarth; } }
-        public Double HoursPerYear { get { return GameSettings.KERBIN_TIME ? HoursPerYearKerbin : HoursPerYearEarth; } }
-        public Double DaysPerYear { get { return HoursPerYear / HoursPerDay; } }
+        public static Double HoursPerDay { get { return GameSettings.KERBIN_TIME ? HoursPerDayKerbin : HoursPerDayEarth; } }
+        public static Double SecondsPerDay { get { return HoursPerDay * 60 * 60; } }
+        public static Double HoursPerYear { get { return GameSettings.KERBIN_TIME ? HoursPerYearKerbin : HoursPerYearEarth; } }
+        public static Double DaysPerYear { get { return HoursPerYear / HoursPerDay; } }
+        public static Double SecondsPerYear { get { return HoursPerYear * 60 * 60; } }
         #endregion
 
         #region "Static Functions"
@@ -390,14 +392,14 @@ namespace KerbalAlarmClock
             if (TimeEntryPrecision > TimeEntryPrecisionEnum.Days)
                 Days = timeTemp.Day.ToString();
             else if (TimeEntryPrecision == TimeEntryPrecisionEnum.Days)
-                Days = ((timeTemp.Year * timeTemp.DaysPerYear) + timeTemp.Day).ToString();
+                Days = ((timeTemp.Year * KACTime.DaysPerYear) + timeTemp.Day).ToString();
             else
                 Days = "0";
 
             if (TimeEntryPrecision > TimeEntryPrecisionEnum.Hours)
                 Hours = timeTemp.Hour.ToString();
             else if (TimeEntryPrecision == TimeEntryPrecisionEnum.Hours)
-                Hours = ((timeTemp.Year * timeTemp.HoursPerYear) + (timeTemp.Day * timeTemp.HoursPerDay) + timeTemp.Hour).ToString();
+                Hours = ((timeTemp.Year * KACTime.HoursPerYear) + (timeTemp.Day * KACTime.HoursPerDay) + timeTemp.Hour).ToString();
             else
                 Hours = "0";
 

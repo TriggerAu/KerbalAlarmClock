@@ -154,7 +154,7 @@ namespace KerbalAlarmClock
         private Int32 intAddDistanceHeight = 272;
         private void WindowLayout_AddPane_TargetDistance()
         {
-            intAddDistanceHeight = 272;
+            intAddDistanceHeight = 262;// 272;
             GUILayout.BeginVertical();
             GUILayout.Label(strAlarmEventName + " Details...", KACResources.styleAddSectionHeading);
 

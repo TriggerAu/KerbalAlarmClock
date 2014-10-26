@@ -1249,13 +1249,7 @@ namespace KerbalAlarmClock
                                             a.XferTargetBodyName == alarmToCheck.XferTargetBodyName &&
                                             a.AlarmTime.UT == tmpModelPoint.UT))
                             {
-                                KACAlarm alarmNew = new KACAlarm(alarmToCheck.VesselID, alarmToCheck.Name, alarmToCheck.Notes,
-                                                    (XferNextTargetEventTime.UT - alarmToCheck.AlarmMarginSecs), alarmToCheck.AlarmMarginSecs, KACAlarm.AlarmTypeEnum.TransferModelled,
-                                                    alarmToCheck.AlarmAction);
-                                alarmNew.XferOriginBodyName = alarmToCheck.XferOriginBodyName;
-                                alarmNew.XferTargetBodyName = alarmToCheck.XferTargetBodyName;
-                                alarmNew.RepeatAlarm = true;
-                                alarmToAdd=alarmNew;
+                                alarmToAdd=alarmToCheck.Duplicate(XferNextTargetEventTime.UT - alarmToCheck.AlarmMarginSecs);
                                 return true;
                             }
                             else
@@ -1273,6 +1267,12 @@ namespace KerbalAlarmClock
                     {
                         LogFormatted("Unable to find a future model data point for this transfer({0}->{1})\r\n{2}", alarmToCheck.XferOriginBodyName, alarmToCheck.XferTargetBodyName, ex.Message);
                     }
+                }
+                else if (alarmToCheck.RepeatAlarmPeriod.UT > 0)
+                {
+                    LogFormatted("Adding repeat alarm for {0}:{1}-{2}+{3}", alarmToCheck.TypeOfAlarm, alarmToCheck.Name, alarmToCheck.AlarmTime.UT, alarmToCheck.RepeatAlarmPeriod.UT);
+                    alarmToAdd = alarmToCheck.Duplicate(alarmToCheck.AlarmTime.UT + alarmToCheck.RepeatAlarmPeriod.UT);
+                    return true;
                 }
             }
             alarmToAdd = null;

@@ -19,6 +19,7 @@ namespace KerbalAlarmClock
 
         private KACTimeStringArray timeRaw = new KACTimeStringArray(600, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        private KACTimeStringArray timeRepeatPeriod = new KACTimeStringArray(50 * KACTime.SecondsPerDay, KACTimeStringArray.TimeEntryPrecisionEnum.Days);
 
         private String strAlarmName = "";
         private String strAlarmNotes = "";
@@ -355,6 +356,7 @@ namespace KerbalAlarmClock
             };
 
         private int intHeight_AddWindowCommon;
+        private int intHeight_AddWindowRepeat;
         /// <summary>
         /// Draw the Add Window contents
         /// </summary>
@@ -598,8 +600,12 @@ namespace KerbalAlarmClock
                     //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Maneuver"
                     String strVesselID = "";
                     if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                    alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmTypeEnum.Raw, 
-                        AddAction));
+                    KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingXferAlarm ? "Alarm Repeats\r\n" : "") + strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmTypeEnum.Raw,
+                        AddAction);
+                    alarmNew.RepeatAlarm = blnRepeatingXferAlarm;
+                    alarmNew.RepeatAlarmPeriod = new KACTime(timeRepeatPeriod.UT);
+                    alarms.Add(alarmNew);
+
                     //settings.Save();
                     _ShowAddPane = false;
                 }
@@ -621,7 +627,7 @@ namespace KerbalAlarmClock
         private  Int32 intAddCrewHeight = 322;
         private void WindowLayout_AddPane_Crew()
         {
-            intAddCrewHeight = 322;
+            intAddCrewHeight = 304;// 322;
             GUILayout.Label("Select Crew...", KACResources.styleAddSectionHeading);
             if (KACWorkerGameState.CurrentVessel == null)
             {
@@ -729,13 +735,16 @@ namespace KerbalAlarmClock
                         if (DrawAddAlarm(CrewTime, null, CrewTimeToAlarm))
                         {
                             //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Maneuver"
-                            KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmTypeEnum.Crew,
+                            KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, (blnRepeatingXferAlarm ? "Alarm Repeats\r\n" : "") + strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmTypeEnum.Crew,
                                 AddAction);
                             if (CrewAlarmStoreNode)
                             {
                                 if (KACWorkerGameState.ManeuverNodeExists) addAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
                                 if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                             }
+                            addAlarm.RepeatAlarm = blnRepeatingXferAlarm;
+                            addAlarm.RepeatAlarmPeriod = new KACTime(timeRepeatPeriod.UT);
+
                             alarms.Add(addAlarm);
                             //settings.Save();
                             _ShowAddPane = false;
@@ -874,11 +883,30 @@ namespace KerbalAlarmClock
             
         }
 
-        private Boolean DrawAddAlarm(KACTime AlarmDate, KACTime TimeToEvent, KACTime TimeToAlarm)
+        private Boolean DrawAddAlarm(KACTime AlarmDate, KACTime TimeToEvent, KACTime TimeToAlarm,Boolean ForceShowRepeat = false)
         {
             Boolean blnReturn = false;
+            intHeight_AddWindowRepeat = 0;
             int intLineHeight = 18;
-            //work out the strings
+
+            GUILayout.BeginVertical();
+
+            //Do we show repeating options
+            if (KACAlarm.AlarmTypeSupportsRepeat.Contains(AddType) || ForceShowRepeat)
+            {
+                intHeight_AddWindowRepeat += 53;
+                GUILayout.Label("Alarm Repeat Options...", KACResources.styleAddSectionHeading);
+                GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+                DrawCheckbox(ref blnRepeatingXferAlarm, new GUIContent("Make this alarm repeat when triggered", "If enabled then when one alarm fires another will be created based on the existing alarm"));
+                if (KACAlarm.AlarmTypeSupportsRepeatPeriod.Contains(AddType))
+                {
+                    intHeight_AddWindowRepeat += 24;
+                    DrawTimeEntry(ref timeRepeatPeriod, KACTimeStringArray.TimeEntryPrecisionEnum.Days, "Repeat After:", 90);
+                }
+                GUILayout.EndVertical();
+            }
+            
+            //Now for the add area
             GUILayout.BeginHorizontal(KACResources.styleAddAlarmArea);
             GUILayout.BeginVertical();
 
@@ -909,6 +937,9 @@ namespace KerbalAlarmClock
                 blnReturn = true;
             }
             GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
+
             return blnReturn;
         }
 
@@ -1129,7 +1160,7 @@ namespace KerbalAlarmClock
         private int intXferType = 1;
         private void WindowLayout_AddPane_Transfer()
         {
-            intAddXferHeight = 317;
+            intAddXferHeight = 304;// 317;
             KACTime XferCurrentTargetEventTime = null;
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
@@ -1344,10 +1375,10 @@ namespace KerbalAlarmClock
                     //Model based
                     if (XferCurrentTargetEventTime!=null)
                     {
-                        DrawCheckbox(ref blnRepeatingXferAlarm, new GUIContent("Make this alarm repeat for future windows", "If enabled then when one alarm fires another will be created for the next transfer"));
                         if (DrawAddAlarm(XferCurrentTargetEventTime,
                                     new KACTime(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT),
-                                    new KACTime(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT)))
+                                    new KACTime(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT),
+                                    true))
                         {
                             String strVesselID = "";
                             if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();

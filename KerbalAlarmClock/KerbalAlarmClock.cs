@@ -1100,6 +1100,9 @@ namespace KerbalAlarmClock
 
         private void ParseAlarmsAndAffectWarpAndPause(double SecondsTillNextUpdate)
         {
+            KACAlarmList alarmsToAdd = new KACAlarmList();
+            KACAlarm alarmAddTemp;
+
             foreach (KACAlarm tmpAlarm in alarms)
             {
                 //reset each alarms WarpInfluence flag
@@ -1132,6 +1135,10 @@ namespace KerbalAlarmClock
 
                         LogFormatted("Triggering Alarm - " + tmpAlarm.Name);
                         tmpAlarm.Triggered = true;
+
+
+                        if (CreateAlarmRepeats(tmpAlarm, out alarmAddTemp))
+                            alarmsToAdd.Add(alarmAddTemp);
 
                         try {
                             APIInstance_AlarmStateChanged(tmpAlarm, AlarmStateEventsEnum.Triggered);
@@ -1210,6 +1217,66 @@ namespace KerbalAlarmClock
                     }
                 //}
             }
+
+            //Add any extra alarms that were created in the parse loop
+            foreach (KACAlarm a in alarmsToAdd)
+            {
+                alarms.Add(a);
+            }
+        }
+
+
+        private Boolean CreateAlarmRepeats(KACAlarm alarmToCheck, out KACAlarm alarmToAdd)
+        {
+            if (alarmToCheck.RepeatAlarm){
+                if (alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.TransferModelled)
+                {
+                    try
+                    {
+                        LogFormatted("Adding repeat alarm for ({0}->{1})", alarmToCheck.XferOriginBodyName, alarmToCheck.XferTargetBodyName);
+                        //find the next transfer from the modelled data
+                        KACXFerModelPoint tmpModelPoint = KACResources.lstXferModelPoints.FirstOrDefault(
+                                   m => FlightGlobals.Bodies[m.Origin].bodyName == alarmToCheck.XferOriginBodyName &&
+                                       FlightGlobals.Bodies[m.Target].bodyName == alarmToCheck.XferTargetBodyName &&
+                                       m.UT > alarmToCheck.AlarmTime.UT + alarmToCheck.AlarmMarginSecs);
+
+                        if (tmpModelPoint != null)
+                        {
+                            KACTime XferNextTargetEventTime = new KACTime(tmpModelPoint.UT);
+
+                            if (!alarms.Any(a => a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.TransferModelled &&
+                                            a.XferOriginBodyName == alarmToCheck.XferOriginBodyName &&
+                                            a.XferTargetBodyName == alarmToCheck.XferTargetBodyName &&
+                                            a.AlarmTime.UT == tmpModelPoint.UT))
+                            {
+                                KACAlarm alarmNew = new KACAlarm(alarmToCheck.VesselID, alarmToCheck.Name, alarmToCheck.Notes,
+                                                    (XferNextTargetEventTime.UT - alarmToCheck.AlarmMarginSecs), alarmToCheck.AlarmMarginSecs, KACAlarm.AlarmTypeEnum.TransferModelled,
+                                                    alarmToCheck.AlarmAction);
+                                alarmNew.XferOriginBodyName = alarmToCheck.XferOriginBodyName;
+                                alarmNew.XferTargetBodyName = alarmToCheck.XferTargetBodyName;
+                                alarmNew.RepeatAlarm = true;
+                                alarmToAdd=alarmNew;
+                                return true;
+                            }
+                            else
+                            {
+                                LogFormatted("Alarm already exists, not adding repeat({0}->{1}): UT={2}", alarmToCheck.XferOriginBodyName, alarmToCheck.XferTargetBodyName, XferNextTargetEventTime.UT);
+                            }
+                        }
+                        else
+                        {
+                            LogFormatted("Unable to find a future model data point for this transfer({0}->{1})", alarmToCheck.XferOriginBodyName, alarmToCheck.XferTargetBodyName);
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        LogFormatted("Unable to find a future model data point for this transfer({0}->{1})\r\n{2}", alarmToCheck.XferOriginBodyName, alarmToCheck.XferTargetBodyName, ex.Message);
+                    }
+                }
+            }
+            alarmToAdd = null;
+            return false;
         }
 
         private Int32 targetToRestoreAttempts = 0;
@@ -1250,15 +1317,15 @@ namespace KerbalAlarmClock
             {
                 first = false;
                 HighLogic.SaveFolder = "default";
-                HighLogic.SaveFolder = "Career";
+                //HighLogic.SaveFolder = "Career";
                 Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
 
                 if (game != null && game.flightState != null && game.compatible)
                 {
                     //straight to spacecenter
-                    HighLogic.CurrentGame = game;
-                    HighLogic.LoadScene(GameScenes.SPACECENTER);
-                    return;
+                    //HighLogic.CurrentGame = game;
+                    //HighLogic.LoadScene(GameScenes.SPACECENTER);
+                    //return;
 
                     Int32 FirstVessel;
                     Boolean blnFoundVessel = false;

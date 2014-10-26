@@ -1076,6 +1076,7 @@ namespace KerbalAlarmClock
         private int intXferCurrentOrigin = 0;
         private int intXferCurrentTarget = 0;
         //private KerbalTime XferCurrentTargetEventTime;
+        private Boolean blnRepeatingXferAlarm = false;
 
         private void SetUpXferParents()
         {
@@ -1132,7 +1133,7 @@ namespace KerbalAlarmClock
             KACTime XferCurrentTargetEventTime = null;
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Transfers", KACResources.styleAddSectionHeading);
+            GUILayout.Label("Transfers", KACResources.styleAddSectionHeading, GUILayout.Width(60));
             //add something here to select the modelled or formula values for Solar orbiting bodies
             if (settings.XferModelDataLoaded)
             {
@@ -1343,15 +1344,18 @@ namespace KerbalAlarmClock
                     //Model based
                     if (XferCurrentTargetEventTime!=null)
                     {
+                        DrawCheckbox(ref blnRepeatingXferAlarm, new GUIContent("Make this alarm repeat for future windows", "If enabled then when one alarm fires another will be created for the next transfer"));
                         if (DrawAddAlarm(XferCurrentTargetEventTime,
                                     new KACTime(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT),
                                     new KACTime(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT)))
                         {
                             String strVesselID = "";
                             if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                            alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
-                                (XferCurrentTargetEventTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.Transfer,
-                                AddAction, XferTargetBodies[intXferCurrentTarget]));
+                            KACAlarm alarmNew =new KACAlarm(strVesselID, strAlarmName, (blnRepeatingXferAlarm?"Alarm Repeats\r\n":"") +  strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
+                                (XferCurrentTargetEventTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.TransferModelled,
+                                AddAction, XferTargetBodies[intXferCurrentTarget]); 
+                            alarmNew.RepeatAlarm = blnRepeatingXferAlarm;
+                            alarms.Add(alarmNew);
                             //settings.Save();
                             _ShowAddPane = false;
                         }

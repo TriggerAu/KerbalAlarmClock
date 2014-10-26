@@ -201,6 +201,8 @@ namespace KerbalAlarmClock
 
         [Persistent] public String XferOriginBodyName = "";                         //Stored orbital transfer details
         [Persistent] public String XferTargetBodyName = "";
+        [Persistent] public Boolean RepeatAlarm = false;
+
 
         //Have to generate these details when the target object is set
         private ITargetable _TargetObject = null;                                   //Stored Target Details

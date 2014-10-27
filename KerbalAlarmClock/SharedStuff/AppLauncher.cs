@@ -71,11 +71,13 @@ namespace KerbalAlarmClock
 
         internal void DestroyAppLauncherButton()
         {
-            LogFormatted_DebugOnly("Here");
+            LogFormatted_DebugOnly("DestroyAppLauncherButton: Call");
             if (btnAppLauncher != null)
             {
+                LogFormatted_DebugOnly("DestroyAppLauncherButton: Button to Destroy");
                 ApplicationLauncher.Instance.RemoveModApplication(btnAppLauncher);
             }
+            LogFormatted_DebugOnly("DestroyAppLauncherButton: End");
         }
 
         void onAppLaunchToggleOn() {

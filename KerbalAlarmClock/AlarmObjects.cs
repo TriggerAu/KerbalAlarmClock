@@ -199,7 +199,11 @@ namespace KerbalAlarmClock
 
         public KACTime AlarmTime = new KACTime();                                   //UT of the alarm
         [Persistent] private Double AlarmTimeStorage;
-        
+        public Double AlarmTimeUT {
+            get { return AlarmTime.UT; }
+            set { AlarmTime.UT = value; }
+        }
+
         [Persistent] public Double AlarmMarginSecs = 0;                             //What the margin from the event was
         [Persistent] public Boolean Enabled = true;                                 //Whether it is enabled - not in use currently
         [Persistent] public AlarmActionEnum AlarmAction= AlarmActionEnum.KillWarp;
@@ -212,8 +216,13 @@ namespace KerbalAlarmClock
         [Persistent] public String XferTargetBodyName = "";
 
         [Persistent] public Boolean RepeatAlarm = false;
-        public KACTime RepeatAlarmPeriod = new KACTime();                           //Repeat how often - for non event driven stuff
+        public KACTime RepeatAlarmPeriod = new KACTime(0);                           //Repeat how often - for non event driven stuff
         [Persistent] private Double RepeatAlarmPeriodStorage;
+        public Double RepeatAlarmPeriodUT
+        {
+            get { return RepeatAlarmPeriod.UT; }
+            set { RepeatAlarmPeriod.UT = value; }
+        }
 
         public Boolean SupportsRepeat { get { return AlarmTypeSupportsRepeat.Contains(this.TypeOfAlarm); } }
         public Boolean SupportsRepeatPeriod { get { return AlarmTypeSupportsRepeatPeriod.Contains(this.TypeOfAlarm); } }
@@ -556,7 +565,7 @@ namespace KerbalAlarmClock
                 MonoBehaviourExtended.LogFormatted_DebugOnly("Decoding:{0}", AlarmListNode);
                 KACAlarmListStorage lstTemp = new KACAlarmListStorage();
                 ConfigNode.LoadObjectFromConfig(lstTemp, AlarmListNode);
-                this.Clear();
+                //this.Clear();
                 this.AddRange(lstTemp.list);
 
             }

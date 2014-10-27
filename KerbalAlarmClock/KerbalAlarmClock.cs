@@ -137,12 +137,19 @@ namespace KerbalAlarmClock
 
         internal override void Start()
         {
+            LogFormatted_DebugOnly("Start function-Setting up ScenarioModule");
+            LogFormatted_DebugOnly("Alarms Length:{0}", alarms.Count);
             ProtoScenarioModule psm = HighLogic.CurrentGame.scenarios.FirstOrDefault(x => x.moduleName == typeof(KerbalAlarmClockScenario).Name);
             if (psm==null) {
+                //if no module then create it
+                LogFormatted_DebugOnly("Creating ScenarioModule for {0}", HighLogic.LoadedScene);
                 HighLogic.CurrentGame.AddProtoScenarioModule(typeof(KerbalAlarmClockScenario), HighLogic.LoadedScene);
             } else {
-                if (!psm.targetScenes.Any(x=>x==HighLogic.LoadedScene))
+                //if it exists, but not in this scene then add it to the scene
+                if (!psm.targetScenes.Any(x => x == HighLogic.LoadedScene)) {
+                    LogFormatted_DebugOnly("Adding Scene to ScenarioModule for {0}", HighLogic.LoadedScene);
                     psm.targetScenes.Add(HighLogic.LoadedScene);
+                }
             }
 
             RemoveInputLock();

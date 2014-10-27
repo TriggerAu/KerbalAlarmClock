@@ -14,7 +14,13 @@ namespace KerbalAlarmClock
     {
         public override void OnLoad(ConfigNode gameNode)
         {
+            //reset the list here
+            //KerbalAlarmClock.alarms = new KACAlarmList();
+            KerbalAlarmClock.alarms.RemoveRange(0,KerbalAlarmClock.alarms.Count);
+
             base.OnLoad(gameNode);
+            MonoBehaviourExtended.LogFormatted_DebugOnly("BaseLoadDone. Alarms Count:{0}", KerbalAlarmClock.alarms.Count);
+
             MonoBehaviourExtended.LogFormatted_DebugOnly("OnLoad: ");
             MonoBehaviourExtended.LogFormatted_DebugOnly("{0}",gameNode);
 
@@ -24,6 +30,8 @@ namespace KerbalAlarmClock
             {
                 KerbalAlarmClock.alarms.DecodeFromCN(gameNode.GetNode("KACAlarmListStorage"));
             }
+
+            MonoBehaviourExtended.LogFormatted_DebugOnly("ScenarioLoadDone. Alarms Count:{0}", KerbalAlarmClock.alarms.Count);
             //{MonoBehaviourExtended.LogFormatted_DebugOnly("A");} else {MonoBehaviourExtended.LogFormatted_DebugOnly("B");}
             //KerbalAlarmClock.alarms.DecodeFromCN(gameNode.GetNode(this.GetType().Name));
         }

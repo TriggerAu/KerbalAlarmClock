@@ -15,7 +15,8 @@ namespace KerbalAlarmClock
         public override void OnLoad(ConfigNode gameNode)
         {
             //reset the list here
-            KerbalAlarmClock.alarms = new KACAlarmList();
+            //KerbalAlarmClock.alarms = new KACAlarmList();
+            KerbalAlarmClock.alarms.RemoveRange(0,KerbalAlarmClock.alarms.Count);
 
             base.OnLoad(gameNode);
             MonoBehaviourExtended.LogFormatted_DebugOnly("BaseLoadDone. Alarms Count:{0}", KerbalAlarmClock.alarms.Count);

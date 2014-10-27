@@ -15,6 +15,7 @@ namespace KerbalAlarmClock
         public override void OnLoad(ConfigNode gameNode)
         {
             MonoBehaviourExtended.LogFormatted_DebugOnly("GameLoad in ScenarioModule. Alarms Count:{0}",KerbalAlarmClock.alarms.Count);
+            KerbalAlarmClock.alarms = new KACAlarmList();
 
             base.OnLoad(gameNode);
             MonoBehaviourExtended.LogFormatted_DebugOnly("BaseLoadDone. Alarms Count:{0}", KerbalAlarmClock.alarms.Count);

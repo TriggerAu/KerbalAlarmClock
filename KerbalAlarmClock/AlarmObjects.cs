@@ -556,7 +556,7 @@ namespace KerbalAlarmClock
                 MonoBehaviourExtended.LogFormatted_DebugOnly("Decoding:{0}", AlarmListNode);
                 KACAlarmListStorage lstTemp = new KACAlarmListStorage();
                 ConfigNode.LoadObjectFromConfig(lstTemp, AlarmListNode);
-                this.Clear();
+                //this.Clear();
                 this.AddRange(lstTemp.list);
 
             }

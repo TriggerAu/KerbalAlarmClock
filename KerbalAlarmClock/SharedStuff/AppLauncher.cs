@@ -40,9 +40,10 @@ namespace KerbalAlarmClock
         {
             ApplicationLauncherButton retButton = null;
 
+            ApplicationLauncherButton[] lstButtons = KerbalAlarmClock.FindObjectsOfType<ApplicationLauncherButton>();
+            LogFormatted("AppLauncher: Creating Button-BEFORE", lstButtons.Length);
             try
             {
-                LogFormatted("ADDING APP LAUNCHER");
                 retButton = ApplicationLauncher.Instance.AddModApplication(
                     onAppLaunchToggleOn, onAppLaunchToggleOff,
                     onAppLaunchHoverOn, onAppLaunchHoverOff,
@@ -62,22 +63,27 @@ namespace KerbalAlarmClock
             }
             catch (Exception ex)
             {
-                MonoBehaviourExtended.LogFormatted("Failed to set up App Launcher Button\r\n{0}",ex.Message);
+                MonoBehaviourExtended.LogFormatted("AppLauncher: Failed to set up App Launcher Button\r\n{0}", ex.Message);
                 retButton = null;
             }
+            lstButtons = KerbalAlarmClock.FindObjectsOfType<ApplicationLauncherButton>();
+            LogFormatted("AppLauncher: Creating Button-AFTER", lstButtons.Length);
+
             return retButton;
         }
 
 
         internal void DestroyAppLauncherButton()
         {
-            LogFormatted_DebugOnly("DestroyAppLauncherButton: Call");
+            LogFormatted("AppLauncher: Destroying Button-BEFORE NULL CHECK");
             if (btnAppLauncher != null)
             {
-                LogFormatted_DebugOnly("DestroyAppLauncherButton: Button to Destroy");
+                ApplicationLauncherButton[] lstButtons = KerbalAlarmClock.FindObjectsOfType<ApplicationLauncherButton>();
+                LogFormatted("AppLauncher: Destroying Button-Button Count:{0}", lstButtons.Length);
                 ApplicationLauncher.Instance.RemoveModApplication(btnAppLauncher);
+                btnAppLauncher = null;
             }
-            LogFormatted_DebugOnly("DestroyAppLauncherButton: End");
+            LogFormatted("AppLauncher: Destroying Button-AFTER NULL CHECK");
         }
 
         void onAppLaunchToggleOn() {

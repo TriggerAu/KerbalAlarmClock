@@ -106,7 +106,7 @@ function CreateKerbalStuffRelease() {
 function UpdateVersionCheckGHPagesAndPublish() {
     write-host -ForegroundColor Yellow "`r`nMERGING GHPages Dev to Master"
 
-    $GHPagesPath = "$($PSScriptRoot)\..\..\$($PluginName)_gh-pages"
+    $GHPagesPath = "$($PSScriptRoot)\..\..\$($GitHubName)_gh-pages"
 
 	git --git-dir="$($GHPagesPath)\.git" --work-tree="$($GHPagesPath)" checkout gh-pages_develop
     #update the version file
@@ -179,8 +179,8 @@ else
             #}
 
             if ($KerbalStuffPW -eq $null) {
-                $KerbalStuffLogin = Read-Host -Prompt "KerbalStuff Login"
-                $KerbalStuffPW = Read-Host -Prompt "KerbalStuff Password"
+                $global:KerbalStuffLogin = Read-Host -Prompt "KerbalStuff Login"
+                $global:KerbalStuffPW = Read-Host -Prompt "KerbalStuff Password"
             }
 
         }

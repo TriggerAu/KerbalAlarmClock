@@ -85,7 +85,7 @@ namespace KACAPITester_KACWrapper
                 return false;
             }
 
-            LogFormatted_DebugOnly("KAC Version:{0}", KACType.Assembly.GetName().Version.ToString());
+            LogFormatted("KAC Version:{0}", KACType.Assembly.GetName().Version.ToString());
             if (KACType.Assembly.GetName().Version.CompareTo(new System.Version(3, 0, 0, 5)) < 0)
             {
                 //No TimeEntry or alarmchoice options = need a newer version
@@ -174,11 +174,11 @@ namespace KACAPITester_KACWrapper
                 //DrawTimeEntryMethod = KACType.GetMethod("DrawTimeEntryAPI", BindingFlags.Public | BindingFlags.Instance);
                 //LogFormatted_DebugOnly("Success: " + (DrawTimeEntryMethod != null).ToString());
 
-                MethodInfo[] mis = KACType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
-                foreach (MethodInfo mi in mis)
-                {
-                    LogFormatted("M:{0}-{1}", mi.Name, mi.DeclaringType);
-                }
+            //    MethodInfo[] mis = KACType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+            //    foreach (MethodInfo mi in mis)
+            //    {
+            //        LogFormatted("M:{0}-{1}", mi.Name, mi.DeclaringType);
+            //    }
             }
 
             private Object actualKAC;
@@ -382,14 +382,17 @@ namespace KACAPITester_KACWrapper
                     NameField = KACAlarmType.GetField("Name");
                     NotesField = KACAlarmType.GetField("Notes");
                     AlarmTypeField = KACAlarmType.GetField("TypeOfAlarm");
-                    AlarmTimeField = KACAlarmType.GetField("AlarmTime");
+                    AlarmTimeProperty = KACAlarmType.GetProperty("AlarmTimeUT");
                     AlarmMarginField = KACAlarmType.GetField("AlarmMarginSecs");
                     AlarmActionField = KACAlarmType.GetField("AlarmAction");
                     RemainingField = KACAlarmType.GetField("Remaining");
 
                     XferOriginBodyNameField = KACAlarmType.GetField("XferOriginBodyName");
-                    LogFormatted("XFEROrigin:{0}", XferOriginBodyNameField == null);
+                    //LogFormatted("XFEROrigin:{0}", XferOriginBodyNameField == null);
                     XferTargetBodyNameField = KACAlarmType.GetField("XferTargetBodyName");
+
+                    RepeatAlarmField = KACAlarmType.GetField("RepeatAlarm");
+                    RepeatAlarmPeriodProperty = KACAlarmType.GetProperty("RepeatAlarmPeriodUT");
 
                     //PropertyInfo[] pis = KACAlarmType.GetProperties();
                     //foreach (PropertyInfo pi in pis)
@@ -469,14 +472,14 @@ namespace KACAPITester_KACWrapper
                 /// </summary>
                 public AlarmTypeEnum AlarmType { get { return (AlarmTypeEnum)AlarmTypeField.GetValue(actualAlarm); } }
 
-                private FieldInfo AlarmTimeField;
+                private PropertyInfo AlarmTimeProperty;
                 /// <summary>
                 /// In game UT value of the alarm
                 /// </summary>
                 public Double AlarmTime
                 {
-                    get { return (Double)AlarmTimeField.GetValue(actualAlarm); }
-                    set { AlarmTimeField.SetValue(actualAlarm, value); }
+                    get { return (Double)AlarmTimeProperty.GetValue(actualAlarm,null); }
+                    set { AlarmTimeProperty.SetValue(actualAlarm, value, null); }
                 }
 
                 private FieldInfo AlarmMarginField;
@@ -504,6 +507,30 @@ namespace KACAPITester_KACWrapper
                 /// How much Game time is left before the alarm fires
                 /// </summary>
                 public Double Remaining { get { return (Double)RemainingField.GetValue(actualAlarm); } }
+
+
+                private FieldInfo RepeatAlarmField;
+                /// <summary>
+                /// Whether the alarm will be repeated after it fires
+                /// </summary>
+                public Boolean RepeatAlarm
+                {
+                    get { return (Boolean)RepeatAlarmField.GetValue(actualAlarm); }
+                    set { RepeatAlarmField.SetValue(actualAlarm, value); }
+                }
+                private PropertyInfo RepeatAlarmPeriodProperty;
+                /// <summary>
+                /// Value in Seconds after which the alarm will repeat
+                /// </summary>
+                public Double RepeatAlarmPeriod
+                {
+                    get
+                    {
+                        try { return (Double)RepeatAlarmPeriodProperty.GetValue(actualAlarm, null); }
+                        catch (Exception) { return 0; }
+                    }
+                    set { RepeatAlarmPeriodProperty.SetValue(actualAlarm, value, null); }
+                }
 
                 public enum AlarmStateEventsEnum
                 {

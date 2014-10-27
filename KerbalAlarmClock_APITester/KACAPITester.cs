@@ -56,7 +56,7 @@ namespace KerbalAlarmClock_APITester
                 foreach (KACWrapper.KACAPI.KACAlarm a in KACWrapper.KAC.Alarms)
                 {
                     GUILayout.BeginHorizontal();
-                    GUILayout.Label(String.Format("{0}-{1}-{2} ({3})", a.Name, a.AlarmType,a.Notes,a.ID  ));
+                    GUILayout.Label(String.Format("{0}-{1}-{2} ({3}) - {4}:{5}",a.Name, a.AlarmType,a.Notes,a.ID, a.RepeatAlarm,a.RepeatAlarmPeriod  ));
                     
                     //Option to delete each alarm
                     if (GUILayout.Button("Delete",GUILayout.Width(50))) {
@@ -73,7 +73,16 @@ namespace KerbalAlarmClock_APITester
                     KACWrapper.KAC.Alarms.First(z=>z.ID==aID).Notes = "FRED FLINTSTONE";
 
                 }
+
+                GUILayout.BeginHorizontal();
+                UT = GUILayout.TextField(UT);
+                if (GUILayout.Button("Create One"))
+                {
+                    KACWrapper.KAC.Alarms.First().AlarmTime = Convert.ToDouble(UT);
+                }
+                GUILayout.EndHorizontal();
             }
         }
+        String UT="";
     }
 }

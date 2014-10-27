@@ -74,6 +74,7 @@ namespace KerbalAlarmClock
         {
             strAlarmDescSOI = String.Format(strAlarmDescSOI, settings.AlarmAddSOIAutoThreshold.ToString());
             strAlarmDescXfer = String.Format(strAlarmDescXfer, settings.AlarmXferRecalcThreshold.ToString());
+            strAlarmDescNode = String.Format(strAlarmDescNode, settings.AlarmNodeRecalcThreshold.ToString());
             strAlarmDescMan = String.Format(strAlarmDescMan, settings.AlarmAddManAutoThreshold.ToString());
 
             GUILayout.BeginVertical();
@@ -361,7 +362,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("Sphere Of Influence Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(intSOIBoxheight));
 
-            if (DrawCheckbox(ref settings.AlarmSOIRecalc, new GUIContent("Auto Recalc of Manual SOI Alarms", strAlarmDescXfer)))
+            if (DrawCheckbox(ref settings.AlarmSOIRecalc, new GUIContent("Auto Recalc of Manual SOI Alarms")))
             {
                 settings.Save();
                 //if it was turned on then force a recalc regardless of the gap

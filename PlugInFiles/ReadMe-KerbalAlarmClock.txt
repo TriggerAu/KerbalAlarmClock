@@ -30,6 +30,12 @@ This work is licensed under an MIT license as outlined at the OSI site. Visit th
 
 VERSION HISTORY
 Version 3.0.2.0		-	KSP Version: 0.25.0
+- Fixed tooltip typos (Issue #68)
+- Fixed error on load of empty alarm block
+- Fixed issues with jumping from paused alarms at SC
+- Fixed versioncheck file
+
+Version 3.0.2.0		-	KSP Version: 0.25.0
 - Fixed issue where Alarm list was persisting between saves (Issue #67)
 - Added extra logging and null checks re AppLauncher
 - Updated KACWrapper to handle Alarmtime properly and add repeat properties

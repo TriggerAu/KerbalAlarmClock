@@ -111,7 +111,7 @@ function UpdateVersionCheckGHPagesAndPublish() {
 	git --git-dir="$($GHPagesPath)\.git" --work-tree="$($GHPagesPath)" checkout gh-pages_develop
     #update the version file
 
-    "|LATESTVERSION|$($Version)|LATESTVERSION|" | Out-File "$($GHPagesPath)\versioncheck.txt"
+    "|LATESTVERSION|$($Version)|LATESTVERSION|" | Out-File "$($GHPagesPath)\versioncheck.txt" -Encoding ascii
 
     #Commit these changes
     git --git-dir="$($GHPagesPath)\.git" --work-tree="$($GHPagesPath)" add "$($GHPagesPath)\versioncheck.txt"

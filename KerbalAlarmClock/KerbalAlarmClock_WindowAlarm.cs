@@ -553,6 +553,8 @@ namespace KerbalAlarmClock
                             String strret = GamePersistence.SaveGame("KACJumpToShip", HighLogic.SaveFolder, SaveMode.OVERWRITE);
                             Game tmpGame = GamePersistence.LoadGame(strret, HighLogic.SaveFolder, false, false);
                             FlightDriver.StartAndFocusVessel(tmpGame, intVesselidx);
+                            //if (tmpAlarm.PauseGame)
+                                FlightDriver.SetPause(false);
                         }
                         else
                         {

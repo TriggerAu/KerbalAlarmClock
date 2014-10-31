@@ -368,6 +368,7 @@ namespace KerbalAlarmClock
                 //Parse it for the version String
                 String strFile = wwwVersionCheck.text;
                 MonoBehaviourExtended.LogFormatted("Response Length:" + strFile.Length);
+                MonoBehaviourExtended.LogFormatted("File:{0}" , strFile);
 
                 Match matchVersion;
                 matchVersion = Regex.Match(strFile, "(?<=\\|LATESTVERSION\\|).+(?=\\|LATESTVERSION\\|)", System.Text.RegularExpressions.RegexOptions.Singleline);

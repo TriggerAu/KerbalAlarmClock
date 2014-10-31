@@ -235,6 +235,24 @@ if($ChoiceRtn -eq 0)
     $relKStuff = $reldescr.Replace("\r\n","`r`n")
     
 
+    "GitHub Description:"
+    "-------------------"
+    "$($reldescr)`r`n"
+
+    "KStuff Description:"
+    "-------------------"
+    "$($relKStuff)`r`n"
+
+    "Forum Info:"
+    "-------------------"
+    "$($ForumHeader)`r`n"
+    "$($ForumList)`r`n"
+
+    $Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
+    $ChoiceRtn = $host.ui.PromptForChoice("Do you wish to Continue?","Confirm Readme Notes",$Choices,0)
+
+    if($ChoiceRtn -eq 0) {
+
     MergeDevToMaster
 
     CreateGitHubRelease
@@ -263,6 +281,8 @@ if($ChoiceRtn -eq 0)
     "-------------------"
     "$($ForumHeader)`r`n"
     "$($ForumList)`r`n"
+
+    }
 
 }
 else

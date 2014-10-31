@@ -29,7 +29,7 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
-Version 3.0.2.0		-	KSP Version: 0.25.0
+Version 3.0.4.0		-	KSP Version: 0.25.0
 - Fixed tooltip typos (Issue #68)
 - Fixed error on load of empty alarm block
 - Fixed issues with jumping from paused alarms at SC

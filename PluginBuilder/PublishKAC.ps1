@@ -1,6 +1,7 @@
 $GitHubName="KerbalAlarmClock"
 $PluginName="KerbalAlarmClock"
 $CurseID="220289"
+$CurseName="220289-kerbal-alarm-clock"
 $KerbalStuffModID = 231
 $UploadDir = "$($PSScriptRoot)\..\..\_Uploads\$($PluginName)"
 $KerbalStuffWrapper = "D:\Programming\KSP\_Scripts\KerbalStuffWrapper\KerbalStuffWrapper.exe"
@@ -224,6 +225,8 @@ if($ChoiceRtn -eq 0)
 	$reldescr = $reldescr.Replace("`r`n","\r\n")
 	$reldescr = $reldescr.Replace("`"","\`"")
 	
+    $ForumHeader = "[B][SIZE=4][COLOR=`"#FF0000`"]v$($Version) Now Available [/COLOR][/SIZE][/B]- [SIZE=3][B][URL=`"https://github.com/TriggerAu/$($GitHubName)/releases/tag/v$($Version)`"]Download from GitHub[/URL][/B] [/SIZE] or [SIZE=3][B][URL=`"http://kerbal.curseforge.com/ksp-mods/$($CurseName)/files`"]Download from Curse*[/URL][/B][/SIZE] or [SIZE=3][B][URL=`"https://kerbalstuff.com/mod/$($KerbalStuffModID)`"]Download from Kerbal Stuff[/URL][/B] [/SIZE]  [COLOR=`"#A9A9A9`"]* Once it's approved[/COLOR]"
+
     $ForumList = "[LIST]`r`n" + $reldescr + "`r`n[/LIST]"
     $ForumList = $ForumList.Replace("\r\n","`r`n").Replace("`r`n* ","`r`n[*]")
 
@@ -256,8 +259,9 @@ if($ChoiceRtn -eq 0)
     "-------------------"
     "$($relKStuff)`r`n"
 
-    "Forum List text:"
+    "Forum Info:"
     "-------------------"
+    "$($ForumHeader)`r`n"
     "$($ForumList)`r`n"
 
 }

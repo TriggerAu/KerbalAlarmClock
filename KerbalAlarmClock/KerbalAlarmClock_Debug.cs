@@ -327,22 +327,22 @@ namespace KerbalAlarmClock
                 }
             }
 
-            //foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w => w.Index))
-            //{
-            //    GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times));
-            //}
-
-            if (GUILayout.Button("SetTrue"))
-                btnAppLauncher.SetTrue();
-            if (GUILayout.Button("SetFalse"))
-                btnAppLauncher.SetFalse();
+            GUILayout.Label(String.Format("{0}", WarpTransitionCalculator.WarpRateHash));
+            foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w => w.Index))
+            {
+                GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times));
+            }
+            for (int i = 0; i < TimeWarp.fetch.warpRates.Length; i++)
+            {
+                GUILayout.Label(string.Format("{0}({1})", TimeWarp.fetch.warpRates[i], i));
+            }
+           
             //    btnAppLauncher = InitAppLauncherButton();
             
-            //if (GUILayout.Button("Calc Rates"))
-            //{
-            //    warpchange();
-            //    WarpTransitionCalculator.CalcWarpRateTransitions();
-            //}
+            if (GUILayout.Button("Calc Rates"))
+            {
+                WarpTransitionCalculator.CalcWarpRateTransitions();
+            }
 
             //if (GUILayout.Button("Set Rate to inttest4"))
             //{

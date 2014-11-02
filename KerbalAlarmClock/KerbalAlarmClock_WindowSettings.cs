@@ -276,7 +276,7 @@ namespace KerbalAlarmClock
                 settings.Save();
             }
             if (GUILayout.Button("Reset",GUILayout.Height(16),GUILayout.Width(40))) {
-                settings.WarpTransitions_UTToRateTimesOneTenths = 16;
+                settings.WarpTransitions_UTToRateTimesOneTenths = 15;
                 settings.Save();
             }
             GUILayout.EndHorizontal();

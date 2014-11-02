@@ -1221,9 +1221,14 @@ namespace KerbalAlarmClock
                                 KACWorkerGameState.CurrentWarpInfluenceStartTime = DateTime.Now;
 
                                 TimeWarp w = TimeWarp.fetch;
-                                if (w.current_rate_index > 0)
+                                if (w.current_rate_index > 0 && WarpTransitionCalculator.UTToRateTimesOne > (tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT))
                                 {
-                                    LogFormatted("Reducing Warp");
+                                    LogFormatted("Reducing Warp-Transition Instant");
+                                    TimeWarp.SetRate(w.current_rate_index - 1, true);
+                                }
+                                else if (w.current_rate_index > 0)
+                                {
+                                    LogFormatted("Reducing Warp-Transition");
                                     TimeWarp.SetRate(w.current_rate_index - 1, false);
                                 }
                             }

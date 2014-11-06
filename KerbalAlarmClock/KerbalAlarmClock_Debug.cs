@@ -304,45 +304,45 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
 
-            GUILayout.Label(String.Format("S:{0}", intSelectedContract));
-            GUILayout.Label(String.Format("LastState:{0}", contractLastState));
-            if (Contracts.ContractSystem.Instance != null && lstContracts != null)
-            {
-                GUILayout.Label(String.Format("Title: {0}", lstContracts[intSelectedContract].Title));
-                //GUILayout.Label(String.Format("Syn: {0}", lstContracts[intSelectedContract].Synopsys));
-                //GUILayout.Label(String.Format("Desc: {0}", lstContracts[intSelectedContract].Description));
+            //GUILayout.Label(String.Format("S:{0}", intSelectedContract));
+            //GUILayout.Label(String.Format("LastState:{0}", contractLastState));
+            //if (Contracts.ContractSystem.Instance != null && lstContracts != null)
+            //{
+            //    GUILayout.Label(String.Format("Title: {0}", lstContracts[intSelectedContract].Title));
+            //    //GUILayout.Label(String.Format("Syn: {0}", lstContracts[intSelectedContract].Synopsys));
+            //    //GUILayout.Label(String.Format("Desc: {0}", lstContracts[intSelectedContract].Description));
 
-                //foreach (Contracts.ContractParameter cp in lstContracts[intSelectedContract].AllParameters)
-                //{
-                //    GUILayout.Label(String.Format("Param: {0}={1}", cp.Title,cp.Optional));
-                //}
-                //GUILayout.Label(String.Format("GUID: {0}", lstContracts[intSelectedContract].ContractGuid));
-                //GUILayout.Label(String.Format("State: {0}", lstContracts[intSelectedContract].ContractState));
-                //GUILayout.Label(String.Format("Notes: {0}", lstContracts[intSelectedContract].Notes));
+            //    //foreach (Contracts.ContractParameter cp in lstContracts[intSelectedContract].AllParameters)
+            //    //{
+            //    //    GUILayout.Label(String.Format("Param: {0}={1}", cp.Title,cp.Optional));
+            //    //}
+            //    //GUILayout.Label(String.Format("GUID: {0}", lstContracts[intSelectedContract].ContractGuid));
+            //    //GUILayout.Label(String.Format("State: {0}", lstContracts[intSelectedContract].ContractState));
+            //    //GUILayout.Label(String.Format("Notes: {0}", lstContracts[intSelectedContract].Notes));
 
-                foreach (Contracts.Contract item in lstContracts.Where(ci => ci.ContractState == Contracts.Contract.State.Offered).OrderBy(ci => ci.DateNext()))
-                {
-                    GUILayout.Label(String.Format("{0}\r\nDate:{1}, Date-margin:{2}", item.Title, item.DateNext(), item.DateNext()-settings.AlarmOnContractExpireMargin));
-                //    //GUILayout.Label(String.Format("DateExpire:{0}DateDeadline:{1}", item.DateExpire,item.DateDeadline));
-                }
-            }
+            //    foreach (Contracts.Contract item in lstContracts.Where(ci => ci.ContractState == Contracts.Contract.State.Offered).OrderBy(ci => ci.DateNext()))
+            //    {
+            //        GUILayout.Label(String.Format("{0}\r\nDate:{1}, Date-margin:{2}", item.Title, item.DateNext(), item.DateNext()-settings.AlarmOnContractExpireMargin));
+            //    //    //GUILayout.Label(String.Format("DateExpire:{0}DateDeadline:{1}", item.DateExpire,item.DateDeadline));
+            //    }
+            //}
 
-            GUILayout.Label(String.Format("{0}", WarpTransitionCalculator.WarpRateHash));
-            foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w => w.Index))
-            {
-                GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times));
-            }
-            for (int i = 0; i < TimeWarp.fetch.warpRates.Length; i++)
-            {
-                GUILayout.Label(string.Format("{0}({1})", TimeWarp.fetch.warpRates[i], i));
-            }
+            //GUILayout.Label(String.Format("{0}", WarpTransitionCalculator.WarpRateHash));
+            //foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w => w.Index))
+            //{
+            //    GUILayout.Label(string.Format("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times));
+            //}
+            //for (int i = 0; i < TimeWarp.fetch.warpRates.Length; i++)
+            //{
+            //    GUILayout.Label(string.Format("{0}({1})", TimeWarp.fetch.warpRates[i], i));
+            //}
            
-            //    btnAppLauncher = InitAppLauncherButton();
+            ////    btnAppLauncher = InitAppLauncherButton();
             
-            if (GUILayout.Button("Calc Rates"))
-            {
-                WarpTransitionCalculator.CalcWarpRateTransitions();
-            }
+            //if (GUILayout.Button("Calc Rates"))
+            //{
+            //    WarpTransitionCalculator.CalcWarpRateTransitions();
+            //}
 
             //if (GUILayout.Button("Set Rate to inttest4"))
             //{

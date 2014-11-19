@@ -312,7 +312,7 @@ namespace KerbalAlarmClock
             Notes = KACUtils.DecodeVarStrings(NotesStorage);
             AlarmTime=new KACTime(AlarmTimeStorage);
 
-            if (RepeatAlarmPeriodStorage != null && RepeatAlarmPeriodStorage != 0)
+            if (RepeatAlarmPeriodStorage != 0)
                 RepeatAlarmPeriod = new KACTime(RepeatAlarmPeriodStorage);
 
             //dont try and create a GUID from null or empty :)

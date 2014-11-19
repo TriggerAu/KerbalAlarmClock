@@ -102,13 +102,13 @@ namespace KerbalAlarmClock
         }
         void onAppLaunchHoverOn() {
             MonoBehaviourExtended.LogFormatted_DebugOnly("HovOn");
-            MouseOverAppLauncherBtn = true;
+            //MouseOverAppLauncherBtn = true;
         }
         void onAppLaunchHoverOff() {
             MonoBehaviourExtended.LogFormatted_DebugOnly("HovOff");
-            MouseOverAppLauncherBtn = false; 
+            //MouseOverAppLauncherBtn = false; 
         }
 
-        Boolean MouseOverAppLauncherBtn = false;
+        //Boolean MouseOverAppLauncherBtn = false;
     }
 }

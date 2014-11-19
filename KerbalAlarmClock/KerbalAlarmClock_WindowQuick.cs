@@ -42,7 +42,7 @@ namespace KerbalAlarmClock
             }
             lstQuickButtons.Add(new QuickAddItem("Raw Alarm (10 Min)", KACResources.iconRaw, QuickAddRaw));
 
-            QuickAddItem qkEarth = new QuickAddItem("Earth Alarm (1 Hr)", KACResources.iconEarth);
+            QuickAddItem qkEarth = new QuickAddItem("Earth Alarm (1 Hr)", KACResources.iconEarth, QuickAddEarth60);
             qkEarth.AllowAddAndWarp = false;
             lstQuickButtons.Add(qkEarth);
 
@@ -123,6 +123,21 @@ namespace KerbalAlarmClock
                 tmpAlarm.VesselID = KACWorkerGameState.CurrentVessel.id.ToString();
 
             
+            alarms.Add(tmpAlarm);
+
+            return tmpAlarm;
+        }
+
+        private KACAlarm QuickAddEarth60()
+        {
+            return QuickAddEarth(60);
+        }
+        private KACAlarm QuickAddEarth(Int32 Minutes)
+        {
+            KACAlarm tmpAlarm = new KACAlarm(EarthTimeEncode(DateTime.Now.AddMinutes(Minutes)));
+            tmpAlarm.TypeOfAlarm = KACAlarm.AlarmTypeEnum.EarthTime;
+            tmpAlarm.Name = "Quick Earth Alarm";
+
             alarms.Add(tmpAlarm);
 
             return tmpAlarm;

@@ -17,7 +17,7 @@ namespace KerbalAlarmClock
         /// </summary>
         internal static List<WarpTransition> WarpRateTransitionPeriods = new List<WarpTransition>();
 
-        private static String WarpRateHash = "";
+        internal static String WarpRateHash = "";
         internal static Boolean CheckForTransitionChanges()
         {
             //check to see if the warp rates are still the same

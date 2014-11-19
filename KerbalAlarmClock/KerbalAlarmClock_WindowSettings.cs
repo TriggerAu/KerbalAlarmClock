@@ -110,7 +110,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 462; //463; //434;// 572;//542;
+                    intSettingsHeight = 514; //462; //463; //434;// 572;//542;
                     break;
                 //case 1:
                 //    WindowLayout_SettingsSpecifics1();
@@ -265,6 +265,21 @@ namespace KerbalAlarmClock
 
             if (DrawCheckbox(ref settings.WarpTransitions_Instant, new GUIContent ("Use Instant Warp Transitions","Slams the transitions between levels - can cause issues for large timewarp factors")))
                 settings.Save();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(new GUIContent ("Transition Weighting:","How much leeway to give the transitions period. The higher this value the earlier the KAC will slow the warp rate"),
+                KACResources.styleAddHeading, GUILayout.Width(115)); //110
+            GUILayout.Label(settings.WarpTransitions_UTToRateTimesOneTenths.ToString(), KACResources.styleAddXferName, GUILayout.Width(25));
+            Int32 intReturn  = (Int32)Math.Floor(GUILayout.HorizontalSlider((float)settings.WarpTransitions_UTToRateTimesOneTenths, 10, 50));
+            if (intReturn != settings.WarpTransitions_UTToRateTimesOneTenths) {
+                settings.WarpTransitions_UTToRateTimesOneTenths = intReturn;
+                settings.Save();
+            }
+            if (GUILayout.Button("Reset",GUILayout.Height(16),GUILayout.Width(40))) {
+                settings.WarpTransitions_UTToRateTimesOneTenths = 15;
+                settings.Save();
+            }
+            GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
 

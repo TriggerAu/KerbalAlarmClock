@@ -99,7 +99,7 @@ function CreateKerbalStuffRelease() {
     {
 		"Updating Mod at KerbalStuff"
 		$File = get-item "$($UploadDir)\v$($Version)\$($pluginname)_$($Version).zip"
-		& $KerbalStuffWrapper updatemod /m:$KerbalStuffModID /u:"$KerbalStuffLogin" /p:"$KerbalStuffPW" /k:"$KSPVersion" /v:"$Version" /f:"$($File.FullName)" /l:"$relKStuff" /n:true
+		& $KerbalStuffWrapper updatemod /m:$KerbalStuffModID /u:"$KerbalStuffLogin" /p:"$KerbalStuffPW" /k:"$KerbalStuffKSPVersion" /v:"$Version" /f:"$($File.FullName)" /l:"$relKStuff" /n:true
 	}
 }
 
@@ -234,6 +234,10 @@ if($ChoiceRtn -eq 0)
 
     $relKStuff = $reldescr.Replace("\r\n","`r`n")
     
+    $KerbalStuffKSPVersion = $KSPVersion.Split(":")[1].Trim(" ")
+    if ($KerbalStuffKSPVersion.EndsWith(".0")){
+        $KerbalStuffKSPVersion = $KerbalStuffKSPVersion.Substring(0,$KerbalStuffKSPVersion.Length-2)
+    }
 
     "GitHub Description:"
     "-------------------"
@@ -242,6 +246,10 @@ if($ChoiceRtn -eq 0)
     "KStuff Description:"
     "-------------------"
     "$($relKStuff)`r`n"
+
+    "KStuff KSPVersion:"
+    "-------------------"
+    "$($KerbalStuffKSPVersion)`r`n"
 
     "Forum Info:"
     "-------------------"

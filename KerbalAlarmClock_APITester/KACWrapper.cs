@@ -174,11 +174,12 @@ namespace KACAPITester_KACWrapper
                 //DrawTimeEntryMethod = KACType.GetMethod("DrawTimeEntryAPI", BindingFlags.Public | BindingFlags.Instance);
                 //LogFormatted_DebugOnly("Success: " + (DrawTimeEntryMethod != null).ToString());
 
-            //    MethodInfo[] mis = KACType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
-            //    foreach (MethodInfo mi in mis)
-            //    {
-            //        LogFormatted("M:{0}-{1}", mi.Name, mi.DeclaringType);
-            //    }
+				//Commenting out rubbish lines
+                //MethodInfo[] mis = KACType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+                //foreach (MethodInfo mi in mis)
+                //{
+                //    LogFormatted("M:{0}-{1}", mi.Name, mi.DeclaringType);
+                //}
             }
 
             private Object actualKAC;

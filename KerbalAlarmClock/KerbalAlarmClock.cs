@@ -433,11 +433,11 @@ namespace KerbalAlarmClock
 					Boolean AddLock = false;
 					switch (HighLogic.LoadedScene)
 					{
-                        case GameScenes.SPACECENTER: AddLock = settings.ClickThroughProtect_KSC && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
+						case GameScenes.SPACECENTER: AddLock = settings.ClickThroughProtect_KSC && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						case GameScenes.EDITOR:
 						case GameScenes.SPH: break;
 						case GameScenes.FLIGHT: AddLock = settings.ClickThroughProtect_Flight && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
-                        case GameScenes.TRACKSTATION: AddLock = settings.ClickThroughProtect_Tracking && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
+						case GameScenes.TRACKSTATION: AddLock = settings.ClickThroughProtect_Tracking && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						default:
 							break;
 					}

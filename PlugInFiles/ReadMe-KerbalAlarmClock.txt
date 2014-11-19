@@ -29,6 +29,14 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.0.5.0		-	KSP Version: 0.25.0
+- Added extra warp rate calcs for non standard values (Issue #71)
+- Added slider to configure weighting of transition periods
+- Added some instant transition fallbacks if alarm is too close to the game UT (Issue #72)
+- Fixed issue with Contract alarms in sandbox mode (Issue #78)
+- Fixed issue with warp fighting when GUI not displayed (Issue #76)
+- Double checked all input lock code
+
 Version 3.0.4.0		-	KSP Version: 0.25.0
 - Fixed tooltip typos (Issue #68)
 - Fixed error on load of empty alarm block

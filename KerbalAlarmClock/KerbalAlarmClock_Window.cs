@@ -371,7 +371,7 @@ namespace KerbalAlarmClock
 
 
         private static Windows.AlarmImport winAlarmImport = new Windows.AlarmImport();
-
+        private static Windows.ConfirmAlarmDelete winConfirmAlarmDelete = new Windows.ConfirmAlarmDelete();
 
         //Window Size Constants
         private Int32 intMainWindowWidth = 340;
@@ -441,6 +441,11 @@ namespace KerbalAlarmClock
 
             if (winAlarmImport.Visible)
                 winAlarmImport.windowRect = GUILayout.Window(winAlarmImport.windowID, winAlarmImport.windowRect, winAlarmImport.FillWindow, "Import v2 Alarm File", KACResources.styleWindow);
+
+            if (winConfirmAlarmDelete.Visible)
+                winConfirmAlarmDelete.windowRect = GUILayout.Window(winConfirmAlarmDelete.windowID, 
+                    new Rect(MainWindowPos.x + MainWindowPos.width,MainWindowPos.y,intTestheight,intTestheight2),
+                    winAlarmImport.FillWindow, "Confirm Alarm Delete", KACResources.styleWindow);
 
             //Do we have anything to show in the right pane
             if (_ShowSettings)
@@ -791,8 +796,10 @@ namespace KerbalAlarmClock
                 foreach (KACAlarm tmpAlarm in alarms.OrderBy(a => a.AlarmTime.UT).ThenBy(a => a.ID.ToString()))
                 {
                     //Draw a line for each alarm, returns true is person clicked delete
-                    if (DrawAlarmLine(tmpAlarm))
-                        AlarmsToRemove.Add(tmpAlarm);
+                    if (DrawAlarmLine(tmpAlarm)) {
+                        if(!settings.ConfirmAlarmDeletes)
+                            AlarmsToRemove.Add(tmpAlarm);
+                    }
                 }
 
                 if (AlarmsToRemove.Count > 0)

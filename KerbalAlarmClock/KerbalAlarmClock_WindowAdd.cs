@@ -267,16 +267,17 @@ namespace KerbalAlarmClock
             else
             {
                 GenerateContractStringsFromContract(lstContracts[intSelectedContract], out strAlarmName, out strAlarmNotes);
-            }
 
-            if (ForceUpdateMargin || contractLastState != lstContracts[intSelectedContract].ContractState)
-            {
-                if (lstContracts[intSelectedContract].ContractState == Contract.State.Active)
-                    timeMargin.BuildFromUT(settings.AlarmOnContractDeadlineMargin);
-                else
-                    timeMargin.BuildFromUT(settings.AlarmOnContractExpireMargin);
 
-                contractLastState = lstContracts[intSelectedContract].ContractState;
+                if (ForceUpdateMargin || contractLastState != lstContracts[intSelectedContract].ContractState)
+                {
+                    if (lstContracts[intSelectedContract].ContractState == Contract.State.Active)
+                        timeMargin.BuildFromUT(settings.AlarmOnContractDeadlineMargin);
+                    else
+                        timeMargin.BuildFromUT(settings.AlarmOnContractExpireMargin);
+
+                    contractLastState = lstContracts[intSelectedContract].ContractState;
+                }
             }
         }
 

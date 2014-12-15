@@ -105,6 +105,7 @@ if exist "D:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
 )
 
 echo Gamepath: %25GAMEPATH%25
+echo ConfigName: $(ConfigurationName)
 set DestPath="%25GAMEPATH%25\GameData\TriggerTech\KerbalAlarmClock"
 set Binary="%25GAMEPATH%25\KSP.exe"
 
@@ -113,6 +114,15 @@ if not $(ConfigurationName)==Debug goto DEBUGREBUILDCONFIG
 rem Copy DLL and run KSP
 copy "$(TargetPath)" "%25DestPath%25"
 rem and then run the game
+if exist "$(ProjectDir)..\..\StartX.exe" goto STARTX
+echo Running Directly
+"%25Binary%25"
+goto END
+
+:STARTX
+echo STARTX running
+"$(ProjectDir)..\..\StartX.exe" "%25Binary%25"
+goto END
 "%25Binary%25"
 
 goto END

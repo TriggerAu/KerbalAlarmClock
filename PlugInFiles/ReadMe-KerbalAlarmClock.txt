@@ -29,6 +29,13 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.0.6.0		-	KSP Version: 0.90
+- Recompiled for 0.90
+- Couple of code changes for 0.90 changes
+- Added Delete Confirmation optional Dialog (Issue #82)
+- Adjusted Top Clamp value to be off screen slightly (Issue #79)
+- Changed KACBackup savenames to start with z so they go to the bottom of the list
+
 Version 3.0.5.0		-	KSP Version: 0.25.0
 - Added extra warp rate calcs for non standard values (Issue #71)
 - Added slider to configure weighting of transition periods

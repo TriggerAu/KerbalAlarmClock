@@ -87,6 +87,8 @@ namespace KerbalAlarmClock
 
             }
         }
+        [Persistent] internal Boolean ConfirmAlarmDeletes = false;
+
 
         [Persistent]
         internal KACAlarm.AlarmActionEnum AlarmDefaultAction = KACAlarm.AlarmActionEnum.KillWarp;

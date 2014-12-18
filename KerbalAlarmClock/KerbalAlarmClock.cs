@@ -13,238 +13,241 @@ using KACToolbarWrapper;
 
 namespace KerbalAlarmClock
 {
-	/// <summary>
-	/// Have to do this behaviour or some of the textures are unloaded on first entry into flight mode
-	/// </summary>
-	[KSPAddon(KSPAddon.Startup.MainMenu, false)]
-	public class KerbalAlarmClockTextureLoader : MonoBehaviour
-	{
-		//Awake Event - when the DLL is loaded
-		public void Awake()
-		{
-			KACResources.loadGUIAssets();
-		}
-	}
+    /// <summary>
+    /// Have to do this behaviour or some of the textures are unloaded on first entry into flight mode
+    /// </summary>
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    public class KerbalAlarmClockTextureLoader : MonoBehaviour
+    {
+        //Awake Event - when the DLL is loaded
+        public void Awake()
+        {
+            KACResources.loadGUIAssets();
+        }
+    }
 
-	[KSPAddon(KSPAddon.Startup.Flight, false)]
-	public class KACFlight : KerbalAlarmClock
-	{
-		public override string MonoName { get { return this.name; } }
-		//public override bool ViewAlarmsOnly { get { return false; } }
-	}
-	[KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
-	public class KACSpaceCenter : KerbalAlarmClock
-	{
-		public override string MonoName { get { return this.name; } }
-		//public override bool ViewAlarmsOnly { get { return false; } }
-	}
-	[KSPAddon(KSPAddon.Startup.TrackingStation, false)]
-	public class KACTrackingStation : KerbalAlarmClock
-	{
-		public override string MonoName { get { return this.name; } }
-		//public override bool ViewAlarmsOnly { get { return false; } }
-	}
+    [KSPAddon(KSPAddon.Startup.Flight, false)]
+    public class KACFlight : KerbalAlarmClock
+    {
+        public override string MonoName { get { return this.name; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
+    }
+    [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
+    public class KACSpaceCenter : KerbalAlarmClock
+    {
+        public override string MonoName { get { return this.name; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
+    }
+    [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
+    public class KACTrackingStation : KerbalAlarmClock
+    {
+        public override string MonoName { get { return this.name; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
+    }
 
-	/// <summary>
-	/// This is the behaviour object that we hook events on to for flight
-	/// </summary>
-	public partial class KerbalAlarmClock : MonoBehaviourExtended
-	{
-		//Global Settings
-		//public static KACSettings Settings = new KACSettings();
-		internal static Settings settings;
-		public static KACAlarmList alarms=new KACAlarmList();
-		public virtual String MonoName { get; set; }
-		//public virtual Boolean ViewAlarmsOnly { get; set; }
-		
-		//GameState Objects for the monobehaviour
-		private Boolean IsInPostDrawQueue=false ;
-		private Boolean ShouldBeInPostDrawQueue = false;
-		private Double LastGameUT;
-		private Vessel LastGameVessel;
+    /// <summary>
+    /// This is the behaviour object that we hook events on to for flight
+    /// </summary>
+    public partial class KerbalAlarmClock : MonoBehaviourExtended
+    {
+        //Global Settings
+        //public static KACSettings Settings = new KACSettings();
+        internal static Settings settings;
+        public static KACAlarmList alarms=new KACAlarmList();
+        public virtual String MonoName { get; set; }
+        //public virtual Boolean ViewAlarmsOnly { get; set; }
+        
+        //GameState Objects for the monobehaviour
+        private Boolean IsInPostDrawQueue=false ;
+        private Boolean ShouldBeInPostDrawQueue = false;
+        private Double LastGameUT;
+        private Vessel LastGameVessel;
 
-		//Worker and Settings objects
-		public static float UpdateInterval = 0.1F;
+        //Worker and Settings objects
+        public static float UpdateInterval = 0.1F;
 
-		//Constructor to set KACWorker parent object to this and access to the settings
-		public KerbalAlarmClock()
-		{
-			//switch (KACWorkerGameState.CurrentGUIScene)
-			//{
-			//    case GameScenes.SPACECENTER:
-			//    case GameScenes.TRACKSTATION:
-			//        = new KACWorker_ViewOnly(this);
-			//        break;
-			//    default:
-			//        = new KACWorker(this);
-			//        break;
-			//}
-			////Set the saves path
-			KACUtils.SavePath=string.Format("{0}saves/{1}",KACUtils.PathApp,HighLogic.SaveFolder);
+        //Constructor to set KACWorker parent object to this and access to the settings
+        public KerbalAlarmClock()
+        {
+            //switch (KACWorkerGameState.CurrentGUIScene)
+            //{
+            //    case GameScenes.SPACECENTER:
+            //    case GameScenes.TRACKSTATION:
+            //        = new KACWorker_ViewOnly(this);
+            //        break;
+            //    default:
+            //        = new KACWorker(this);
+            //        break;
+            //}
+            ////Set the saves path
+            KACUtils.SavePath=string.Format("{0}saves/{1}",KACUtils.PathApp,HighLogic.SaveFolder);
 
-		}
+        }
 
-		//Awake Event - when the DLL is loaded
-		internal override void Awake()
-		{
-			LogFormatted("Awakening the KerbalAlarmClock-{0}", MonoName);
+        //Awake Event - when the DLL is loaded
+        internal override void Awake()
+        {
+            LogFormatted("Awakening the KerbalAlarmClock-{0}", MonoName);
 
-			InitVariables();
+            InitVariables();
 
-			//Event for when the vessel changes (within a scene).
-			KACWorkerGameState.VesselChanged += KACWorkerGameState_VesselChanged;
+            //Event for when the vessel changes (within a scene).
+            KACWorkerGameState.VesselChanged += KACWorkerGameState_VesselChanged;
 
-			//Load the Settings values from the file
-			//Settings.Load();
-			LogFormatted("Loading Settings");
-			settings = new Settings("settings.cfg");
-			if (!settings.Load())
-				LogFormatted("Settings Load Failed");
+            //Load the Settings values from the file
+            //Settings.Load();
+            LogFormatted("Loading Settings");
+            settings = new Settings("settings.cfg");
+            if (!settings.Load())
+                LogFormatted("Settings Load Failed");
 
-			//Set initial GameState
-			KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
+            //Set initial GameState
+            KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
 
-			//Load Hohmann modelling data - if in flight mode
-			//if ((KACWorkerGameState.LastGUIScene == GameScenes.FLIGHT) && settings.XferModelLoadData)
-			if (settings.XferModelLoadData)
-					settings.XferModelDataLoaded = KACResources.LoadModelPoints();
+            //Load Hohmann modelling data - if in flight mode
+            //if ((KACWorkerGameState.LastGUIScene == GameScenes.FLIGHT) && settings.XferModelLoadData)
+            if (settings.XferModelLoadData)
+                    settings.XferModelDataLoaded = KACResources.LoadModelPoints();
 
-			//Get whether the toolbar is there
-			settings.BlizzyToolbarIsAvailable = ToolbarManager.ToolbarAvailable;
+            //Get whether the toolbar is there
+            settings.BlizzyToolbarIsAvailable = ToolbarManager.ToolbarAvailable;
 
-			//setup the Toolbar button if necessary
-			if (settings.ButtonStyleToDisplay == Settings.ButtonStyleEnum.Toolbar)
-			{
-				btnToolbarKAC = InitToolbarButton();
-			}
-			//Hook the App Launcher
-			GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
-			GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
+            //setup the Toolbar button if necessary
+            if (settings.ButtonStyleToDisplay == Settings.ButtonStyleEnum.Toolbar)
+            {
+                btnToolbarKAC = InitToolbarButton();
+            }
+            //Hook the App Launcher
+            GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+            GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
 
-			//Set up the updating function - do this 5 times a sec not on every frame.
-			StartRepeatingWorker(settings.BehaviourChecksPerSec);
+            //Set up the updating function - do this 5 times a sec not on every frame.
+            StartRepeatingWorker(settings.BehaviourChecksPerSec);
 
-			InitDropDowns();
+            InitDropDowns();
 
-			winAlarmImport.KAC = this;
-			winAlarmImport.Visible = false;
-			winAlarmImport.InitWindow();
+            winAlarmImport.KAC = this;
+            winAlarmImport.Visible = false;
+            winAlarmImport.InitWindow();
 
-			WarpTransitionCalculator.CalcWarpRateTransitions();
+            winConfirmAlarmDelete.Visible = false;
+            winConfirmAlarmDelete.InitWindow();
 
-			APIAwake();
-		}
+            WarpTransitionCalculator.CalcWarpRateTransitions();
 
-		internal override void Start()
-		{
-			LogFormatted_DebugOnly("Start function-Setting up ScenarioModule");
-			LogFormatted_DebugOnly("Alarms Length:{0}", alarms.Count);
-			ProtoScenarioModule psm = HighLogic.CurrentGame.scenarios.FirstOrDefault(x => x.moduleName == typeof(KerbalAlarmClockScenario).Name);
-			if (psm==null) {
-				//if no module then create it
-				LogFormatted_DebugOnly("Creating ScenarioModule for {0}", HighLogic.LoadedScene);
-				HighLogic.CurrentGame.AddProtoScenarioModule(typeof(KerbalAlarmClockScenario), HighLogic.LoadedScene);
-			} else {
-				//if it exists, but not in this scene then add it to the scene
-				if (!psm.targetScenes.Any(x => x == HighLogic.LoadedScene)) {
-					LogFormatted_DebugOnly("Adding Scene to ScenarioModule for {0}", HighLogic.LoadedScene);
-					psm.targetScenes.Add(HighLogic.LoadedScene);
-				}
-			}
+            APIAwake();
+        }
 
-			RemoveInputLock();
-		}
+        internal override void Start()
+        {
+            LogFormatted_DebugOnly("Start function-Setting up ScenarioModule");
+            LogFormatted_DebugOnly("Alarms Length:{0}", alarms.Count);
+            ProtoScenarioModule psm = HighLogic.CurrentGame.scenarios.FirstOrDefault(x => x.moduleName == typeof(KerbalAlarmClockScenario).Name);
+            if (psm==null) {
+                //if no module then create it
+                LogFormatted_DebugOnly("Creating ScenarioModule for {0}", HighLogic.LoadedScene);
+                HighLogic.CurrentGame.AddProtoScenarioModule(typeof(KerbalAlarmClockScenario), HighLogic.LoadedScene);
+            } else {
+                //if it exists, but not in this scene then add it to the scene
+                if (!psm.targetScenes.Any(x => x == HighLogic.LoadedScene)) {
+                    LogFormatted_DebugOnly("Adding Scene to ScenarioModule for {0}", HighLogic.LoadedScene);
+                    psm.targetScenes.Add(HighLogic.LoadedScene);
+                }
+            }
 
-		//Destroy Event - when the DLL is loaded
-		internal override void OnDestroy()
-		{
-			LogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
+            RemoveInputLock();
+        }
 
-			//Hook the App Launcher
-			GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
-			GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
+        //Destroy Event - when the DLL is loaded
+        internal override void OnDestroy()
+        {
+            LogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
 
-			DestroyDropDowns();
+            //Hook the App Launcher
+            GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+            GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
 
-			DestroyToolbarButton(btnToolbarKAC);
+            DestroyDropDowns();
 
-			DestroyAppLauncherButton();
+            DestroyToolbarButton(btnToolbarKAC);
 
-			APIDestroy();
-		}
+            DestroyAppLauncherButton();
 
-		#region "Update Code"
-		//Update Function - Happens on every frame - this is where behavioural stuff is typically done
-		internal override void Update()
-		{
-			KACWorkerGameState.SetCurrentGUIStates();
-			//if scene has changed
-			if (KACWorkerGameState.ChangedGUIScene)
-				LogFormatted("Scene Change from '{0}' to '{1}'", KACWorkerGameState.LastGUIScene.ToString(), KACWorkerGameState.CurrentGUIScene.ToString());
+            APIDestroy();
+        }
 
-			HandleKeyStrokes();
+        #region "Update Code"
+        //Update Function - Happens on every frame - this is where behavioural stuff is typically done
+        internal override void Update()
+        {
+            KACWorkerGameState.SetCurrentGUIStates();
+            //if scene has changed
+            if (KACWorkerGameState.ChangedGUIScene)
+                LogFormatted("Scene Change from '{0}' to '{1}'", KACWorkerGameState.LastGUIScene.ToString(), KACWorkerGameState.CurrentGUIScene.ToString());
 
-			//Work out if we should be in the gui queue
-			ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
+            HandleKeyStrokes();
 
-			//Fix the issues with Flight SCene Stuff
-			if (HighLogic.LoadedScene == GameScenes.FLIGHT)
-			{
-				//If time goes backwards assume a reload/restart/ if vessel changes and readd to rendering queue
-				CheckForFlightChanges();
+            //Work out if we should be in the gui queue
+            ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
 
-				//tag these for next time round
-				LastGameUT = Planetarium.GetUniversalTime();
-				LastGameVessel = FlightGlobals.ActiveVessel;
-			}
-			KACWorkerGameState.SetLastGUIStatesToCurrent();
-		}
-		
-		private void HandleKeyStrokes()
-		{
-			//Look for key inputs to change settings
-			if (!settings.F11KeystrokeDisabled)
-			{
-				if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F11))
-				{
-					//switch (KACWorkerGameState.CurrentGUIScene)
-					//{
-					//    case GameScenes.SPACECENTER: Settings.WindowVisible_SpaceCenter = !Settings.WindowVisible_SpaceCenter; break;
-					//    case GameScenes.TRACKSTATION: Settings.WindowVisible_TrackingStation = !Settings.WindowVisible_TrackingStation; break;
-					//    default: Settings.WindowVisible = !Settings.WindowVisible; break;
-					//}
-					WindowVisibleByActiveScene = !WindowVisibleByActiveScene;
-					settings.Save();
-				}
-			}
+            //Fix the issues with Flight SCene Stuff
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+            {
+                //If time goes backwards assume a reload/restart/ if vessel changes and readd to rendering queue
+                CheckForFlightChanges();
 
-			//TODO:Disable this one
-			//if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
-			//{
-			//    DebugActionTriggered(HighLogic.LoadedScene);
-			//}
+                //tag these for next time round
+                LastGameUT = Planetarium.GetUniversalTime();
+                LastGameVessel = FlightGlobals.ActiveVessel;
+            }
+            KACWorkerGameState.SetLastGUIStatesToCurrent();
+        }
+        
+        private void HandleKeyStrokes()
+        {
+            //Look for key inputs to change settings
+            if (!settings.F11KeystrokeDisabled)
+            {
+                if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F11))
+                {
+                    //switch (KACWorkerGameState.CurrentGUIScene)
+                    //{
+                    //    case GameScenes.SPACECENTER: Settings.WindowVisible_SpaceCenter = !Settings.WindowVisible_SpaceCenter; break;
+                    //    case GameScenes.TRACKSTATION: Settings.WindowVisible_TrackingStation = !Settings.WindowVisible_TrackingStation; break;
+                    //    default: Settings.WindowVisible = !Settings.WindowVisible; break;
+                    //}
+                    WindowVisibleByActiveScene = !WindowVisibleByActiveScene;
+                    settings.Save();
+                }
+            }
 
-			//if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
-			//    Settings.Save();
+            //TODO:Disable this one
+            //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
+            //{
+            //    DebugActionTriggered(HighLogic.LoadedScene);
+            //}
 
-			//if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F9)) 
-			//    Settings.Load();
+            //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
+            //    Settings.Save();
 
-			//If we have paused the game via an alarm and the menu is not visible, then unpause so the menu will display
-			try {
-				if (Input.GetKey(KeyCode.Escape) && !PauseMenu.isOpen && FlightDriver.Pause)
-				{
-					FlightDriver.SetPause(false);
-				}
-			} catch (Exception) { }//LogFormatted("PauseMenu Object Not ready");
-		}
+            //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F9)) 
+            //    Settings.Load();
 
-		private void CheckForFlightChanges()
-		{
-			if ((LastGameUT != 0) && (LastGameUT > Planetarium.GetUniversalTime()))
-			{
-				LogFormatted("Time Went Backwards - Load or restart - resetting inqueue flag");
-				ShouldBeInPostDrawQueue = false;
+            //If we have paused the game via an alarm and the menu is not visible, then unpause so the menu will display
+            try {
+                if (Input.GetKey(KeyCode.Escape) && !PauseMenu.isOpen && FlightDriver.Pause)
+                {
+                    FlightDriver.SetPause(false);
+                }
+            } catch (Exception) { }//LogFormatted("PauseMenu Object Not ready");
+        }
+
+        private void CheckForFlightChanges()
+        {
+            if ((LastGameUT != 0) && (LastGameUT > Planetarium.GetUniversalTime()))
+            {
+                LogFormatted("Time Went Backwards - Load or restart - resetting inqueue flag");
+                ShouldBeInPostDrawQueue = false;
 //                IsInPostDrawQueue = false;
 
 				//Also, untrigger any alarms that we have now gone back past
@@ -434,8 +437,7 @@ namespace KerbalAlarmClock
 					switch (HighLogic.LoadedScene)
 					{
 						case GameScenes.SPACECENTER: AddLock = settings.ClickThroughProtect_KSC && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
-						case GameScenes.EDITOR:
-						case GameScenes.SPH: break;
+						case GameScenes.EDITOR: break;
 						case GameScenes.FLIGHT: AddLock = settings.ClickThroughProtect_Flight && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						case GameScenes.TRACKSTATION: AddLock = settings.ClickThroughProtect_Tracking && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						default:
@@ -448,9 +450,7 @@ namespace KerbalAlarmClock
 						switch (HighLogic.LoadedScene)
 						{
 							case GameScenes.SPACECENTER: InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, "KACControlLock"); break;
-							case GameScenes.EDITOR:
-							case GameScenes.SPH:
-								break;
+							case GameScenes.EDITOR: break;
 							case GameScenes.FLIGHT:
 								InputLockManager.SetControlLock(ControlTypes.ALL_SHIP_CONTROLS, "KACControlLock");
 								break;

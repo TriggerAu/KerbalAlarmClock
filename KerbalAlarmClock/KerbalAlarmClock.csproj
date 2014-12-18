@@ -85,6 +85,7 @@
     <Compile Include="UtilitiesLegacy.cs" />
     <Compile Include="WarpTransitionCalculator.cs" />
     <Compile Include="Windows\AlarmImport.cs" />
+    <Compile Include="Windows\ConfirmAlarmDelete.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

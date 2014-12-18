@@ -57,17 +57,17 @@ namespace KerbalAlarmClock
                     try
                     {
                         System.IO.File.Copy(String.Format("{0}/persistent.sfs", SavePath),
-                                            String.Format("{0}/KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now),
+                                            String.Format("{0}/zKACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now),
                                             true);
-                        MonoBehaviourExtended.LogFormatted("Backed Up Persistent.sfs as: {0}/KACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now);
+                        MonoBehaviourExtended.LogFormatted("Backed Up Persistent.sfs as: {0}/zKACBACKUP{1:yyyyMMddHHmmss}-persistent.sfs", SavePath, DateTime.Now);
                         
                         //Now go for the quicksave
                         if (System.IO.File.Exists(String.Format("{0}/quicksave.sfs", SavePath)))
                         {
                             System.IO.File.Copy(String.Format("{0}/quicksave.sfs", SavePath),
-                                                String.Format("{0}/KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now),
+                                                String.Format("{0}/zKACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now),
                                                 true);
-                            MonoBehaviourExtended.LogFormatted("Backed Up quicksave.sfs as: {0}/KACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now);
+                            MonoBehaviourExtended.LogFormatted("Backed Up quicksave.sfs as: {0}/zKACBACKUP{1:yyyyMMddHHmmss}-quicksave.sfs", SavePath, DateTime.Now);
                         }                        
                         blnReturn = true;
 
@@ -94,6 +94,8 @@ namespace KerbalAlarmClock
         {
             //Now delete any old ones greater than the list to keep
             List<System.IO.FileInfo> SaveBackups = new System.IO.DirectoryInfo(SavePath).GetFiles(string.Format("KACBACKUP*{0}",OriginalName)).ToList<System.IO.FileInfo>();
+            SaveBackups.AddRange(new System.IO.DirectoryInfo(SavePath).GetFiles(string.Format("zKACBACKUP*{0}", OriginalName)).ToList<System.IO.FileInfo>());
+
             MonoBehaviourExtended.LogFormatted("{0} KACBackup...{1} Saves found", SaveBackups.Count,OriginalName);
 
             List<System.IO.FileInfo> SaveBackupsToDelete = SaveBackups.OrderByDescending(fi => fi.CreationTime).Skip(KerbalAlarmClock.settings.BackupSavesToKeep).ToList<System.IO.FileInfo>();

@@ -444,8 +444,8 @@ namespace KerbalAlarmClock
 
             if (winConfirmAlarmDelete.Visible)
                 winConfirmAlarmDelete.windowRect = GUILayout.Window(winConfirmAlarmDelete.windowID, 
-                    new Rect(MainWindowPos.x + MainWindowPos.width,MainWindowPos.y,intTestheight,intTestheight2),
-                    winAlarmImport.FillWindow, "Confirm Alarm Delete", KACResources.styleWindow);
+                    new Rect(MainWindowPos.x + MainWindowPos.width,MainWindowPos.y,300,140),
+                    winConfirmAlarmDelete.FillWindow, "Confirm Alarm Delete", KACResources.styleWindow);
 
             //Do we have anything to show in the right pane
             if (_ShowSettings)
@@ -629,10 +629,8 @@ namespace KerbalAlarmClock
             if (DrawToggle(ref _ShowSettings, contSettings, KACResources.styleSmallButton) && _ShowSettings)
             {
                 NewSettingsWindow();
-                _ShowAddPane = false;
-                _ShowEditPane = false;
-                _ShowEarthAlarm = false;
-                _ShowQuickAdd = false;
+                ResetPanes();
+                    _ShowSettings = true;
             }
             //No longer relevant
             //if (!ViewAlarmsOnly)
@@ -642,20 +640,17 @@ namespace KerbalAlarmClock
                 {
                     //reset the add stuff
                     NewAddAlarm();
-                    _ShowSettings = false;
-                    _ShowEditPane = false;
-                    _ShowEarthAlarm = false;
-                    _ShowQuickAdd = false;
+
+                    ResetPanes();
+                    _ShowAddPane = true;
                 }
             //}
             //get this button right up against the add one
             GUILayout.Space(-5);
             if (DrawToggle(ref _ShowQuickAdd, new GUIContent("+", "Quick Add..."), KACResources.styleQAButton) && _ShowQuickAdd)
             {
-                _ShowAddPane = false;
-                _ShowEditPane = false;
-                _ShowEarthAlarm = false;
-                _ShowSettings = false;
+                ResetPanes();
+                _ShowQuickAdd = true;
                 SetupQuickList();
             }
 
@@ -711,9 +706,8 @@ namespace KerbalAlarmClock
                 {
                     //reset the add stuff
                     NewEarthAlarm();
-                    _ShowSettings = false;
-                    _ShowEditPane = false;
-                    _ShowAddPane = false;
+                    ResetPanes();
+                    _ShowEarthAlarm = true;
                 }
                 GUILayout.EndHorizontal();
             }
@@ -796,9 +790,16 @@ namespace KerbalAlarmClock
                 foreach (KACAlarm tmpAlarm in alarms.OrderBy(a => a.AlarmTime.UT).ThenBy(a => a.ID.ToString()))
                 {
                     //Draw a line for each alarm, returns true is person clicked delete
-                    if (DrawAlarmLine(tmpAlarm)) {
-                        if(!settings.ConfirmAlarmDeletes)
+                    if (DrawAlarmLine(tmpAlarm))
+                    {
+                        if (!settings.ConfirmAlarmDeletes)
                             AlarmsToRemove.Add(tmpAlarm);
+                        else
+                        {
+                            ResetPanes();
+                            winConfirmAlarmDelete.AlarmToConfirm = tmpAlarm;
+                            winConfirmAlarmDelete.Visible = true;
+                        }
                     }
                 }
 
@@ -965,6 +966,7 @@ namespace KerbalAlarmClock
                         _ShowEditPane = true;
                         _ShowSettings = false;
                         _ShowAddPane = false;
+                        winConfirmAlarmDelete.Visible = false;
                     }
                 }
             }
@@ -1000,8 +1002,12 @@ namespace KerbalAlarmClock
         internal void ResetPanes()
         {
             _ShowAddPane = false;
+            _ShowEarthAlarm = false;
             _ShowEditPane = false;
             _ShowSettings = false;
+            _ShowQuickAdd = false;
+            winConfirmAlarmDelete.Visible = false;
+            winAlarmImport.Visible = false;
         }
         
         #endregion

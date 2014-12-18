@@ -110,7 +110,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 514; //462; //463; //434;// 572;//542;
+                    intSettingsHeight = 567;// 514; //462; //463; //434;// 572;//542;
                     break;
                 //case 1:
                 //    WindowLayout_SettingsSpecifics1();
@@ -224,6 +224,13 @@ namespace KerbalAlarmClock
                 settings.Save();
             }
             GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+            GUILayout.Label("Safety Options", KACResources.styleAddSectionHeading);
+
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            if (DrawCheckbox(ref settings.ConfirmAlarmDeletes, "Confirm before deleting alarms"))
+                settings.Save();
 
             if (DrawCheckbox(ref settings.AllowJumpFromViewOnly, "Allow Ship Jump in Space Center and Tracking Station"))
                 settings.Save();

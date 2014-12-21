@@ -92,7 +92,7 @@
             <ol>
                 <li>
                     Add the KACWrapper.cs file to your project<br />
-                    <a href="https://github.com/TriggerAu/KerbalAlarmClock/blob/feature/v3refresh/KerbalAlarmClock/API/KACWrapper.cs">https://github.com/TriggerAu/KerbalAlarmClock/blob/feature/v3refresh/KerbalAlarmClock/API/KACWrapper.cs</a>
+                    <a href="https://github.com/TriggerAu/KerbalAlarmClock/blob/master/KerbalAlarmClock/API/KACWrapper.cs">https://github.com/TriggerAu/KerbalAlarmClock/blob/master/KerbalAlarmClock/API/KACWrapper.cs</a>
                 </li>
                 <li>
                     Edit the Namespace definition at the top of the KACWrapper you have added to be specific to your plugin
@@ -177,12 +177,16 @@ internal override void Start()
                 <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmAction</td><td>AlarmActionEnum</td><td>What should the Alarm Clock do when the alarm fires</td></tr>
                 <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmMargin</td><td>Double</td><td>In game seconds the alarm will fire before the event it is for</td></tr>
                 <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmTime</td><td>Double</td><td>In game UT value of the alarm</td></tr>
-                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmType</td><td>AlarmTypeEnum</td><td>What type of Alarm is this - affects icon displayed and some calc options</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>AlarmType</td><td>AlarmTypeEnum (ReadOnly)</td><td>What type of Alarm is this - affects icon displayed and some calc options</td></tr>
                 <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>ID</td><td>String (Readonly)</td><td>Unique Identifier of this alarm</td></tr>
                 <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Name</td><td>String</td><td>Short Text Name for the Alarm</td></tr>
                 <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Notes</td><td>String</td><td>Longer Text Description for the Alarm</td></tr>
                 <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>Remaining</td><td>Double (Readonly)</td><td>How much Game time is left before the alarm fires</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>RepeatAlarm</td><td>Boolean</td><td>Should the alarm be repeated once it fires</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>RepeatAlarmPeriod</td><td>Double</td><td>how long after the alarm fires should the next alarm be set up</td></tr>
                 <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>VesselID</td><td>String</td><td>Unique Identifier of the Vessel that the alarm is attached to</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>XferOrginBodyname</td><td>String</td><td>name of the body the vessel is departing from</td></tr>
+                <tr><td><img src="images/apiicons/property.gif" alt="prop" /></td><td>XferTargetBodyname</td><td>String</td><td>name of the body the vessel is arriving at</td></tr>
             </table>
         </div>
 

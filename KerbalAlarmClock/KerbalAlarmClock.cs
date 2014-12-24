@@ -1345,7 +1345,7 @@ namespace KerbalAlarmClock
 
 #if DEBUG
 	//This will kick us into the save called default and set the first vessel active
-	//[KSPAddon(KSPAddon.Startup.MainMenu, false)]
+	[KSPAddon(KSPAddon.Startup.MainMenu, false)]
 	public class Debug_AutoLoadPersistentSaveOnStartup : MonoBehaviour
 	{
 		//use this variable for first run to avoid the issue with when this is true and multiple addons use it
@@ -1357,7 +1357,7 @@ namespace KerbalAlarmClock
 			{
 				first = false;
 				HighLogic.SaveFolder = "default";
-				//HighLogic.SaveFolder = "Career";
+				HighLogic.SaveFolder = "Career";
 				Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
 
 				if (game != null && game.flightState != null && game.compatible)

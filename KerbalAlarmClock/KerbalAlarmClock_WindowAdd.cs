@@ -425,13 +425,30 @@ namespace KerbalAlarmClock
                     break;
                 case KACAlarm.AlarmTypeEnum.Apoapsis:
                     WindowLayout_AddTypeApPe();
-                    dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToAp;
-                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.ApPointExists && !KACWorkerGameState.CurrentVessel.LandedOrSplashed, dblTimeToPoint);
+
+                    if (!KACWorkerGameState.ApPointExists && HighLogic.CurrentGame.Mode == Game.Modes.CAREER &&
+                        GameVariables.Instance.GetOrbitDisplayMode(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)) != GameVariables.OrbitDisplayMode.PatchedConics)
+                    {
+                        GUILayout.Label("Apoapsis Alarms cannot be set without upgrading the Tracking Station", GUILayout.ExpandWidth(true));
+                    }
+                    else
+                    {
+                        dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToAp;
+                        WindowLayout_AddPane_NodeEvent(KACWorkerGameState.ApPointExists && !KACWorkerGameState.CurrentVessel.LandedOrSplashed, dblTimeToPoint);
+                    }
                     break;
                 case KACAlarm.AlarmTypeEnum.Periapsis:
                     WindowLayout_AddTypeApPe();
+                    if (!KACWorkerGameState.PePointExists && HighLogic.CurrentGame.Mode == Game.Modes.CAREER &&
+                        GameVariables.Instance.GetOrbitDisplayMode(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)) != GameVariables.OrbitDisplayMode.PatchedConics)
+                    {
+                        GUILayout.Label("Periapsis Alarms cannot be set without upgrading the Tracking Station", GUILayout.ExpandWidth(true));
+                    }
+                    else
+                    {
                     dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null ) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToPe;
                     WindowLayout_AddPane_NodeEvent(KACWorkerGameState.PePointExists && !KACWorkerGameState.CurrentVessel.LandedOrSplashed, dblTimeToPoint);
+                    }
                     break;
                 case KACAlarm.AlarmTypeEnum.AscendingNode:
                     WindowLayout_AddTypeANDN();

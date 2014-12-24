@@ -1,7 +1,7 @@
 {
-  "NAME": "Transfer Window Planner",
-  "URL": "https://raw.githubusercontent.com/TriggerAu/TransferWindowPlanner/master/TransferWindowPlanner.version",
-  "DOWNLOAD" : "https://github.com/TriggerAu/TransferWindowPlanner/releases",
+  "NAME": "Kerbal Alarm Clock",
+  "URL": "https://raw.githubusercontent.com/TriggerAu/KerbalAlarmClock/master/KerbalAlarmClock/KerbalAlarmClock.version",
+  "DOWNLOAD" : "https://github.com/TriggerAu/KerbalAlarmClock/releases",
   "VERSION": {
     "MAJOR": %PLUGIN_MAJOR%,
     "MINOR": %PLUGIN_MINOR%,

@@ -1240,7 +1240,9 @@ namespace KerbalAlarmClock
 					if (tmpAlarm.Triggered && !tmpAlarm.Actioned)
 					{
 						tmpAlarm.Actioned = true;
-						if (tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.KillWarpOnly)
+                        if (tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.KillWarpOnly 
+                            || tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed
+                            || tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.DoNothing)
 						{
 							tmpAlarm.AlarmWindowClosed = true;
 							try
@@ -1253,7 +1255,8 @@ namespace KerbalAlarmClock
 							}
 
 						}
-						LogFormatted("Actioning Alarm");
+
+                        LogFormatted("Actioning Alarm");
 					}
 
 			}
@@ -1263,6 +1266,13 @@ namespace KerbalAlarmClock
 			{
 				alarms.Add(a);
 			}
+
+            // Delete the do nothing/delete alarms
+            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.AlarmAction == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed))
+			{
+                if (tmpAlarm.Triggered && tmpAlarm.Actioned)
+                alarms.Remove(tmpAlarm);
+            }
 		}
 
 

@@ -1117,7 +1117,7 @@ namespace KerbalAlarmClock
             }
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice3(ref Action, "Action:", 70 ,56);
+            DrawAlarmActionChoice3(ref Action, "Action:", 70 ,37);
 
             if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {

@@ -997,6 +997,8 @@ namespace KerbalAlarmClock
             lstAlarmChoices.Add(new GUIContent(btnActionWarp, KACAlarm.AlarmActionEnum.KillWarpOnly.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionWarpMsg, KACAlarm.AlarmActionEnum.KillWarp.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionPause, KACAlarm.AlarmActionEnum.PauseGame.Description()));
+            lstAlarmChoices.Add(new GUIContent(btnRaw, KACAlarm.AlarmActionEnum.DoNothing.Description()));
+            lstAlarmChoices.Add(new GUIContent(btnRedCross, KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed.Description()));
         }
 
         /// <summary>

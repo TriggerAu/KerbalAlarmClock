@@ -110,7 +110,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 567;// 514; //462; //463; //434;// 572;//542;
+                    intSettingsHeight = 591; // 567;// 514; //462; //463; //434;// 572;//542;
                     break;
                 //case 1:
                 //    WindowLayout_SettingsSpecifics1();
@@ -213,6 +213,9 @@ namespace KerbalAlarmClock
                 settings.Save();
 
             if (DrawCheckbox(ref settings.ShowTooltips, "Show Tooltips on Mouse Hover"))
+                settings.Save();
+
+            if (DrawCheckbox(ref settings.KillWarpOnThrottleCutOffKeystroke, "Halt TimeWarp when Throttle Cutoff by Keystroke"))
                 settings.Save();
 
             int intTimeFormat = (int)settings.TimeFormat;

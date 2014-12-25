@@ -221,6 +221,14 @@ namespace KerbalAlarmClock
                 }
             }
 
+            if (settings.KillWarpOnThrottleCutOffKeystroke)
+            {
+                if (Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.primary) || Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.secondary))
+                {
+                    TimeWarp.SetRate(0, false);
+                }
+            }
+
             //TODO:Disable this one
             //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
             //{

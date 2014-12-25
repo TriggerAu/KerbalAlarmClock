@@ -1045,7 +1045,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice3(ref Action, "On Alarm:", 100,62);
+            DrawAlarmActionChoice3(ref Action, "On Alarm:", 100,40); //62
 
             if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {
@@ -1117,7 +1117,7 @@ namespace KerbalAlarmClock
             }
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice3(ref Action, "Action:", 70 ,37);
+            DrawAlarmActionChoice3(ref Action, "Action:", 70 ,38); //37
 
             if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {

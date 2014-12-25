@@ -198,7 +198,7 @@ namespace KerbalAlarmClock
                 }
             }
             GUILayout.EndVertical();
-            //if (settings.SelectedSkin == Settings.DisplaySkin.Default) GUILayout.Space(intTestheight3);
+            //if (settings.SelectedSkin == Settings.DisplaySkin.Default) GUILayout.Space(38);
             //Preferences
             GUILayout.Label("Plugin Preferences", KACResources.styleAddSectionHeading);
 
@@ -308,7 +308,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Default Alarm Action
-            if (DrawAlarmActionChoice3(ref settings.AlarmDefaultAction, "Default Action:", 108, 61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmDefaultAction, "Default Action:", 108, 38))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeDefaultMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Default Margin:", 100))
@@ -350,7 +350,7 @@ namespace KerbalAlarmClock
                 }
 
                 GUILayout.Label("Man Node Alarm Settings", KACResources.styleAddSectionHeading);
-                if (DrawAlarmActionChoice3(ref settings.AlarmAddManAuto_Action, "On Alarm:", 108, 61))
+                if (DrawAlarmActionChoice3(ref settings.AlarmAddManAuto_Action, "On Alarm:", 108, 38))
                 {
                     settings.Save();
                 }
@@ -367,7 +367,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("Maneuver Quick Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-            if (DrawAlarmActionChoice3(ref settings.AlarmAddManQuickAction, "Quick Action:", 108, 61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmAddManQuickAction, "Quick Action:", 108, 38))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeQuickManNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
@@ -417,7 +417,7 @@ namespace KerbalAlarmClock
                 //    settings.Save();
                 //GUILayout.EndHorizontal();
                 GUILayout.Label("SOI Alarm Settings", KACResources.styleAddSectionHeading);
-                if (DrawAlarmActionChoice3(ref settings.AlarmOnSOIChange_Action, "On Alarm:", 108, 61))
+                if (DrawAlarmActionChoice3(ref settings.AlarmOnSOIChange_Action, "On Alarm:", 108, 38))
                 {
                     settings.Save();
                 }
@@ -434,7 +434,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("SOI Quick Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-            if (DrawAlarmActionChoice3(ref settings.AlarmAddSOIQuickAction, "Quick Action:", 108, 61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmAddSOIQuickAction, "Quick Action:", 108, 38))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeQuickSOIMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
@@ -450,7 +450,7 @@ namespace KerbalAlarmClock
         private void WindowLayout_SettingsSpecifics_Contract() {
             GUILayout.Label("Active Contract Alarm Settings", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractDeadline_Action, "On Alarm:", 108, 61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractDeadline_Action, "On Alarm:", 108, 38))
             {
                 settings.Save();
             }
@@ -476,7 +476,7 @@ namespace KerbalAlarmClock
 
             GUILayout.Label("Offered Contract Alarm Settings", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108, 61)) {
+            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108, 38)) {
                 settings.Save();
             }
             if (DrawTimeEntry(ref timeContractExpireMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Days, "Alarm Margin:", 100)) {
@@ -526,7 +526,7 @@ namespace KerbalAlarmClock
 
             GUILayout.Label("Quick Alarm Settings", KACResources.styleAddSectionHeading);
 
-            if (DrawAlarmActionChoice3(ref settings.AlarmAddNodeQuickAction, "Quick Action:", 108, 61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmAddNodeQuickAction, "Quick Action:", 108, 38))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeQuickNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))

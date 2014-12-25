@@ -1267,11 +1267,16 @@ namespace KerbalAlarmClock
 				alarms.Add(a);
 			}
 
-            // Delete the do nothing/delete alarms
+            // Delete the do nothing/delete alarms - One loop to find the ones to delete - cant delete inside the foreach or it breaks the iterator
+            List<KACAlarm> ToDelete = new List<KACAlarm>();
             foreach (KACAlarm tmpAlarm in alarms.Where(a => a.AlarmAction == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed))
 			{
                 if (tmpAlarm.Triggered && tmpAlarm.Actioned)
-                alarms.Remove(tmpAlarm);
+                    ToDelete.Add(tmpAlarm);
+            }
+            foreach (KACAlarm a in ToDelete)
+            {
+                alarms.Remove(a);
             }
 		}
 
@@ -1367,7 +1372,7 @@ namespace KerbalAlarmClock
 			{
 				first = false;
 				HighLogic.SaveFolder = "default";
-				HighLogic.SaveFolder = "Career";
+//				HighLogic.SaveFolder = "Career";
 				Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
 
 				if (game != null && game.flightState != null && game.compatible)

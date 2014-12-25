@@ -110,6 +110,8 @@ namespace KerbalAlarmClock
         internal static Texture2D btnSettingsAttention = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnAdd = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
+        internal static Texture2D btnActionNothingAndDelete = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionNothing = new Texture2D(32, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnActionMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnActionWarp = new Texture2D(32, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnActionWarpMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
@@ -228,6 +230,8 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
                 KACUtils.LoadImageFromFile(ref btnAdd, "img_buttonAdd.png");
 
+                KACUtils.LoadImageFromFile(ref btnActionNothingAndDelete, "img_buttonActionNothingAndDelete.png");
+                KACUtils.LoadImageFromFile(ref btnActionNothing, "img_buttonActionNothing.png");
                 KACUtils.LoadImageFromFile(ref btnActionMsg, "img_buttonActionMsg.png");
                 KACUtils.LoadImageFromFile(ref btnActionWarp, "img_buttonActionWarp.png");
                 KACUtils.LoadImageFromFile(ref btnActionWarpMsg, "img_buttonActionWarpMsg.png");
@@ -993,12 +997,12 @@ namespace KerbalAlarmClock
             styleSeparatorH.fixedHeight = 2;
 
             lstAlarmChoices = new List<GUIContent>();
+            lstAlarmChoices.Add(new GUIContent(btnActionNothingAndDelete, KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed.Description()));
+            lstAlarmChoices.Add(new GUIContent(btnActionNothing, KACAlarm.AlarmActionEnum.DoNothing.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionMsg, KACAlarm.AlarmActionEnum.MessageOnly.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionWarp, KACAlarm.AlarmActionEnum.KillWarpOnly.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionWarpMsg, KACAlarm.AlarmActionEnum.KillWarp.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionPause, KACAlarm.AlarmActionEnum.PauseGame.Description()));
-            lstAlarmChoices.Add(new GUIContent(btnRaw, KACAlarm.AlarmActionEnum.DoNothing.Description()));
-            lstAlarmChoices.Add(new GUIContent(btnRedCross, KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed.Description()));
         }
 
         /// <summary>

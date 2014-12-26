@@ -51,5 +51,11 @@ namespace KSPPluginFramework
             else if (val.CompareTo(max) > 0) return max;
             else return val;
         }
+
+        public static Int32 ToInt32(this String s)
+        {
+            return Convert.ToInt32(s);
+        }
+
     }
 }

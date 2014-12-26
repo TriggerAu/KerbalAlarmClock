@@ -110,6 +110,8 @@ namespace KerbalAlarmClock
         internal static Texture2D btnSettingsAttention = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnAdd = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
+        internal static Texture2D btnCalendar = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+
         internal static Texture2D btnActionNothingAndDelete = new Texture2D(32, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnActionNothing = new Texture2D(32, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnActionMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
@@ -229,6 +231,8 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref btnSettings, "img_buttonSettings.png");
                 KACUtils.LoadImageFromFile(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
                 KACUtils.LoadImageFromFile(ref btnAdd, "img_buttonAdd.png");
+
+                KACUtils.LoadImageFromFile(ref btnCalendar, "img_buttonCalendar.png");
 
                 KACUtils.LoadImageFromFile(ref btnActionNothingAndDelete, "img_buttonActionNothingAndDelete.png");
                 KACUtils.LoadImageFromFile(ref btnActionNothing, "img_buttonActionNothing.png");
@@ -675,6 +679,7 @@ namespace KerbalAlarmClock
         internal static GUIStyle styleAddHeading;
         internal static GUIStyle styleAddField;
         internal static GUIStyle styleAddFieldError;
+        internal static GUIStyle styleAddFieldLocked;
         
         //internal static GUIStyle styleAddFieldErorOverlay;
         internal static GUIStyle styleAddFieldGreen;
@@ -901,6 +906,10 @@ namespace KerbalAlarmClock
 
             styleAddFieldError = new GUIStyle(styleAddField);
             styleAddFieldError.normal.textColor = Color.red;
+
+            styleAddFieldLocked = new GUIStyle(styleAddField);
+            styleAddFieldLocked.normal.textColor = Color.gray;
+            styleAddFieldLocked.fontStyle = FontStyle.Italic;
 
             styleAddFieldGreen = new GUIStyle(styleAddField);
             styleAddFieldGreen.normal.textColor = Color.green;

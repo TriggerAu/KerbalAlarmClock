@@ -228,7 +228,15 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean ClickThroughProtect_Tracking=true;
         //[Persistent] internal Boolean ClickThroughProtect_Editor=true;
         [Persistent] internal Boolean ClickThroughProtect_Flight=true;
-        
+
+
+        [Persistent] internal CalendarTypeEnum SelectedCalendar = CalendarTypeEnum.KSPStock;
+        [Persistent] internal String EarthEpoch = "1951-01-01";
+
+        [Persistent]
+        internal Boolean ShowCalendarToggle = false;
+        internal Boolean RSSActive = false;
+
         //Version Stuff
         [Persistent] internal Boolean DailyVersionCheck = true;
         internal Boolean VersionAttentionFlag = false;

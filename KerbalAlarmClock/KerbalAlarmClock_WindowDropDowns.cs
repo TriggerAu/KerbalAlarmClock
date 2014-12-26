@@ -19,6 +19,7 @@ namespace KerbalAlarmClock
         private DropDownList ddlSettingsButtonStyle;
 
         private DropDownList ddlSettingsAlarmSpecs;
+        private DropDownList ddlSettingsCalendar;
 
         private DropDownList ddlSettingsContractAutoOffered;
         private DropDownList ddlSettingsContractAutoActive;
@@ -55,13 +56,20 @@ namespace KerbalAlarmClock
             ddlSettingsContractAutoActive = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.AutoContractBehaviorEnum>(), (Int32)settings.AlarmAddContractAutoActive, _WindowSettingsRect);
             ddlSettingsContractAutoActive.OnSelectionChanged += ddlSettingsContractAutoActive_OnSelectionChanged;
 
+            ddlSettingsCalendar = new DropDownList(EnumExtensions.ToEnumDescriptions<CalendarTypeEnum>(), (Int32)settings.SelectedCalendar,_WindowSettingsRect );
+            //NOTE:Pull out the custom option for now
+            ddlSettingsCalendar.Items.Remove(CalendarTypeEnum.Custom.Description());
+            ddlSettingsCalendar.OnSelectionChanged += ddlSettingsCalendar_OnSelectionChanged;
+
             ddlManager.AddDDL(ddlChecksPerSec);
             ddlManager.AddDDL(ddlSettingsSkin);
             ddlManager.AddDDL(ddlSettingsButtonStyle);
             ddlManager.AddDDL(ddlSettingsAlarmSpecs);
             ddlManager.AddDDL(ddlSettingsContractAutoOffered);
             ddlManager.AddDDL(ddlSettingsContractAutoActive);
+            ddlManager.AddDDL(ddlSettingsCalendar);
         }
+
 
         internal void DestroyDropDowns()
         {
@@ -71,6 +79,7 @@ namespace KerbalAlarmClock
             ddlSettingsAlarmSpecs.OnSelectionChanged -= ddlSettingsAlarmSpecs_OnSelectionChanged;
             ddlSettingsContractAutoOffered.OnSelectionChanged -= ddlSettingsContractAutoOffered_OnSelectionChanged;
             ddlSettingsContractAutoActive.OnSelectionChanged -= ddlSettingsContractAutoActive_OnSelectionChanged;
+            ddlSettingsCalendar.OnSelectionChanged -= ddlSettingsCalendar_OnSelectionChanged;
         }
 
         internal void SetDDLWindowPositions()
@@ -81,6 +90,7 @@ namespace KerbalAlarmClock
             ddlSettingsAlarmSpecs.WindowRect = _WindowSettingsRect;
             ddlSettingsContractAutoOffered.WindowRect = _WindowSettingsRect;
             ddlSettingsContractAutoActive.WindowRect = _WindowSettingsRect;
+            ddlSettingsCalendar.WindowRect = _WindowSettingsRect;
         }
 
         #region DDLEvents code
@@ -149,6 +159,22 @@ namespace KerbalAlarmClock
             settings.Save();
         }
 
+        void ddlSettingsCalendar_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
+        {
+            settings.SelectedCalendar = (CalendarTypeEnum)NewIndex;
+            settings.Save();
+            switch (settings.SelectedCalendar)
+            {
+                case CalendarTypeEnum.KSPStock: KSPDateStructure.SetKSPStockCalendar(); break;
+                case CalendarTypeEnum.Earth:
+                    KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
+                    break;
+                case CalendarTypeEnum.Custom:
+                    KSPDateStructure.SetCustomCalendar();
+                    break;
+                default: KSPDateStructure.SetKSPStockCalendar(); break;
+            }
+        }
 
         #endregion
 

@@ -69,6 +69,14 @@ namespace KSPPluginFramework
             DaysPerYear = GameSettings.KERBIN_TIME ? 426 : 365;
         }
 
+        /// <summary>Sets the Date Structure to be Earth based - Accepts Epoch date as string</summary>
+        /// <param name="EpochString">Date in form of yyyy-MM-dd - eg 1951-02-20</param>
+        static public void SetEarthCalendar(String EpochString)
+        {
+            KSPDateStructure.SetEarthCalendar(EpochString.Split('-')[0].ToInt32(),
+                                                    EpochString.Split('-')[1].ToInt32(),
+                                                    EpochString.Split('-')[2].ToInt32());
+        }
         /// <summary>Sets the Date Structure to be Earth based - Epoch of 1/1/1951 (RSS default)</summary>
         static public void SetEarthCalendar()
         {

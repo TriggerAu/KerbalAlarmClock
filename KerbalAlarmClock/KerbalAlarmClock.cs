@@ -116,6 +116,10 @@ namespace KerbalAlarmClock
                 }
             }
 
+            if (settings.SelectedCalendar == CalendarTypeEnum.Earth) {
+                KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
+            }
+
             //Set initial GameState
             KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
 
@@ -169,6 +173,12 @@ namespace KerbalAlarmClock
                     psm.targetScenes.Add(HighLogic.LoadedScene);
                 }
             }
+
+            if (AssemblyLoader.loadedAssemblies
+                        .Select(a => a.assembly.GetExportedTypes())
+                        .SelectMany(t => t)
+                        .Any(t => t.FullName.ToLower().EndsWith(".realsolarsystem")))
+                settings.RSSActive = true;
 
             RemoveInputLock();
         }

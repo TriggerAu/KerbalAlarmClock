@@ -677,6 +677,22 @@ namespace KerbalAlarmClock
                 settings.ShowEarthTime = !settings.ShowEarthTime;
             }
 
+            //Calendar toggle
+            if (settings.ShowCalendarToggle || settings.RSSActive)
+            {
+                if (GUILayout.Button(new GUIContent(KACResources.btnCalendar, "Toggle Calendar"), KACResources.styleSmallButton))
+                {
+                    if (settings.SelectedCalendar == CalendarTypeEnum.Earth) {
+                        settings.SelectedCalendar = CalendarTypeEnum.KSPStock;
+                        KSPDateStructure.SetKSPStockCalendar();
+                    } else {
+                        settings.SelectedCalendar = CalendarTypeEnum.Earth;
+                        KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
+                    }
+                    settings.Save();
+                }
+            }
+
             //Work out the right text and tooltip and display the button as a label
             DateStringFormatsEnum MainClockFormat = DateStringFormatsEnum.DateTimeFormat;
             if (settings.DateTimeFormat == DateStringFormatsEnum.TimeAsUT) MainClockFormat = DateStringFormatsEnum.TimeAsUT;
@@ -1170,7 +1186,7 @@ namespace KerbalAlarmClock
 
 
 
-        internal Boolean DrawTextBox(ref String strVar, GUIStyle style, params GUILayoutOption[] options)
+        internal static Boolean DrawTextBox(ref String strVar, GUIStyle style, params GUILayoutOption[] options)
         {
             String strReturn = GUILayout.TextField(strVar, style, options);
             if (strReturn != strVar)
@@ -1182,6 +1198,85 @@ namespace KerbalAlarmClock
             return false;
         }
 
+
+        internal static Boolean DrawTextField(ref String Value, String RegexValidator, Boolean RegexFailOnMatch, String LabelText = "", Int32 FieldWidth = 0, Int32 LabelWidth = 0, Boolean Locked = false)
+        {
+            GUIStyle styleTextBox = KACResources.styleAddField;
+            if (Locked)
+                styleTextBox = KACResources.styleAddFieldLocked;
+            else if ((RegexFailOnMatch && System.Text.RegularExpressions.Regex.IsMatch(Value, RegexValidator, System.Text.RegularExpressions.RegexOptions.IgnoreCase)) ||
+                (!RegexFailOnMatch && !System.Text.RegularExpressions.Regex.IsMatch(Value, RegexValidator, System.Text.RegularExpressions.RegexOptions.IgnoreCase)))
+                styleTextBox = KACResources.styleAddFieldError;
+
+
+            if (LabelText != "")
+            {
+                if (LabelWidth == 0)
+                    GUILayout.Label(LabelText, KACResources.styleLabel);
+                else
+                    GUILayout.Label(LabelText, KACResources.styleLabel, GUILayout.Width(LabelWidth));
+            }
+
+
+            String textValue = Value;
+            Boolean blnReturn = false;
+            if (FieldWidth == 0)
+                blnReturn = DrawTextBox(ref textValue, styleTextBox);
+            else
+                blnReturn = DrawTextBox(ref textValue, styleTextBox, GUILayout.Width(FieldWidth));
+
+            if (!Locked) Value = textValue;
+            return blnReturn;
+        }
+
+        internal static Boolean DrawYearDay(ref KSPDateTime dateToDraw)
+        {
+            String strYear = dateToDraw.Year.ToString();
+            String strMonth = dateToDraw.Month.ToString();
+            String strDay = dateToDraw.Day.ToString();
+
+            //If the value changed
+            Boolean blnReturn = false;
+
+            if (KSPDateStructure.CalendarType == CalendarTypeEnum.Earth)
+            {
+                blnReturn = DrawYearMonthDay(ref strYear, ref strMonth, ref strDay);
+                if (blnReturn)
+                {
+                    dateToDraw = KSPDateTime.FromEarthValues(strYear, strMonth, strDay);
+                }
+            }
+            else
+            {
+                blnReturn = DrawYearDay(ref strYear, ref strDay);
+                if (blnReturn)
+                {
+                    dateToDraw = new KSPDateTime(strYear, strDay);
+                }
+            }
+            return blnReturn;
+        }
+
+        internal static Boolean DrawYearDay(ref String strYear, ref String strDay)
+        {
+            Boolean blnReturn = false;
+            GUILayout.BeginHorizontal();
+            blnReturn = blnReturn || DrawTextField(ref strYear, "[^\\d\\.]+", true, "Year:", 50, 40);
+            blnReturn = blnReturn || DrawTextField(ref strDay, "[^\\d\\.]+", true, "Day:", 50, 40);
+            GUILayout.EndHorizontal();
+            return blnReturn;
+        }
+
+        internal static Boolean DrawYearMonthDay(ref String strYear, ref String strMonth, ref String strDay)
+        {
+            Boolean blnReturn = false;
+            GUILayout.BeginHorizontal();
+            blnReturn = blnReturn || DrawTextField(ref strYear, "[^\\d\\.]+", true, "Y:", 40, 20);
+            blnReturn = blnReturn || DrawTextField(ref strMonth, "[^\\d\\.]+", true, "M:", 30, 20);
+            blnReturn = blnReturn || DrawTextField(ref strDay, "[^\\d\\.]+", true, "D:", 30, 20);
+            GUILayout.EndHorizontal();
+            return blnReturn;
+        }
 
         /// <summary>
         /// Draws a toggle button like a checkbox

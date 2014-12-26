@@ -36,7 +36,7 @@ namespace KSPPluginFramework
             List<KeyValuePair<TEnum, string>> temp = Enum
                 .GetValues(typeof(TEnum))
                 .Cast<TEnum>()
-                .Select(x => new KeyValuePair<TEnum, string>(x, ((Enum)((object)x)).Description()))
+                .Select(x => new KeyValuePair<TEnum, string>(x, ((Enum)((System.Object)x)).Description()))
                 .ToList();
             return temp.Select(x => x.Value).ToList<String>();
         }
@@ -44,6 +44,8 @@ namespace KSPPluginFramework
         {
             return ToEnumDescriptions<TEnum>(default(TEnum)).ToList<String>();
         }
+
+
 
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
         {
@@ -57,5 +59,16 @@ namespace KSPPluginFramework
             return Convert.ToInt32(s);
         }
 
+        public static Int32 NormalizeAngle360(this Int32 val) {
+            return (Int32)Convert.ToDouble(val).NormalizeAngle360();
+        }
+
+        public static Double NormalizeAngle360(this Double val) 
+        {
+            val %= 360;
+            if (val < 0)
+                val += 360;
+            return val;
+        }
     }
 }

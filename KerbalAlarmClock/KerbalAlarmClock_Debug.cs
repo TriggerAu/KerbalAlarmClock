@@ -303,29 +303,31 @@ namespace KerbalAlarmClock
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
 
-            GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.DateTimeFormat));
-            GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.KSPFormat));
-            GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.KSPFormatWithSecs));
-            GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.TimeAsUT));
 
-            GUILayout.Label(rawEntry.UT.ToString());
-            GUILayout.Label(rawEntry.Years.ToString());
-            GUILayout.Label(timeDefaultMargin.UT.ToString());
-            GUILayout.Label(timeDefaultMargin.Years.ToString());
-            GUILayout.Label(timeDefaultMargin.Days.ToString());
-            GUILayout.Label(timeDefaultMargin.Hours.ToString());
-            GUILayout.Label(timeDefaultMargin.Minutes.ToString());
+            GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.ToString());
+            //GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.DateTimeFormat));
+            //GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.KSPFormat));
+            //GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.KSPFormatWithSecs));
+            //GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.TimeAsUT));
+
+            //GUILayout.Label(rawEntry.UT.ToString());
+            //GUILayout.Label(rawEntry.Years.ToString());
+            //GUILayout.Label(timeDefaultMargin.UT.ToString());
+            //GUILayout.Label(timeDefaultMargin.Years.ToString());
+            //GUILayout.Label(timeDefaultMargin.Days.ToString());
+            //GUILayout.Label(timeDefaultMargin.Hours.ToString());
+            //GUILayout.Label(timeDefaultMargin.Minutes.ToString());
 
 
 
-            if (GUILayout.Button("KSP Cal"))
-            {
-                KSPDateStructure.SetKSPStockCalendar();
-            }
-            if (GUILayout.Button("Earth Cal"))
-            {
-                KSPDateStructure.SetEarthCalendar();
-            }
+            //if (GUILayout.Button("KSP Cal"))
+            //{
+            //    KSPDateStructure.SetKSPStockCalendar();
+            //}
+            //if (GUILayout.Button("Earth Cal"))
+            //{
+            //    KSPDateStructure.SetEarthCalendar();
+            //}
 
             //if (GUILayout.Button("Add Lock"))
             //{

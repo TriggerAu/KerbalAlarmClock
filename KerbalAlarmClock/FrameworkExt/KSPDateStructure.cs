@@ -20,6 +20,14 @@ namespace KSPPluginFramework
         /// <summary>What Year does UT 0 represent</summary>
         static public Int32 EpochYear { get; private set; }
 
+
+        static public KSPDateTime EpochAsKSPDateTime { 
+            get {
+                return new KSPDateTime(EpochYear, EpochDayOfYear);
+            }
+        }
+
+
         //Define the Calendar
         /// <summary>How many seconds (game UT) make up a minute</summary>
         static public Int32 SecondsPerMinute { get; private set; }
@@ -37,6 +45,10 @@ namespace KSPPluginFramework
         /// <summary>How many seconds (game UT) make up a year - not relevant for Earth time</summary>
         static public Int32 SecondsPerYear { get { return SecondsPerDay * DaysPerYear; } }
 
+        /// <summary>How many seconds (game UT) make up a year - not relevant for Earth time</summary>
+        static public Int32 HoursPerYear { get { return HoursPerDay * DaysPerYear; } }
+
+        
         /// <summary>What Earth date does UT 0 represent</summary>
         static public DateTime CustomEpochEarth { get; private set; }
 

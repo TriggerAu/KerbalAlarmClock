@@ -96,11 +96,11 @@ namespace KerbalAlarmClock
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Alarm Time:", KACResources.styleAlarmMessageTime);
 			if (tmpAlarm.TypeOfAlarm!= KACAlarm.AlarmTypeEnum.EarthTime)
-				GUILayout.Label(KACTime.PrintDate(tmpAlarm.AlarmTime, settings.TimeFormat), KACResources.styleAlarmMessageTime);
+				GUILayout.Label(tmpAlarm.AlarmTime.ToStringStandard(settings.DateTimeFormat), KACResources.styleAlarmMessageTime);
 			else
 				GUILayout.Label(EarthTimeDecode(tmpAlarm.AlarmTime.UT).ToLongTimeString(), KACResources.styleAlarmMessageTime);
 			if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
-				GUILayout.Label("(m: " + KACTime.PrintInterval(new KACTime(tmpAlarm.AlarmMarginSecs),3, settings.TimeFormat)+ ")", KACResources.styleAlarmMessageTime);
+				GUILayout.Label("(m: " + new KSPTimeSpan(tmpAlarm.AlarmMarginSecs).ToStringStandard(settings.TimeSpanFormat, 3) + ")", KACResources.styleAlarmMessageTime);
 			GUILayout.EndHorizontal();
 
 			GUILayout.Label(tmpAlarm.Notes, KACResources.styleAlarmMessage);
@@ -293,19 +293,20 @@ namespace KerbalAlarmClock
 				else
 					DrawStoredVesselIDMissing(alarmEdit.VesselID);
 
-				//Draw the old and new times
-				GUILayout.BeginHorizontal();
-				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
-				{
-					GUILayout.Label("Time To Alarm:", KACResources.styleContent);
-					GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT), settings.TimeFormat), KACResources.styleAddHeading);
-				}
-				GUILayout.Label("Time To Event:", KACResources.styleContent);
-				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
-					GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT + alarmEdit.AlarmMarginSecs-KACWorkerGameState.CurrentTime.UT),settings.TimeFormat),KACResources.styleAddHeading);
-				else
-                    GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.Remaining.UT), OldPrintTimeFormat.DateTimeString), KACResources.styleAddHeading);
-				GUILayout.EndHorizontal();
+
+                //Draw the old and new times
+                GUILayout.BeginHorizontal();
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
+                {
+                    GUILayout.Label("Time To Alarm:", KACResources.styleContent);
+                    GUILayout.Label((alarmEdit.AlarmTime - KACWorkerGameState.CurrentTime).ToStringStandard(settings.TimeSpanFormat), KACResources.styleAddHeading);
+                }
+                GUILayout.Label("Time To Event:", KACResources.styleContent);
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
+                    GUILayout.Label((alarmEdit.AlarmTime - KACWorkerGameState.CurrentTime).Add(new KSPTimeSpan(alarmEdit.AlarmMarginSecs)).ToStringStandard(settings.TimeSpanFormat), KACResources.styleAddHeading);
+                else
+                    GUILayout.Label(alarmEdit.Remaining.ToStringStandard(TimeSpanStringFormatsEnum.DateTimeFormat), KACResources.styleAddHeading);
+                GUILayout.EndHorizontal();
 
 				int intNoOfActionButtons = 0;
 				int intNoOfActionButtonsDoubleLine = 0;
@@ -349,13 +350,13 @@ namespace KerbalAlarmClock
 				GUILayout.BeginHorizontal();
 				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew) {
 					GUILayout.Label("Time To Alarm:", KACResources.styleContent);
-					GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT), settings.TimeFormat), KACResources.styleAddHeading);
+					GUILayout.Label((alarmEdit.AlarmTime - KACWorkerGameState.CurrentTime).ToStringStandard(settings.TimeSpanFormat), KACResources.styleAddHeading);
 				}
 				GUILayout.Label("Time To Event:", KACResources.styleContent);
 				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
-					GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT + alarmEdit.AlarmMarginSecs - KACWorkerGameState.CurrentTime.UT), settings.TimeFormat), KACResources.styleAddHeading);
+					GUILayout.Label((alarmEdit.AlarmTime - KACWorkerGameState.CurrentTime).Add(new KSPTimeSpan(alarmEdit.AlarmMarginSecs)).ToStringStandard(settings.TimeSpanFormat), KACResources.styleAddHeading);
 				else
-                    GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.Remaining.UT), OldPrintTimeFormat.DateTimeString), KACResources.styleAddHeading);
+                    GUILayout.Label(alarmEdit.Remaining.ToStringStandard(TimeSpanStringFormatsEnum.DateTimeFormat), KACResources.styleAddHeading);
 				GUILayout.EndHorizontal();
 
 				int intNoOfActionButtons = 0;

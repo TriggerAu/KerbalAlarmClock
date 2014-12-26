@@ -603,11 +603,24 @@ namespace KSPPluginFramework
 		}
 		/// <summary>Indicates whether two KSPPluginFramework.KSPDateTime instances are equal.</summary> 
 		/// <param name="d1">A KSPPluginFramework.KSPDateTime.</param>
-		/// <param name="d2">A DateTime.</param>
+		/// <param name="d2">A KSPDateTime.</param>
 		/// <returns>true if the values of d1 and d2 are equal; otherwise, false.</returns>
 		public static Boolean operator ==(KSPDateTime d1, KSPDateTime d2)
 		{
-			return d1.UT == d2.UT;
+            if (object.ReferenceEquals(d1, d2))
+            {
+                // handles if both are null as well as object identity
+                return true;
+            }
+
+            //handles if one is null and not the other
+            if ((object)d1 == null || (object)d2 == null)
+            {
+                return false;
+            }
+
+            //now compares
+            return d1.UT == d2.UT;
 		}
 
 

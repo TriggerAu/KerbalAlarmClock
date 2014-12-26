@@ -122,7 +122,7 @@ namespace KerbalAlarmClock.Windows
                     }
 
                     String strLabelText = "";
-                    strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, KACTime.PrintInterval(tmpAlarm.Remaining, KerbalAlarmClock.settings.TimeFormat));
+                    strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, tmpAlarm.Remaining.ToStringStandard(KerbalAlarmClock.settings.TimeSpanFormat,3));
                     GUIStyle styleLabel = new GUIStyle(KACResources.styleAlarmText);
                     GUIContent contAlarmLabel = new GUIContent(strLabelText, tmpAlarm.Notes);
                     GUILayout.Label(contAlarmLabel, styleLabel);

@@ -101,6 +101,22 @@ namespace KerbalAlarmClock
         [Persistent] internal OldPrintTimeFormat TimeFormat = OldPrintTimeFormat.KSPString;
         [Persistent] internal DateStringFormatsEnum DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs;
         [Persistent] internal Boolean TimeFormatConverted = false;
+        internal TimeSpanStringFormatsEnum TimeSpanFormat { get {
+            switch (DateTimeFormat)
+            {
+                case DateStringFormatsEnum.TimeAsUT:
+                    return TimeSpanStringFormatsEnum.TimeAsUT;
+                case DateStringFormatsEnum.KSPFormat:
+                    return TimeSpanStringFormatsEnum.KSPFormat;
+                case DateStringFormatsEnum.KSPFormatWithSecs:
+                    return TimeSpanStringFormatsEnum.KSPFormat;
+                case DateStringFormatsEnum.DateTimeFormat:
+                    return TimeSpanStringFormatsEnum.DateTimeFormat;
+                default:
+                    return TimeSpanStringFormatsEnum.KSPFormat;
+            }
+        } }
+
 
         [Persistent] internal Boolean ShowTooltips = true;
         [Persistent] internal Boolean ShowEarthTime = false;

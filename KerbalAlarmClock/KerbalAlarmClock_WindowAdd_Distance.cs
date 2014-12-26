@@ -94,15 +94,15 @@ namespace KerbalAlarmClock
 
 
                     String strMarginConversion = "";
-                    KACTime eventTime = new KACTime(dblClosestUT);
-                    KACTime eventInterval = new KACTime(dblClosestUT - KACWorkerGameState.CurrentTime.UT);
+                    KSPDateTime eventTime = new KSPDateTime(dblClosestUT);
+                    KSPTimeSpan eventInterval = new KSPTimeSpan(dblClosestUT - KACWorkerGameState.CurrentTime.UT);
 
-                    KACTime eventAlarm;
-                    KACTime eventAlarmInterval;
+                    KSPDateTime eventAlarm;
+                    KSPTimeSpan eventAlarmInterval;
                     try
                     {
-                        eventAlarm = new KACTime(eventTime.UT - timeMargin.UT);
-                        eventAlarmInterval = new KACTime(eventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
+                        eventAlarm = new KSPDateTime(eventTime.UT - timeMargin.UT);
+                        eventAlarmInterval = new KSPTimeSpan(eventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
                     }
                     catch (Exception)
                     {
@@ -292,15 +292,15 @@ namespace KerbalAlarmClock
 
             //Now do the stuff to draw the alarm button
             String strMarginConversion = "";
-            KACTime eventTime = new KACTime(dblDistanceUT);
-            KACTime eventInterval = new KACTime(dblDistanceUT - KACWorkerGameState.CurrentTime.UT);
+            KSPDateTime eventTime = new KSPDateTime(dblDistanceUT);
+            KSPTimeSpan eventInterval = new KSPTimeSpan(dblDistanceUT - KACWorkerGameState.CurrentTime.UT);
 
-            KACTime eventAlarm;
-            KACTime eventAlarmInterval;
+            KSPDateTime eventAlarm;
+            KSPTimeSpan eventAlarmInterval;
             try
             {
-                eventAlarm = new KACTime(eventTime.UT - timeMargin.UT);
-                eventAlarmInterval = new KACTime(eventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
+                eventAlarm = new KSPDateTime(eventTime.UT - timeMargin.UT);
+                eventAlarmInterval = new KSPTimeSpan(eventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
             }
             catch (Exception)
             {

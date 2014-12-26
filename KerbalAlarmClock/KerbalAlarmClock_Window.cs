@@ -932,7 +932,7 @@ namespace KerbalAlarmClock
             //float width1 = fOutMin1;
 
             String strLabelText = "";
-            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, KACTime.PrintInterval(tmpAlarm.Remaining, settings.TimeFormat));
+            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name,tmpAlarm.Remaining.ToStringStandard(settings.TimeSpanFormat,3));
 
             GUIStyle styleLabel = new GUIStyle( KACResources.styleAlarmText);
             if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))

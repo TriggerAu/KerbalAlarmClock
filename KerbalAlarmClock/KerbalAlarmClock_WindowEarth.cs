@@ -64,7 +64,7 @@ namespace KerbalAlarmClock
 				TimeSpan tmAlarm = (dteWorking.TimeOfDay - DateTime.Now.TimeOfDay);
 				if (tmAlarm.TotalSeconds < 0) tmAlarm=tmAlarm.Add(new TimeSpan(24, 0, 0));
 
-				KACTime TimeToAlarm = new KACTime(tmAlarm.TotalSeconds);
+                KSPTimeSpan TimeToAlarm = new KSPTimeSpan(tmAlarm.TotalSeconds);
 
 				//Bit at the bottom to add an alarm
 				int intLineHeight = 18;
@@ -78,7 +78,7 @@ namespace KerbalAlarmClock
 
 				GUILayout.BeginHorizontal();
 				GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(100), GUILayout.MaxWidth(100));
-                GUILayout.Label(KACTime.PrintInterval(TimeToAlarm, OldPrintTimeFormat.DateTimeString), KACResources.styleContentEarth, GUILayout.Height(intLineHeight));
+                GUILayout.Label(TimeToAlarm.ToStringStandard(TimeSpanStringFormatsEnum.DateTimeFormatLong), KACResources.styleContentEarth, GUILayout.Height(intLineHeight));
 				GUILayout.EndHorizontal();
 				GUILayout.EndVertical();
 

@@ -169,7 +169,7 @@ namespace KSPPluginFramework
         /// <summary>Generates some standard Templated versions of output</summary>
         /// <param name="TimeSpanFormat">Enum of some common formats</param>
         /// <returns>A string that represents the value of this instance.</returns>
-        public String ToStringStandard(TimeSpanStringFormatsEnum TimeSpanFormat)
+        public String ToStringStandard(TimeSpanStringFormatsEnum TimeSpanFormat, Int32 Precision = 6)
         {
             switch (TimeSpanFormat)
             {
@@ -179,12 +179,14 @@ namespace KSPPluginFramework
                     strReturn += String.Format("{0:N0}s", Math.Abs(UT));
                     return strReturn;
                 case TimeSpanStringFormatsEnum.KSPFormat:
-                    return ToString(5);
-                case TimeSpanStringFormatsEnum.IntervalLong:
-                    return ToString("y Year\\s, d Da\\y\\s, hh:mm:ss");
-                case TimeSpanStringFormatsEnum.IntervalLongTrimYears:
-                    return ToString("y Year\\s, d Da\\y\\s, hh:mm:ss").Replace("0 Years, ","");
+                    return ToString(Precision);
                 case TimeSpanStringFormatsEnum.DateTimeFormat:
+                    return ToDateTimeString(Precision);
+                case TimeSpanStringFormatsEnum.IntervalLong:
+                    return ToString((UT < 0?"+ ":"") + "y Year\\s, d Da\\y\\s, hh:mm:ss");
+                case TimeSpanStringFormatsEnum.IntervalLongTrimYears:
+                    return ToString((UT < 0 ? "+ " : "") + "y Year\\s, d Da\\y\\s, hh:mm:ss").Replace("0 Years, ", "");
+                case TimeSpanStringFormatsEnum.DateTimeFormatLong:
                     String strFormat = "";
                     if (Years > 0) strFormat += "y\\y";
                     if (Days > 0) strFormat += (strFormat.EndsWith("y") ? ", ":"") + "d\\d";
@@ -203,11 +205,11 @@ namespace KSPPluginFramework
         /// <returns>A string that represents the value of this instance.</returns>
         public override String ToString()
         {
-            return ToString(1);
+            return ToString(3);
         }
 
         /// <summary>Returns the string representation of the value of this instance.</summary> 
-        /// <param name="Precision">How many parts of the timespane to return (of year, Day, hour, minute, second)</param>
+        /// <param name="Precision">How many parts of the timespan to return (of year, Day, hour, minute, second)</param>
         /// <returns>A string that represents the value of this instance.</returns>
         public String ToString(Int32 Precision)
         {
@@ -218,33 +220,85 @@ namespace KSPPluginFramework
 
 
             if (CalType != CalendarTypeEnum.Earth) {
-                if ((Years > 0 || Precision > 4) && Displayed < Precision) {
+                if ((Years != 0) && Displayed < Precision) {
                     format = "y\\y,";
                     Displayed++;
                 }
             }
 
-            if((Days>0 || Precision > 3) && Displayed<Precision){
-                format = "d\\d,";
+            if ((Days != 0 || format.EndsWith(",")) && Displayed < Precision)
+            {
+                format += (format == "" ? "" : " ") + "d\\d,";
                 Displayed++;
             }
-            if ((Hours>0  || Precision > 2) && Displayed<Precision) {
+            if ((Hours != 0 || format.EndsWith(",")) && Displayed < Precision)
+            {
                 format += (format==""?"":" ") + "h\\h,";
                 Displayed++;
 
             }
-            if ((Minutes>0  || Precision > 1) && Displayed<Precision) {
+            if ((Minutes != 0 || format.EndsWith(",")) && Displayed < Precision)
+            {
                 format += (format==""?"":" ") + "m\\m,";
                 Displayed++;
 
             }
-            if ((Seconds>0 || Precision > 0) && Displayed<Precision) {
+            if (Displayed<Precision) {
                 format += (format==""?"":" ") + "s\\s,";
                 Displayed++;
 
             }
 
             format = format.TrimEnd(',');
+
+            return ToString(format, null);
+        }
+
+        /// <summary>Returns the string representation of the value of this instance.</summary> 
+        /// <param name="Precision">How many parts of the timespan to return (of year, Day, hour, minute, second)</param>
+        /// <returns>A string that represents the value of this instance.</returns>
+        public String ToDateTimeString(Int32 Precision)
+        {
+            Int32 Displayed = 0;
+            String format = "";
+
+            if (UT < 0) format += "+ ";
+
+
+            if (CalType != CalendarTypeEnum.Earth)
+            {
+                if ((Years != 0) && Displayed < Precision)
+                {
+                    format = "y\\y,";
+                    Displayed++;
+                }
+            }
+
+            if ((Days != 0 || format.EndsWith(",")) && Displayed < Precision)
+            {
+                format += (format == "" ? "" : " ") + "d\\d,";
+                Displayed++;
+            }
+            if ((Hours != 0 || format.EndsWith(",")) && Displayed < Precision)
+            {
+                format += (format == "" ? "" : " ") + "hh:";
+                Displayed++;
+
+            }
+            if (Displayed < Precision)
+            {
+                format += "mm:";
+                Displayed++;
+
+            }
+            if (Displayed < Precision)
+            {
+                format += "ss";
+                Displayed++;
+
+            }
+
+            format = format.TrimEnd(',').TrimEnd(':');
 
             return ToString(format, null);
         }
@@ -281,19 +335,19 @@ namespace KSPPluginFramework
                 switch (m.Value[0])
                 {
                     case 'y':
-                        format = format.Substring(0, mIndex) + Years.ToString("D" + mLength) + format.Substring(mIndex + mLength);
+                        format = format.Substring(0, mIndex) + Math.Abs(Years).ToString("D" + mLength) + format.Substring(mIndex + mLength);
                         break;
                     case 'd':
-                        format = format.Substring(0, mIndex) + Days.ToString("D" + mLength) + format.Substring(mIndex + mLength);
+                        format = format.Substring(0, mIndex) + Math.Abs(Days).ToString("D" + mLength) + format.Substring(mIndex + mLength);
                         break;
                     case 'h':
-                        format = format.Substring(0, mIndex) + Hours.ToString("D" + mLength.Clamp(1, KSPDateStructure.HoursPerDay.ToString().Length)) + format.Substring(mIndex + mLength);
+                        format = format.Substring(0, mIndex) + Math.Abs(Hours).ToString("D" + mLength.Clamp(1, KSPDateStructure.HoursPerDay.ToString().Length)) + format.Substring(mIndex + mLength);
                         break;
                     case 'm':
-                        format = format.Substring(0, mIndex) + Minutes.ToString("D" + mLength.Clamp(1, KSPDateStructure.MinutesPerHour.ToString().Length)) + format.Substring(mIndex + mLength);
+                        format = format.Substring(0, mIndex) + Math.Abs(Minutes).ToString("D" + mLength.Clamp(1, KSPDateStructure.MinutesPerHour.ToString().Length)) + format.Substring(mIndex + mLength);
                         break;
                     case 's':
-                        format = format.Substring(0, mIndex) + Seconds.ToString("D" + mLength.Clamp(1, KSPDateStructure.SecondsPerMinute.ToString().Length)) + format.Substring(mIndex + mLength);
+                        format = format.Substring(0, mIndex) + Math.Abs(Seconds).ToString("D" + mLength.Clamp(1, KSPDateStructure.SecondsPerMinute.ToString().Length)) + format.Substring(mIndex + mLength);
                         break;
 
                     default:
@@ -481,6 +535,19 @@ namespace KSPPluginFramework
         /// <returns>true if the values of t1 and t2 are equal; otherwise, false.</returns>
         public static Boolean operator ==(KSPTimeSpan t1, KSPTimeSpan t2)
         {
+            if (object.ReferenceEquals(t1, t2))
+            {
+                // handles if both are null as well as object identity
+                return true;
+            }
+
+            //handles if one is null and not the other
+            if ((object)t1 == null || (object)t2 == null)
+            {
+                return false;
+            }
+
+            //now compares
             return t1.UT == t2.UT;
         }
 
@@ -528,8 +595,9 @@ namespace KSPPluginFramework
     {
         TimeAsUT,
         KSPFormat,
+        DateTimeFormatLong,
         IntervalLong,
         IntervalLongTrimYears,
-        DateTimeFormat
+        DateTimeFormat,
     }
 }

@@ -276,7 +276,7 @@ namespace KerbalAlarmClock
 				//Also, untrigger any alarms that we have now gone back past
 				foreach (KACAlarm tmpAlarm in alarms.Where(a=>a.Triggered && (a.AlarmTime.UT>Planetarium.GetUniversalTime())))
 				{
-					LogFormatted("Resetting Alarm Trigger for {0}({1})", tmpAlarm.Name, tmpAlarm.AlarmTime.UTString());
+					LogFormatted("Resetting Alarm Trigger for {0}({1})", tmpAlarm.Name, tmpAlarm.AlarmTime.ToStringStandard(DateStringFormatsEnum.TimeAsUT));
 					tmpAlarm.Triggered = false;
 					tmpAlarm.AlarmWindowID = 0;
 					tmpAlarm.AlarmWindowClosed = false;
@@ -984,8 +984,8 @@ namespace KerbalAlarmClock
 			//is there an alarm and no man node?
 			if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
 			{
-				KACTime nodeAutoAlarm;
-				nodeAutoAlarm = new KACTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin);
+                KSPDateTime nodeAutoAlarm;
+				nodeAutoAlarm = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin);
 				
 				List<ManeuverNode> manNodesToStore = KACWorkerGameState.ManeuverNodesFuture;
 
@@ -1320,7 +1320,7 @@ namespace KerbalAlarmClock
 
 						if (tmpModelPoint != null)
 						{
-							KACTime XferNextTargetEventTime = new KACTime(tmpModelPoint.UT);
+                            KSPDateTime XferNextTargetEventTime = new KSPDateTime(tmpModelPoint.UT);
 
 							if (!alarms.Any(a => a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.TransferModelled &&
 											a.XferOriginBodyName == alarmToCheck.XferOriginBodyName &&

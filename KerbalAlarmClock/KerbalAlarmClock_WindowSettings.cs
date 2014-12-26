@@ -19,7 +19,7 @@ namespace KerbalAlarmClock
         private Int32 intUpdateBoxheight = 116;
         private Int32 intSOIBoxheight = 178; //166;
 
-        private KACTimeStringArray timeDefaultMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        internal KACTimeStringArray timeDefaultMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeAutoManNodeThreshold = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
@@ -218,7 +218,7 @@ namespace KerbalAlarmClock
             if (DrawCheckbox(ref settings.KillWarpOnThrottleCutOffKeystroke, "Halt TimeWarp when Throttle Cutoff by Keystroke"))
                 settings.Save();
 
-            int intTimeFormat = (int)settings.TimeFormat;
+            int intTimeFormat = (int)settings.DateTimeFormat;
             if (intTimeFormat > 1) intTimeFormat--;
             GUILayout.BeginHorizontal();
             GUILayout.Label("Time Format:", KACResources.styleAddHeading, GUILayout.Width(90));

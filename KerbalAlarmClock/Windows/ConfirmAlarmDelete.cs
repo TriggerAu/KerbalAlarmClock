@@ -30,7 +30,7 @@ namespace KerbalAlarmClock.Windows
             GUILayout.BeginVertical();
             GUILayout.Label("Are you sure you want to delete?");
             GUILayout.Label(AlarmToConfirm.Name);
-            GUILayout.Label(AlarmToConfirm.Remaining.IntervalStringLong());
+            GUILayout.Label(AlarmToConfirm.Remaining.ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears));
             
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();

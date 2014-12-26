@@ -219,11 +219,13 @@ namespace KerbalAlarmClock
                 settings.Save();
 
             int intTimeFormat = (int)settings.TimeFormat;
+            if (intTimeFormat > 1) intTimeFormat--;
             GUILayout.BeginHorizontal();
             GUILayout.Label("Time Format:", KACResources.styleAddHeading, GUILayout.Width(90));
             if (DrawRadioList(ref intTimeFormat, new String[] { "UT", "KSP Time", "Normal Time" }))
-            {   
-                settings.TimeFormat = (KACTime.PrintTimeFormat)intTimeFormat;
+            {
+                if (intTimeFormat > 0) intTimeFormat++;
+                settings.DateTimeFormat = (DateStringFormatsEnum)intTimeFormat;
                 settings.Save();
             }
             GUILayout.EndHorizontal();

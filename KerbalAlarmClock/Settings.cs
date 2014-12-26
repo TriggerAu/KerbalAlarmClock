@@ -98,7 +98,10 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean AlarmDeleteOnClose = false;
         [Persistent] internal Boolean HideOnPause = true;
         //public Boolean TimeAsUT = false;
-        [Persistent] internal KACTime.PrintTimeFormat TimeFormat = KACTime.PrintTimeFormat.KSPString;
+        [Persistent] internal OldPrintTimeFormat TimeFormat = OldPrintTimeFormat.KSPString;
+        [Persistent] internal DateStringFormatsEnum DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs;
+        [Persistent] internal Boolean TimeFormatConverted = false;
+
         [Persistent] internal Boolean ShowTooltips = true;
         [Persistent] internal Boolean ShowEarthTime = false;
 

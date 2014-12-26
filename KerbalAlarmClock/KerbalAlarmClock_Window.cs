@@ -678,17 +678,17 @@ namespace KerbalAlarmClock
             }
 
             //Work out the right text and tooltip and display the button as a label
-            KACTime.PrintTimeFormat MainClockFormat = KACTime.PrintTimeFormat.DateTimeString;
-            if (settings.TimeFormat == KACTime.PrintTimeFormat.TimeAsUT) MainClockFormat = KACTime.PrintTimeFormat.TimeAsUT;
-            GUIContent contCurrentTime = new GUIContent(KACTime.PrintDate(KACWorkerGameState.CurrentTime, MainClockFormat), "Click to toggle through time formats");
+            DateStringFormatsEnum MainClockFormat = DateStringFormatsEnum.DateTimeFormat;
+            if (settings.DateTimeFormat == DateStringFormatsEnum.TimeAsUT) MainClockFormat = DateStringFormatsEnum.TimeAsUT;
+            GUIContent contCurrentTime = new GUIContent(KACWorkerGameState.CurrentTime.ToStringStandard(MainClockFormat), "Click to toggle through time formats");
             if (GUILayout.Button(contCurrentTime, KACResources.styleContent))
             {
-                switch (settings.TimeFormat)
+                switch (settings.DateTimeFormat)
                 {
-                    case KACTime.PrintTimeFormat.TimeAsUT: settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
-                    case KACTime.PrintTimeFormat.KSPString: settings.TimeFormat = KACTime.PrintTimeFormat.DateTimeString; break;
-                    case KACTime.PrintTimeFormat.DateTimeString: settings.TimeFormat = KACTime.PrintTimeFormat.TimeAsUT; break;
-                    default: settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
+                    case DateStringFormatsEnum.TimeAsUT: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
+                    case DateStringFormatsEnum.KSPFormatWithSecs: settings.DateTimeFormat = DateStringFormatsEnum.DateTimeFormat; break;
+                    case DateStringFormatsEnum.DateTimeFormat: settings.DateTimeFormat = DateStringFormatsEnum.TimeAsUT; break;
+                    default: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
                 }
                 settings.Save();
             }

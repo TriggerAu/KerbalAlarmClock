@@ -28,8 +28,8 @@ namespace KerbalAlarmClock
         internal static Boolean ChangedVesselTarget { get { if (LastVesselTarget == null) return true; else return (LastVesselTarget != CurrentVesselTarget); } }
 
         //The current UT time - for alarm comparison
-        internal static KACTime CurrentTime = new KACTime();
-        internal static KACTime LastTime = new KACTime();
+        internal static KSPDateTime CurrentTime = new KSPDateTime(0);
+        internal static KSPDateTime LastTime = new KSPDateTime(0);
 
         internal static Boolean CurrentlyUnderWarpInfluence = false;
         internal static DateTime CurrentWarpInfluenceStartTime;

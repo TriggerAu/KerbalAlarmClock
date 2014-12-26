@@ -304,7 +304,7 @@ namespace KerbalAlarmClock
 				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
 					GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT + alarmEdit.AlarmMarginSecs-KACWorkerGameState.CurrentTime.UT),settings.TimeFormat),KACResources.styleAddHeading);
 				else
-					GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.Remaining.UT), KACTime.PrintTimeFormat.DateTimeString  ), KACResources.styleAddHeading);
+                    GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.Remaining.UT), OldPrintTimeFormat.DateTimeString), KACResources.styleAddHeading);
 				GUILayout.EndHorizontal();
 
 				int intNoOfActionButtons = 0;
@@ -355,7 +355,7 @@ namespace KerbalAlarmClock
 				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
 					GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.AlarmTime.UT + alarmEdit.AlarmMarginSecs - KACWorkerGameState.CurrentTime.UT), settings.TimeFormat), KACResources.styleAddHeading);
 				else
-					GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.Remaining.UT), KACTime.PrintTimeFormat.DateTimeString), KACResources.styleAddHeading);
+                    GUILayout.Label(KACTime.PrintInterval(new KACTime(alarmEdit.Remaining.UT), OldPrintTimeFormat.DateTimeString), KACResources.styleAddHeading);
 				GUILayout.EndHorizontal();
 
 				int intNoOfActionButtons = 0;

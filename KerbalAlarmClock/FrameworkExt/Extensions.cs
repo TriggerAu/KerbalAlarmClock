@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-namespace KerbalAlarmClock
+namespace KSPPluginFramework
 {
     public static class EnumExtensions
     {
@@ -43,6 +43,13 @@ namespace KerbalAlarmClock
         public static List<String> ToEnumDescriptions<TEnum>() where TEnum : struct,IConvertible
         {
             return ToEnumDescriptions<TEnum>(default(TEnum)).ToList<String>();
+        }
+
+        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
+        {
+            if (val.CompareTo(min) < 0) return min;
+            else if (val.CompareTo(max) > 0) return max;
+            else return val;
         }
     }
 }

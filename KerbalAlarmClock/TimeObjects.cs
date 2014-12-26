@@ -285,48 +285,55 @@ namespace KerbalAlarmClock
             }
         }
 
-        public static String PrintInterval(KACTime timeTemp,  KACTime.PrintTimeFormat TimeFormat)
+        public static String PrintInterval(KACTime timeTemp, OldPrintTimeFormat TimeFormat)
         {
             return PrintInterval(timeTemp, 3, TimeFormat);
         }
 
-        public static String PrintInterval(KACTime timeTemp, int Segments, KACTime.PrintTimeFormat TimeFormat)
+        public static String PrintInterval(KACTime timeTemp, int Segments, OldPrintTimeFormat TimeFormat)
         {
             switch (TimeFormat )
             {
-                case PrintTimeFormat.TimeAsUT:
+                case OldPrintTimeFormat.TimeAsUT:
                     return timeTemp.UTString();
-                case PrintTimeFormat.KSPString:
+                case OldPrintTimeFormat.KSPString:
                     return timeTemp.IntervalString(Segments);
-                case PrintTimeFormat.DateTimeString:
+                case OldPrintTimeFormat.DateTimeString:
                     return timeTemp.IntervalDateTimeString(Segments);
                 default:
                     return timeTemp.IntervalString(Segments);
             }
         }
 
-        public static String PrintDate(KACTime timeTemp, KACTime.PrintTimeFormat TimeFormat)
+        public static String PrintDate(KACTime timeTemp, OldPrintTimeFormat TimeFormat)
         {
             switch (TimeFormat)
             {
-                case PrintTimeFormat.TimeAsUT:
+                case OldPrintTimeFormat.TimeAsUT:
                     return timeTemp.UTString();
-                case PrintTimeFormat.KSPString:
+                case OldPrintTimeFormat.KSPString:
                     return timeTemp.DateString();
-                case PrintTimeFormat.DateTimeString:
+                case OldPrintTimeFormat.DateTimeString:
                     return timeTemp.DateTimeString();
                 default:
                     return timeTemp.DateTimeString();
             }
         }
 
-        public enum PrintTimeFormat
-        {
-            TimeAsUT,
-            KSPString,
-            DateTimeString
-        }
+        //public enum PrintTimeFormat
+        //{
+        //    TimeAsUT,
+        //    KSPString,
+        //    DateTimeString
+        //}
 #endregion
+    }
+
+    public enum OldPrintTimeFormat
+    {
+        TimeAsUT,
+        KSPString,
+        DateTimeString
     }
 
     public class KACTimeStringArray

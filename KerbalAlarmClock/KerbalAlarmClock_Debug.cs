@@ -303,8 +303,10 @@ namespace KerbalAlarmClock
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
 
-            GUILayout.Label(GameVariables.Instance.GetOrbitDisplayMode(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)).ToString());
-            GUILayout.Label(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation).ToString());
+            GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.DateTimeFormat));
+            GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.KSPFormat));
+            GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.KSPFormatWithSecs));
+            GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.TimeAsUT));
 
             //if (GUILayout.Button("Add Lock"))
             //{

@@ -100,6 +100,21 @@ namespace KerbalAlarmClock
             settings = new Settings("settings.cfg");
             if (!settings.Load())
                 LogFormatted("Settings Load Failed");
+            else
+            {
+                if (!settings.TimeFormatConverted)
+                {
+                    settings.TimeFormatConverted = true;
+                    switch (settings.TimeFormat)
+                    {
+                        case OldPrintTimeFormat.TimeAsUT: settings.DateTimeFormat = DateStringFormatsEnum.TimeAsUT; break;
+                        case OldPrintTimeFormat.KSPString: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
+                        case OldPrintTimeFormat.DateTimeString: settings.DateTimeFormat = DateStringFormatsEnum.DateTimeFormat; break;
+                        default: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
+                    }
+                    settings.Save();
+                }
+            }
 
             //Set initial GameState
             KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;

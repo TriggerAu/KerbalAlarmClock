@@ -78,7 +78,7 @@ namespace KerbalAlarmClock
 
 				GUILayout.BeginHorizontal();
 				GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(100), GUILayout.MaxWidth(100));
-				GUILayout.Label(KACTime.PrintInterval(TimeToAlarm, KACTime.PrintTimeFormat.DateTimeString), KACResources.styleContentEarth, GUILayout.Height(intLineHeight));
+                GUILayout.Label(KACTime.PrintInterval(TimeToAlarm, OldPrintTimeFormat.DateTimeString), KACResources.styleContentEarth, GUILayout.Height(intLineHeight));
 				GUILayout.EndHorizontal();
 				GUILayout.EndVertical();
 

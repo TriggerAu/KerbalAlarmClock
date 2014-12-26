@@ -1180,6 +1180,15 @@ namespace KerbalAlarmClock
         private void WindowLayout_AddPane_Transfer()
         {
             intAddXferHeight = 304;// 317;
+
+            if (settings.RSSActive) {
+                GUILayout.Label("RSS detected - it is recommended that you use the Transfer Window Planner Plugin to plan transfers", KACResources.styleAddXferName);
+                GUILayout.Space(-8);
+                if (GUILayout.Button("Click here to open the TWP forum thread", KACResources.styleContent))
+                    Application.OpenURL("http://forum.kerbalspaceprogram.com/threads/93115");
+                intAddXferHeight += 58;
+            }
+
             KSPDateTime XferCurrentTargetEventTime = null;
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();

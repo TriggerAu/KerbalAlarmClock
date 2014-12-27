@@ -178,7 +178,13 @@ namespace KerbalAlarmClock
                         .Select(a => a.assembly.GetExportedTypes())
                         .SelectMany(t => t)
                         .Any(t => t.FullName.ToLower().EndsWith(".realsolarsystem")))
+            {
                 settings.RSSActive = true;
+                if (!settings.RSSShowCalendarToggled) {
+                    settings.ShowCalendarToggle = true;
+                    settings.RSSShowCalendarToggled = true;
+                }
+            }
 
             RemoveInputLock();
         }

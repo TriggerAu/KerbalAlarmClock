@@ -678,7 +678,7 @@ namespace KerbalAlarmClock
             }
 
             //Calendar toggle
-            if (settings.ShowCalendarToggle || settings.RSSActive)
+            if (settings.ShowCalendarToggle)
             {
                 if (GUILayout.Button(new GUIContent(KACResources.btnCalendar, "Toggle Calendar"), KACResources.styleSmallButton))
                 {

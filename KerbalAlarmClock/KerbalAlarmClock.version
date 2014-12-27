@@ -1,0 +1,16 @@
+{
+  "NAME": "Kerbal Alarm Clock",
+  "URL": "https://raw.githubusercontent.com/TriggerAu/KerbalAlarmClock/master/KerbalAlarmClock/KerbalAlarmClock.version",
+  "DOWNLOAD" : "https://github.com/TriggerAu/KerbalAlarmClock/releases",
+  "VERSION": {
+    "MAJOR": 3,
+    "MINOR": 1,
+    "PATCH": 0,
+	"BUILD": 0
+  },
+  "KSP_VERSION": {
+    "MAJOR": 0,
+    "MINOR": 90,
+    "PATCH": 0
+  }
+}

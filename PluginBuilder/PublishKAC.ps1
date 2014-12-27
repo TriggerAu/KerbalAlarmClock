@@ -270,7 +270,7 @@ if($ChoiceRtn -eq 0)
     CreateKerbalStuffRelease
 
     $Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
-    $ChoiceRtn = $host.ui.PromptForChoice("Update versioncheck.txt file","Do you wish to updatethe versioncheck file in ghpages?",$Choices,0)
+    $ChoiceRtn = $host.ui.PromptForChoice("Update versioncheck.txt file","Do you wish to update the versioncheck file in ghpages?",$Choices,0)
 
     if($ChoiceRtn -eq 0)
     {

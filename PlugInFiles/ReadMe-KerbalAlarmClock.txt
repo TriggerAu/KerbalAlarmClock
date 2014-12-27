@@ -29,6 +29,21 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.1.0.0		-	KSP Version: 0.90
+- Added option so when you hit the throttle cutoff ("X" by default) it will also kill warp (Issue #85)
+- Added "No Action" Action options (Issue #80)
+- Added functionality to change calendar to RSS cal (Issue #53)
+- Added extra message for career mode when AP/PE points are not targettable (Issue #83)
+- Added warning to Transfer values for RSS loaded games (Issue #18)
+- Closed bug with Asteroid Closest Distance crash (Issue #54)
+- Confirmed code requirement for closest Distance and landed craft (Issue #73)
+- Closed request re "Focus"ing vessels in TS - no API exists (Issue #32)
+- Replaced all the Time objects with new KSPDateTime and KSPTimeSpan classes (Issue #74)
+- Added AVC .version file (Issue #88)
+- Restructured Zip to better suit CKAN (Issue #87)
+- Updated Toolbar wrapper
+- Updated manual pages
+
 Version 3.0.6.0		-	KSP Version: 0.90
 - Recompiled for 0.90
 - Couple of code changes for 0.90 changes

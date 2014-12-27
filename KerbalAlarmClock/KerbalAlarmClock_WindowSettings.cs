@@ -19,7 +19,7 @@ namespace KerbalAlarmClock
         private Int32 intUpdateBoxheight = 116;
         private Int32 intSOIBoxheight = 178; //166;
 
-        private KACTimeStringArray timeDefaultMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
+        internal KACTimeStringArray timeDefaultMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeAutoSOIMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeAutoManNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeAutoManNodeThreshold = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
@@ -89,6 +89,7 @@ namespace KerbalAlarmClock
                 //new GUIContent("Alarm Settings","Specific Settings for Alarm Types"), 
                 new GUIContent("Specifics","Specific Settings for Alarm Types"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
+                new GUIContent("Calendar", "Chosen Calendar and Details"), 
                 new GUIContent("About") 
             };
             GUIContent[] contSettingsTabsNewVersion = new GUIContent[] 
@@ -99,6 +100,7 @@ namespace KerbalAlarmClock
                 //new GUIContent("Alarm Specifics","Specific Settings for Alarm Types"), 
                 new GUIContent("Specifics","Specific Settings for Alarm Types"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
+                new GUIContent("Calendar", "Chosen Calendar and Details"), 
                 new GUIContent(" About", KACResources.btnSettingsAttention) 
             };
 
@@ -110,7 +112,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 567;// 514; //462; //463; //434;// 572;//542;
+                    intSettingsHeight = 591; // 567;// 514; //462; //463; //434;// 572;//542;
                     break;
                 //case 1:
                 //    WindowLayout_SettingsSpecifics1();
@@ -158,6 +160,10 @@ namespace KerbalAlarmClock
                     intSettingsHeight =  509; //518;//466 //406;
                     break;
                 case 3:
+                    WindowLayout_SettingsCalendar();
+                    intSettingsHeight = 226;
+                    break;
+                case 4:
                     WindowLayout_SettingsAbout();
                     intSettingsHeight = 350; // 294; //306;
                     break;
@@ -198,7 +204,7 @@ namespace KerbalAlarmClock
                 }
             }
             GUILayout.EndVertical();
-            //if (settings.SelectedSkin == Settings.DisplaySkin.Default) GUILayout.Space(intTestheight3);
+            //if (settings.SelectedSkin == Settings.DisplaySkin.Default) GUILayout.Space(38);
             //Preferences
             GUILayout.Label("Plugin Preferences", KACResources.styleAddSectionHeading);
 
@@ -215,12 +221,17 @@ namespace KerbalAlarmClock
             if (DrawCheckbox(ref settings.ShowTooltips, "Show Tooltips on Mouse Hover"))
                 settings.Save();
 
-            int intTimeFormat = (int)settings.TimeFormat;
+            if (DrawCheckbox(ref settings.KillWarpOnThrottleCutOffKeystroke, "Halt TimeWarp when Throttle Cutoff by Keystroke"))
+                settings.Save();
+
+            int intTimeFormat = (int)settings.DateTimeFormat;
+            if (intTimeFormat > 1) intTimeFormat--;
             GUILayout.BeginHorizontal();
             GUILayout.Label("Time Format:", KACResources.styleAddHeading, GUILayout.Width(90));
             if (DrawRadioList(ref intTimeFormat, new String[] { "UT", "KSP Time", "Normal Time" }))
-            {   
-                settings.TimeFormat = (KACTime.PrintTimeFormat)intTimeFormat;
+            {
+                if (intTimeFormat > 0) intTimeFormat++;
+                settings.DateTimeFormat = (DateStringFormatsEnum)intTimeFormat;
                 settings.Save();
             }
             GUILayout.EndHorizontal();
@@ -292,7 +303,6 @@ namespace KerbalAlarmClock
 
         }
 
-
         private void WindowLayout_SettingsSpecifics_Default()
         {
             GUILayout.Label("Alarm Defaults", KACResources.styleAddSectionHeading);
@@ -308,7 +318,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Default Alarm Action
-            if (DrawAlarmActionChoice3(ref settings.AlarmDefaultAction, "Default Action:", 108, 61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmDefaultAction, "Default Action:", 108, 38))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeDefaultMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Default Margin:", 100))
@@ -350,7 +360,7 @@ namespace KerbalAlarmClock
                 }
 
                 GUILayout.Label("Man Node Alarm Settings", KACResources.styleAddSectionHeading);
-                if (DrawAlarmActionChoice3(ref settings.AlarmAddManAuto_Action, "On Alarm:", 108, 61))
+                if (DrawAlarmActionChoice3(ref settings.AlarmAddManAuto_Action, "On Alarm:", 108, 38))
                 {
                     settings.Save();
                 }
@@ -367,7 +377,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("Maneuver Quick Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-            if (DrawAlarmActionChoice3(ref settings.AlarmAddManQuickAction, "Quick Action:", 108, 61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmAddManQuickAction, "Quick Action:", 108, 38))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeQuickManNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
@@ -417,7 +427,7 @@ namespace KerbalAlarmClock
                 //    settings.Save();
                 //GUILayout.EndHorizontal();
                 GUILayout.Label("SOI Alarm Settings", KACResources.styleAddSectionHeading);
-                if (DrawAlarmActionChoice3(ref settings.AlarmOnSOIChange_Action, "On Alarm:", 108, 61))
+                if (DrawAlarmActionChoice3(ref settings.AlarmOnSOIChange_Action, "On Alarm:", 108, 38))
                 {
                     settings.Save();
                 }
@@ -434,7 +444,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("SOI Quick Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-            if (DrawAlarmActionChoice3(ref settings.AlarmAddSOIQuickAction, "Quick Action:", 108, 61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmAddSOIQuickAction, "Quick Action:", 108, 38))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeQuickSOIMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
@@ -450,7 +460,7 @@ namespace KerbalAlarmClock
         private void WindowLayout_SettingsSpecifics_Contract() {
             GUILayout.Label("Active Contract Alarm Settings", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractDeadline_Action, "On Alarm:", 108, 61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractDeadline_Action, "On Alarm:", 108, 38))
             {
                 settings.Save();
             }
@@ -476,7 +486,7 @@ namespace KerbalAlarmClock
 
             GUILayout.Label("Offered Contract Alarm Settings", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108, 61)) {
+            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108, 38)) {
                 settings.Save();
             }
             if (DrawTimeEntry(ref timeContractExpireMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Days, "Alarm Margin:", 100)) {
@@ -526,7 +536,7 @@ namespace KerbalAlarmClock
 
             GUILayout.Label("Quick Alarm Settings", KACResources.styleAddSectionHeading);
 
-            if (DrawAlarmActionChoice3(ref settings.AlarmAddNodeQuickAction, "Quick Action:", 108, 61))
+            if (DrawAlarmActionChoice3(ref settings.AlarmAddNodeQuickAction, "Quick Action:", 108, 38))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeQuickNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
@@ -644,6 +654,72 @@ namespace KerbalAlarmClock
 
             GUILayout.EndVertical();
 
+        }
+
+        private void WindowLayout_SettingsCalendar()
+        {
+            //Update Check Area
+            GUILayout.Label("General Settings", KACResources.styleAddSectionHeading);
+
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical(GUILayout.Width(60));
+            GUILayout.Space(2); //to even up the text
+            GUILayout.Label("Calendar:", KACResources.styleAddHeading);
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+            ddlSettingsCalendar.DrawButton();
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+            if (DrawToggle(ref settings.ShowCalendarToggle, "Show Calendar Toggle in Main Window", KACResources.styleCheckbox))
+                settings.Save();
+            GUILayout.EndVertical();
+
+
+            if (settings.SelectedCalendar == CalendarTypeEnum.Earth)
+            {
+                GUILayout.Label("Earth Settings", KACResources.styleAddSectionHeading);
+                GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Earth Epoch:");
+
+                String strYear, strMonth, strDay;
+                strYear = KSPDateStructure.CustomEpochEarth.Year.ToString();
+                strMonth = KSPDateStructure.CustomEpochEarth.Month.ToString();
+                strDay = KSPDateStructure.CustomEpochEarth.Day.ToString();
+                if (DrawYearMonthDay(ref strYear, ref strMonth, ref strDay))
+                {
+                    try
+                    {
+                        KSPDateStructure.SetEarthCalendar(strYear.ToInt32(), strMonth.ToInt32(), strDay.ToInt32());
+                        settings.EarthEpoch = KSPDateStructure.CustomEpochEarth.ToString("yyyy-MM-dd");
+                        settings.Save();
+                    }
+                    catch (Exception)
+                    {
+                        LogFormatted("Unable to set the Epoch date using the values provided-{0}-{1}-{2}", strYear, strMonth, strDay);
+                    }
+                }
+
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("Reset Earth Epoch"))
+                {
+                    KSPDateStructure.SetEarthCalendar();
+                    settings.EarthEpoch = KSPDateStructure.CustomEpochEarth.ToString("1951-01-01");
+                    settings.Save();
+                }
+                GUILayout.EndHorizontal();
+
+                GUILayout.EndVertical();
+            }
+
+            //if RSS not installed and RSS chosen...
+
+            ///section for custom stuff
         }
 
         private void WindowLayout_SettingsAbout()

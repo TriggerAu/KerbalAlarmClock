@@ -117,13 +117,12 @@ namespace KerbalAlarmClock
 
         public enum AlarmActionEnum
         {
-
+            [Description("Do Nothing-Delete When Past")]        DoNothingDeleteWhenPassed,
+            [Description("Do Nothing")]                         DoNothing,
             [Description("Message Only-No Affect on warp")]     MessageOnly,
             [Description("Kill Warp Only-No Message")]          KillWarpOnly,
             [Description("Kill Warp and Message")]              KillWarp,
             [Description("Pause Game and Message")]             PauseGame,
-            [Description("Do Nothing")]                         DoNothing,
-            [Description("Do Nothing-Delete When Past")]        DoNothingDeleteWhenPassed
         }
 
         public enum ContractAlarmTypeEnum
@@ -199,7 +198,7 @@ namespace KerbalAlarmClock
         
         [Persistent] public AlarmTypeEnum TypeOfAlarm = AlarmTypeEnum.Raw;          //What Type of Alarm
 
-        public KACTime AlarmTime = new KACTime();                                   //UT of the alarm
+        public KSPDateTime AlarmTime = new KSPDateTime(0);                                   //UT of the alarm
         [Persistent] private Double AlarmTimeStorage;
         public Double AlarmTimeUT {
             get { return AlarmTime.UT; }
@@ -218,7 +217,7 @@ namespace KerbalAlarmClock
         [Persistent] public String XferTargetBodyName = "";
 
         [Persistent] public Boolean RepeatAlarm = false;
-        public KACTime RepeatAlarmPeriod = new KACTime(0);                           //Repeat how often - for non event driven stuff
+        public KSPTimeSpan RepeatAlarmPeriod = new KSPTimeSpan(0);                           //Repeat how often - for non event driven stuff
         [Persistent] private Double RepeatAlarmPeriodStorage;
         public Double RepeatAlarmPeriodUT
         {
@@ -276,13 +275,13 @@ namespace KerbalAlarmClock
 
 
         [Persistent] internal Boolean DeleteOnClose;                                //Whether the checkbox is on or off for this
-        [Persistent] internal Boolean Triggered = false;                               //Has this alarm been triggered
-        [Persistent] internal Boolean Actioned = false;                                //Has the code actioned th alarm - ie. displayed its message
+        [Persistent] internal Boolean Triggered = false;                            //Has this alarm been triggered
+        [Persistent] internal Boolean Actioned = false;                             //Has the code actioned th alarm - ie. displayed its message
 
 
         //Dynamic props down here
-        public KACTime Remaining = new KACTime();                        //UT value of how long till the alarm fires
-        public Boolean WarpInfluence = false;                           //Whether the Warp setting is being influenced by this alarm
+        public KSPTimeSpan Remaining = new KSPTimeSpan(0);                           //UT value of how long till the alarm fires
+        public Boolean WarpInfluence = false;                                       //Whether the Warp setting is being influenced by this alarm
 
         //Details of the alarm message window
         public Rect AlarmWindow;
@@ -312,10 +311,10 @@ namespace KerbalAlarmClock
         public override void OnDecodeFromConfigNode()
         {
             Notes = KACUtils.DecodeVarStrings(NotesStorage);
-            AlarmTime=new KACTime(AlarmTimeStorage);
+            AlarmTime=new KSPDateTime(AlarmTimeStorage);
 
             if (RepeatAlarmPeriodStorage != 0)
-                RepeatAlarmPeriod = new KACTime(RepeatAlarmPeriodStorage);
+                RepeatAlarmPeriod = new KSPTimeSpan(RepeatAlarmPeriodStorage);
 
             //dont try and create a GUID from null or empty :)
             if (ContractGUIDStorage!=null && ContractGUIDStorage!="")
@@ -447,7 +446,7 @@ namespace KerbalAlarmClock
         public KACAlarm Duplicate(Double newUT)
         {
             KACAlarm newAlarm = Duplicate();
-            newAlarm.AlarmTime = new KACTime(newUT);
+            newAlarm.AlarmTime = new KSPDateTime(newUT);
             return newAlarm;
         }
         public KACAlarm Duplicate()

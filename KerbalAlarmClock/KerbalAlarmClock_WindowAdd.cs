@@ -19,7 +19,7 @@ namespace KerbalAlarmClock
 
         private KACTimeStringArray timeRaw = new KACTimeStringArray(600, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
-        private KACTimeStringArray timeRepeatPeriod = new KACTimeStringArray(50 * KACTime.SecondsPerDay, KACTimeStringArray.TimeEntryPrecisionEnum.Days);
+        private KACTimeStringArray timeRepeatPeriod = new KACTimeStringArray(50 * KSPDateStructure.SecondsPerDay, KACTimeStringArray.TimeEntryPrecisionEnum.Days);
 
         private String strAlarmName = "";
         private String strAlarmNotes = "";
@@ -425,13 +425,30 @@ namespace KerbalAlarmClock
                     break;
                 case KACAlarm.AlarmTypeEnum.Apoapsis:
                     WindowLayout_AddTypeApPe();
-                    dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToAp;
-                    WindowLayout_AddPane_NodeEvent(KACWorkerGameState.ApPointExists && !KACWorkerGameState.CurrentVessel.LandedOrSplashed, dblTimeToPoint);
+
+                    if (!KACWorkerGameState.ApPointExists && HighLogic.CurrentGame.Mode == Game.Modes.CAREER &&
+                        GameVariables.Instance.GetOrbitDisplayMode(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)) != GameVariables.OrbitDisplayMode.PatchedConics)
+                    {
+                        GUILayout.Label("Apoapsis Alarms cannot be set without upgrading the Tracking Station", GUILayout.ExpandWidth(true));
+                    }
+                    else
+                    {
+                        dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToAp;
+                        WindowLayout_AddPane_NodeEvent(KACWorkerGameState.ApPointExists && !KACWorkerGameState.CurrentVessel.LandedOrSplashed, dblTimeToPoint);
+                    }
                     break;
                 case KACAlarm.AlarmTypeEnum.Periapsis:
                     WindowLayout_AddTypeApPe();
+                    if (!KACWorkerGameState.PePointExists && HighLogic.CurrentGame.Mode == Game.Modes.CAREER &&
+                        GameVariables.Instance.GetOrbitDisplayMode(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)) != GameVariables.OrbitDisplayMode.PatchedConics)
+                    {
+                        GUILayout.Label("Periapsis Alarms cannot be set without upgrading the Tracking Station", GUILayout.ExpandWidth(true));
+                    }
+                    else
+                    {
                     dblTimeToPoint = (KACWorkerGameState.CurrentVessel == null ) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToPe;
                     WindowLayout_AddPane_NodeEvent(KACWorkerGameState.PePointExists && !KACWorkerGameState.CurrentVessel.LandedOrSplashed, dblTimeToPoint);
+                    }
                     break;
                 case KACAlarm.AlarmTypeEnum.AscendingNode:
                     WindowLayout_AddTypeANDN();
@@ -532,15 +549,15 @@ namespace KerbalAlarmClock
         ////Variabled for Raw Alarm screen
         //String strYears = "0", strDays = "0", strHours = "0", strMinutes = "0",
         private String strRawUT="0";
-        private KACTime rawTime = new KACTime(600);
-        private KACTime rawTimeToAlarm = new KACTime();
+        private KSPDateTime rawTime = new KSPDateTime(600);
+        private KSPTimeSpan rawTimeToAlarm = new KSPTimeSpan(0);
         //Boolean blnRawDate = false;
         //Boolean blnRawInterval = true;
         ///// <summary>
         ///// Layout the raw alarm screen inputs
         ///// </summary>
         private Int32 intRawType = 1;
-        private KACTimeStringArray rawEntry = new KACTimeStringArray(600, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
+        internal KACTimeStringArray rawEntry = new KACTimeStringArray(600, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
         private void WindowLayout_AddPane_Raw()
         {
             GUILayout.Label("Enter Raw Time Values...", KACResources.styleAddSectionHeading);
@@ -561,10 +578,10 @@ namespace KerbalAlarmClock
             if (intRawType == 0)
             {
                 //date
-                KACTimeStringArray rawDate = new KACTimeStringArray(rawEntry.UT + KACTime.timeDateOffest.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
+                KACTimeStringArray rawDate = new KACTimeStringArray(rawEntry.UT + KSPDateStructure.EpochAsKSPDateTime.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
                 if (DrawTimeEntry(ref rawDate, KACTimeStringArray.TimeEntryPrecisionEnum.Years, "Time:", 50, 35, 15))
                 {
-                    rawEntry.BuildFromUT(rawDate.UT - KACTime.timeDateOffest.UT);
+                    rawEntry.BuildFromUT(rawDate.UT - KSPDateStructure.EpochAsKSPDateTime.UT);
                 }
             }
             else
@@ -591,9 +608,9 @@ namespace KerbalAlarmClock
         
                 //If its an interval add the interval to the current time
                 if (intRawType==1)
-                    rawTime = new KACTime(KACWorkerGameState.CurrentTime.UT + rawTime.UT);
+                    rawTime = new KSPDateTime(KACWorkerGameState.CurrentTime.UT + rawTime.UT);
 
-                rawTimeToAlarm = new KACTime(rawTime.UT - KACWorkerGameState.CurrentTime.UT);
+                rawTimeToAlarm = new KSPTimeSpan(rawTime.UT - KACWorkerGameState.CurrentTime.UT);
 
                 //Draw the Add Alarm details at the bottom
                 if (DrawAddAlarm(rawTime,null,rawTimeToAlarm))
@@ -604,24 +621,25 @@ namespace KerbalAlarmClock
                     KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingXferAlarm ? "Alarm Repeats\r\n" : "") + strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmTypeEnum.Raw,
                         AddAction);
                     alarmNew.RepeatAlarm = blnRepeatingXferAlarm;
-                    alarmNew.RepeatAlarmPeriod = new KACTime(timeRepeatPeriod.UT);
+                    alarmNew.RepeatAlarmPeriod = new KSPTimeSpan(timeRepeatPeriod.UT);
                     alarms.Add(alarmNew);
 
                     //settings.Save();
                     _ShowAddPane = false;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 GUILayout.Label("Unable to combine all text fields to date", GUILayout.ExpandWidth(true));
+                LogFormatted_DebugOnly("{0}\r\n{1}", ex.Message, ex.StackTrace);
             }
         }
 
         private int intSelectedCrew = 0;
         //Do we do this in with the Raw alarm as we are gonna ask for almost the same stuff
         private String strCrewUT = "0";
-        private KACTime CrewTime = new KACTime(600);
-        private KACTime CrewTimeToAlarm = new KACTime();
+        private KSPDateTime CrewTime = new KSPDateTime(600);
+        private KSPTimeSpan CrewTimeToAlarm = new KSPTimeSpan(0);
         private Int32 intCrewType = 1;
         private KACTimeStringArray CrewEntry = new KACTimeStringArray(600, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
         private Boolean CrewAlarmStoreNode = false;
@@ -699,10 +717,10 @@ namespace KerbalAlarmClock
                     if (intCrewType == 0)
                     {
                         //date
-                        KACTimeStringArray CrewDate = new KACTimeStringArray(CrewEntry.UT + KACTime.timeDateOffest.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
+                        KACTimeStringArray CrewDate = new KACTimeStringArray(CrewEntry.UT + KSPDateStructure.EpochAsKSPDateTime.UT, KACTimeStringArray.TimeEntryPrecisionEnum.Years);
                         if (DrawTimeEntry(ref CrewDate, KACTimeStringArray.TimeEntryPrecisionEnum.Years, "Time:", 50, 35, 15))
                         {
-                            rawEntry.BuildFromUT(CrewDate.UT - KACTime.timeDateOffest.UT);
+                            rawEntry.BuildFromUT(CrewDate.UT - KSPDateStructure.EpochAsKSPDateTime.UT);
                         }
                     }
                     else
@@ -728,9 +746,9 @@ namespace KerbalAlarmClock
 
                         //If its an interval add the interval to the current time
                         if (intCrewType == 1)
-                            CrewTime = new KACTime(KACWorkerGameState.CurrentTime.UT + CrewTime.UT);
+                            CrewTime = new KSPDateTime(KACWorkerGameState.CurrentTime.UT + CrewTime.UT);
 
-                        CrewTimeToAlarm = new KACTime(CrewTime.UT - KACWorkerGameState.CurrentTime.UT);
+                        CrewTimeToAlarm = new KSPTimeSpan(CrewTime.UT - KACWorkerGameState.CurrentTime.UT);
 
                         //Draw the Add Alarm details at the bottom
                         if (DrawAddAlarm(CrewTime, null, CrewTimeToAlarm))
@@ -744,7 +762,7 @@ namespace KerbalAlarmClock
                                 if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                             }
                             addAlarm.RepeatAlarm = blnRepeatingXferAlarm;
-                            addAlarm.RepeatAlarmPeriod = new KACTime(timeRepeatPeriod.UT);
+                            addAlarm.RepeatAlarmPeriod = new KSPTimeSpan(timeRepeatPeriod.UT);
 
                             alarms.Add(addAlarm);
                             //settings.Save();
@@ -762,9 +780,9 @@ namespace KerbalAlarmClock
 
         Vector2 scrollContract = new Vector2(0, 0);
         Int32 intSelectedContract = 0;
-        private KACTime ContractTime = new KACTime(600);
-        private KACTime ContractTimeToEvent = new KACTime();
-        private KACTime ContractTimeToAlarm = new KACTime();
+        private KSPDateTime ContractTime = new KSPDateTime(600);
+        private KSPTimeSpan ContractTimeToEvent = new KSPTimeSpan(0);
+        private KSPTimeSpan ContractTimeToAlarm = new KSPTimeSpan(0);
 
         internal List<Contract> lstContracts;
         internal Contract.State contractLastState = Contract.State.Offered;
@@ -859,9 +877,9 @@ namespace KerbalAlarmClock
                     } else { 
                         //Draw the Add Alarm details at the bottom
                         //If its an interval add the interval to the current time
-                        ContractTime = new KACTime(lstContracts[intSelectedContract].DateNext());
-                        ContractTimeToEvent = new KACTime(lstContracts[intSelectedContract].DateNext() - KACWorkerGameState.CurrentTime.UT);
-                        ContractTimeToAlarm = new KACTime(ContractTimeToEvent.UT - timeMargin.UT);
+                        ContractTime = new KSPDateTime(lstContracts[intSelectedContract].DateNext());
+                        ContractTimeToEvent = new KSPTimeSpan(lstContracts[intSelectedContract].DateNext() - KACWorkerGameState.CurrentTime.UT);
+                        ContractTimeToAlarm = new KSPTimeSpan(ContractTimeToEvent.UT - timeMargin.UT);
 
                         if (DrawAddAlarm(ContractTime, ContractTimeToEvent, ContractTimeToAlarm))
                         {
@@ -884,7 +902,7 @@ namespace KerbalAlarmClock
             
         }
 
-        private Boolean DrawAddAlarm(KACTime AlarmDate, KACTime TimeToEvent, KACTime TimeToAlarm,Boolean ForceShowRepeat = false)
+        private Boolean DrawAddAlarm(KSPDateTime AlarmDate, KSPTimeSpan TimeToEvent, KSPTimeSpan TimeToAlarm, Boolean ForceShowRepeat = false)
         {
             Boolean blnReturn = false;
             intHeight_AddWindowRepeat = 0;
@@ -906,27 +924,27 @@ namespace KerbalAlarmClock
                 }
                 GUILayout.EndVertical();
             }
-            
+        
             //Now for the add area
             GUILayout.BeginHorizontal(KACResources.styleAddAlarmArea);
             GUILayout.BeginVertical();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Date:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(40), GUILayout.MaxWidth(40));
-            GUILayout.Label(KACTime.PrintDate(AlarmDate, settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+            GUILayout.Label(AlarmDate.ToStringStandard(DateStringFormatsEnum.DateTimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
             GUILayout.EndHorizontal();
             if (TimeToEvent != null)
             {
                 GUILayout.BeginHorizontal();
                 //GUILayout.Label("Time to " + strAlarmEventName + ":", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(120), GUILayout.MaxWidth(120));
                 GUILayout.Label("Time to " + strAlarmEventName + ":", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
-                GUILayout.Label(KACTime.PrintInterval(TimeToEvent, settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+                GUILayout.Label(TimeToEvent.ToStringStandard(settings.TimeSpanFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
                 GUILayout.EndHorizontal();
             }
             GUILayout.BeginHorizontal();
             //GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight), GUILayout.Width(120), GUILayout.MaxWidth(120));
             GUILayout.Label("Time to Alarm:", KACResources.styleAddHeading, GUILayout.Height(intLineHeight));
-            GUILayout.Label(KACTime.PrintInterval(TimeToAlarm, settings.TimeFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
+            GUILayout.Label(TimeToAlarm.ToStringStandard(settings.TimeSpanFormat), KACResources.styleContent, GUILayout.Height(intLineHeight));
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
 
@@ -971,15 +989,15 @@ namespace KerbalAlarmClock
                     //loop to find the first future node
                     for (int intNode = 0; (intNode < KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Count) && !blnFoundNode; intNode++)
                     {
-                        KACTime nodeTime = new KACTime(KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes[intNode].UT);
-                        KACTime nodeInterval = new KACTime(nodeTime.UT - KACWorkerGameState.CurrentTime.UT);
+                        KSPDateTime nodeTime = new KSPDateTime(KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes[intNode].UT);
+                        KSPTimeSpan nodeInterval = new KSPTimeSpan(nodeTime.UT - KACWorkerGameState.CurrentTime.UT);
 
-                        KACTime nodeAlarm;
-                        KACTime nodeAlarmInterval;
+                        KSPDateTime nodeAlarm;
+                        KSPTimeSpan nodeAlarmInterval;
                         try
                         {
-                            nodeAlarm = new KACTime(nodeTime.UT - timeMargin.UT);
-                            nodeAlarmInterval = new KACTime(nodeTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
+                            nodeAlarm = new KSPDateTime(nodeTime.UT - timeMargin.UT);
+                            nodeAlarmInterval = new KSPTimeSpan(nodeTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
                         }
                         catch (Exception)
                         {
@@ -1047,15 +1065,15 @@ namespace KerbalAlarmClock
                 else
                 {
                     String strMarginConversion = "";
-                    KACTime eventTime = new KACTime(KACWorkerGameState.CurrentTime.UT + timeToPoint);
-                    KACTime eventInterval = new KACTime(timeToPoint);
+                    KSPDateTime eventTime = new KSPDateTime(KACWorkerGameState.CurrentTime.UT + timeToPoint);
+                    KSPTimeSpan eventInterval = new KSPTimeSpan(timeToPoint);
 
-                    KACTime eventAlarm;
-                    KACTime eventAlarmInterval;
+                    KSPDateTime eventAlarm;
+                    KSPTimeSpan eventAlarmInterval;
                     try
                     {
-                        eventAlarm = new KACTime(eventTime.UT - timeMargin.UT);
-                        eventAlarmInterval = new KACTime(eventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
+                        eventAlarm = new KSPDateTime(eventTime.UT - timeMargin.UT);
+                        eventAlarmInterval = new KSPTimeSpan(eventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
                     }
                     catch (Exception)
                     {
@@ -1162,7 +1180,16 @@ namespace KerbalAlarmClock
         private void WindowLayout_AddPane_Transfer()
         {
             intAddXferHeight = 304;// 317;
-            KACTime XferCurrentTargetEventTime = null;
+
+            if (settings.RSSActive) {
+                GUILayout.Label("RSS detected - it is recommended that you use the Transfer Window Planner Plugin to plan transfers", KACResources.styleAddXferName);
+                GUILayout.Space(-8);
+                if (GUILayout.Button("Click here to open the TWP forum thread", KACResources.styleContent))
+                    Application.OpenURL("http://forum.kerbalspaceprogram.com/threads/93115");
+                intAddXferHeight += 58;
+            }
+
+            KSPDateTime XferCurrentTargetEventTime = null;
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
             GUILayout.Label("Transfers", KACResources.styleAddSectionHeading, GUILayout.Width(60));
@@ -1273,7 +1300,7 @@ namespace KerbalAlarmClock
                             if (tmpModelPoint != null)
                             {
                                 GUILayout.Label(String.Format("{0:0.00}", tmpModelPoint.PhaseAngle), KACResources.styleContent, GUILayout.Width(67));
-                                XferCurrentTargetEventTime = new KACTime(tmpModelPoint.UT);
+                                XferCurrentTargetEventTime = new KSPDateTime(tmpModelPoint.UT);
                             }
                             else
                             {
@@ -1307,7 +1334,7 @@ namespace KerbalAlarmClock
                             //formula based
                             String strPhase = String.Format("{0:0.00}({1:0.00})", XferTargetBodies[intTarget].PhaseAngleCurrent, XferTargetBodies[intTarget].PhaseAngleTarget);
                             GUILayout.Label(strPhase, KACResources.styleAddHeading, GUILayout.Width(105), GUILayout.Height(20));
-                            GUILayout.Label(KACTime.PrintInterval(XferTargetBodies[intTarget].AlignmentTime, settings.TimeFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));
+                            GUILayout.Label(XferTargetBodies[intTarget].AlignmentTime.ToStringStandard(settings.TimeSpanFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));
                         }
                         else 
                         { 
@@ -1322,11 +1349,11 @@ namespace KerbalAlarmClock
                                 {
                                     String strPhase = String.Format("{0:0.00}({1:0.00})", XferTargetBodies[intTarget].PhaseAngleCurrent, tmpModelPoint.PhaseAngle);
                                     GUILayout.Label(strPhase, KACResources.styleAddHeading, GUILayout.Width(105), GUILayout.Height(20));
-                                    KACTime tmpTime = new KACTime(tmpModelPoint.UT - KACWorkerGameState.CurrentTime.UT);
-                                    GUILayout.Label(KACTime.PrintInterval(tmpTime, settings.TimeFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));                                
+                                    KSPDateTime tmpTime = new KSPDateTime(tmpModelPoint.UT - KACWorkerGameState.CurrentTime.UT);
+                                    GUILayout.Label(tmpTime.ToStringStandard(settings.DateTimeFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));                                
 
                                     if (intTarget==intXferCurrentTarget)
-                                        XferCurrentTargetEventTime = new KACTime(tmpModelPoint.UT);
+                                        XferCurrentTargetEventTime = new KSPDateTime(tmpModelPoint.UT);
                                 }
                                 else
                                 {
@@ -1358,13 +1385,13 @@ namespace KerbalAlarmClock
                 if (intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))
                 {
                     //Formula based - add new alarm
-                    if (DrawAddAlarm(new KACTime(KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT),
+                    if (DrawAddAlarm(new KSPDateTime(KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT),
                                     XferTargetBodies[intXferCurrentTarget].AlignmentTime,
-                                    new KACTime(XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT - timeMargin.UT)))
+                                    new KSPTimeSpan(XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT - timeMargin.UT)))
                     {
                         String strVesselID = "";
                         if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                        alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
+                        alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
                             (KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.Transfer,
                             AddAction, XferTargetBodies[intXferCurrentTarget]));
                         //settings.Save();
@@ -1377,13 +1404,13 @@ namespace KerbalAlarmClock
                     if (XferCurrentTargetEventTime!=null)
                     {
                         if (DrawAddAlarm(XferCurrentTargetEventTime,
-                                    new KACTime(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT),
-                                    new KACTime(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT),
+                                    new KSPTimeSpan(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT),
+                                    new KSPTimeSpan(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT),
                                     true))
                         {
                             String strVesselID = "";
                             if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                            KACAlarm alarmNew =new KACAlarm(strVesselID, strAlarmName, (blnRepeatingXferAlarm?"Alarm Repeats\r\n":"") +  strAlarmNotes + "\r\n\tMargin: " + new KACTime(timeMargin.UT).IntervalString(),
+                            KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingXferAlarm ? "Alarm Repeats\r\n" : "") + strAlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
                                 (XferCurrentTargetEventTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.TransferModelled,
                                 AddAction, XferTargetBodies[intXferCurrentTarget]); 
                             alarmNew.RepeatAlarm = blnRepeatingXferAlarm;

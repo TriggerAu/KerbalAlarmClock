@@ -677,18 +677,34 @@ namespace KerbalAlarmClock
                 settings.ShowEarthTime = !settings.ShowEarthTime;
             }
 
+            //Calendar toggle
+            if (settings.ShowCalendarToggle)
+            {
+                if (GUILayout.Button(new GUIContent(KACResources.btnCalendar, "Toggle Calendar"), KACResources.styleSmallButton))
+                {
+                    if (settings.SelectedCalendar == CalendarTypeEnum.Earth) {
+                        settings.SelectedCalendar = CalendarTypeEnum.KSPStock;
+                        KSPDateStructure.SetKSPStockCalendar();
+                    } else {
+                        settings.SelectedCalendar = CalendarTypeEnum.Earth;
+                        KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
+                    }
+                    settings.Save();
+                }
+            }
+
             //Work out the right text and tooltip and display the button as a label
-            KACTime.PrintTimeFormat MainClockFormat = KACTime.PrintTimeFormat.DateTimeString;
-            if (settings.TimeFormat == KACTime.PrintTimeFormat.TimeAsUT) MainClockFormat = KACTime.PrintTimeFormat.TimeAsUT;
-            GUIContent contCurrentTime = new GUIContent(KACTime.PrintDate(KACWorkerGameState.CurrentTime, MainClockFormat), "Click to toggle through time formats");
+            DateStringFormatsEnum MainClockFormat = DateStringFormatsEnum.DateTimeFormat;
+            if (settings.DateTimeFormat == DateStringFormatsEnum.TimeAsUT) MainClockFormat = DateStringFormatsEnum.TimeAsUT;
+            GUIContent contCurrentTime = new GUIContent(KACWorkerGameState.CurrentTime.ToStringStandard(MainClockFormat), "Click to toggle through time formats");
             if (GUILayout.Button(contCurrentTime, KACResources.styleContent))
             {
-                switch (settings.TimeFormat)
+                switch (settings.DateTimeFormat)
                 {
-                    case KACTime.PrintTimeFormat.TimeAsUT: settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
-                    case KACTime.PrintTimeFormat.KSPString: settings.TimeFormat = KACTime.PrintTimeFormat.DateTimeString; break;
-                    case KACTime.PrintTimeFormat.DateTimeString: settings.TimeFormat = KACTime.PrintTimeFormat.TimeAsUT; break;
-                    default: settings.TimeFormat = KACTime.PrintTimeFormat.KSPString; break;
+                    case DateStringFormatsEnum.TimeAsUT: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
+                    case DateStringFormatsEnum.KSPFormatWithSecs: settings.DateTimeFormat = DateStringFormatsEnum.DateTimeFormat; break;
+                    case DateStringFormatsEnum.DateTimeFormat: settings.DateTimeFormat = DateStringFormatsEnum.TimeAsUT; break;
+                    default: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
                 }
                 settings.Save();
             }
@@ -932,7 +948,7 @@ namespace KerbalAlarmClock
             //float width1 = fOutMin1;
 
             String strLabelText = "";
-            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, KACTime.PrintInterval(tmpAlarm.Remaining, settings.TimeFormat));
+            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name,tmpAlarm.Remaining.ToStringStandard(settings.TimeSpanFormat,3));
 
             GUIStyle styleLabel = new GUIStyle( KACResources.styleAlarmText);
             if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))
@@ -1045,7 +1061,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice3(ref Action, "On Alarm:", 100,62);
+            DrawAlarmActionChoice3(ref Action, "On Alarm:", 100,40); //62
 
             if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {
@@ -1117,7 +1133,7 @@ namespace KerbalAlarmClock
             }
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice3(ref Action, "Action:", 70 ,37);
+            DrawAlarmActionChoice3(ref Action, "Action:", 70 ,38); //37
 
             if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {
@@ -1170,7 +1186,7 @@ namespace KerbalAlarmClock
 
 
 
-        internal Boolean DrawTextBox(ref String strVar, GUIStyle style, params GUILayoutOption[] options)
+        internal static Boolean DrawTextBox(ref String strVar, GUIStyle style, params GUILayoutOption[] options)
         {
             String strReturn = GUILayout.TextField(strVar, style, options);
             if (strReturn != strVar)
@@ -1182,6 +1198,85 @@ namespace KerbalAlarmClock
             return false;
         }
 
+
+        internal static Boolean DrawTextField(ref String Value, String RegexValidator, Boolean RegexFailOnMatch, String LabelText = "", Int32 FieldWidth = 0, Int32 LabelWidth = 0, Boolean Locked = false)
+        {
+            GUIStyle styleTextBox = KACResources.styleAddField;
+            if (Locked)
+                styleTextBox = KACResources.styleAddFieldLocked;
+            else if ((RegexFailOnMatch && System.Text.RegularExpressions.Regex.IsMatch(Value, RegexValidator, System.Text.RegularExpressions.RegexOptions.IgnoreCase)) ||
+                (!RegexFailOnMatch && !System.Text.RegularExpressions.Regex.IsMatch(Value, RegexValidator, System.Text.RegularExpressions.RegexOptions.IgnoreCase)))
+                styleTextBox = KACResources.styleAddFieldError;
+
+
+            if (LabelText != "")
+            {
+                if (LabelWidth == 0)
+                    GUILayout.Label(LabelText, KACResources.styleLabel);
+                else
+                    GUILayout.Label(LabelText, KACResources.styleLabel, GUILayout.Width(LabelWidth));
+            }
+
+
+            String textValue = Value;
+            Boolean blnReturn = false;
+            if (FieldWidth == 0)
+                blnReturn = DrawTextBox(ref textValue, styleTextBox);
+            else
+                blnReturn = DrawTextBox(ref textValue, styleTextBox, GUILayout.Width(FieldWidth));
+
+            if (!Locked) Value = textValue;
+            return blnReturn;
+        }
+
+        internal static Boolean DrawYearDay(ref KSPDateTime dateToDraw)
+        {
+            String strYear = dateToDraw.Year.ToString();
+            String strMonth = dateToDraw.Month.ToString();
+            String strDay = dateToDraw.Day.ToString();
+
+            //If the value changed
+            Boolean blnReturn = false;
+
+            if (KSPDateStructure.CalendarType == CalendarTypeEnum.Earth)
+            {
+                blnReturn = DrawYearMonthDay(ref strYear, ref strMonth, ref strDay);
+                if (blnReturn)
+                {
+                    dateToDraw = KSPDateTime.FromEarthValues(strYear, strMonth, strDay);
+                }
+            }
+            else
+            {
+                blnReturn = DrawYearDay(ref strYear, ref strDay);
+                if (blnReturn)
+                {
+                    dateToDraw = new KSPDateTime(strYear, strDay);
+                }
+            }
+            return blnReturn;
+        }
+
+        internal static Boolean DrawYearDay(ref String strYear, ref String strDay)
+        {
+            Boolean blnReturn = false;
+            GUILayout.BeginHorizontal();
+            blnReturn = blnReturn || DrawTextField(ref strYear, "[^\\d\\.]+", true, "Year:", 50, 40);
+            blnReturn = blnReturn || DrawTextField(ref strDay, "[^\\d\\.]+", true, "Day:", 50, 40);
+            GUILayout.EndHorizontal();
+            return blnReturn;
+        }
+
+        internal static Boolean DrawYearMonthDay(ref String strYear, ref String strMonth, ref String strDay)
+        {
+            Boolean blnReturn = false;
+            GUILayout.BeginHorizontal();
+            blnReturn = blnReturn || DrawTextField(ref strYear, "[^\\d\\.]+", true, "Y:", 40, 20);
+            blnReturn = blnReturn || DrawTextField(ref strMonth, "[^\\d\\.]+", true, "M:", 30, 20);
+            blnReturn = blnReturn || DrawTextField(ref strDay, "[^\\d\\.]+", true, "D:", 30, 20);
+            GUILayout.EndHorizontal();
+            return blnReturn;
+        }
 
         /// <summary>
         /// Draws a toggle button like a checkbox

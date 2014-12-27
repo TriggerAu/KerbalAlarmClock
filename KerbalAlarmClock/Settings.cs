@@ -46,6 +46,7 @@ namespace KerbalAlarmClock
         [Persistent] internal MiminalDisplayType WindowMinimizedType = MiminalDisplayType.NextAlarm;
 
         [Persistent] internal Boolean F11KeystrokeDisabled = true;
+        [Persistent] internal Boolean KillWarpOnThrottleCutOffKeystroke = false;
 
         //Audio Volume
         [Persistent] internal Boolean AlarmsVolumeFromUI=true;
@@ -97,7 +98,26 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean AlarmDeleteOnClose = false;
         [Persistent] internal Boolean HideOnPause = true;
         //public Boolean TimeAsUT = false;
-        [Persistent] internal KACTime.PrintTimeFormat TimeFormat = KACTime.PrintTimeFormat.KSPString;
+        [Persistent] internal OldPrintTimeFormat TimeFormat = OldPrintTimeFormat.KSPString;
+        [Persistent] internal DateStringFormatsEnum DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs;
+        [Persistent] internal Boolean TimeFormatConverted = false;
+        internal TimeSpanStringFormatsEnum TimeSpanFormat { get {
+            switch (DateTimeFormat)
+            {
+                case DateStringFormatsEnum.TimeAsUT:
+                    return TimeSpanStringFormatsEnum.TimeAsUT;
+                case DateStringFormatsEnum.KSPFormat:
+                    return TimeSpanStringFormatsEnum.KSPFormat;
+                case DateStringFormatsEnum.KSPFormatWithSecs:
+                    return TimeSpanStringFormatsEnum.KSPFormat;
+                case DateStringFormatsEnum.DateTimeFormat:
+                    return TimeSpanStringFormatsEnum.DateTimeFormat;
+                default:
+                    return TimeSpanStringFormatsEnum.KSPFormat;
+            }
+        } }
+
+
         [Persistent] internal Boolean ShowTooltips = true;
         [Persistent] internal Boolean ShowEarthTime = false;
 
@@ -208,7 +228,15 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean ClickThroughProtect_Tracking=true;
         //[Persistent] internal Boolean ClickThroughProtect_Editor=true;
         [Persistent] internal Boolean ClickThroughProtect_Flight=true;
-        
+
+
+        [Persistent] internal CalendarTypeEnum SelectedCalendar = CalendarTypeEnum.KSPStock;
+        [Persistent] internal String EarthEpoch = "1951-01-01";
+
+        [Persistent] internal Boolean ShowCalendarToggle = false;
+        internal Boolean RSSActive = false;
+        [Persistent] internal Boolean RSSShowCalendarToggled=false;
+
         //Version Stuff
         [Persistent] internal Boolean DailyVersionCheck = true;
         internal Boolean VersionAttentionFlag = false;

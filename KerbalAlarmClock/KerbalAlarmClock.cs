@@ -100,6 +100,25 @@ namespace KerbalAlarmClock
             settings = new Settings("settings.cfg");
             if (!settings.Load())
                 LogFormatted("Settings Load Failed");
+            else
+            {
+                if (!settings.TimeFormatConverted)
+                {
+                    settings.TimeFormatConverted = true;
+                    switch (settings.TimeFormat)
+                    {
+                        case OldPrintTimeFormat.TimeAsUT: settings.DateTimeFormat = DateStringFormatsEnum.TimeAsUT; break;
+                        case OldPrintTimeFormat.KSPString: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
+                        case OldPrintTimeFormat.DateTimeString: settings.DateTimeFormat = DateStringFormatsEnum.DateTimeFormat; break;
+                        default: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
+                    }
+                    settings.Save();
+                }
+            }
+
+            if (settings.SelectedCalendar == CalendarTypeEnum.Earth) {
+                KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
+            }
 
             //Set initial GameState
             KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
@@ -152,6 +171,18 @@ namespace KerbalAlarmClock
                 if (!psm.targetScenes.Any(x => x == HighLogic.LoadedScene)) {
                     LogFormatted_DebugOnly("Adding Scene to ScenarioModule for {0}", HighLogic.LoadedScene);
                     psm.targetScenes.Add(HighLogic.LoadedScene);
+                }
+            }
+
+            if (AssemblyLoader.loadedAssemblies
+                        .Select(a => a.assembly.GetExportedTypes())
+                        .SelectMany(t => t)
+                        .Any(t => t.FullName.ToLower().EndsWith(".realsolarsystem")))
+            {
+                settings.RSSActive = true;
+                if (!settings.RSSShowCalendarToggled) {
+                    settings.ShowCalendarToggle = true;
+                    settings.RSSShowCalendarToggled = true;
                 }
             }
 
@@ -221,6 +252,14 @@ namespace KerbalAlarmClock
                 }
             }
 
+            if (settings.KillWarpOnThrottleCutOffKeystroke)
+            {
+                if (Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.primary) || Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.secondary))
+                {
+                    TimeWarp.SetRate(0, false);
+                }
+            }
+
             //TODO:Disable this one
             //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
             //{
@@ -253,7 +292,7 @@ namespace KerbalAlarmClock
 				//Also, untrigger any alarms that we have now gone back past
 				foreach (KACAlarm tmpAlarm in alarms.Where(a=>a.Triggered && (a.AlarmTime.UT>Planetarium.GetUniversalTime())))
 				{
-					LogFormatted("Resetting Alarm Trigger for {0}({1})", tmpAlarm.Name, tmpAlarm.AlarmTime.UTString());
+					LogFormatted("Resetting Alarm Trigger for {0}({1})", tmpAlarm.Name, tmpAlarm.AlarmTime.ToStringStandard(DateStringFormatsEnum.TimeAsUT));
 					tmpAlarm.Triggered = false;
 					tmpAlarm.AlarmWindowID = 0;
 					tmpAlarm.AlarmWindowClosed = false;
@@ -961,8 +1000,8 @@ namespace KerbalAlarmClock
 			//is there an alarm and no man node?
 			if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
 			{
-				KACTime nodeAutoAlarm;
-				nodeAutoAlarm = new KACTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin);
+                KSPDateTime nodeAutoAlarm;
+				nodeAutoAlarm = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin);
 				
 				List<ManeuverNode> manNodesToStore = KACWorkerGameState.ManeuverNodesFuture;
 
@@ -1267,11 +1306,16 @@ namespace KerbalAlarmClock
 				alarms.Add(a);
 			}
 
-            // Delete the do nothing/delete alarms
+            // Delete the do nothing/delete alarms - One loop to find the ones to delete - cant delete inside the foreach or it breaks the iterator
+            List<KACAlarm> ToDelete = new List<KACAlarm>();
             foreach (KACAlarm tmpAlarm in alarms.Where(a => a.AlarmAction == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed))
 			{
                 if (tmpAlarm.Triggered && tmpAlarm.Actioned)
-                alarms.Remove(tmpAlarm);
+                    ToDelete.Add(tmpAlarm);
+            }
+            foreach (KACAlarm a in ToDelete)
+            {
+                alarms.Remove(a);
             }
 		}
 
@@ -1292,7 +1336,7 @@ namespace KerbalAlarmClock
 
 						if (tmpModelPoint != null)
 						{
-							KACTime XferNextTargetEventTime = new KACTime(tmpModelPoint.UT);
+                            KSPDateTime XferNextTargetEventTime = new KSPDateTime(tmpModelPoint.UT);
 
 							if (!alarms.Any(a => a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.TransferModelled &&
 											a.XferOriginBodyName == alarmToCheck.XferOriginBodyName &&
@@ -1355,7 +1399,7 @@ namespace KerbalAlarmClock
 
 #if DEBUG
 	//This will kick us into the save called default and set the first vessel active
-	//[KSPAddon(KSPAddon.Startup.MainMenu, false)]
+	[KSPAddon(KSPAddon.Startup.MainMenu, false)]
 	public class Debug_AutoLoadPersistentSaveOnStartup : MonoBehaviour
 	{
 		//use this variable for first run to avoid the issue with when this is true and multiple addons use it
@@ -1367,15 +1411,16 @@ namespace KerbalAlarmClock
 			{
 				first = false;
 				HighLogic.SaveFolder = "default";
-				//HighLogic.SaveFolder = "Career";
+//				HighLogic.SaveFolder = "Career";
 				Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
 
 				if (game != null && game.flightState != null && game.compatible)
 				{
 					//straight to spacecenter
-					//HighLogic.CurrentGame = game;
-					//HighLogic.LoadScene(GameScenes.SPACECENTER);
-					//return;
+					HighLogic.CurrentGame = game;
+					HighLogic.LoadScene(GameScenes.SPACECENTER);
+                    //HighLogic.LoadScene(GameScenes.TRACKSTATION);
+					return;
 
 					Int32 FirstVessel;
 					Boolean blnFoundVessel = false;

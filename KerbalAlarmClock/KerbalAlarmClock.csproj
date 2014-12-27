@@ -55,7 +55,10 @@
     <Compile Include="API.cs" />
     <Compile Include="API\KACWrapper.cs" />
     <Compile Include="FrameworkExt\Extensions.cs" />
-    <Compile Include="FrameworkExt\ExtensionsKSP.cs" />
+    <Compile Include="SharedStuff\ExtensionsKSP.cs" />
+    <Compile Include="FrameworkExt\KSPDateStructure.cs" />
+    <Compile Include="FrameworkExt\KSPDateTime.cs" />
+    <Compile Include="FrameworkExt\KSPTimeSpan.cs" />
     <Compile Include="Framework\ConfigNodeStorage.cs" />
     <Compile Include="Framework\ExtensionsUnity.cs" />
     <Compile Include="Framework\MonoBehaviourExtended.cs" />

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-namespace KerbalAlarmClock
+namespace KSPPluginFramework
 {
     public static class EnumExtensions
     {
@@ -36,13 +36,39 @@ namespace KerbalAlarmClock
             List<KeyValuePair<TEnum, string>> temp = Enum
                 .GetValues(typeof(TEnum))
                 .Cast<TEnum>()
-                .Select(x => new KeyValuePair<TEnum, string>(x, ((Enum)((object)x)).Description()))
+                .Select(x => new KeyValuePair<TEnum, string>(x, ((Enum)((System.Object)x)).Description()))
                 .ToList();
             return temp.Select(x => x.Value).ToList<String>();
         }
         public static List<String> ToEnumDescriptions<TEnum>() where TEnum : struct,IConvertible
         {
             return ToEnumDescriptions<TEnum>(default(TEnum)).ToList<String>();
+        }
+
+
+
+        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
+        {
+            if (val.CompareTo(min) < 0) return min;
+            else if (val.CompareTo(max) > 0) return max;
+            else return val;
+        }
+
+        public static Int32 ToInt32(this String s)
+        {
+            return Convert.ToInt32(s);
+        }
+
+        public static Int32 NormalizeAngle360(this Int32 val) {
+            return (Int32)Convert.ToDouble(val).NormalizeAngle360();
+        }
+
+        public static Double NormalizeAngle360(this Double val) 
+        {
+            val %= 360;
+            if (val < 0)
+                val += 360;
+            return val;
         }
     }
 }

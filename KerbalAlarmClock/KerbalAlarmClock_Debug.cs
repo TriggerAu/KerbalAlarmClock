@@ -303,8 +303,19 @@ namespace KerbalAlarmClock
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
 
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+            {
+                GUILayout.Label(KACWorkerGameState.CurrentVessel == null ? "NULL" : (KACWorkerGameState.CurrentVessel.vesselName + "-" + KACWorkerGameState.CurrentVessel.id.ToString()));
+                
+                SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
+                foreach (MapObject item in st.mainCamera.targets)
+                {
+                    GUILayout.Label(String.Format("{0}-{1}-{2}", item.GetName(), item.type.ToString(), item.type== MapObject.MapObjectType.VESSEL?item.vessel.id.ToString():""));
+                }
+            }
 
-            GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.ToString());
+
+            //GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.ToString());
             //GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.DateTimeFormat));
             //GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.KSPFormat));
             //GUILayout.Label(KACWorkerGameState.CurrentTime.ToStringStandard(DateStringFormatsEnum.KSPFormatWithSecs));

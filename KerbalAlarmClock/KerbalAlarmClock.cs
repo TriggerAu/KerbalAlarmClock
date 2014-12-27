@@ -1417,9 +1417,10 @@ namespace KerbalAlarmClock
 				if (game != null && game.flightState != null && game.compatible)
 				{
 					//straight to spacecenter
-					//HighLogic.CurrentGame = game;
-					//HighLogic.LoadScene(GameScenes.SPACECENTER);
-					//return;
+					HighLogic.CurrentGame = game;
+					HighLogic.LoadScene(GameScenes.SPACECENTER);
+                    //HighLogic.LoadScene(GameScenes.TRACKSTATION);
+					return;
 
 					Int32 FirstVessel;
 					Boolean blnFoundVessel = false;

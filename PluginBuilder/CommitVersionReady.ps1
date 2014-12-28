@@ -11,4 +11,5 @@ if ($ChoiceRtn -eq 0 )
     git checkout develop
     git add -A * ..\*
     git commit -m "Version $($Version) ready"
+	git push
 }

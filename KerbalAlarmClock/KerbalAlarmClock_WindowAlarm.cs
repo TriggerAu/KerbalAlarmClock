@@ -370,7 +370,7 @@ namespace KerbalAlarmClock
 				if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
 					_ShowEditPane = false;
 
-				intAlarmEditHeight = 112 +
+				intAlarmEditHeight = 152 +
 					alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 +
 					intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine * 14;
 			}

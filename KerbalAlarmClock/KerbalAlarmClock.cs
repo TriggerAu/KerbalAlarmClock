@@ -66,6 +66,9 @@ namespace KerbalAlarmClock
         //Worker and Settings objects
         public static float UpdateInterval = 0.1F;
 
+
+        private DateTime dateCreated = DateTime.Now;
+
         //Constructor to set KACWorker parent object to this and access to the settings
         public KerbalAlarmClock()
         {
@@ -1035,7 +1038,9 @@ namespace KerbalAlarmClock
 		internal void MonitorContracts()
 		{
 			if(lstContracts==null) return;
-			 
+
+            if (lstContracts.Count == 0 && dateCreated.AddSeconds(5) > DateTime.Now) return;
+
 			//check for expired/dead contracts
 			if (settings.ContractExpireDelete)
 			{

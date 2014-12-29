@@ -29,6 +29,10 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.1.1.0		-	KSP Version: 0.90
+- Fixed issue with Contract alarms disappearing on scene change (Issue #92)
+- Added feature to swap the child windows to the left side if the KAC is near the right screen edge (Issue #94)
+
 Version 3.1.0.0		-	KSP Version: 0.90
 - Added option so when you hit the throttle cutoff ("X" by default) it will also kill warp (Issue #85)
 - Added "No Action" Action options (Issue #80)

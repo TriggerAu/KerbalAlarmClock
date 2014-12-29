@@ -15,6 +15,7 @@ namespace KerbalAlarmClock.Windows
         internal Int32 windowID;
         internal Rect windowRect;
         internal Boolean Visible;
+        internal Boolean ShowOnLeft = false;
 
         internal KerbalAlarmClock KAC;
 
@@ -32,7 +33,8 @@ namespace KerbalAlarmClock.Windows
         }
         internal void FillWindow(Int32 windowID)
         {
-            windowRect.x = KAC.WindowPosByActiveScene.x + KAC.WindowPosByActiveScene.width;
+            Rect Toggle = KerbalAlarmClock.WindowRectLeftRightToggle(KAC.WindowPosByActiveScene.x, KAC.WindowPosByActiveScene.width, KAC.WindowPosByActiveScene.y, windowRect.width, windowRect.height,ref ShowOnLeft);
+            windowRect.x = Toggle.x;
             windowRect.y = KAC.WindowPosByActiveScene.y;
 
             GUILayout.BeginVertical();

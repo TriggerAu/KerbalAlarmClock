@@ -352,8 +352,19 @@ namespace KerbalAlarmClock
 
 			//GUILayout.Label(String.Format("S:{0}", intSelectedContract));
 			//GUILayout.Label(String.Format("LastState:{0}", contractLastState));
-			//if (Contracts.ContractSystem.Instance != null && lstContracts != null)
-			//{
+            //if (Contracts.ContractSystem.Instance != null)
+            //{
+            //    foreach (Contracts.Contract c in Contracts.ContractSystem.Instance.Contracts)
+            //    {
+            //        GUILayout.Label(string.Format("{0}:{1}:{2}", c.ContractID, c.ContractGuid, c.Title.Substring(0, 20)));
+            //    }
+
+            //    GUILayout.Label("CONTRACTS Variable");
+            //    foreach (Contracts.Contract c in lstContracts)
+            //    {
+            //        GUILayout.Label(string.Format("{0}:{1}:{2}", c.ContractID, c.ContractGuid, c.Title.Substring(0, 20)));
+            //    }
+
 			//    GUILayout.Label(String.Format("Title: {0}", lstContracts[intSelectedContract].Title));
 			//    //GUILayout.Label(String.Format("Syn: {0}", lstContracts[intSelectedContract].Synopsys));
 			//    //GUILayout.Label(String.Format("Desc: {0}", lstContracts[intSelectedContract].Description));
@@ -371,7 +382,7 @@ namespace KerbalAlarmClock
 			//        GUILayout.Label(String.Format("{0}\r\nDate:{1}, Date-margin:{2}", item.Title, item.DateNext(), item.DateNext()-settings.AlarmOnContractExpireMargin));
 			//    //    //GUILayout.Label(String.Format("DateExpire:{0}DateDeadline:{1}", item.DateExpire,item.DateDeadline));
 			//    }
-			//}
+            //}
 
 			//GUILayout.Label(String.Format("{0}", WarpTransitionCalculator.WarpRateHash));
 			//foreach (WarpTransition item in WarpTransitionCalculator.WarpRateTransitionPeriods.OrderBy(w => w.Index))

@@ -30,6 +30,8 @@ namespace KerbalAlarmClock
         internal static String DBPathTextures = string.Format("{0}/Textures", DBPathPlugin);
         internal static String DBPathPluginSounds = string.Format("{0}/Sounds", DBPathPlugin);
 
+        internal static String PathToolbarTexturePath = PathToolbarIcons.Replace("\\", "/").Substring(PathToolbarIcons.Replace("\\", "/").ToLower().IndexOf("/gamedata/") + 10);
+
         internal static String SavePath;
 
         internal static Boolean BackupSaves()

@@ -353,7 +353,7 @@ namespace KerbalAlarmClock
 
         internal static String GetWarpIconTexturePath()
         {
-            String textureReturn = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-WarpEffect2_";
+            String textureReturn = KACUtils.PathToolbarTexturePath + "/KACIcon-WarpEffect2_";
 
             textureReturn = GetIconPercentageFromTime(textureReturn);
             return textureReturn;
@@ -361,7 +361,7 @@ namespace KerbalAlarmClock
 
         internal static String GetPauseIconTexturePath()
         {
-            String textureReturn = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-PauseEffect_";
+            String textureReturn = KACUtils.PathToolbarTexturePath + "/KACIcon-PauseEffect_";
 
             textureReturn = GetIconPercentageFromTime(textureReturn);
             return textureReturn;

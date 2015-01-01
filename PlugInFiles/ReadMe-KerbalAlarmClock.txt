@@ -29,6 +29,12 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.1.2.0		-	KSP Version: 0.90
+- Updated default button state for app button (Issue #97)
+- Fixed issue with "date" alarms not using epoch (Issue #96)
+- Added feature to detect Ap/Pe when choosing Apsis alarms (Issue #95)
+- Fixed Toolbar code to use relative paths (Issue #94)
+
 Version 3.1.1.0		-	KSP Version: 0.90
 - Fixed issue with Contract alarms disappearing on scene change (Issue #92)
 - Added feature to swap the child windows to the left side if the KAC is near the right screen edge (Issue #94)

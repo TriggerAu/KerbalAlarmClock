@@ -19,15 +19,13 @@ namespace KSPPluginFramework
         static public Int32 EpochDayOfYear { get; private set; }
         /// <summary>What Year does UT 0 represent</summary>
         static public Int32 EpochYear { get; private set; }
-
-
+        
         static public KSPDateTime EpochAsKSPDateTime { 
             get {
-                return new KSPDateTime(EpochYear, EpochDayOfYear);
+                return new KSPDateTime(EpochYear * SecondsPerYear + EpochDayOfYear* SecondsPerDay);
             }
         }
-
-
+        
         //Define the Calendar
         /// <summary>How many seconds (game UT) make up a minute</summary>
         static public Int32 SecondsPerMinute { get; private set; }

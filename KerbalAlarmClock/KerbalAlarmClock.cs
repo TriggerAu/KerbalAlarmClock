@@ -190,6 +190,12 @@ namespace KerbalAlarmClock
             }
 
             RemoveInputLock();
+
+            if (WindowVisibleByActiveScene && settings.ButtonStyleToDisplay==Settings.ButtonStyleEnum.Launcher)
+            {
+                AppLauncherToBeSetTrue = true;
+                AppLauncherToBeSetTrueAttemptDate = DateTime.Now;
+            }
         }
 
         //Destroy Event - when the DLL is loaded
@@ -354,6 +360,9 @@ namespace KerbalAlarmClock
 		private Int32 WarpRateWorkerInitialPeriodCounter = 0;
 		internal override void RepeatingWorker()
 		{
+            if (AppLauncherToBeSetTrue)
+                SetAppButtonToTrue();
+
 			UpdateDetails();
 
 			//Contract stuff

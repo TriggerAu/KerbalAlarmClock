@@ -19,11 +19,11 @@ namespace KerbalAlarmClock
                 if (settings.ButtonStyleChosen == Settings.ButtonStyleEnum.Launcher )
                 {
                     btnAppLauncher = InitAppLauncherButton();
-                    if (WindowVisibleByActiveScene)
-                    {
-                        LogFormatted("Setting Button True");
-                        btnAppLauncher.SetTrue();
-                    }
+                    //if (WindowVisibleByActiveScene)
+                    //{
+                    //    LogFormatted("Setting Button True");
+                    //    btnAppLauncher.SetTrue();
+                    //}
                 }
             }
             else { LogFormatted("App Launcher-Not Actually Ready"); }
@@ -84,6 +84,46 @@ namespace KerbalAlarmClock
                 btnAppLauncher = null;
             }
             LogFormatted("AppLauncher: Destroying Button-AFTER NULL CHECK");
+        }
+
+
+        internal Boolean AppLauncherToBeSetTrue = false;
+        internal DateTime AppLauncherToBeSetTrueAttemptDate;
+        internal void SetAppButtonToTrue()
+        {
+            if (!ApplicationLauncher.Ready)
+            {
+                LogFormatted_DebugOnly("not ready yet");
+                AppLauncherToBeSetTrueAttemptDate = DateTime.Now;
+                return;
+            }
+            ApplicationLauncherButton ButtonToToggle = btnAppLauncher;
+
+            if (ButtonToToggle == null)
+            {
+                LogFormatted_DebugOnly("Button Is Null");
+                AppLauncherToBeSetTrueAttemptDate = DateTime.Now;
+                return;
+            }
+
+
+            if (ButtonToToggle.State != RUIToggleButton.ButtonState.TRUE)
+            {
+                if (AppLauncherToBeSetTrueAttemptDate.AddSeconds(settings.AppLauncherSetTrueTimeOut) < DateTime.Now)
+                {
+                    AppLauncherToBeSetTrue = false;
+                    LogFormatted("AppLauncher: Unable to set the AppButton to true - tried for {0} secs", settings.AppLauncherSetTrueTimeOut);
+                }
+                else
+                {
+                    LogFormatted("Setting App Button True");
+                    ButtonToToggle.SetTrue(true);
+                }
+            }
+            else
+            {
+                AppLauncherToBeSetTrue = false;
+            }
         }
 
         void onAppLaunchToggleOn() {

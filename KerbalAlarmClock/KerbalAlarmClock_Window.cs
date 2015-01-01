@@ -275,16 +275,16 @@ namespace KerbalAlarmClock
                             if (alarms.ActiveEnabledFutureAlarms(HighLogic.CurrentGame.Title))
                             {
                                 if (WindowVisibleByActiveScene)
-                                    TexturePath = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-AlarmShow";
+                                    TexturePath = KACUtils.PathToolbarTexturePath + "/KACIcon-AlarmShow";
                                 else
-                                    TexturePath = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-Alarm";
+                                    TexturePath = KACUtils.PathToolbarTexturePath + "/KACIcon-Alarm";
                             }
                             else
                             {
                                 if (WindowVisibleByActiveScene)
-                                    TexturePath = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-NormShow";
+                                    TexturePath = KACUtils.PathToolbarTexturePath + "/KACIcon-NormShow";
                                 else
-                                    TexturePath = "TriggerTech/KerbalAlarmClock/ToolbarIcons/KACIcon-Norm";
+                                    TexturePath = KACUtils.PathToolbarTexturePath + "/KACIcon-Norm";
                             }
                         }
 

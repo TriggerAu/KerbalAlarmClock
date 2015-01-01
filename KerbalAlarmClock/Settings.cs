@@ -237,6 +237,8 @@ namespace KerbalAlarmClock
         internal Boolean RSSActive = false;
         [Persistent] internal Boolean RSSShowCalendarToggled=false;
 
+        [Persistent] internal Int32 AppLauncherSetTrueTimeOut= 6;
+
         //Version Stuff
         [Persistent] internal Boolean DailyVersionCheck = true;
         internal Boolean VersionAttentionFlag = false;

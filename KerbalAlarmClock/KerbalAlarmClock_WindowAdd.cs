@@ -380,6 +380,15 @@ namespace KerbalAlarmClock
             }
             if (DrawButtonList(ref AddType,guiButtons))
             {
+                //if the choice was the Ap/Pe one then work out the best next choice
+                if(AddType== KACAlarm.AlarmTypeEnum.Apoapsis) {
+                    
+                    if(!KACWorkerGameState.ApPointExists && KACWorkerGameState.PePointExists)
+                        AddType = KACAlarm.AlarmTypeEnum.Periapsis;
+                    else if(KACWorkerGameState.ApPointExists && KACWorkerGameState.PePointExists &&
+                            ((KACWorkerGameState.CurrentVessel == null) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToAp) > ((KACWorkerGameState.CurrentVessel == null ) ? 0 : KACWorkerGameState.CurrentVessel.orbit.timeToPe))
+                        AddType = KACAlarm.AlarmTypeEnum.Periapsis;
+                }
                 AddTypeChanged();
             }
             

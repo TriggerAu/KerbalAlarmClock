@@ -437,6 +437,9 @@ namespace KerbalAlarmClock
 					DrawWindowsPre();
 					DrawWindows();
 					DrawWindowsPost();
+
+
+                    DrawNodeButtons();
 				}
 			}
 
@@ -454,6 +457,137 @@ namespace KerbalAlarmClock
 			}
 		}
 
+
+
+        private void DrawNodeButtons()
+        {
+            if (MapView.MapIsEnabled && KACWorkerGameState.CurrentVessel!=null)
+            {
+                DrawNodeWarpButton(KACWorkerGameState.ApPointExists,
+                    KACWorkerGameState.CurrentTime.UT + KACWorkerGameState.CurrentVessel.orbit.timeToAp
+                    , KACAlarm.AlarmTypeEnum.Apoapsis
+                    , "Ap");
+
+                DrawNodeWarpButton(KACWorkerGameState.PePointExists,
+                    KACWorkerGameState.CurrentTime.UT + KACWorkerGameState.CurrentVessel.orbit.timeToPe,
+                    KACAlarm.AlarmTypeEnum.Periapsis,
+                    "Pe");
+
+                if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION && KACWorkerGameState.ManeuverNodeExists && 
+                        KACWorkerGameState.ManeuverNodeFuture != null && KACWorkerGameState.ManeuverNodeFuture.attachedGizmo == null)
+
+                    DrawNodeWarpButton(true,
+                        KACWorkerGameState.ManeuverNodeFuture.UT, 
+                        KACAlarm.AlarmTypeEnum.Maneuver,
+                        "ManNode");
+
+                DrawNodeWarpButton(KACWorkerGameState.SOIPointExists,
+                    KACWorkerGameState.CurrentVessel.orbit.UTsoi,
+                    KACAlarm.AlarmTypeEnum.SOIChange,
+                    "SOI");
+
+                if (KACWorkerGameState.CurrentVesselTarget != null)
+                {
+                    if (KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()))
+                    {
+                        DrawNodeWarpButton(true,
+                            KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT),
+                            KACAlarm.AlarmTypeEnum.AscendingNode,
+                            "AN");
+                    }
+                    if (KACWorkerGameState.CurrentVessel.orbit.DescendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()))
+                    {
+                        DrawNodeWarpButton(true,
+                            KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT),
+                            KACAlarm.AlarmTypeEnum.DescendingNode,
+                            "DN");
+                    }
+                }
+            }
+        }
+        private Boolean DrawNodeWarpButton(Boolean Exists, Double UT,KACAlarm.AlarmTypeEnum aType, String NodeName)
+        {
+            if (Exists)
+            {
+                GUIStyle styleWarpToButton = new GUIStyle();
+                styleWarpToButton.fixedWidth = 20;
+                styleWarpToButton.fixedHeight = 12;
+
+                Int32 xOffset = 10;
+                Int32 yOffset = -20;
+
+                switch (aType)
+                {
+                    case KACAlarm.AlarmTypeEnum.Maneuver:
+                    case KACAlarm.AlarmTypeEnum.ManeuverAuto:
+                        if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+                        {
+                            styleWarpToButton.normal.background = KACResources.iconWarpToTSManNode;
+                            styleWarpToButton.hover.background = KACResources.iconWarpToTSManNodeOver;
+                        }
+                        else
+                        {
+                            styleWarpToButton.normal.background = KACResources.iconWarpToManNode;
+                            styleWarpToButton.hover.background = KACResources.iconWarpToManNodeOver;
+                        }
+                        break;
+                    case KACAlarm.AlarmTypeEnum.Apoapsis:
+                    case KACAlarm.AlarmTypeEnum.Periapsis:
+                        if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) {
+                            styleWarpToButton.normal.background = KACResources.iconWarpToTSApPe;
+                            styleWarpToButton.hover.background = KACResources.iconWarpToTSApPeOver;
+                        }
+                        else { 
+                            styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
+                            styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
+                        }
+                        break;
+                    case KACAlarm.AlarmTypeEnum.AscendingNode:
+                    case KACAlarm.AlarmTypeEnum.DescendingNode:
+                        styleWarpToButton.normal.background = KACResources.iconWarpToANDN;
+                        styleWarpToButton.hover.background = KACResources.iconWarpToANDNOver;
+                        break;
+                    case KACAlarm.AlarmTypeEnum.SOIChange:
+                    case KACAlarm.AlarmTypeEnum.SOIChangeAuto:
+                        xOffset = intTestheight;
+                        yOffset = intTestheight2;
+                        if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) {
+                            styleWarpToButton.normal.background = KACResources.iconWarpToTSApPe;
+                            styleWarpToButton.hover.background = KACResources.iconWarpToTSApPeOver;
+                        }
+                        else { 
+                            styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
+                            styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
+                        }
+                        break;
+                    default:
+                        styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
+                        styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
+                        break;
+                }
+
+                //get the screen coordinates of the AP Point
+                Vector3d screenPosNode = MapView.MapCamera.camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(UT)));
+
+                if (GUI.Button(new Rect((Int32)screenPosNode.x + xOffset, (Int32)(Screen.height - screenPosNode.y) + yOffset, 20, 12), "", styleWarpToButton))
+                {
+                    KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), "Warp to " + NodeName, "", UT, 0, aType,
+                            KACAlarm.AlarmActionEnum.KillWarpOnly);
+                    if (lstAlarmsWithTarget.Contains(aType))
+                        newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
+
+                    alarms.Add(newAlarm);
+
+                    Double timeToEvent = UT - KACWorkerGameState.CurrentTime.UT;
+                    Int32 rateToSet = WarpTransitionCalculator.WarpRateTransitionPeriods.Where(r => r.UTTo1Times < timeToEvent)
+                                        .OrderBy(r=>r.UTTo1Times)
+                                        .Last().Index;
+                    TimeWarp.SetRate(rateToSet, false);
+                }
+            }
+            return false;
+        }
+        
 		internal Boolean MouseOverAnyWindow = false;
 		internal Boolean InputLockExists = false;
 		internal void ControlInputLocks()
@@ -1431,10 +1565,10 @@ namespace KerbalAlarmClock
 				if (game != null && game.flightState != null && game.compatible)
 				{
 					//straight to spacecenter
-					HighLogic.CurrentGame = game;
-					HighLogic.LoadScene(GameScenes.SPACECENTER);
+					//HighLogic.CurrentGame = game;
+					//HighLogic.LoadScene(GameScenes.SPACECENTER);
                     //HighLogic.LoadScene(GameScenes.TRACKSTATION);
-					return;
+					//return;
 
 					Int32 FirstVessel;
 					Boolean blnFoundVessel = false;

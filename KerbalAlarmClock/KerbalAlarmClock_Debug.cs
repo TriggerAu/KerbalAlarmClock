@@ -303,16 +303,49 @@ namespace KerbalAlarmClock
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
 
-            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
-            {
-                GUILayout.Label(KACWorkerGameState.CurrentVessel == null ? "NULL" : (KACWorkerGameState.CurrentVessel.vesselName + "-" + KACWorkerGameState.CurrentVessel.id.ToString()));
+            //if ((KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION || (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT && MapView.MapIsEnabled)) && KACWorkerGameState.CurrentVessel != null)
+            //{
+
+            //    //GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.timeToAp.ToString());
+            //    GUILayout.Label(MapView.MapCamera.camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(KACWorkerGameState.CurrentVessel.orbit.timeToAp))).ToString());
                 
-                SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
-                foreach (MapObject item in st.mainCamera.targets)
-                {
-                    GUILayout.Label(String.Format("{0}-{1}-{2}", item.GetName(), item.type.ToString(), item.type== MapObject.MapObjectType.VESSEL?item.vessel.id.ToString():""));
-                }
-            }
+            //    if (KACWorkerGameState.ManeuverNodeExists)
+            //    {
+
+            //        GUILayout.Label(MapView.MapCamera.camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(KACWorkerGameState.ManeuverNodeFuture.UT))).ToString());
+            //        GUILayout.Label(MapView.MapCamera.camera.transform.position.ToString());
+            //        GUILayout.Label((MapView.MapCamera.camera.transform.position - KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(KACWorkerGameState.ManeuverNodeFuture.UT)).ToString());
+
+
+
+            //        //GUILayout.Label(MapView.MapCamera.camera.WorldToScreenPoint(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(KACWorkerGameState.ManeuverNodeFuture.UT)).ToString());
+            //        //GUILayout.Label(MapView.MapCamera.camera.WorldToScreenPoint(KACWorkerGameState.CurrentVessel.orbit.getRelativePositionAtUT(KACWorkerGameState.ManeuverNodeFuture.UT)).ToString());
+            //        if (KACWorkerGameState.ManeuverNodeFuture.attachedGizmo == null)
+            //        {
+            //            GUILayout.Label("Attached=NULL");
+            //        }
+            //        else
+            //        {
+            //            GUILayout.Label("Attached=YEP");
+            //            GUILayout.Label(KACWorkerGameState.ManeuverNodeFuture.attachedGizmo.grabArea.position.ToString());
+            //            GUILayout.Label(MapView.MapCamera.camera.WorldToScreenPoint(KACWorkerGameState.ManeuverNodeFuture.attachedGizmo.grabArea.position).ToString());
+            //            GUILayout.Label(KACWorkerGameState.ManeuverNodeFuture.attachedGizmo.grabArea.localScale.ToString());
+            //            GUILayout.Label(KACWorkerGameState.ManeuverNodeFuture.attachedGizmo.buttonRoot.position.ToString());
+
+            //        }
+            //    }
+
+            //    //GUILayout.Label(KACWorkerGameState.CurrentVessel == null ? "NULL" : (KACWorkerGameState.CurrentVessel.vesselName + "-" + KACWorkerGameState.CurrentVessel.id.ToString()));
+                
+
+
+
+            //    //SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
+            //    //foreach (MapObject item in st.mainCamera.targets)
+            //    //{
+            //    //    GUILayout.Label(String.Format("{0}-{1}-{2}", item.GetName(), item.type.ToString(), item.type== MapObject.MapObjectType.VESSEL?item.vessel.id.ToString():""));
+            //    //}
+            //}
 
 
             //GUILayout.Label(KACWorkerGameState.CurrentVessel.orbit.ToString());

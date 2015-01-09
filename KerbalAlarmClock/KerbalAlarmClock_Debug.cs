@@ -271,7 +271,8 @@ namespace KerbalAlarmClock
 		int intTestDistance = 710000;
 		public void FillDebugWindow(int WindowID)
 		{
-			GUILayout.BeginVertical();
+            try { GUILayout.BeginVertical(); }
+            catch (Exception) { LogFormatted("FillDebugWindow: GUILayout not ready yet", this._ClassName); return; }
 			//GUILayout.BeginHorizontal();
 			////GUILayout.Label("Alarm Add Interface:", KACResources.styleAddHeading, GUILayout.Width(90));
 			////AddInterfaceType = Convert.ToInt32(GUILayout.TextField(AddInterfaceType.ToString()));

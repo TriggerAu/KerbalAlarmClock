@@ -565,7 +565,8 @@ namespace KerbalAlarmClock
         //Now the layout
         internal void FillWindow(Int32 intWindowID)
         {
-            GUILayout.BeginVertical();
+            try { GUILayout.BeginVertical(); }
+            catch (Exception) { LogFormatted("FillWindow: GUILayout not ready yet"); return; }
 
             //Heading Part
             GUILayout.BeginHorizontal();

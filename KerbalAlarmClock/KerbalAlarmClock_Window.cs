@@ -403,7 +403,7 @@ namespace KerbalAlarmClock
             }
 #endif
             //set initial values for rect from old ones - ignore old width
-            Rect MainWindowPos = new Rect(WindowPosByActiveScene.x, WindowPosByActiveScene.y, intMainWindowWidth, WindowPosByActiveScene.height);
+            Rect MainWindowPos = new Rect(WindowPosByActiveScene.x, WindowPosByActiveScene.y, WindowPosByActiveScene.width, WindowPosByActiveScene.height);
             
             //Min or normal window
             if (WindowMinimizedByActiveScene)
@@ -565,7 +565,8 @@ namespace KerbalAlarmClock
         //Now the layout
         internal void FillWindow(Int32 intWindowID)
         {
-            GUILayout.BeginVertical();
+            try { GUILayout.BeginVertical(); }
+            catch (Exception) { LogFormatted("FillWindow: GUILayout not ready yet"); return; }
 
             //Heading Part
             GUILayout.BeginHorizontal();
@@ -768,8 +769,115 @@ namespace KerbalAlarmClock
 
             GUILayout.EndVertical();
             SetTooltipText();
-            GUI.DragWindow();
+
+            windowMainMouseEvents();
+
+            if (!(resizingWidth || resizingHeight || resizingBoth))
+                GUI.DragWindow();
         }
+
+        Boolean resizingWidth = false, resizingHeight = false, resizingBoth = false;
+        Boolean cursorWidth = false, cursorHeight = false, cursorBoth = false;
+        internal Rect dragHandleWidth, dragHandleHeight, dragHandleBoth;
+        internal Vector2 mousePosition;
+
+        private void windowMainMouseEvents()
+        {
+            //set the drag areas
+            dragHandleWidth = new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width - 6, WindowPosByActiveScene.y, 8, WindowPosByActiveScene.height);
+            dragHandleHeight = new Rect(WindowPosByActiveScene.x, WindowPosByActiveScene.y - 6, WindowPosByActiveScene.width, 8);
+            dragHandleBoth = new Rect(WindowPosByActiveScene.x + WindowPosByActiveScene.width - 6, WindowPosByActiveScene.y - 6, 8, 8);
+
+            mousePosition.x = Input.mousePosition.x;
+            mousePosition.y = Screen.height - Input.mousePosition.y;
+
+            if (resizingBoth) {
+                //if we are dragging then set the width
+                //WindowPosByActiveScene = new Rect(WindowPosByActiveScene) { 
+                //    width = (mousePosition.x - WindowPosByActiveScene.x).Clamp(intMainWindowWidth, 1000) ,
+                //    height = (mousePosition.y - WindowPosByActiveScene.y).Clamp(100, 1000) 
+                //};
+            } else if (resizingWidth) {
+                //if we are dragging then set the width
+                WindowPosByActiveScene = new Rect(WindowPosByActiveScene) { width = (mousePosition.x - WindowPosByActiveScene.x).Clamp(intMainWindowWidth, 1000) };
+            } else if (resizingHeight) {
+                //if we are dragging then set the width
+                //WindowPosByActiveScene = new Rect(WindowPosByActiveScene) { height = (mousePosition.y - WindowPosByActiveScene.y).Clamp(100, 1000) };
+            } else {
+                //if in width dragrect
+                if (dragHandleWidth.Contains(mousePosition))
+                {
+                    SetCustomCursor(ref cursorWidth, KACResources.curResizeWidth);
+
+                    //watch for mousedown
+                    if (Event.current.type == EventType.mouseDown && Event.current.button == 0)
+                    {
+                        LogFormatted_DebugOnly("Resize Width Start");
+                        resizingWidth = true;
+                    }
+                }
+                else
+                {
+                    ClearCustomCursor(ref cursorWidth);
+                }
+            }
+
+
+            //if (!resizingWidth)
+            //{
+            //    //if in dragrect
+            //    if (dragHandleWidth.Contains(mousePosition)) 
+            //    {
+            //        SetCustomCursor(ref cursorWidth, KACResources.curResizeWidth);
+
+            //        //watch for mousedown
+            //        if (Event.current.type == EventType.mouseDown && Event.current.button == 0) {
+            //            LogFormatted_DebugOnly("Resize Width Start");
+            //            resizingWidth = true;
+            //        }
+            //    } else {
+            //        ClearCustomCursor(ref cursorWidth);
+            //    }
+            //} else {
+            //    //if we are dragging then set the width
+            //    WindowPosByActiveScene = new Rect(WindowPosByActiveScene) { width = (mousePosition.x - WindowPosByActiveScene.x).Clamp(intMainWindowWidth,1000) };
+            //}
+        }
+
+        private void SetCustomCursor(ref Boolean Flag, Texture2D curText)
+        {
+            if (!Flag)
+            {
+                Cursor.SetCursor(curText, new Vector2(10, 10), CursorMode.ForceSoftware);
+                Flag = true;
+            }
+        }
+        private void ClearCustomCursor(ref Boolean Flag)
+        {
+            if (Flag)
+            {
+                Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+                Flag = false;
+            }
+        }
+
+        private void OnGUIMouseEvents()
+        {
+            //kill the resize bools if mouse up
+            if ((resizingWidth || resizingHeight || resizingBoth) && Event.current.type == EventType.mouseUp && Event.current.button == 0)
+            {
+                LogFormatted_DebugOnly("Resize Stop");
+                resizingWidth = resizingHeight = resizingBoth = false;
+
+                //reset the cursor
+                Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+                cursorWidth = cursorHeight = cursorBoth = false;
+            }
+
+
+        }
+
+
 
         String strAlarmEarthHour="";
         String strAlarmEarthMin = "";
@@ -996,12 +1104,12 @@ namespace KerbalAlarmClock
             Single sOutMin1, sOutMax1;
             styleLabel.CalcMinMaxWidth(contAlarmLabel, out sOutMin1, out sOutMax1);
             tmpAlarm.AlarmLineWidth = Convert.ToInt32(sOutMax1);
-            Int32 intMaxwidth = 256;// 220;// 228;
-            if (_ShowEditPane && (alarmEdit == tmpAlarm)) intMaxwidth = 235;// 198;// 216;
+            Int32 intMaxwidth = (Int32)WindowPosByActiveScene.width - 84;// 256;// 220;// 228;
+            if (_ShowEditPane && (alarmEdit == tmpAlarm)) intMaxwidth = (Int32)WindowPosByActiveScene.width - 105; //235;// 198;// 216;
             tmpAlarm.AlarmLineHeight = Convert.ToInt32(styleLabel.CalcHeight(contAlarmLabel, intMaxwidth)); //218
 
             //Draw a button that looks like a label.
-            if (GUILayout.Button(contAlarmLabel, styleLabel, GUILayout.MaxWidth(256)))
+            if (GUILayout.Button(contAlarmLabel, styleLabel, GUILayout.MaxWidth((Int32)WindowPosByActiveScene.width - 84)))  //256
             {
                 if (!_ShowSettings)
                 {

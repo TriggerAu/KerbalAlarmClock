@@ -69,6 +69,18 @@ namespace KerbalAlarmClock
         internal static Texture2D iconNone = new Texture2D(18, 14, TextureFormat.ARGB32, false);
         internal static Texture2D iconEdit = new Texture2D(16, 16, TextureFormat.ARGB32, false);
 
+        internal static Texture2D iconWarpToApPe = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToApPeOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToManNode = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToManNodeOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToANDN = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToANDNOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToTSApPe = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToTSApPeOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToTSManNode = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToTSManNodeOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+
+
         internal static Texture2D iconWarpList100 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         internal static Texture2D iconWarpList080 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         internal static Texture2D iconWarpList060 = new Texture2D(32, 32, TextureFormat.ARGB32, false);
@@ -129,6 +141,10 @@ namespace KerbalAlarmClock
 
         internal static Texture2D texSeparatorV = new Texture2D(6, 2, TextureFormat.ARGB32, false);
         internal static Texture2D texSeparatorH = new Texture2D(2, 20, TextureFormat.ARGB32, false);
+
+        internal static Texture2D curResizeWidth = new Texture2D(23, 23, TextureFormat.ARGB32, false);
+        internal static Texture2D curResizeHeight = new Texture2D(23, 23, TextureFormat.ARGB32, false);
+        internal static Texture2D curResizeBoth = new Texture2D(23, 23, TextureFormat.ARGB32, false);
 
         //internal static Texture2D txtTooltipBackground = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
         //internal static Texture2D txtRedTint = new Texture2D(16, 16); //, TextureFormat.ARGB32, false);
@@ -206,6 +222,17 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref iconNone, "img_listiconNone.png");
                 KACUtils.LoadImageFromFile(ref iconEdit, "img_listiconEdit.png");
 
+                KACUtils.LoadImageFromFile(ref iconWarpToApPe, "img_buttonWarpToApPe.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToApPeOver, "img_buttonWarpToApPeOver.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToManNode, "img_buttonWarpToManNode.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToManNodeOver, "img_buttonWarpToManNodeOver.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToANDN, "img_buttonWarpToANDN.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToANDNOver, "img_buttonWarpToANDNOver.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToTSApPe, "img_buttonWarpToTSApPe.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToTSApPeOver, "img_buttonWarpToTSApPeOver.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToTSManNode, "img_buttonWarpToTSManNode.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToTSManNodeOver, "img_buttonWarpToTSManNodeOver.png");
+
                 //KACUtils.LoadImageFromFile(ref iconstatusSOI, "img_statusiconSOI.png");
 
                 KACUtils.LoadImageFromFile(ref btnRaw, "img_buttonTypeRaw.png");
@@ -244,6 +271,10 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref btnDropDown, "img_DropDown.png");
                 KACUtils.LoadImageFromFile(ref btnPlay, "img_Play.png");
                 KACUtils.LoadImageFromFile(ref btnStop, "img_Stop.png");
+
+                KACUtils.LoadImageFromFile(ref curResizeWidth, "cur_ResizeWidth.png");
+                KACUtils.LoadImageFromFile(ref curResizeHeight, "cur_ResizeHeight.png");
+                KACUtils.LoadImageFromFile(ref curResizeBoth, "cur_ResizeBoth.png");
 
                 KACUtils.LoadImageFromFile(ref texBox, "tex_Box.png");
                 KACUtils.LoadImageFromFile(ref texBoxUnity, "tex_BoxUnity.png");

@@ -133,6 +133,10 @@ namespace KerbalAlarmClock
                             WindowLayout_SettingsSpecifics_Default();
                             intSettingsHeight = 221; // 234;
                             break;
+                        case SettingsAlarmSpecsEnum.WarpTo:
+                            WindowLayout_SettingsSpecifics_WarpTo();
+                            intSettingsHeight = intTestheight; //318;
+                            break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
                             intSettingsHeight = 387; //318;
@@ -332,6 +336,32 @@ namespace KerbalAlarmClock
 
             GUILayout.EndVertical();
         }
+
+        private void WindowLayout_SettingsSpecifics_WarpTo()
+        {
+            GUILayout.Label("Warp To General Settings", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            if (DrawCheckbox(ref settings.WarpToEnabled, new GUIContent("Enable WarpTo Buttons", "Adds WarpTo Buttons near flight nodes to")))
+            {
+                settings.Save();
+            }
+            GUILayout.BeginHorizontal();
+            String strTemp = settings.WarpToDupeProximitySecs.ToString("0");
+            if (DrawTextBox(ref strTemp, KACResources.styleAddField, GUILayout.Width(45)))
+            {
+                try {
+                    settings.WarpToDupeProximitySecs = Convert.ToInt32(strTemp);
+                    settings.Save();
+                } catch (Exception) {
+
+                }
+            }
+            GUILayout.Label("Reuse existing Alarm within if node within X(s)", KACResources.styleAddHeading);
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
+        }
+
         private void WindowLayout_SettingsSpecifics_ManNode()
         {
             GUILayout.Label("Maneuver Alarms", KACResources.styleAddSectionHeading);

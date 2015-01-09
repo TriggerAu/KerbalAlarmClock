@@ -438,8 +438,10 @@ namespace KerbalAlarmClock
 					DrawWindows();
 					DrawWindowsPost();
 
-
-                    DrawNodeButtons();
+                    if (settings.WarpToEnabled)
+                    {
+                        DrawNodeButtons();
+                    }
 				}
 			}
 

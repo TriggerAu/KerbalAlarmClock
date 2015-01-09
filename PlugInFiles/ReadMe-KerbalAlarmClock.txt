@@ -29,6 +29,9 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.2.1.0		-	KSP Version: 0.90
+- Added check to not display WarpTo when vessel is landed
+
 Version 3.2.0.0		-	KSP Version: 0.90
 - Added Window Width Resizing via Mouse (Issue #102)
 - Added WarpToNode Feature for MapView (Issue #98)

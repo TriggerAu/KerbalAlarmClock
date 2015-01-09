@@ -467,7 +467,7 @@ namespace KerbalAlarmClock
         private DateTime drawingTrackStationButtonsAt = DateTime.Now;
         private void DrawNodeButtons()
         {
-            if (MapView.MapIsEnabled && KACWorkerGameState.CurrentVessel!=null)
+            if (MapView.MapIsEnabled && KACWorkerGameState.CurrentVessel != null && !KACWorkerGameState.CurrentVessel.LandedOrSplashed)
             {
                 //Check if the focus just went off so the buttons still work
                 if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused) {
@@ -504,7 +504,7 @@ namespace KerbalAlarmClock
                         KACAlarm.AlarmTypeEnum.Maneuver,
                         "ManNode");
 
-                if (KACWorkerGameState.CurrentVesselTarget != null && !KACWorkerGameState.ManeuverNodeExists)
+                if (KACWorkerGameState.CurrentVesselTarget != null && !KACWorkerGameState.ManeuverNodeExists && KACWorkerGameState.CurrentVesselTarget.GetOrbit()!=null)
                 {
                     if (KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()))
                     {

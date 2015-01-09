@@ -261,8 +261,8 @@ namespace KerbalAlarmClock
 			return UT;
 		}
 
-		int intTestheight = 221;
-		int intTestheight2 = 0;
+		int intTestheight = -12;
+		int intTestheight2 = -12;
 		int intTestheight3 = 0;
 		static int intTestheight4 = 0;
 
@@ -305,20 +305,28 @@ namespace KerbalAlarmClock
 			GUILayout.EndHorizontal();
 
 
-            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && KACWorkerGameState.CurrentVessel != null){
-                GUILayout.Label(KACWorkerGameState.CurrentVessel.id.ToString());
-                GUILayout.Label(KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused.ToString());
-                GUILayout.Label(KACWorkerGameState.CurrentVessel.orbitRenderer.drawIcons.ToString());
-                GUILayout.Label(KACWorkerGameState.CurrentVessel.orbitRenderer.drawMode.ToString());
-                GUILayout.Label(KACWorkerGameState.CurrentVessel.PatchedConicsAttached.ToString());
+            GUILayout.Label(WindowPosByActiveScene.ToString());
+            GUILayout.Label(Input.mousePosition.ToString());
+            GUILayout.Label(Event.current.mousePosition.ToString());
 
-                if (GUILayout.Button("Toggle"))
-                {
-                    KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = !KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused;
-                    KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
-                }
+            GUILayout.Label(dragHandleWidth.ToString());
+            GUILayout.Label(resizingWidth.ToString());
 
-            }
+
+            //if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && KACWorkerGameState.CurrentVessel != null){
+            //    GUILayout.Label(KACWorkerGameState.CurrentVessel.id.ToString());
+            //    GUILayout.Label(KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused.ToString());
+            //    GUILayout.Label(KACWorkerGameState.CurrentVessel.orbitRenderer.drawIcons.ToString());
+            //    GUILayout.Label(KACWorkerGameState.CurrentVessel.orbitRenderer.drawMode.ToString());
+            //    GUILayout.Label(KACWorkerGameState.CurrentVessel.PatchedConicsAttached.ToString());
+
+            //    if (GUILayout.Button("Toggle"))
+            //    {
+            //        KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = !KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused;
+            //        KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
+            //    }
+
+            //}
             //if ((KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION || (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT && MapView.MapIsEnabled)) && KACWorkerGameState.CurrentVessel != null)
             //{
 

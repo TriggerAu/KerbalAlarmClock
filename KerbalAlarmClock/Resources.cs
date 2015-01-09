@@ -142,6 +142,10 @@ namespace KerbalAlarmClock
         internal static Texture2D texSeparatorV = new Texture2D(6, 2, TextureFormat.ARGB32, false);
         internal static Texture2D texSeparatorH = new Texture2D(2, 20, TextureFormat.ARGB32, false);
 
+        internal static Texture2D curResizeWidth = new Texture2D(23, 23, TextureFormat.ARGB32, false);
+        internal static Texture2D curResizeHeight = new Texture2D(23, 23, TextureFormat.ARGB32, false);
+        internal static Texture2D curResizeBoth = new Texture2D(23, 23, TextureFormat.ARGB32, false);
+
         //internal static Texture2D txtTooltipBackground = new Texture2D(9, 9); //, TextureFormat.ARGB32, false);
         //internal static Texture2D txtRedTint = new Texture2D(16, 16); //, TextureFormat.ARGB32, false);
         //internal static Texture2D txtBlackSquare = new Texture2D(5, 5); //, TextureFormat.ARGB32, false);
@@ -267,6 +271,10 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref btnDropDown, "img_DropDown.png");
                 KACUtils.LoadImageFromFile(ref btnPlay, "img_Play.png");
                 KACUtils.LoadImageFromFile(ref btnStop, "img_Stop.png");
+
+                KACUtils.LoadImageFromFile(ref curResizeWidth, "cur_ResizeWidth.png");
+                KACUtils.LoadImageFromFile(ref curResizeHeight, "cur_ResizeHeight.png");
+                KACUtils.LoadImageFromFile(ref curResizeBoth, "cur_ResizeBoth.png");
 
                 KACUtils.LoadImageFromFile(ref texBox, "tex_Box.png");
                 KACUtils.LoadImageFromFile(ref texBoxUnity, "tex_BoxUnity.png");

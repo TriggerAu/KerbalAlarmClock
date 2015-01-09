@@ -440,12 +440,13 @@ namespace KerbalAlarmClock
 					DrawWindows();
 					DrawWindowsPost();
 
-                    if (settings.WarpToEnabled)
-                    {
-                        DrawNodeButtons();
-                    }
 				}
-			}
+
+                if (settings.WarpToEnabled)
+                {
+                    DrawNodeButtons();
+                }
+            }
 
 			//Do the stuff to lock inputs of people have that turned on
 			ControlInputLocks();
@@ -598,10 +599,10 @@ namespace KerbalAlarmClock
                         break;
                 }
 
-                //get the screen coordinates of the AP Point
+                //get the screen coordinates of the Point
                 Vector3d screenPosNode = MapView.MapCamera.camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(UT)));
-
-                if (GUI.Button(new Rect((Int32)screenPosNode.x + xOffset, (Int32)(Screen.height - screenPosNode.y) + yOffset, 20, 12), "", styleWarpToButton))
+                Rect rectNodeButton = new Rect((Int32)screenPosNode.x + xOffset, (Int32)(Screen.height - screenPosNode.y) + yOffset, 20, 12);
+                if (GUI.Button(rectNodeButton, "", styleWarpToButton))
                 {
                     //Get any existing alarm for the same vessel/type and time
                     KACAlarm aExisting = alarms.FirstOrDefault(a=>a.VesselID==KACWorkerGameState.CurrentVessel.id.ToString() && a.TypeOfAlarm==aType
@@ -635,6 +636,20 @@ namespace KerbalAlarmClock
                     {
                         KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = true;
                         KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
+                    }
+                }
+
+                if (settings.ShowTooltips && !settings.WarpToTipsHidden)
+                {
+                    //Vector2
+                    Vector3 VectMouseflipped  = Input.mousePosition;
+                    VectMouseflipped.y = Screen.height - VectMouseflipped.y;
+                    if (rectNodeButton.Contains(VectMouseflipped))
+                    {
+                        GUIStyle styleTip = new GUIStyle();
+                        styleTip.normal.textColor = Color.white;
+                        styleTip.fontSize = 12;
+                        GUI.Label(new Rect((Int32)screenPosNode.x + xOffset + 21, (Int32)(Screen.height - screenPosNode.y) + yOffset -2, 100, 12), "Warp to " + NodeName, styleTip);
                     }
                 }
             }

@@ -345,6 +345,10 @@ namespace KerbalAlarmClock
             {
                 settings.Save();
             }
+            if (DrawCheckbox(ref settings.WarpToTipsHidden, new GUIContent("Hide WarpTo Tooltips", "Hides these labels regardless of the tooltips setting")))
+            {
+                settings.Save();
+            }
             GUILayout.BeginHorizontal();
             String strTemp = settings.WarpToDupeProximitySecs.ToString("0");
             if (DrawTextBox(ref strTemp, KACResources.styleAddField, GUILayout.Width(45)))

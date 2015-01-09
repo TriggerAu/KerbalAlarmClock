@@ -24,17 +24,17 @@ namespace KerbalAlarmClock
         //Windows and Visible Settings
         [Persistent] internal Boolean WindowVisible = false;
         [Persistent] internal Boolean WindowMinimized = false;
-        internal Rect WindowPos = new Rect(3, 55, 300, 45);
+        internal Rect WindowPos = new Rect(3, 55, 340, 45);
         [Persistent] private RectStorage WindowPositionStored = new RectStorage();
 
         [Persistent] internal Boolean WindowVisible_SpaceCenter = false;
         [Persistent] internal Boolean WindowMinimized_SpaceCenter = false;
-        internal Rect WindowPos_SpaceCenter = new Rect(3, 36, 300, 45);
+        internal Rect WindowPos_SpaceCenter = new Rect(3, 36, 340, 45);
         [Persistent] private RectStorage WindowPos_SpaceCenterStored = new RectStorage();
 
         [Persistent] internal Boolean WindowVisible_TrackingStation = false;
         [Persistent] internal Boolean WindowMinimized_TrackingStation = false;
-        internal Rect WindowPos_TrackingStation = new Rect(196, 45, 300, 45);
+        internal Rect WindowPos_TrackingStation = new Rect(196, 45, 340, 45);
         [Persistent] private RectStorage WindowPos_TrackingStationStored = new RectStorage();
 
         [Persistent] internal Rect IconPos =  new Rect(152, 0, 32, 32);
@@ -65,6 +65,7 @@ namespace KerbalAlarmClock
         [Persistent] internal Int32 WarpTransitions_ShowIndicatorSecs = 4;
 
         [Persistent] internal Boolean WarpToEnabled = true;
+        [Persistent] internal Boolean WarpToTipsHidden = false;
         [Persistent] internal Int32 WarpToTSIconDelayMSecs = 200;
         [Persistent] internal Int32 WarpToDupeProximitySecs = 60;
         //[Persistent] internal Boolean NewWarpBehaviour = true;

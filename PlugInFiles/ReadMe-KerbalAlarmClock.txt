@@ -29,6 +29,12 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.2.0.0		-	KSP Version: 0.90
+- Added Window Width Resizing via Mouse (Issue #102)
+- Added WarpToNode Feature for MapView (Issue #98)
+- Made Warp Kill via X the default behaviour (Issue #101)
+- Added some code to fix Control Layout Errors (Issue #99)
+
 Version 3.1.2.0		-	KSP Version: 0.90
 - Updated default button state for app button (Issue #97)
 - Fixed issue with "date" alarms not using epoch (Issue #96)

@@ -135,7 +135,7 @@ namespace KerbalAlarmClock
                             break;
                         case SettingsAlarmSpecsEnum.WarpTo:
                             WindowLayout_SettingsSpecifics_WarpTo();
-                            intSettingsHeight = intTestheight; //318;
+                            intSettingsHeight = 221; //318;
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();

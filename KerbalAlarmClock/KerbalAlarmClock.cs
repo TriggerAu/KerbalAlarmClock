@@ -458,20 +458,38 @@ namespace KerbalAlarmClock
 		}
 
 
-
+        private Boolean drawingTrackStationButtons=false;
+        private DateTime drawingTrackStationButtonsAt = DateTime.Now;
         private void DrawNodeButtons()
         {
             if (MapView.MapIsEnabled && KACWorkerGameState.CurrentVessel!=null)
             {
+                //Check if the focus just went off so the buttons still work
+                if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused) {
+                    drawingTrackStationButtons = true;
+                    drawingTrackStationButtonsAt = DateTime.Now;
+                } else if(drawingTrackStationButtons) {
+                    if (drawingTrackStationButtonsAt.AddMilliseconds(settings.WarpToTSIconDelayMSecs) < DateTime.Now)
+                        drawingTrackStationButtons = false;
+                }
+
+                if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION || drawingTrackStationButtons)
                 DrawNodeWarpButton(KACWorkerGameState.ApPointExists,
-                    KACWorkerGameState.CurrentTime.UT + KACWorkerGameState.CurrentVessel.orbit.timeToAp
+                    Planetarium.GetUniversalTime() + KACWorkerGameState.CurrentVessel.orbit.timeToAp
                     , KACAlarm.AlarmTypeEnum.Apoapsis
                     , "Ap");
 
-                DrawNodeWarpButton(KACWorkerGameState.PePointExists,
-                    KACWorkerGameState.CurrentTime.UT + KACWorkerGameState.CurrentVessel.orbit.timeToPe,
+                if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION || drawingTrackStationButtons)
+                    DrawNodeWarpButton(KACWorkerGameState.PePointExists,
+                    Planetarium.GetUniversalTime() + KACWorkerGameState.CurrentVessel.orbit.timeToPe,
                     KACAlarm.AlarmTypeEnum.Periapsis,
                     "Pe");
+
+                if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION || drawingTrackStationButtons)
+                    DrawNodeWarpButton(KACWorkerGameState.SOIPointExists,
+                        KACWorkerGameState.CurrentVessel.orbit.UTsoi,
+                        KACAlarm.AlarmTypeEnum.SOIChange,
+                        "SOI");
 
                 if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION && KACWorkerGameState.ManeuverNodeExists && 
                         KACWorkerGameState.ManeuverNodeFuture != null && KACWorkerGameState.ManeuverNodeFuture.attachedGizmo == null)
@@ -481,41 +499,44 @@ namespace KerbalAlarmClock
                         KACAlarm.AlarmTypeEnum.Maneuver,
                         "ManNode");
 
-                DrawNodeWarpButton(KACWorkerGameState.SOIPointExists,
-                    KACWorkerGameState.CurrentVessel.orbit.UTsoi,
-                    KACAlarm.AlarmTypeEnum.SOIChange,
-                    "SOI");
-
-                if (KACWorkerGameState.CurrentVesselTarget != null)
+                if (KACWorkerGameState.CurrentVesselTarget != null && !KACWorkerGameState.ManeuverNodeExists)
                 {
                     if (KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()))
                     {
-                        DrawNodeWarpButton(true,
-                            KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT),
-                            KACAlarm.AlarmTypeEnum.AscendingNode,
-                            "AN");
+                        Double tAN = KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), Planetarium.GetUniversalTime());
+                        if (tAN < KACWorkerGameState.CurrentVessel.orbit.EndUT)
+                        {
+                            DrawNodeWarpButton(true, tAN, KACAlarm.AlarmTypeEnum.AscendingNode, "AN");
+                        }
                     }
                     if (KACWorkerGameState.CurrentVessel.orbit.DescendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()))
                     {
-                        DrawNodeWarpButton(true,
-                            KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), KACWorkerGameState.CurrentTime.UT),
-                            KACAlarm.AlarmTypeEnum.DescendingNode,
-                            "DN");
+                        Double tDN = KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), Planetarium.GetUniversalTime());
+                        if (tDN < KACWorkerGameState.CurrentVessel.orbit.EndUT)
+                        {
+                            DrawNodeWarpButton(true,tDN, KACAlarm.AlarmTypeEnum.DescendingNode, "DN");
+                        }
                     }
                 }
             }
         }
+
+        //Draw a single button near the correct node
         private Boolean DrawNodeWarpButton(Boolean Exists, Double UT,KACAlarm.AlarmTypeEnum aType, String NodeName)
         {
             if (Exists)
             {
+                //set the style basics
                 GUIStyle styleWarpToButton = new GUIStyle();
                 styleWarpToButton.fixedWidth = 20;
                 styleWarpToButton.fixedHeight = 12;
 
+                //set the default offset of the buttons top left from the node point
+                // - these move around depending on the size of the node icon
                 Int32 xOffset = 10;
                 Int32 yOffset = -20;
 
+                //set the specific normal and hover textures and any custom offsets
                 switch (aType)
                 {
                     case KACAlarm.AlarmTypeEnum.Maneuver:
@@ -543,14 +564,21 @@ namespace KerbalAlarmClock
                         }
                         break;
                     case KACAlarm.AlarmTypeEnum.AscendingNode:
+                        styleWarpToButton.normal.background = KACResources.iconWarpToANDN;
+                        styleWarpToButton.hover.background = KACResources.iconWarpToANDNOver;
+                        xOffset = 18;
+                        yOffset = -14;
+                        break;
                     case KACAlarm.AlarmTypeEnum.DescendingNode:
                         styleWarpToButton.normal.background = KACResources.iconWarpToANDN;
                         styleWarpToButton.hover.background = KACResources.iconWarpToANDNOver;
+                        xOffset = -1;
+                        yOffset = -16;
                         break;
                     case KACAlarm.AlarmTypeEnum.SOIChange:
                     case KACAlarm.AlarmTypeEnum.SOIChangeAuto:
-                        xOffset = intTestheight;
-                        yOffset = intTestheight2;
+                        xOffset = 6;
+                        yOffset = -16;
                         if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) {
                             styleWarpToButton.normal.background = KACResources.iconWarpToTSApPe;
                             styleWarpToButton.hover.background = KACResources.iconWarpToTSApPeOver;
@@ -571,18 +599,39 @@ namespace KerbalAlarmClock
 
                 if (GUI.Button(new Rect((Int32)screenPosNode.x + xOffset, (Int32)(Screen.height - screenPosNode.y) + yOffset, 20, 12), "", styleWarpToButton))
                 {
-                    KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), "Warp to " + NodeName, "", UT, 0, aType,
-                            KACAlarm.AlarmActionEnum.KillWarpOnly);
-                    if (lstAlarmsWithTarget.Contains(aType))
-                        newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
+                    //Get any existing alarm for the same vessel/type and time
+                    KACAlarm aExisting = alarms.FirstOrDefault(a=>a.VesselID==KACWorkerGameState.CurrentVessel.id.ToString() && a.TypeOfAlarm==aType
+                        && Math.Abs(a.AlarmTimeUT - UT)<settings.WarpToDupeProximitySecs);
 
-                    alarms.Add(newAlarm);
+                    //if there aint one then add one
+                    if(aExisting == null) {
+                        KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), "Warp to " + NodeName, "", UT, 0, aType,
+                                KACAlarm.AlarmActionEnum.KillWarpOnly);
+                        if (lstAlarmsWithTarget.Contains(aType))
+                            newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
+                        if (KACWorkerGameState.ManeuverNodeExists)
+                            newAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
+                        newAlarm.DeleteWhenPassed = true;
 
-                    Double timeToEvent = UT - KACWorkerGameState.CurrentTime.UT;
+                        alarms.Add(newAlarm);
+                    } else {
+                        //else update the UT
+                        aExisting.AlarmTimeUT = UT;
+                    }
+
+                    //now accelerate time
+                    Double timeToEvent = UT - Planetarium.GetUniversalTime();
                     Int32 rateToSet = WarpTransitionCalculator.WarpRateTransitionPeriods.Where(r => r.UTTo1Times < timeToEvent)
                                         .OrderBy(r=>r.UTTo1Times)
                                         .Last().Index;
                     TimeWarp.SetRate(rateToSet, false);
+
+                    //If in the TS then reset the orbit selection
+                    if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+                    {
+                        KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = true;
+                        KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
+                    }
                 }
             }
             return false;
@@ -721,6 +770,19 @@ namespace KerbalAlarmClock
 		public void UpdateDetails()
 		{
 			KACWorkerGameState.SetCurrentFlightStates();
+
+            //Turn off the rendering of orbits for vessels we may have adjusted by the warpto code
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+            {
+                if (KACWorkerGameState.ChangedVessel)
+                {
+                    FlightGlobals.Vessels.Where(v => v != KACWorkerGameState.CurrentVessel).ToList().ForEach(v =>
+                    {
+                        v.orbitRenderer.isFocused = false;
+                        v.DetachPatchedConicsSolver();
+                    });
+                }
+            }
 
 			if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
 			{
@@ -1456,7 +1518,7 @@ namespace KerbalAlarmClock
 
             // Delete the do nothing/delete alarms - One loop to find the ones to delete - cant delete inside the foreach or it breaks the iterator
             List<KACAlarm> ToDelete = new List<KACAlarm>();
-            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.AlarmAction == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed))
+            foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmAction == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.DeleteWhenPassed)))
 			{
                 if (tmpAlarm.Triggered && tmpAlarm.Actioned)
                     ToDelete.Add(tmpAlarm);
@@ -1565,10 +1627,10 @@ namespace KerbalAlarmClock
 				if (game != null && game.flightState != null && game.compatible)
 				{
 					//straight to spacecenter
-					//HighLogic.CurrentGame = game;
+					HighLogic.CurrentGame = game;
 					//HighLogic.LoadScene(GameScenes.SPACECENTER);
-                    //HighLogic.LoadScene(GameScenes.TRACKSTATION);
-					//return;
+                    HighLogic.LoadScene(GameScenes.TRACKSTATION);
+					return;
 
 					Int32 FirstVessel;
 					Boolean blnFoundVessel = false;

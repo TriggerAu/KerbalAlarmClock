@@ -64,6 +64,9 @@ namespace KerbalAlarmClock
         [Persistent] internal Int32 WarpTransitions_UTToRateTimesOneTenths = 15;
         [Persistent] internal Int32 WarpTransitions_ShowIndicatorSecs = 4;
 
+
+        [Persistent] internal Int32 WarpToTSIconDelayMSecs = 300;
+        [Persistent] internal Int32 WarpToDupeProximitySecs = 10;
         //[Persistent] internal Boolean NewWarpBehaviour = true;
 
         [Persistent] internal Boolean AllowJumpFromViewOnly = true;

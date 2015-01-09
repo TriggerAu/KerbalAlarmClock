@@ -304,6 +304,21 @@ namespace KerbalAlarmClock
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
 
+
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && KACWorkerGameState.CurrentVessel != null){
+                GUILayout.Label(KACWorkerGameState.CurrentVessel.id.ToString());
+                GUILayout.Label(KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused.ToString());
+                GUILayout.Label(KACWorkerGameState.CurrentVessel.orbitRenderer.drawIcons.ToString());
+                GUILayout.Label(KACWorkerGameState.CurrentVessel.orbitRenderer.drawMode.ToString());
+                GUILayout.Label(KACWorkerGameState.CurrentVessel.PatchedConicsAttached.ToString());
+
+                if (GUILayout.Button("Toggle"))
+                {
+                    KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = !KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused;
+                    KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
+                }
+
+            }
             //if ((KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION || (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT && MapView.MapIsEnabled)) && KACWorkerGameState.CurrentVessel != null)
             //{
 

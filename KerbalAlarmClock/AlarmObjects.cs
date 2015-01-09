@@ -208,6 +208,7 @@ namespace KerbalAlarmClock
         [Persistent] public Double AlarmMarginSecs = 0;                             //What the margin from the event was
         [Persistent] public Boolean Enabled = true;                                 //Whether it is enabled - not in use currently
         [Persistent] public AlarmActionEnum AlarmAction= AlarmActionEnum.KillWarp;
+        [Persistent] public Boolean DeleteWhenPassed = false;                       //Whether it will be cleaned up after its time
         
         //public ManeuverNode ManNode;                                              //Stored ManeuverNode attached to alarm
         public List<ManeuverNode> ManNodes = new List<ManeuverNode>();                                  //Stored ManeuverNode's attached to alarm

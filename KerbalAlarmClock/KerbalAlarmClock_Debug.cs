@@ -304,13 +304,20 @@ namespace KerbalAlarmClock
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
 
+            try
+            {
+                GUILayout.Label(FlightGlobals.ActiveVessel.vesselName);
+            }
+            catch (Exception)
+            {
+                
+            }
+            //GUILayout.Label(WindowPosByActiveScene.ToString());
+            //GUILayout.Label(Input.mousePosition.ToString());
+            //GUILayout.Label(Event.current.mousePosition.ToString());
 
-            GUILayout.Label(WindowPosByActiveScene.ToString());
-            GUILayout.Label(Input.mousePosition.ToString());
-            GUILayout.Label(Event.current.mousePosition.ToString());
-
-            GUILayout.Label(dragHandleWidth.ToString());
-            GUILayout.Label(resizingWidth.ToString());
+            //GUILayout.Label(dragHandleWidth.ToString());
+            //GUILayout.Label(resizingWidth.ToString());
 
 
             //if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && KACWorkerGameState.CurrentVessel != null){

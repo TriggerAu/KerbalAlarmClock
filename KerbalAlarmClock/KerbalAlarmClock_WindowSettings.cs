@@ -135,7 +135,7 @@ namespace KerbalAlarmClock
                             break;
                         case SettingsAlarmSpecsEnum.WarpTo:
                             WindowLayout_SettingsSpecifics_WarpTo();
-                            intSettingsHeight = 221; //318;
+                            intSettingsHeight = 395;//221; //318;
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
@@ -364,6 +364,27 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
+
+            GUILayout.Label("WarpTo Margins", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+            DrawWarpToMarginCheck(ref settings.WarpToAddMarginAp, "Ap", "Ap", KACResources.iconAp);
+            DrawWarpToMarginCheck(ref settings.WarpToAddMarginPe, "Pe", "Pe", KACResources.iconPe);
+            DrawWarpToMarginCheck(ref settings.WarpToAddMarginAN, "AN", "AN", KACResources.iconAN);
+            DrawWarpToMarginCheck(ref settings.WarpToAddMarginDN, "DN", "DN", KACResources.iconDN);
+            DrawWarpToMarginCheck(ref settings.WarpToAddMarginSOI, "SOI", "SOI", KACResources.iconSOI);
+            DrawWarpToMarginCheck(ref settings.WarpToAddMarginManNode, "Man Node", "Maneuver Node", KACResources.iconMNode);
+
+            GUILayout.EndVertical();
+        }
+
+        private void DrawWarpToMarginCheck(ref Boolean settingsBool, String ShortName, String LongName, Texture2D icon)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(icon, GUILayout.Width(20));
+            if (DrawCheckbox(ref settingsBool, new GUIContent("Add Margin to " + ShortName + " WarpTo", "Add the configured default Margin to " + LongName + " Alarms when Warping to")))
+                settings.Save();
+            GUILayout.EndHorizontal();
         }
 
         private void WindowLayout_SettingsSpecifics_ManNode()

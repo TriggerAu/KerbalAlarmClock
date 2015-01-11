@@ -644,6 +644,7 @@ namespace KerbalAlarmClock
                     //If in the TS then reset the orbit selection
                     if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
                     {
+                        lstOrbitRenderChanged.Add(KACWorkerGameState.CurrentVessel.id);
                         KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = true;
                         KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
                     }
@@ -665,7 +666,10 @@ namespace KerbalAlarmClock
             }
             return false;
         }
-        
+
+        internal List<Guid> lstOrbitRenderChanged = new List<Guid>();
+
+
 		internal Boolean MouseOverAnyWindow = false;
 		internal Boolean InputLockExists = false;
 		internal void ControlInputLocks()
@@ -805,13 +809,14 @@ namespace KerbalAlarmClock
             //Turn off the rendering of orbits for vessels we may have adjusted by the warpto code
             if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
             {
-                if (KACWorkerGameState.ChangedVessel)
+                if (KACWorkerGameState.ChangedVessel && KACWorkerGameState.LastVessel!=null)
                 {
-                    FlightGlobals.Vessels.Where(v => v != KACWorkerGameState.CurrentVessel).ToList().ForEach(v =>
+                    if (lstOrbitRenderChanged.Contains(KACWorkerGameState.LastVessel.id))
                     {
-                        v.orbitRenderer.isFocused = false;
-                        v.DetachPatchedConicsSolver();
-                    });
+                        KACWorkerGameState.LastVessel.orbitRenderer.isFocused = false;
+                        KACWorkerGameState.LastVessel.DetachPatchedConicsSolver();
+                        lstOrbitRenderChanged.Clear();
+                    }
                 }
             }
 

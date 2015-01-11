@@ -66,9 +66,6 @@ namespace KerbalAlarmClock
         //Worker and Settings objects
         public static float UpdateInterval = 0.1F;
 
-
-        private DateTime dateCreated = DateTime.Now;
-
         //Constructor to set KACWorker parent object to this and access to the settings
         public KerbalAlarmClock()
         {
@@ -142,6 +139,7 @@ namespace KerbalAlarmClock
             //Hook the App Launcher
             GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
+            GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
 
             //Set up the updating function - do this 5 times a sec not on every frame.
             StartRepeatingWorker(settings.BehaviourChecksPerSec);
@@ -158,6 +156,14 @@ namespace KerbalAlarmClock
             WarpTransitionCalculator.CalcWarpRateTransitions();
 
             APIAwake();
+        }
+
+        Boolean blnContractsSystemReady = false;
+        void ContractsReady()
+        {
+            LogFormatted("Contracts System Ready");
+            UpdateContractDetails();
+            blnContractsSystemReady = true;
         }
 
         internal override void Start()
@@ -206,6 +212,7 @@ namespace KerbalAlarmClock
             //Hook the App Launcher
             GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
+            GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
 
             DestroyDropDowns();
 
@@ -781,6 +788,8 @@ namespace KerbalAlarmClock
 			_WindowEarthAlarmID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
 			_WindowBackupFailedID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
 			_WindowQuickAddID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
+
+            blnContractsSystemReady = false;
 		}
 		//#endregion
 
@@ -1263,7 +1272,9 @@ namespace KerbalAlarmClock
 		{
 			if(lstContracts==null) return;
 
-            if (lstContracts.Count == 0 && dateCreated.AddSeconds(5) > DateTime.Now) return;
+            if (!blnContractsSystemReady) return;
+
+            LogFormatted("Contracts Count {0}", lstContracts.Count);
 
 			//check for expired/dead contracts
 			if (settings.ContractExpireDelete)

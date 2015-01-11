@@ -68,6 +68,13 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean WarpToTipsHidden = false;
         [Persistent] internal Int32 WarpToTSIconDelayMSecs = 200;
         [Persistent] internal Int32 WarpToDupeProximitySecs = 60;
+
+        [Persistent] internal Boolean WarpToAddMarginAp = false;
+        [Persistent] internal Boolean WarpToAddMarginPe = false;
+        [Persistent] internal Boolean WarpToAddMarginAN = false;
+        [Persistent] internal Boolean WarpToAddMarginDN = false;
+        [Persistent] internal Boolean WarpToAddMarginSOI = true;
+        [Persistent] internal Boolean WarpToAddMarginManNode = true;
         //[Persistent] internal Boolean NewWarpBehaviour = true;
 
         [Persistent] internal Boolean AllowJumpFromViewOnly = true;
@@ -153,10 +160,10 @@ namespace KerbalAlarmClock
 
         [Persistent] internal Double AlarmAddManQuickMargin = 180;
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
-        [Persistent] internal Double AlarmAddSOIQuickMargin = 900;
+        [Persistent] internal Double AlarmAddSOIQuickMargin = 180;
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddSOIQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
 
-        [Persistent] internal Double AlarmAddNodeQuickMargin = 60;
+        [Persistent] internal Double AlarmAddNodeQuickMargin = 30;
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddNodeQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
 
 

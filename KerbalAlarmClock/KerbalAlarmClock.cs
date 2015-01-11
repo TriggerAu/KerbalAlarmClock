@@ -158,14 +158,6 @@ namespace KerbalAlarmClock
             APIAwake();
         }
 
-        Boolean blnContractsSystemReady = false;
-        void ContractsReady()
-        {
-            LogFormatted("Contracts System Ready");
-            UpdateContractDetails();
-            blnContractsSystemReady = true;
-        }
-
         internal override void Start()
         {
             LogFormatted_DebugOnly("Start function-Setting up ScenarioModule");
@@ -221,6 +213,17 @@ namespace KerbalAlarmClock
             DestroyAppLauncherButton();
 
             APIDestroy();
+        }
+
+        Boolean blnContractsSystemReady = false;
+        void ContractsReady()
+        {
+            LogFormatted("Contracts System Ready");
+            //update the list
+            UpdateContractDetails();
+
+            //set the flag to say we can start processing contracts
+            blnContractsSystemReady = true;
         }
 
         #region "Update Code"
@@ -1272,9 +1275,8 @@ namespace KerbalAlarmClock
 		{
 			if(lstContracts==null) return;
 
+            //check the ready flag
             if (!blnContractsSystemReady) return;
-
-            LogFormatted("Contracts Count {0}", lstContracts.Count);
 
 			//check for expired/dead contracts
 			if (settings.ContractExpireDelete)

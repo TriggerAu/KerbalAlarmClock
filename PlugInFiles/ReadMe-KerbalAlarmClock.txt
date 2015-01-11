@@ -29,6 +29,11 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.2.2.0		-	KSP Version: 0.90
+- Changed fix for Contracts going missing to use a gameevent (Issue #92 again)
+- Changed orbit render stuff in TS so it is more specific (Issue #104)
+- Added Margin options for WarpTo Alarms (Issue #105)
+
 Version 3.2.1.0		-	KSP Version: 0.90
 - Added check to not display WarpTo when vessel is landed
 

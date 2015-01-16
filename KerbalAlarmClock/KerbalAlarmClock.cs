@@ -633,39 +633,46 @@ namespace KerbalAlarmClock
                 Rect rectNodeButton = new Rect((Int32)screenPosNode.x + xOffset, (Int32)(Screen.height - screenPosNode.y) + yOffset, 20, 12);
                 if (GUI.Button(rectNodeButton, "", styleWarpToButton))
                 {
-                    //Get any existing alarm for the same vessel/type and time
-                    KACAlarm aExisting = alarms.FirstOrDefault(a=>a.VesselID==KACWorkerGameState.CurrentVessel.id.ToString() && a.TypeOfAlarm==aType
-                        && Math.Abs(a.AlarmTimeUT - UT)<settings.WarpToDupeProximitySecs);
-
-                    //if there aint one then add one
-                    if(aExisting == null) {
-                        KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), "Warp to " + NodeName, "", UT - (WithMargin ? MarginSecs : 0), (WithMargin ? MarginSecs : 0), aType,
-                                KACAlarm.AlarmActionEnum.KillWarpOnly);
-                        if (lstAlarmsWithTarget.Contains(aType))
-                            newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
-                        if (KACWorkerGameState.ManeuverNodeExists)
-                            newAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
-                        newAlarm.DeleteWhenPassed = true;
-
-                        alarms.Add(newAlarm);
-                    } else {
-                        //else update the UT
-                        aExisting.AlarmTimeUT = UT;
-                    }
-
-                    //now accelerate time
-                    Double timeToEvent = UT - Planetarium.GetUniversalTime();
-                    Int32 rateToSet = WarpTransitionCalculator.WarpRateTransitionPeriods.Where(r => r.UTTo1Times < timeToEvent)
-                                        .OrderBy(r=>r.UTTo1Times)
-                                        .Last().Index;
-                    TimeWarp.SetRate(rateToSet, false);
-
-                    //If in the TS then reset the orbit selection
-                    if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+                    if (Event.current.button == 0)
                     {
-                        lstOrbitRenderChanged.Add(KACWorkerGameState.CurrentVessel.id);
-                        KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = true;
-                        KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
+
+                        //Get any existing alarm for the same vessel/type and time
+                        KACAlarm aExisting = alarms.FirstOrDefault(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString() && a.TypeOfAlarm == aType
+                            && Math.Abs(a.AlarmTimeUT - UT) < settings.WarpToDupeProximitySecs);
+
+                        //if there aint one then add one
+                        if (aExisting == null)
+                        {
+                            KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), "Warp to " + NodeName, "", UT - (WithMargin ? MarginSecs : 0), (WithMargin ? MarginSecs : 0), aType,
+                                    KACAlarm.AlarmActionEnum.KillWarpOnly);
+                            if (lstAlarmsWithTarget.Contains(aType))
+                                newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
+                            if (KACWorkerGameState.ManeuverNodeExists)
+                                newAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
+                            newAlarm.DeleteWhenPassed = true;
+
+                            alarms.Add(newAlarm);
+                        }
+                        else
+                        {
+                            //else update the UT
+                            aExisting.AlarmTimeUT = UT;
+                        }
+
+                        //now accelerate time
+                        Double timeToEvent = UT - Planetarium.GetUniversalTime();
+                        Int32 rateToSet = WarpTransitionCalculator.WarpRateTransitionPeriods.Where(r => r.UTTo1Times < timeToEvent)
+                                            .OrderBy(r => r.UTTo1Times)
+                                            .Last().Index;
+                        TimeWarp.SetRate(rateToSet, false);
+
+                        //If in the TS then reset the orbit selection
+                        if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+                        {
+                            lstOrbitRenderChanged.Add(KACWorkerGameState.CurrentVessel.id);
+                            KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = true;
+                            KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
+                        }
                     }
                 }
 

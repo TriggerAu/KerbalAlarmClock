@@ -135,7 +135,7 @@ namespace KerbalAlarmClock
                             break;
                         case SettingsAlarmSpecsEnum.WarpTo:
                             WindowLayout_SettingsSpecifics_WarpTo();
-                            intSettingsHeight = 395;//221; //318;
+                            intSettingsHeight = 419;//  395;//221; //318;
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
@@ -342,6 +342,10 @@ namespace KerbalAlarmClock
             GUILayout.Label("Warp To General Settings", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
             if (DrawCheckbox(ref settings.WarpToEnabled, new GUIContent("Enable WarpTo Buttons", "Adds WarpTo Buttons near flight nodes to")))
+            {
+                settings.Save();
+            }
+            if (DrawCheckbox(ref settings.WarpToRequiresConfirm, new GUIContent("WarpTo Requires Confirmation (Two-Clicks)", "You need to click twice to use these so a single click doesnt inadvertantly cause a warp")))
             {
                 settings.Save();
             }

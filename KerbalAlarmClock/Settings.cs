@@ -68,6 +68,7 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean WarpToTipsHidden = false;
         [Persistent] internal Int32 WarpToTSIconDelayMSecs = 200;
         [Persistent] internal Int32 WarpToDupeProximitySecs = 60;
+        [Persistent] internal Boolean WarpToRequiresConfirm = false;
 
         [Persistent] internal Boolean WarpToAddMarginAp = false;
         [Persistent] internal Boolean WarpToAddMarginPe = false;

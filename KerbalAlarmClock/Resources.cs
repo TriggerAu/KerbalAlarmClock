@@ -77,6 +77,7 @@ namespace KerbalAlarmClock
         internal static Texture2D iconWarpToANDNOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
         internal static Texture2D iconWarpToTSApPe = new Texture2D(20, 12, TextureFormat.ARGB32, false);
         internal static Texture2D iconWarpToTSApPeOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToTSApPeOverConfirm = new Texture2D(20, 12, TextureFormat.ARGB32, false);
         internal static Texture2D iconWarpToTSManNode = new Texture2D(20, 12, TextureFormat.ARGB32, false);
         internal static Texture2D iconWarpToTSManNodeOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
 
@@ -230,6 +231,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref iconWarpToANDNOver, "img_buttonWarpToANDNOver.png");
                 KACUtils.LoadImageFromFile(ref iconWarpToTSApPe, "img_buttonWarpToTSApPe.png");
                 KACUtils.LoadImageFromFile(ref iconWarpToTSApPeOver, "img_buttonWarpToTSApPeOver.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToTSApPeOverConfirm, "img_buttonWarpToTSApPeOverConfirm.png");
                 KACUtils.LoadImageFromFile(ref iconWarpToTSManNode, "img_buttonWarpToTSManNode.png");
                 KACUtils.LoadImageFromFile(ref iconWarpToTSManNodeOver, "img_buttonWarpToTSManNodeOver.png");
 

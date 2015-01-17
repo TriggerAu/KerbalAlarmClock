@@ -308,6 +308,14 @@ namespace KerbalAlarmClock
                     GUILayout.Label(alarmEdit.Remaining.ToStringStandard(TimeSpanStringFormatsEnum.DateTimeFormat), KACResources.styleAddHeading);
                 GUILayout.EndHorizontal();
 
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Date of Event:", KACResources.styleContent);
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
+                    GUILayout.Label(alarmEdit.AlarmTime.ToStringStandard(DateStringFormatsEnum.DateTimeFormat), KACResources.styleAddHeading);
+                else
+                    GUILayout.Label(DateTime.Now.AddSeconds(alarmEdit.Remaining.UT).ToLongTimeString(), KACResources.styleAddHeading);
+                GUILayout.EndHorizontal();
+
 				int intNoOfActionButtons = 0;
 				int intNoOfActionButtonsDoubleLine = 0;
 				//if the alarm has a vessel ID/Kerbal associated
@@ -323,10 +331,12 @@ namespace KerbalAlarmClock
 				}
 
 				//TODO: Edit the height of this for when we have big text in restore button
-				intAlarmEditHeight = 197 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine*14;
+				 intAlarmEditHeight = 197 + 20 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine*14;
 				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
 					intAlarmEditHeight += 28;
-			}
+                if (alarmEdit.TypeOfAlarm==KACAlarm.AlarmTypeEnum.EarthTime)
+                    intAlarmEditHeight -= 28;
+            }
 			else
 			{
 
@@ -359,6 +369,14 @@ namespace KerbalAlarmClock
                     GUILayout.Label(alarmEdit.Remaining.ToStringStandard(TimeSpanStringFormatsEnum.DateTimeFormat), KACResources.styleAddHeading);
 				GUILayout.EndHorizontal();
 
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Date of Event:", KACResources.styleContent);
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
+                    GUILayout.Label(alarmEdit.AlarmTime.ToStringStandard(DateStringFormatsEnum.DateTimeFormat), KACResources.styleAddHeading);
+                else
+                    GUILayout.Label(DateTime.Now.AddSeconds(alarmEdit.Remaining.UT).ToLongTimeString(), KACResources.styleAddHeading);
+                GUILayout.EndHorizontal();
+
 				int intNoOfActionButtons = 0;
 				int intNoOfActionButtonsDoubleLine = 0;
 				//if the alarm has a vessel ID/Kerbal associated
@@ -370,7 +388,7 @@ namespace KerbalAlarmClock
 				if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
 					_ShowEditPane = false;
 
-				intAlarmEditHeight = 152 +
+				intAlarmEditHeight = 152 + 20 +
 					alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 +
 					intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine * 14;
 			}

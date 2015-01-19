@@ -77,6 +77,7 @@ namespace KerbalAlarmClock
         internal static Texture2D iconWarpToANDNOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
         internal static Texture2D iconWarpToTSApPe = new Texture2D(20, 12, TextureFormat.ARGB32, false);
         internal static Texture2D iconWarpToTSApPeOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
+        internal static Texture2D iconWarpToTSApPeOverConfirm = new Texture2D(20, 12, TextureFormat.ARGB32, false);
         internal static Texture2D iconWarpToTSManNode = new Texture2D(20, 12, TextureFormat.ARGB32, false);
         internal static Texture2D iconWarpToTSManNodeOver = new Texture2D(20, 12, TextureFormat.ARGB32, false);
 
@@ -121,6 +122,8 @@ namespace KerbalAlarmClock
         internal static Texture2D btnSettings = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnSettingsAttention = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnAdd = new Texture2D(17, 16, TextureFormat.ARGB32, false);
+
+        internal static Texture2D btnRocket = new Texture2D(16, 16, TextureFormat.ARGB32, false);
 
         internal static Texture2D btnCalendar = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
@@ -230,6 +233,7 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref iconWarpToANDNOver, "img_buttonWarpToANDNOver.png");
                 KACUtils.LoadImageFromFile(ref iconWarpToTSApPe, "img_buttonWarpToTSApPe.png");
                 KACUtils.LoadImageFromFile(ref iconWarpToTSApPeOver, "img_buttonWarpToTSApPeOver.png");
+                KACUtils.LoadImageFromFile(ref iconWarpToTSApPeOverConfirm, "img_buttonWarpToTSApPeOverConfirm.png");
                 KACUtils.LoadImageFromFile(ref iconWarpToTSManNode, "img_buttonWarpToTSManNode.png");
                 KACUtils.LoadImageFromFile(ref iconWarpToTSManNodeOver, "img_buttonWarpToTSManNodeOver.png");
 
@@ -258,6 +262,8 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref btnSettings, "img_buttonSettings.png");
                 KACUtils.LoadImageFromFile(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
                 KACUtils.LoadImageFromFile(ref btnAdd, "img_buttonAdd.png");
+
+                KACUtils.LoadImageFromFile(ref btnRocket, "img_buttonRocket.png");
 
                 KACUtils.LoadImageFromFile(ref btnCalendar, "img_buttonCalendar.png");
 

@@ -112,7 +112,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 591; // 567;// 514; //462; //463; //434;// 572;//542;
+                    intSettingsHeight = 620;// 591; // 567;// 514; //462; //463; //434;// 572;//542;
                     break;
                 //case 1:
                 //    WindowLayout_SettingsSpecifics1();
@@ -135,7 +135,7 @@ namespace KerbalAlarmClock
                             break;
                         case SettingsAlarmSpecsEnum.WarpTo:
                             WindowLayout_SettingsSpecifics_WarpTo();
-                            intSettingsHeight = 395;//221; //318;
+                            intSettingsHeight = 419;//  395;//221; //318;
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
@@ -207,6 +207,9 @@ namespace KerbalAlarmClock
                     //intBlizzyToolbarMissingHeight = 18;
                 }
             }
+
+            if (DrawCheckbox(ref settings.WindowChildPosBelow, "Show Child Windows Below (not to the side)"))
+                settings.Save();
             GUILayout.EndVertical();
             //if (settings.SelectedSkin == Settings.DisplaySkin.Default) GUILayout.Space(38);
             //Preferences
@@ -342,6 +345,10 @@ namespace KerbalAlarmClock
             GUILayout.Label("Warp To General Settings", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
             if (DrawCheckbox(ref settings.WarpToEnabled, new GUIContent("Enable WarpTo Buttons", "Adds WarpTo Buttons near flight nodes to")))
+            {
+                settings.Save();
+            }
+            if (DrawCheckbox(ref settings.WarpToRequiresConfirm, new GUIContent("WarpTo Requires Confirmation (Two-Clicks)", "You need to click twice to use these so a single click doesnt inadvertantly cause a warp")))
             {
                 settings.Save();
             }

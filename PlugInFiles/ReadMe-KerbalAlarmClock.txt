@@ -29,6 +29,14 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.2.3.0		-	KSP Version: 0.90
+- Changed WarpTo buttons to only respond to left-click (Issue #112)
+- Added Confirmation option to WarpTo Buttons (Issue #111)
+- Fixed bug in Launch Rendezvous code for non Equatorial landing positions (Issue #110)
+- Added Filter to this Vessel option for alarms list (Issue #108)
+- Added Date of Alarm to editing window (Issue #107)
+- Added option to display child windows below main window, not just to the side (Issue #106)
+
 Version 3.2.2.0		-	KSP Version: 0.90
 - Changed fix for Contracts going missing to use a gameevent (Issue #92 again)
 - Changed orbit render stuff in TS so it is more specific (Issue #104)

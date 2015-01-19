@@ -560,20 +560,21 @@ namespace KerbalAlarmClock
                 }
 
                 //if we had started a confirmation and the mouse leaves the button then turn off step 1
-                if(Confirmed){
+                if(WarpToArmed){
                     Vector3 VectMouseflipped  = Input.mousePosition;
                     VectMouseflipped.y = Screen.height - VectMouseflipped.y;
-                    if (!ConfirmedRect.Contains(VectMouseflipped)){
-                        Confirmed = false;
-                        LogFormatted_DebugOnly("Mouse Left WarpTo Button");
+                    if (!WarpToArmedButtonRect.Contains(VectMouseflipped)){
+                        WarpToArmed = false;
+                        LogFormatted_DebugOnly("Mouse position has Left WarpTo Button Rect");
                     }
                 }
             }
         }
 
 
-        Boolean Confirmed = false;
-        Rect ConfirmedRect;
+        Boolean WarpToArmed = false;
+        Rect WarpToArmedButtonRect;
+
         //Draw a single button near the correct node
         private Boolean DrawNodeWarpButton(Boolean Exists, Double UT,KACAlarm.AlarmTypeEnum aType, String NodeName, Boolean WithMargin, Double MarginSecs)
         {
@@ -597,13 +598,13 @@ namespace KerbalAlarmClock
                         if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
                         {
                             styleWarpToButton.normal.background = KACResources.iconWarpToTSManNode;
-                            if (!settings.WarpToRequiresConfirm || Confirmed)
+                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
                                 styleWarpToButton.hover.background = KACResources.iconWarpToTSManNodeOver;
                         }
                         else
                         {
                             styleWarpToButton.normal.background = KACResources.iconWarpToManNode;
-                            if (!settings.WarpToRequiresConfirm || Confirmed)
+                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
                                 styleWarpToButton.hover.background = KACResources.iconWarpToManNodeOver;
                         }
                         break;
@@ -611,25 +612,25 @@ namespace KerbalAlarmClock
                     case KACAlarm.AlarmTypeEnum.Periapsis:
                         if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) {
                             styleWarpToButton.normal.background = KACResources.iconWarpToTSApPe;
-                            if (!settings.WarpToRequiresConfirm || Confirmed)
+                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
                                 styleWarpToButton.hover.background = KACResources.iconWarpToTSApPeOver;
                         }
                         else { 
                             styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
-                            if (!settings.WarpToRequiresConfirm || Confirmed)
+                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
                                 styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
                         }
                         break;
                     case KACAlarm.AlarmTypeEnum.AscendingNode:
                         styleWarpToButton.normal.background = KACResources.iconWarpToANDN;
-                        if (!settings.WarpToRequiresConfirm || Confirmed)
+                        if (!settings.WarpToRequiresConfirm || WarpToArmed)
                             styleWarpToButton.hover.background = KACResources.iconWarpToANDNOver;
                         xOffset = 18;
                         yOffset = -14;
                         break;
                     case KACAlarm.AlarmTypeEnum.DescendingNode:
                         styleWarpToButton.normal.background = KACResources.iconWarpToANDN;
-                        if (!settings.WarpToRequiresConfirm || Confirmed)
+                        if (!settings.WarpToRequiresConfirm || WarpToArmed)
                             styleWarpToButton.hover.background = KACResources.iconWarpToANDNOver;
                         xOffset = -1;
                         yOffset = -16;
@@ -640,18 +641,18 @@ namespace KerbalAlarmClock
                         yOffset = -16;
                         if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) {
                             styleWarpToButton.normal.background = KACResources.iconWarpToTSApPe;
-                            if (!settings.WarpToRequiresConfirm || Confirmed)
+                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
                                 styleWarpToButton.hover.background = KACResources.iconWarpToTSApPeOver;
                         }
                         else { 
                             styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
-                            if (!settings.WarpToRequiresConfirm || Confirmed)
+                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
                                 styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
                         }
                         break;
                     default:
                         styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
-                        if (!settings.WarpToRequiresConfirm || Confirmed)
+                        if (!settings.WarpToRequiresConfirm || WarpToArmed)
                             styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
                         break;
                 }
@@ -663,11 +664,11 @@ namespace KerbalAlarmClock
                 {
                     if (Event.current.button == 0)
                     {
-                        if (settings.WarpToRequiresConfirm && !Confirmed)
+                        if (settings.WarpToRequiresConfirm && !WarpToArmed)
                         {
                             LogFormatted_DebugOnly("Set confirmed and store Rect");
-                            Confirmed = true;
-                            ConfirmedRect = new Rect(rectNodeButton);
+                            WarpToArmed = true;
+                            WarpToArmedButtonRect = new Rect(rectNodeButton);
                             //If in the TS then reset the orbit selection
                             if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
                             {
@@ -678,7 +679,7 @@ namespace KerbalAlarmClock
                         }
                         else
                         {
-                            Confirmed = false;
+                            WarpToArmed = false;
 
                             //Get any existing alarm for the same vessel/type and time
                             KACAlarm aExisting = alarms.FirstOrDefault(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString() && a.TypeOfAlarm == aType
@@ -710,6 +711,8 @@ namespace KerbalAlarmClock
                                                 .Last().Index;
                             TimeWarp.SetRate(rateToSet, false);
 
+
+
                             //If in the TS then reset the orbit selection
                             if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
                             {
@@ -735,7 +738,7 @@ namespace KerbalAlarmClock
 
                         String strArm = "";
                         if (settings.WarpToRequiresConfirm) {
-                            if (!Confirmed)
+                            if (!WarpToArmed)
                                 strArm = " (Unarmed)";
                         }
                         String strlabel = "Warp to " + NodeName + strArm + (WithMargin ? " (Margin=" + new KSPTimeSpan(MarginSecs).ToString(1) + ")" : "");

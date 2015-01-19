@@ -447,15 +447,18 @@ namespace KerbalAlarmClock
             if (winAlarmImport.Visible)
                 winAlarmImport.windowRect = GUILayout.Window(winAlarmImport.windowID, winAlarmImport.windowRect, winAlarmImport.FillWindow, "Import v2 Alarm File", KACResources.styleWindow);
 
-            if (winConfirmAlarmDelete.Visible)
-                winConfirmAlarmDelete.windowRect = GUILayout.Window(winConfirmAlarmDelete.windowID, 
-                    new Rect(MainWindowPos.x + MainWindowPos.width,MainWindowPos.y,300,140),
+            if (winConfirmAlarmDelete.Visible){
+                winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x + MainWindowPos.width,MainWindowPos.y,300,140);
+                if(settings.WindowChildPosBelow)
+                    winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x,MainWindowPos.y + MainWindowPos.height,MainWindowPos.width,140);
+                GUILayout.Window(winConfirmAlarmDelete.windowID,
+                    winConfirmAlarmDelete.windowRect,
                     winConfirmAlarmDelete.FillWindow, "Confirm Alarm Delete", KACResources.styleWindow);
-
+            }
             //Do we have anything to show in the right pane
             if (_ShowSettings)
             {
-                _WindowSettingsRect = GUILayout.Window(_WindowSettingsID, WindowRectLeftRightToggle(WindowPosByActiveScene.x , WindowPosByActiveScene.width, WindowPosByActiveScene.y, intPaneWindowWidth, intSettingsHeight, ref _ShowShowSettingsOnLeft), FillSettingsWindow, "Settings and Globals", KACResources.styleWindow);
+                _WindowSettingsRect = GUILayout.Window(_WindowSettingsID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intPaneWindowWidth, intSettingsHeight, ref _ShowShowSettingsOnLeft,settings.WindowChildPosBelow), FillSettingsWindow, "Settings and Globals", KACResources.styleWindow);
             }
             else if (_ShowAddPane)
             {
@@ -489,7 +492,7 @@ namespace KerbalAlarmClock
                 }
                 AddWindowHeight += intHeight_AddWindowCommon;
                 AddWindowHeight += intHeight_AddWindowRepeat;
-                _WindowAddRect = GUILayout.Window(_WindowAddID, WindowRectLeftRightToggle(WindowPosByActiveScene.x , WindowPosByActiveScene.width, WindowPosByActiveScene.y, intAddPaneWindowWidth, AddWindowHeight,ref _ShowAddPaneOnLeft), FillAddWindow, "Add New Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
+                _WindowAddRect = GUILayout.Window(_WindowAddID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intAddPaneWindowWidth, AddWindowHeight,ref _ShowAddPaneOnLeft,settings.WindowChildPosBelow), FillAddWindow, "Add New Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
 
                 if (_ShowAddMessages)
                 {
@@ -500,7 +503,7 @@ namespace KerbalAlarmClock
             {
                 float _WindowEarthTop = WindowPosByActiveScene.y + WindowPosByActiveScene.height - EarthWindowHeight;
                 if (EarthWindowHeight > MainWindowPos.height) _WindowEarthTop = WindowPosByActiveScene.y;
-                _WindowEarthAlarmRect = GUILayout.Window(_WindowEarthAlarmID, WindowRectLeftRightToggle(WindowPosByActiveScene.x, WindowPosByActiveScene.width, _WindowEarthTop, intAddPaneWindowWidth, EarthWindowHeight, ref _ShowEarthAlarmOnLeft), FillEarthAlarmWindow, "Add Earth Time Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
+                _WindowEarthAlarmRect = GUILayout.Window(_WindowEarthAlarmID, GetChildWindowRect(WindowPosByActiveScene, _WindowEarthTop, intAddPaneWindowWidth, EarthWindowHeight, ref _ShowEarthAlarmOnLeft,settings.WindowChildPosBelow), FillEarthAlarmWindow, "Add Earth Time Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
                 if (_ShowAddMessages)
                 {
                     _WindowAddMessagesRect = GUILayout.Window(_WindowAddMessagesID, new Rect(_WindowEarthAlarmRect.x + _WindowEarthAlarmRect.width, _WindowEarthAlarmRect.y, 200, EarthWindowHeight), FillAddMessagesWindow, "");
@@ -508,11 +511,11 @@ namespace KerbalAlarmClock
             }
             else if (_ShowEditPane)
             {
-                _WindowEditRect = GUILayout.Window(_WindowEditID, WindowRectLeftRightToggle(WindowPosByActiveScene.x ,WindowPosByActiveScene.width, WindowPosByActiveScene.y, intPaneWindowWidth, intAlarmEditHeight,ref _ShowEditPaneOnLeft), FillEditWindow, "Editing Alarm", KACResources.styleWindow);
+                _WindowEditRect = GUILayout.Window(_WindowEditID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intPaneWindowWidth, intAlarmEditHeight,ref _ShowEditPaneOnLeft,settings.WindowChildPosBelow), FillEditWindow, "Editing Alarm", KACResources.styleWindow);
             }
             else if (_ShowQuickAdd)
             {
-                _WindowQuickAddRect = GUILayout.Window(_WindowQuickAddID, WindowRectLeftRightToggle(WindowPosByActiveScene.x , WindowPosByActiveScene.width, WindowPosByActiveScene.y, 300, QuickWindowHeight, ref _ShowQuickAddOnLeft), FillQuickWindow, "Quick Add", KACResources.styleWindow);
+                _WindowQuickAddRect = GUILayout.Window(_WindowQuickAddID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, 300, QuickWindowHeight, ref _ShowQuickAddOnLeft,settings.WindowChildPosBelow), FillQuickWindow, "Quick Add", KACResources.styleWindow);
             }
 
             if (_ShowBackupFailedMessage)
@@ -530,7 +533,7 @@ namespace KerbalAlarmClock
         }
 
         /// <summary>
-        /// Places the winodw on the left or right of the parent depending on the parents screen position
+        /// Places the window on the left or right of the parent depending on the parents screen position
         /// </summary>
         /// <param name="leftParent">x of parent</param>
         /// <param name="widthParent">width of parent</param>
@@ -539,26 +542,30 @@ namespace KerbalAlarmClock
         /// <param name="height">height of child</param>
         /// <param name="ShowingOnLeft">Is it currently on the left?</param>
         /// <returns></returns>
-        internal static Rect WindowRectLeftRightToggle(Single leftParent,Single widthParent, Single top, Single width, Single height, ref Boolean ShowingOnLeft)
+        internal static Rect GetChildWindowRect(Rect rectParent, Single top, Single width, Single height, ref Boolean ShowingOnLeft, Boolean ShowBelow)
         {
             //Default Rect
-            Rect rectReturn = new Rect(leftParent + widthParent, top, width, height);
+            Rect rectReturn = new Rect(rectParent.x + rectParent.width, top, width, height);
 
-            //Is it on the right and going out of screen
-            if (!ShowingOnLeft && ((leftParent + widthParent + width) > Screen.width))
-            {
-                //toggle side
-                ShowingOnLeft=true;
-            } else if (ShowingOnLeft && ((leftParent - width) < 0)) {
-                //or on the left going going out then toggle side
-                ShowingOnLeft = false;
-            } 
-            //if its on the left then change the left value
-            if (ShowingOnLeft){
-                rectReturn.x = leftParent - width;
-            }
+            if (!ShowBelow) {
+
+                //Is it on the right and going out of screen
+                if (!ShowingOnLeft && ((rectParent.x + rectParent.width + width) > Screen.width)) {
+                    //toggle side
+                    ShowingOnLeft = true;
+                }
+                else if (ShowingOnLeft && ((rectParent.x - width) < 0)) {
+                    //or on the left going going out then toggle side
+                    ShowingOnLeft = false;
+                }
+                //if its on the left then change the left value
+                if (ShowingOnLeft) {
+                    rectReturn.x = rectParent.x - width;
+                }
                 //    LeftEdge = WindowPosByActiveScene.x - intPaneWindowWidth;)
-
+            } else {
+                rectReturn = new Rect(rectParent.x, rectParent.y + rectParent.height, rectParent.width, height);
+            }
             return rectReturn;
         }
 

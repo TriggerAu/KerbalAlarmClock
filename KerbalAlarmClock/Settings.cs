@@ -37,6 +37,8 @@ namespace KerbalAlarmClock
         internal Rect WindowPos_TrackingStation = new Rect(196, 45, 340, 45);
         [Persistent] private RectStorage WindowPos_TrackingStationStored = new RectStorage();
 
+        [Persistent] internal Boolean WindowChildPosBelow = false;
+
         [Persistent] internal Rect IconPos =  new Rect(152, 0, 32, 32);
         [Persistent] internal Rect IconPos_SpaceCenter = new Rect(3, 3, 32, 32);
         [Persistent] internal Boolean IconShow_SpaceCenter = true;

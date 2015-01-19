@@ -207,6 +207,9 @@ namespace KerbalAlarmClock
                     //intBlizzyToolbarMissingHeight = 18;
                 }
             }
+
+            if (DrawCheckbox(ref settings.WindowChildPosBelow, "Show Child Windows Below (not to the side)"))
+                settings.Save();
             GUILayout.EndVertical();
             //if (settings.SelectedSkin == Settings.DisplaySkin.Default) GUILayout.Space(38);
             //Preferences

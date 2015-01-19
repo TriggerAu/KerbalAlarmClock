@@ -33,7 +33,7 @@ namespace KerbalAlarmClock.Windows
         }
         internal void FillWindow(Int32 windowID)
         {
-            Rect Toggle = KerbalAlarmClock.WindowRectLeftRightToggle(KAC.WindowPosByActiveScene.x, KAC.WindowPosByActiveScene.width, KAC.WindowPosByActiveScene.y, windowRect.width, windowRect.height,ref ShowOnLeft);
+            Rect Toggle = KerbalAlarmClock.GetChildWindowRect(KAC.WindowPosByActiveScene, KAC.WindowPosByActiveScene.y, windowRect.width, windowRect.height,ref ShowOnLeft,KerbalAlarmClock.settings.WindowChildPosBelow);
             windowRect.x = Toggle.x;
             windowRect.y = KAC.WindowPosByActiveScene.y;
 

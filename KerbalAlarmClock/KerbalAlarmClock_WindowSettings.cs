@@ -112,7 +112,7 @@ namespace KerbalAlarmClock
             {
                 case 0:
                     WindowLayout_SettingsGlobal();
-                    intSettingsHeight = 591; // 567;// 514; //462; //463; //434;// 572;//542;
+                    intSettingsHeight = 620;// 591; // 567;// 514; //462; //463; //434;// 572;//542;
                     break;
                 //case 1:
                 //    WindowLayout_SettingsSpecifics1();

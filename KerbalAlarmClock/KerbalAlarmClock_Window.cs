@@ -564,7 +564,7 @@ namespace KerbalAlarmClock
                 }
                 //    LeftEdge = WindowPosByActiveScene.x - intPaneWindowWidth;)
             } else {
-                rectReturn = new Rect(rectParent.x, rectParent.y + rectParent.height, rectParent.width, height);
+                rectReturn = new Rect(rectParent.x, rectParent.y + rectParent.height, Math.Max(rectParent.width,width), height);
             }
             return rectReturn;
         }

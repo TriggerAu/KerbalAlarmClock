@@ -414,20 +414,20 @@ namespace KerbalAlarmClock
             {
                 MainWindowPos.height = intMainWindowBaseHeight;
                 //Work out the number of alarms and therefore the height of the window
-                if (alarms.Count > 1)
+                if (alarmsDisplayed.Count > 1)
                 {
                     //if (alarms.Count<2)
                     //    MainWindowPos.height = intMainWindowBaseHeight;
                     //else 
-                    if (alarms.Count < settings.AlarmListMaxAlarmsInt)
-                        MainWindowPos.height = intMainWindowBaseHeight + 
-                            ((alarms.Count - 1) * intMainWindowAlarmListItemHeight) +
-                            alarms.Sum(x=>x.AlarmLineHeightExtra);
+                    if (alarmsDisplayed.Count < settings.AlarmListMaxAlarmsInt)
+                        MainWindowPos.height = intMainWindowBaseHeight +
+                            ((alarmsDisplayed.Count - 1) * intMainWindowAlarmListItemHeight) +
+                            alarmsDisplayed.Sum(x => x.AlarmLineHeightExtra);
                     else
                         //this is scrolling
                         MainWindowPos.height = (intMainWindowBaseHeight -3 )  +
-                            ((settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) + 
-                            alarms.Take(settings.AlarmListMaxAlarmsInt).Sum(x=>x.AlarmLineHeightExtra) +
+                            ((settings.AlarmListMaxAlarmsInt - 1) * intMainWindowAlarmListItemHeight) +
+                            alarmsDisplayed.Take(settings.AlarmListMaxAlarmsInt).Sum(x => x.AlarmLineHeightExtra) +
                             intMainWindowAlarmListScrollPad;
                 }
                 else MainWindowPos.height = intMainWindowBaseHeight;
@@ -569,6 +569,9 @@ namespace KerbalAlarmClock
             return rectReturn;
         }
 
+        Boolean blnFilterToVessel = false;
+        Boolean blnShowFilterToVessel = false;
+
         //Now the layout
         internal void FillWindow(Int32 intWindowID)
         {
@@ -577,7 +580,17 @@ namespace KerbalAlarmClock
 
             //Heading Part
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Alarm List", KACResources.styleHeading, GUILayout.ExpandWidth(true));
+            GUILayout.Label("Alarm List", KACResources.styleHeading, GUILayout.Width(65));
+
+            if (blnShowFilterToVessel)
+            {
+                if (DrawToggle(ref blnFilterToVessel, new GUIContent(KACResources.btnRocket, "Filter list to current vessel"), new GUIStyle(KACResources.styleQAButton) { fixedWidth = 22 }))
+                {
+
+                }
+            }
+
+            GUILayout.FlexibleSpace();
 
             //No Longer Relevant
             //hide this stuff when not in alarm edit mode/flight mode
@@ -931,15 +944,15 @@ namespace KerbalAlarmClock
             }
             else
             {
-                if (Event.current.type == EventType.repaint)
-                    rectScrollview = new Rect(0, 0, 0, 0);
+                //if (Event.current.type == EventType.repaint)
+                //    rectScrollview = new Rect(0, 0, 0, 0);
                 if (DrawAlarmLine(nextAlarm))
                     alarms.Remove(nextAlarm);
             }
         }
 
         //Display Full alarm list 
-        internal static Rect rectScrollview;
+        //internal static Rect rectScrollview;
         internal Vector2 scrollPosition = Vector2.zero;
         private void WindowLayout_AlarmList()
         {
@@ -947,15 +960,34 @@ namespace KerbalAlarmClock
 
 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, styleTemp);
+
+            //What alarms are we gonna show
+            alarmsDisplayed = alarms.OrderBy(a => a.AlarmTime.UT).ThenBy(a => a.ID.ToString()).ToList();
+            if (blnFilterToVessel)
+            {
+                if (KACWorkerGameState.CurrentVessel != null)
+                    alarmsDisplayed = alarmsDisplayed.Where(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()).ToList();
+                else
+                    alarmsDisplayed = new List<KACAlarm>();
+            }
+
             if (alarms.Count == 0)
             {
                 GUILayout.Label("No Alarms in the List");
             }
-            else
+            else if (blnFilterToVessel && alarmsDisplayed.Count < 1)
+            {
+                if(KACWorkerGameState.CurrentVessel!=null)
+                    GUILayout.Label("No Alarms for the Active Vessel");
+                else
+                    GUILayout.Label("No Active Vessel to filter for");
+            } 
+            else 
             {
                 GUILayout.Space(4);
                 List<KACAlarm> AlarmsToRemove = new List<KACAlarm>();
-                foreach (KACAlarm tmpAlarm in alarms.OrderBy(a => a.AlarmTime.UT).ThenBy(a => a.ID.ToString()))
+
+                foreach (KACAlarm tmpAlarm in alarmsDisplayed)
                 {
                     //Draw a line for each alarm, returns true is person clicked delete
                     if (DrawAlarmLine(tmpAlarm))
@@ -988,10 +1020,11 @@ namespace KerbalAlarmClock
 
             }
             GUILayout.EndScrollView();
+
             //Get the visible portion of the Scrollview and record it for hittesting later - needs to just be a box from the 0,0 point for the hit test
             // not sure why as the cursor test point is from the screen 0,0
-            if (Event.current.type == EventType.repaint)
-                rectScrollview = new Rect(0, scrollPosition.y, GUILayoutUtility.GetLastRect().width, GUILayoutUtility.GetLastRect().height);
+            //if (Event.current.type == EventType.repaint)
+            //    rectScrollview = new Rect(0, scrollPosition.y, GUILayoutUtility.GetLastRect().width, GUILayoutUtility.GetLastRect().height);
 
         }
 

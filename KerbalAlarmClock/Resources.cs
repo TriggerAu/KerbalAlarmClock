@@ -123,6 +123,8 @@ namespace KerbalAlarmClock
         internal static Texture2D btnSettingsAttention = new Texture2D(17, 16, TextureFormat.ARGB32, false);
         internal static Texture2D btnAdd = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
+        internal static Texture2D btnRocket = new Texture2D(16, 16, TextureFormat.ARGB32, false);
+
         internal static Texture2D btnCalendar = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
         internal static Texture2D btnActionNothingAndDelete = new Texture2D(32, 16, TextureFormat.ARGB32, false);
@@ -260,6 +262,8 @@ namespace KerbalAlarmClock
                 KACUtils.LoadImageFromFile(ref btnSettings, "img_buttonSettings.png");
                 KACUtils.LoadImageFromFile(ref btnSettingsAttention, "img_buttonSettingsAttention.png");
                 KACUtils.LoadImageFromFile(ref btnAdd, "img_buttonAdd.png");
+
+                KACUtils.LoadImageFromFile(ref btnRocket, "img_buttonRocket.png");
 
                 KACUtils.LoadImageFromFile(ref btnCalendar, "img_buttonCalendar.png");
 

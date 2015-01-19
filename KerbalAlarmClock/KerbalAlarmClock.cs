@@ -53,7 +53,8 @@ namespace KerbalAlarmClock
         //Global Settings
         //public static KACSettings Settings = new KACSettings();
         internal static Settings settings;
-        public static KACAlarmList alarms=new KACAlarmList();
+        public static KACAlarmList alarms = new KACAlarmList();
+        public static List<KACAlarm> alarmsDisplayed = new KACAlarmList();
         public virtual String MonoName { get; set; }
         //public virtual Boolean ViewAlarmsOnly { get; set; }
         
@@ -140,6 +141,11 @@ namespace KerbalAlarmClock
             GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
+
+            blnFilterToVessel = false;
+            if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
+                HighLogic.LoadedScene == GameScenes.FLIGHT)
+                blnShowFilterToVessel = true;
 
             //Set up the updating function - do this 5 times a sec not on every frame.
             StartRepeatingWorker(settings.BehaviourChecksPerSec);

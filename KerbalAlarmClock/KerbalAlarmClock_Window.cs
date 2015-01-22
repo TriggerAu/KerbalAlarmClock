@@ -947,7 +947,16 @@ namespace KerbalAlarmClock
                 //if (Event.current.type == EventType.repaint)
                 //    rectScrollview = new Rect(0, 0, 0, 0);
                 if (DrawAlarmLine(nextAlarm))
-                    alarms.Remove(nextAlarm);
+                {
+                    if (!settings.ConfirmAlarmDeletes)
+                        alarms.Remove(nextAlarm);
+                    else
+                    {
+                        ResetPanes();
+                        winConfirmAlarmDelete.AlarmToConfirm = nextAlarm;
+                        winConfirmAlarmDelete.Visible = true;
+                    }
+                } 
             }
         }
 

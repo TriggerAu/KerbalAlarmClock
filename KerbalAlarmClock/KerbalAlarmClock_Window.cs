@@ -408,7 +408,7 @@ namespace KerbalAlarmClock
             //Min or normal window
             if (WindowMinimizedByActiveScene)
             {
-                MainWindowPos.height = intMainWindowMinHeight-2;
+                MainWindowPos.height = intMainWindowMinHeight + 1; // -2 ;
             }
             else
             {

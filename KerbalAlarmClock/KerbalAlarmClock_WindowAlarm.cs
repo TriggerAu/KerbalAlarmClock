@@ -421,7 +421,7 @@ namespace KerbalAlarmClock
 						if (!KACAlarm.CompareManNodeListSimple(KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes, tmpAlarm.ManNodes))
 							strRestoretext += "\r\nNOTE: There is already a Node on the flight path";
 						else
-							strRestoretext += "\r\nNOTE: These Node's appear to be already set on the flight path";
+							strRestoretext += "\r\nNOTE: These nodes appear to be already set on the flight path";
 						NoOfDoubleLineButtons++;
 					}
 					if ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) < 0)

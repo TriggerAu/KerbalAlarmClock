@@ -91,7 +91,7 @@ namespace KerbalAlarmClock
         {
             get
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: return settings.IconShow_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.IconShow_TrackingStation;
@@ -115,7 +115,7 @@ namespace KerbalAlarmClock
         {
             get
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: return settings.IconPos_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.IconPos_TrackingStation;
@@ -138,7 +138,8 @@ namespace KerbalAlarmClock
         {
             get
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                //switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: return settings.WindowVisible_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.WindowVisible_TrackingStation;
@@ -160,7 +161,7 @@ namespace KerbalAlarmClock
         {
             get
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: return settings.WindowMinimized_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.WindowMinimized_TrackingStation;
@@ -181,7 +182,7 @@ namespace KerbalAlarmClock
         public Rect WindowPosByActiveScene
         {
             get {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER:    return settings.WindowPos_SpaceCenter;
                     case GameScenes.TRACKSTATION:   return settings.WindowPos_TrackingStation;

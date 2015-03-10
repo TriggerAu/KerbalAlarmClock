@@ -37,6 +37,11 @@ namespace KerbalAlarmClock
         internal Rect WindowPos_TrackingStation = new Rect(196, 45, 340, 45);
         [Persistent] private RectStorage WindowPos_TrackingStationStored = new RectStorage();
 
+        [Persistent] internal Boolean WindowVisible_Editor = false;
+        [Persistent] internal Boolean WindowMinimized_Editor = false;
+        internal Rect WindowPos_Editor = new Rect(270, 45, 340, 45);
+        [Persistent] private RectStorage WindowPos_EditorStored = new RectStorage();
+
         [Persistent] internal Boolean WindowChildPosBelow = false;
 
         [Persistent] internal Rect IconPos =  new Rect(152, 0, 32, 32);
@@ -44,6 +49,8 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean IconShow_SpaceCenter = true;
         [Persistent] internal Rect IconPos_TrackingStation = new Rect(196, 0, 32, 32);
         [Persistent] internal Boolean IconShow_TrackingStation = true;
+        [Persistent] internal Rect IconPos_Editor = new Rect(298, 0, 32, 32);
+        [Persistent] internal Boolean IconShow_Editor = true;
 
         [Persistent] internal MiminalDisplayType WindowMinimizedType = MiminalDisplayType.NextAlarm;
 
@@ -210,7 +217,7 @@ namespace KerbalAlarmClock
 
         //public KACAlarmList Alarms = new KACAlarmList();
         
-        public List<GameScenes> DrawScenes = new List<GameScenes> { GameScenes.FLIGHT, GameScenes.SPACECENTER, GameScenes.TRACKSTATION };
+        public List<GameScenes> DrawScenes = new List<GameScenes> { GameScenes.FLIGHT, GameScenes.SPACECENTER, GameScenes.TRACKSTATION, GameScenes.EDITOR };
         public List<GameScenes> BehaviourScenes = new List<GameScenes> { GameScenes.FLIGHT };
         public List<VesselType> VesselTypesForSOI = new List<VesselType>() { VesselType.Base, VesselType.Lander, VesselType.Probe, VesselType.Ship, VesselType.Station };
         public List<Orbit.PatchTransitionType> SOITransitions = new List<Orbit.PatchTransitionType> { Orbit.PatchTransitionType.ENCOUNTER, Orbit.PatchTransitionType.ESCAPE };
@@ -240,7 +247,7 @@ namespace KerbalAlarmClock
         //Click through protection
         [Persistent] internal Boolean ClickThroughProtect_KSC=true;
         [Persistent] internal Boolean ClickThroughProtect_Tracking=true;
-        //[Persistent] internal Boolean ClickThroughProtect_Editor=true;
+        [Persistent] internal Boolean ClickThroughProtect_Editor=true;
         [Persistent] internal Boolean ClickThroughProtect_Flight=true;
 
 
@@ -269,6 +276,7 @@ namespace KerbalAlarmClock
             WindowPositionStored = WindowPositionStored.FromRect(WindowPos);
             WindowPos_SpaceCenterStored = WindowPos_SpaceCenterStored.FromRect(WindowPos_SpaceCenter);
             WindowPos_TrackingStationStored = WindowPos_TrackingStationStored.FromRect(WindowPos_TrackingStation);
+            WindowPos_EditorStored = WindowPos_EditorStored.FromRect(WindowPos_Editor);
             VersionCheckDate_AttemptStored = VersionCheckDate_AttemptString;
             VersionCheckDate_SuccessStored = VersionCheckDate_SuccessString;
         }
@@ -277,6 +285,7 @@ namespace KerbalAlarmClock
             WindowPos = WindowPositionStored.ToRect();
             WindowPos_SpaceCenter = WindowPos_SpaceCenterStored.ToRect();
             WindowPos_TrackingStation = WindowPos_TrackingStationStored.ToRect();
+            WindowPos_Editor = WindowPos_EditorStored.ToRect();
             DateTime.TryParseExact(VersionCheckDate_AttemptStored, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out VersionCheckDate_Attempt);
             DateTime.TryParseExact(VersionCheckDate_SuccessStored, "yyyy-MM-dd", null ,System.Globalization.DateTimeStyles.None, out VersionCheckDate_Success);
         }

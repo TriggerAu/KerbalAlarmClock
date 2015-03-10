@@ -44,6 +44,13 @@ namespace KerbalAlarmClock
         public override string MonoName { get { return this.name; } }
         //public override bool ViewAlarmsOnly { get { return false; } }
     }
+    
+    [KSPAddon(KSPAddon.Startup.EditorAny, false)]
+    public class KACEditor : KerbalAlarmClock
+    {
+        public override string MonoName { get { return this.name; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
+    }
 
     /// <summary>
     /// This is the behaviour object that we hook events on to for flight
@@ -757,7 +764,7 @@ namespace KerbalAlarmClock
 		internal void ControlInputLocks()
 		{
 			//Do this for control Locks
-			if (settings.ClickThroughProtect_KSC || settings.ClickThroughProtect_Tracking || settings.ClickThroughProtect_Flight)
+			if (settings.ClickThroughProtect_KSC || settings.ClickThroughProtect_Tracking || settings.ClickThroughProtect_Flight || settings.ClickThroughProtect_Editor)
 			{
 				MouseOverAnyWindow = false;
 				MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(WindowPosByActiveScene, WindowVisibleByActiveScene);
@@ -786,7 +793,7 @@ namespace KerbalAlarmClock
 					switch (HighLogic.LoadedScene)
 					{
 						case GameScenes.SPACECENTER: AddLock = settings.ClickThroughProtect_KSC && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
-						case GameScenes.EDITOR: break;
+                        case GameScenes.EDITOR: AddLock = settings.ClickThroughProtect_Editor && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						case GameScenes.FLIGHT: AddLock = settings.ClickThroughProtect_Flight && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						case GameScenes.TRACKSTATION: AddLock = settings.ClickThroughProtect_Tracking && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						default:
@@ -799,7 +806,9 @@ namespace KerbalAlarmClock
 						switch (HighLogic.LoadedScene)
 						{
 							case GameScenes.SPACECENTER: InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, "KACControlLock"); break;
-							case GameScenes.EDITOR: break;
+							case GameScenes.EDITOR:
+                                InputLockManager.SetControlLock((ControlTypes.EDITOR_LOCK | ControlTypes.EDITOR_GIZMO_TOOLS), "KACControlLock");
+                                break;
 							case GameScenes.FLIGHT:
 								InputLockManager.SetControlLock(ControlTypes.ALL_SHIP_CONTROLS, "KACControlLock");
 								break;

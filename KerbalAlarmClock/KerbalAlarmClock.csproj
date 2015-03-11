@@ -86,6 +86,7 @@
     <Compile Include="TimeObjects.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="UtilitiesLegacy.cs" />
+    <Compile Include="WarpRateMonitor.cs" />
     <Compile Include="WarpTransitionCalculator.cs" />
     <Compile Include="Windows\AlarmImport.cs" />
     <Compile Include="Windows\ConfirmAlarmDelete.cs" />

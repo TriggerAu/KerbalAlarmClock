@@ -148,6 +148,7 @@ namespace KerbalAlarmClock
             GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
+            GameEvents.onTimeWarpRateChanged.Add(WarpToMonitor.onTimeWarpRateChanged);
 
             blnFilterToVessel = false;
             if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
@@ -218,6 +219,7 @@ namespace KerbalAlarmClock
             GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
+            GameEvents.onTimeWarpRateChanged.Remove(WarpToMonitor.onTimeWarpRateChanged);
 
             DestroyDropDowns();
 
@@ -412,6 +414,11 @@ namespace KerbalAlarmClock
 					WarpTransitionCalculator.CheckForTransitionChanges();
 				}
 			}
+
+            //WarpToStuff
+            if (settings.WarpToIncrease && WarpToActive) {
+                WarpToMonitor.RepeatingWorkerCheck();
+            }
 		}
 
 		private void UpdateContractDetails()
@@ -579,7 +586,8 @@ namespace KerbalAlarmClock
         }
 
 
-        Boolean WarpToArmed = false;
+        internal static Boolean WarpToArmed = false;
+        internal static Boolean WarpToActive = false;
         Rect WarpToArmedButtonRect;
 
         //Draw a single button near the correct node
@@ -717,6 +725,9 @@ namespace KerbalAlarmClock
                                                 .OrderBy(r => r.UTTo1Times)
                                                 .Last().Index;
                             TimeWarp.SetRate(rateToSet, false);
+
+                            if (settings.WarpToIncrease)
+                                WarpToActive = true;
 
 
 

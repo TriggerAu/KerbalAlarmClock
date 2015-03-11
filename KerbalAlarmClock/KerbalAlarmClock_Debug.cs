@@ -312,6 +312,9 @@ namespace KerbalAlarmClock
             {
                 
             }
+
+            GUILayout.Label("WarpToActive: " + WarpToActive.ToString());
+
             //GUILayout.Label(WindowPosByActiveScene.ToString());
             //GUILayout.Label(Input.mousePosition.ToString());
             //GUILayout.Label(Event.current.mousePosition.ToString());

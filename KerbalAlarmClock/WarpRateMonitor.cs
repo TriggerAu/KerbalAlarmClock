@@ -38,7 +38,7 @@ namespace KerbalAlarmClock
             //if in the next x secs we will be below a certain altitude then slow the warp rate and set a flag so the transition event doesnt koll the increase
 
 
-            //if we can increase spead then lets go baby!
+            //if we can increase spead then lets go baby!b
         }
     }
 }

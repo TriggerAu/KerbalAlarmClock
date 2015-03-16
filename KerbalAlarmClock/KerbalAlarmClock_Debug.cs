@@ -313,7 +313,11 @@ namespace KerbalAlarmClock
                 
             }
 
+			WarpToMonitor.dblLeadSecs = Convert.ToDouble(GUILayout.TextField(WarpToMonitor.dblLeadSecs.ToString()));
             GUILayout.Label("WarpToActive: " + WarpToActive.ToString());
+            GUILayout.Label("DownShiftTriggered: " + WarpToMonitor.DownShiftTriggered.ToString());
+
+            
 
             //GUILayout.Label(WindowPosByActiveScene.ToString());
             //GUILayout.Label(Input.mousePosition.ToString());

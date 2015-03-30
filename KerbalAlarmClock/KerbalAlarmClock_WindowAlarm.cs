@@ -687,8 +687,9 @@ namespace KerbalAlarmClock
 				switch (KACWorkerGameState.CurrentGUIScene)
 				{
 					case GameScenes.SPACECENTER: return settings.WindowPos_SpaceCenter;
-					case GameScenes.TRACKSTATION: return settings.WindowPos_TrackingStation;
-					default: return settings.WindowPos;
+                    case GameScenes.TRACKSTATION: return settings.WindowPos_TrackingStation;
+                    case GameScenes.EDITOR: return settings.WindowPos_Editor;
+                    default: return settings.WindowPos;
 				}
 			}
 		}

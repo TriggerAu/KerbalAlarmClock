@@ -35,7 +35,7 @@ namespace KerbalAlarmClock
         //private KACTimeStringArray timeQuickPeNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         //private KACTimeStringArray timeQuickANNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         //private KACTimeStringArray timeQuickDNNodeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
-        
+
         private void NewSettingsWindow()
         {
             if (settings.VersionAttentionFlag)
@@ -62,7 +62,7 @@ namespace KerbalAlarmClock
 
             timeContractExpireMargin.BuildFromUT(settings.AlarmOnContractExpireMargin);
             timeContractDeadlineMargin.BuildFromUT(settings.AlarmOnContractDeadlineMargin);
-            
+
             //timeQuickApNodeMargin.BuildFromUT(settings.AlarmAddApQuickMargin);
             //timeQuickPeNodeMargin.BuildFromUT(settings.AlarmAddPeQuickMargin);
             //timeQuickANNodeMargin.BuildFromUT(settings.AlarmAddANQuickMargin);
@@ -80,7 +80,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
 
             //String[] strSettingsTabs = new String[] { "All Alarms", "Specific Types", "Sounds", "About" };
-            String[] strSettingsTabs = new String[] { "All Alarms","Specific Types","About" };
+            String[] strSettingsTabs = new String[] { "All Alarms", "Specific Types", "About" };
             GUIContent[] contSettingsTabs = new GUIContent[] 
             { 
                 new GUIContent("General","Global Settings"), 
@@ -107,7 +107,7 @@ namespace KerbalAlarmClock
             GUIContent[] conTabstoShow = contSettingsTabs;
             if (settings.VersionAvailable) conTabstoShow = contSettingsTabsNewVersion;
             intSettingsTab = GUILayout.Toolbar(intSettingsTab, conTabstoShow, KACResources.styleButton);
-            
+
             switch (intSettingsTab)
             {
                 case 0:
@@ -124,18 +124,18 @@ namespace KerbalAlarmClock
                 //    break;
                 case 1:
                     GUILayout.BeginHorizontal();
-                    GUILayout.Label("Select Alarm Type:",KACResources.styleAddHeading,GUILayout.Width(120));
+                    GUILayout.Label("Select Alarm Type:", KACResources.styleAddHeading, GUILayout.Width(120));
                     ddlSettingsAlarmSpecs.DrawButton();
                     GUILayout.EndHorizontal();
                     switch (SettingsAlarmSpecSelected)
-	                {
+                    {
                         case SettingsAlarmSpecsEnum.Default:
                             WindowLayout_SettingsSpecifics_Default();
                             intSettingsHeight = 221; // 234;
                             break;
                         case SettingsAlarmSpecsEnum.WarpTo:
                             WindowLayout_SettingsSpecifics_WarpTo();
-                            intSettingsHeight = 419;//  395;//221; //318;
+                            intSettingsHeight = 453; // 419;//  395;//221; //318;
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
@@ -157,11 +157,11 @@ namespace KerbalAlarmClock
                             WindowLayout_SettingsSpecifics_Default();
                             intSettingsHeight = 221; //234;
                             break;
-	                }
+                    }
                     break;
                 case 2:
                     WindowLayout_SettingsIcons();
-                    intSettingsHeight =  509; //518;//466 //406;
+                    intSettingsHeight = 509; //518;//466 //406;
                     break;
                 case 3:
                     WindowLayout_SettingsCalendar();
@@ -217,7 +217,7 @@ namespace KerbalAlarmClock
 
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
             GUILayout.BeginHorizontal();
-            if (DrawTextBox(ref settings.AlarmListMaxAlarms, KACResources.styleAddField,GUILayout.Width(45)))
+            if (DrawTextBox(ref settings.AlarmListMaxAlarms, KACResources.styleAddField, GUILayout.Width(45)))
                 settings.Save();
             GUILayout.Label("Max alarms before scrolling the list", KACResources.styleAddHeading);
             GUILayout.EndHorizontal();
@@ -263,7 +263,7 @@ namespace KerbalAlarmClock
 
             GUIContent Saveheader = new GUIContent("Save File Backups", "This option will save your persistent and quicksave files prior to switching ships using the KAC Jump buttons");
             GUILayout.Label(Saveheader, KACResources.styleAddSectionHeading);
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas,GUILayout.Height(64));
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(64));
             if (DrawCheckbox(ref settings.BackupSaves, "Backup Saves on Ship Jump"))
                 settings.Save();
 
@@ -288,19 +288,21 @@ namespace KerbalAlarmClock
             ddlChecksPerSec.DrawButton();
             GUILayout.EndHorizontal();
 
-            if (DrawCheckbox(ref settings.WarpTransitions_Instant, new GUIContent ("Use Instant Warp Transitions","Slams the transitions between levels - can cause issues for large timewarp factors")))
+            if (DrawCheckbox(ref settings.WarpTransitions_Instant, new GUIContent("Use Instant Warp Transitions", "Slams the transitions between levels - can cause issues for large timewarp factors")))
                 settings.Save();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label(new GUIContent ("Transition Weighting:","How much leeway to give the transitions period. The higher this value the earlier the KAC will slow the warp rate"),
+            GUILayout.Label(new GUIContent("Transition Weighting:", "How much leeway to give the transitions period. The higher this value the earlier the KAC will slow the warp rate"),
                 KACResources.styleAddHeading, GUILayout.Width(115)); //110
             GUILayout.Label(settings.WarpTransitions_UTToRateTimesOneTenths.ToString(), KACResources.styleAddXferName, GUILayout.Width(25));
-            Int32 intReturn  = (Int32)Math.Floor(GUILayout.HorizontalSlider((float)settings.WarpTransitions_UTToRateTimesOneTenths, 10, 50));
-            if (intReturn != settings.WarpTransitions_UTToRateTimesOneTenths) {
+            Int32 intReturn = (Int32)Math.Floor(GUILayout.HorizontalSlider((float)settings.WarpTransitions_UTToRateTimesOneTenths, 10, 50));
+            if (intReturn != settings.WarpTransitions_UTToRateTimesOneTenths)
+            {
                 settings.WarpTransitions_UTToRateTimesOneTenths = intReturn;
                 settings.Save();
             }
-            if (GUILayout.Button("Reset",GUILayout.Height(16),GUILayout.Width(40))) {
+            if (GUILayout.Button("Reset", GUILayout.Height(16), GUILayout.Width(40)))
+            {
                 settings.WarpTransitions_UTToRateTimesOneTenths = 15;
                 settings.Save();
             }
@@ -360,14 +362,34 @@ namespace KerbalAlarmClock
             String strTemp = settings.WarpToDupeProximitySecs.ToString("0");
             if (DrawTextBox(ref strTemp, KACResources.styleAddField, GUILayout.Width(45)))
             {
-                try {
+                try
+                {
                     settings.WarpToDupeProximitySecs = Convert.ToInt32(strTemp);
                     settings.Save();
-                } catch (Exception) {
+                }
+                catch (Exception)
+                {
 
                 }
             }
             GUILayout.Label("Reuse existing Alarm within if node within X(s)", KACResources.styleAddHeading);
+            GUILayout.EndHorizontal();
+
+
+            GUILayout.BeginHorizontal();
+            if (DrawToggle(ref settings.WarpToLimitMaxWarp, "Max Warp Limit", KACResources.styleCheckbox))
+                settings.Save();
+
+            if (settings.WarpToLimitMaxWarp)
+            {
+                GUILayout.Space(200);
+                strTemp = settings.WarpToMaxWarp.ToString("0");
+                if (DrawTextField(ref strTemp, "\\d+", false, "Limit:", 80, 0))
+                {
+                    settings.WarpToMaxWarp = Convert.ToInt32(strTemp);
+                    settings.Save();
+                }
+            }
             GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
@@ -519,7 +541,8 @@ namespace KerbalAlarmClock
 
         }
 
-        private void WindowLayout_SettingsSpecifics_Contract() {
+        private void WindowLayout_SettingsSpecifics_Contract()
+        {
             GUILayout.Label("Active Contract Alarm Settings", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
             if (DrawAlarmActionChoice3(ref settings.AlarmOnContractDeadline_Action, "On Alarm:", 108, 38))
@@ -548,10 +571,12 @@ namespace KerbalAlarmClock
 
             GUILayout.Label("Offered Contract Alarm Settings", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108, 38)) {
+            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108, 38))
+            {
                 settings.Save();
             }
-            if (DrawTimeEntry(ref timeContractExpireMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Days, "Alarm Margin:", 100)) {
+            if (DrawTimeEntry(ref timeContractExpireMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Days, "Alarm Margin:", 100))
+            {
                 //convert it and save it in the settings
                 settings.AlarmOnContractExpireMargin = timeContractExpireMargin.UT;
                 settings.Save();
@@ -651,7 +676,7 @@ namespace KerbalAlarmClock
             //    GUILayout.EndHorizontal();
             //}
             //GUILayout.EndVertical();
-            int MinimalDisplayChoice=(int)settings.WindowMinimizedType;
+            int MinimalDisplayChoice = (int)settings.WindowMinimizedType;
 
             GUILayout.Label("Minimal Mode", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
@@ -665,15 +690,17 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
 
-            DrawIconPos("Flight Mode", false, ref blnTemp, ref settings.IconPos, ref settings.WindowVisible,ref settings.ClickThroughProtect_Flight);
+            DrawIconPos("Flight Mode", false, ref blnTemp, ref settings.IconPos, ref settings.WindowVisible, ref settings.ClickThroughProtect_Flight);
 
             DrawIconPos("Space Center", true, ref settings.IconShow_SpaceCenter, ref settings.IconPos_SpaceCenter, ref settings.WindowVisible_SpaceCenter, ref settings.ClickThroughProtect_KSC);
 
-            DrawIconPos("Tracking Station", true, ref settings.IconShow_TrackingStation, ref settings.IconPos_TrackingStation,ref settings.WindowVisible_TrackingStation,ref settings.ClickThroughProtect_Tracking);
+            DrawIconPos("Tracking Station", true, ref settings.IconShow_TrackingStation, ref settings.IconPos_TrackingStation, ref settings.WindowVisible_TrackingStation, ref settings.ClickThroughProtect_Tracking);
+
+            DrawIconPos("Editor", true, ref settings.IconShow_Editor, ref settings.IconPos_Editor, ref settings.WindowVisible_Editor, ref settings.ClickThroughProtect_Editor);
 
         }
 
-        private void DrawIconPos(String Title,Boolean Toggleable, ref Boolean IconShow,ref Rect IconPos,ref Boolean WindowVisible,ref Boolean ClickThroughProtect)
+        private void DrawIconPos(String Title, Boolean Toggleable, ref Boolean IconShow, ref Rect IconPos, ref Boolean WindowVisible, ref Boolean ClickThroughProtect)
         {
             GUILayout.Label(Title, KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
@@ -689,26 +716,27 @@ namespace KerbalAlarmClock
                 }
             }
 
-            if (DrawCheckbox(ref ClickThroughProtect, "Prevent Click Through over Windows")) {
-                    settings.Save();
+            if (DrawCheckbox(ref ClickThroughProtect, "Prevent Click Through over Windows"))
+            {
+                settings.Save();
             }
 
-            GUILayout.Label("Icon Position",KACResources.styleAddSectionHeading);
+            GUILayout.Label("Icon Position", KACResources.styleAddSectionHeading);
             //Now two columns
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
             GUILayout.Label("Horizontal: ", KACResources.styleAddHeading);
             GUILayout.Label(string.Format("{0}", Math.Floor((IconPos.xMin)).ToString()), KACResources.styleAddXferName, GUILayout.Width(50));
-            GUILayout.EndHorizontal(); 
+            GUILayout.EndHorizontal();
             IconPos.xMin = Convert.ToInt32(Math.Floor(GUILayout.HorizontalSlider(IconPos.xMin, 0, Screen.width - 32)));
             IconPos.xMax = IconPos.xMin + 32;
             GUILayout.EndVertical();
             GUILayout.BeginVertical();
-            GUILayout.BeginHorizontal(); 
+            GUILayout.BeginHorizontal();
             GUILayout.Label("Vertical: ", KACResources.styleAddHeading);
             GUILayout.Label(string.Format("{0}", Math.Floor((IconPos.yMin)).ToString()), KACResources.styleAddXferName, GUILayout.Width(50));
-            GUILayout.EndHorizontal(); 
+            GUILayout.EndHorizontal();
             IconPos.yMin = Convert.ToInt32(Math.Floor(GUILayout.HorizontalSlider(IconPos.yMin, 0, Screen.height - 32)));
             IconPos.yMax = IconPos.yMin + 32;
             GUILayout.EndVertical();
@@ -789,7 +817,7 @@ namespace KerbalAlarmClock
             //Update Check Area
             GUILayout.Label("Version Check", KACResources.styleAddSectionHeading);
 
-            GUILayout.BeginVertical(KACResources.styleAddFieldAreas,GUILayout.Height(intUpdateBoxheight));
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(intUpdateBoxheight));
             GUILayout.BeginHorizontal();
             if (DrawCheckbox(ref settings.DailyVersionCheck, "Check Version Daily"))
                 settings.Save();
@@ -870,7 +898,8 @@ namespace KerbalAlarmClock
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical();
             //GUILayout.Label("Written by:", KACResources.styleAddHeading);
-            if (GUILayout.Button("Open Import Tool")){
+            if (GUILayout.Button("Open Import Tool"))
+            {
                 winAlarmImport.Visible = true;
                 _ShowSettings = false;
             }

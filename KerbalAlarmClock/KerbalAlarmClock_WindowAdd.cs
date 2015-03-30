@@ -333,6 +333,12 @@ namespace KerbalAlarmClock
                 new GUIContent(KACResources.btnCrew,"Kerbal Crew"),
                 new GUIContent(KACResources.btnContract,"Contract")
             };
+        private GUIContent[] guiTypesEditor = new GUIContent[]
+            {
+                new GUIContent(KACResources.btnRaw,"Raw Time Alarm"),
+                new GUIContent(KACResources.btnXfer,"Transfer Window"),
+                new GUIContent(KACResources.btnContract,"Contract")
+            };
 
         private GameScenes[] ScenesForAttachOption = new GameScenes[] 
             { 
@@ -375,6 +381,8 @@ namespace KerbalAlarmClock
                     guiButtons = guiTypesSpaceCenter; break;
                 case "KACTrackingStation":
                     guiButtons = guiTypesTrackingStation; break;
+                case "KACEditor":
+                    guiButtons = guiTypesEditor; break;
                 default:
                     break;
             }

@@ -91,10 +91,11 @@ namespace KerbalAlarmClock
         {
             get
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: return settings.IconShow_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.IconShow_TrackingStation;
+                    case GameScenes.EDITOR: return settings.IconShow_Editor;
                     default: return true;
                 }
             }
@@ -104,6 +105,7 @@ namespace KerbalAlarmClock
                 {
                     case GameScenes.SPACECENTER: settings.IconShow_SpaceCenter = value; break;
                     case GameScenes.TRACKSTATION: settings.IconShow_TrackingStation = value; break;
+                    case GameScenes.EDITOR: settings.IconShow_Editor = value; break;
                     default: 
                         //Settings.WindowVisible = value; 
                         break;
@@ -115,10 +117,11 @@ namespace KerbalAlarmClock
         {
             get
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: return settings.IconPos_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.IconPos_TrackingStation;
+                    case GameScenes.EDITOR: return settings.IconPos_Editor;
                     default: return settings.IconPos;
                 }
             }
@@ -128,6 +131,7 @@ namespace KerbalAlarmClock
                 {
                     case GameScenes.SPACECENTER: settings.IconPos_SpaceCenter = value; break;
                     case GameScenes.TRACKSTATION: settings.IconPos_TrackingStation = value; break;
+                    case GameScenes.EDITOR: settings.IconPos_Editor = value; break;
                     default: settings.IconPos = value; break;
                 }
             }
@@ -138,10 +142,12 @@ namespace KerbalAlarmClock
         {
             get
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                //switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: return settings.WindowVisible_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.WindowVisible_TrackingStation;
+                    case GameScenes.EDITOR: return settings.WindowVisible_Editor;
                     default: return settings.WindowVisible;
                 }
             }
@@ -151,6 +157,7 @@ namespace KerbalAlarmClock
                 {
                     case GameScenes.SPACECENTER: settings.WindowVisible_SpaceCenter = value; break;
                     case GameScenes.TRACKSTATION: settings.WindowVisible_TrackingStation = value; break;
+                    case GameScenes.EDITOR: settings.WindowVisible_Editor = value; break;
                     default: settings.WindowVisible = value; break;
                 }
             }
@@ -160,10 +167,11 @@ namespace KerbalAlarmClock
         {
             get
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: return settings.WindowMinimized_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.WindowMinimized_TrackingStation;
+                    case GameScenes.EDITOR: return settings.WindowMinimized_Editor;
                     default: return settings.WindowMinimized;
                 }
             }
@@ -173,6 +181,7 @@ namespace KerbalAlarmClock
                 {
                     case GameScenes.SPACECENTER: settings.WindowMinimized_SpaceCenter = value; break;
                     case GameScenes.TRACKSTATION: settings.WindowMinimized_TrackingStation = value; break;
+                    case GameScenes.EDITOR: settings.WindowMinimized_Editor = value; break;
                     default: settings.WindowMinimized = value; break;
                 }
             }
@@ -181,10 +190,11 @@ namespace KerbalAlarmClock
         public Rect WindowPosByActiveScene
         {
             get {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER:    return settings.WindowPos_SpaceCenter;
                     case GameScenes.TRACKSTATION:   return settings.WindowPos_TrackingStation;
+                    case GameScenes.EDITOR:   return settings.WindowPos_Editor;
                     default:                        return settings.WindowPos;
                 }
             }
@@ -192,8 +202,9 @@ namespace KerbalAlarmClock
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
                     case GameScenes.SPACECENTER:    settings.WindowPos_SpaceCenter = value;         break;
-                    case GameScenes.TRACKSTATION:   settings.WindowPos_TrackingStation = value;     break;
-                    default:                        settings.WindowPos = value;                     break;
+                    case GameScenes.TRACKSTATION: settings.WindowPos_TrackingStation = value; break;
+                    case GameScenes.EDITOR: settings.WindowPos_Editor = value; break;
+                    default: settings.WindowPos = value; break;
                 }
             }
         }
@@ -408,7 +419,7 @@ namespace KerbalAlarmClock
             //Min or normal window
             if (WindowMinimizedByActiveScene)
             {
-                MainWindowPos.height = intMainWindowMinHeight-2;
+                MainWindowPos.height = intMainWindowMinHeight + 1; // -2 ;
             }
             else
             {
@@ -947,7 +958,16 @@ namespace KerbalAlarmClock
                 //if (Event.current.type == EventType.repaint)
                 //    rectScrollview = new Rect(0, 0, 0, 0);
                 if (DrawAlarmLine(nextAlarm))
-                    alarms.Remove(nextAlarm);
+                {
+                    if (!settings.ConfirmAlarmDeletes)
+                        alarms.Remove(nextAlarm);
+                    else
+                    {
+                        ResetPanes();
+                        winConfirmAlarmDelete.AlarmToConfirm = nextAlarm;
+                        winConfirmAlarmDelete.Visible = true;
+                    }
+                } 
             }
         }
 
@@ -1714,6 +1734,8 @@ namespace KerbalAlarmClock
                     selType = KACAlarm.AlarmTypeFromButtonTS[Selection];
                 else if (KACWorkerGameState.CurrentGUIScene == GameScenes.SPACECENTER)
                     selType = KACAlarm.AlarmTypeFromButtonSC[Selection];
+                else if (KACWorkerGameState.CurrentGUIScene == GameScenes.EDITOR)
+                    selType = KACAlarm.AlarmTypeFromButtonEditor[Selection];
                 else
                     selType = KACAlarm.AlarmTypeFromButton[Selection];
             }

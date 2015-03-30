@@ -263,6 +263,8 @@ if($ChoiceRtn -eq 0)
 
     MergeDevToMaster
 
+	"Pausing 3 Secs to let Github catchup"
+	Start-Sleep -s 3
     CreateGitHubRelease
 
     #CreateCurseRelease 

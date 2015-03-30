@@ -44,6 +44,13 @@ namespace KerbalAlarmClock
         public override string MonoName { get { return this.name; } }
         //public override bool ViewAlarmsOnly { get { return false; } }
     }
+    
+    [KSPAddon(KSPAddon.Startup.EditorAny, false)]
+    public class KACEditor : KerbalAlarmClock
+    {
+        public override string MonoName { get { return this.name; } }
+        //public override bool ViewAlarmsOnly { get { return false; } }
+    }
 
     /// <summary>
     /// This is the behaviour object that we hook events on to for flight
@@ -681,9 +688,19 @@ namespace KerbalAlarmClock
                         {
                             WarpToArmed = false;
 
-                            //Get any existing alarm for the same vessel/type and time
-                            KACAlarm aExisting = alarms.FirstOrDefault(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString() && a.TypeOfAlarm == aType
-                                && Math.Abs(a.AlarmTimeUT - UT) < settings.WarpToDupeProximitySecs);
+                            //Get any existing alarm for the same vessel/type and time - 
+                            //  Event Time NOT the alarm time
+                            KACAlarm aExisting = alarms.FirstOrDefault(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()
+                                && Math.Abs((a.AlarmTimeUT + a.AlarmMarginSecs) - UT) <= settings.WarpToDupeProximitySecs
+                                && (a.TypeOfAlarm == aType 
+                                    || a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.SOIChangeAuto && aType==KACAlarm.AlarmTypeEnum.SOIChange
+                                    || a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.ManeuverAuto && aType==KACAlarm.AlarmTypeEnum.Maneuver
+                                    )
+                                );
+
+                            //LogFormatted("UT:{0},Margin:{1},WUT:{2},Prox:{3}", alarms.First().AlarmTimeUT, alarms.First().AlarmMarginSecs, UT, settings.WarpToDupeProximitySecs);
+                            //LogFormatted("DIFF:{0}", Math.Abs((alarms.First().AlarmTimeUT + alarms.First().AlarmMarginSecs) - UT) <= settings.WarpToDupeProximitySecs);
+
 
                             //if there aint one then add one
                             if (aExisting == null)
@@ -706,7 +723,10 @@ namespace KerbalAlarmClock
 
                             //now accelerate time
                             Double timeToEvent = UT - Planetarium.GetUniversalTime();
-                            Int32 rateToSet = WarpTransitionCalculator.WarpRateTransitionPeriods.Where(r => r.UTTo1Times < timeToEvent)
+                            Int32 rateToSet = WarpTransitionCalculator.WarpRateTransitionPeriods.Where(
+                                                    r => r.UTTo1Times < timeToEvent
+                                                        && (!settings.WarpToLimitMaxWarp || r.Rate<=settings.WarpToMaxWarp)
+                                                    )
                                                 .OrderBy(r => r.UTTo1Times)
                                                 .Last().Index;
                             TimeWarp.SetRate(rateToSet, false);
@@ -757,7 +777,7 @@ namespace KerbalAlarmClock
 		internal void ControlInputLocks()
 		{
 			//Do this for control Locks
-			if (settings.ClickThroughProtect_KSC || settings.ClickThroughProtect_Tracking || settings.ClickThroughProtect_Flight)
+			if (settings.ClickThroughProtect_KSC || settings.ClickThroughProtect_Tracking || settings.ClickThroughProtect_Flight || settings.ClickThroughProtect_Editor)
 			{
 				MouseOverAnyWindow = false;
 				MouseOverAnyWindow = MouseOverAnyWindow || MouseOverWindow(WindowPosByActiveScene, WindowVisibleByActiveScene);
@@ -786,7 +806,7 @@ namespace KerbalAlarmClock
 					switch (HighLogic.LoadedScene)
 					{
 						case GameScenes.SPACECENTER: AddLock = settings.ClickThroughProtect_KSC && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
-						case GameScenes.EDITOR: break;
+                        case GameScenes.EDITOR: AddLock = settings.ClickThroughProtect_Editor && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						case GameScenes.FLIGHT: AddLock = settings.ClickThroughProtect_Flight && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						case GameScenes.TRACKSTATION: AddLock = settings.ClickThroughProtect_Tracking && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						default:
@@ -799,7 +819,9 @@ namespace KerbalAlarmClock
 						switch (HighLogic.LoadedScene)
 						{
 							case GameScenes.SPACECENTER: InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, "KACControlLock"); break;
-							case GameScenes.EDITOR: break;
+							case GameScenes.EDITOR:
+                                InputLockManager.SetControlLock((ControlTypes.EDITOR_LOCK | ControlTypes.EDITOR_GIZMO_TOOLS), "KACControlLock");
+                                break;
 							case GameScenes.FLIGHT:
 								InputLockManager.SetControlLock(ControlTypes.ALL_SHIP_CONTROLS, "KACControlLock");
 								break;

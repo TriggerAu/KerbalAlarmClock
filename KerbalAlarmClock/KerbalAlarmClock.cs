@@ -688,9 +688,19 @@ namespace KerbalAlarmClock
                         {
                             WarpToArmed = false;
 
-                            //Get any existing alarm for the same vessel/type and time
-                            KACAlarm aExisting = alarms.FirstOrDefault(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString() && a.TypeOfAlarm == aType
-                                && Math.Abs(a.AlarmTimeUT - UT) < settings.WarpToDupeProximitySecs);
+                            //Get any existing alarm for the same vessel/type and time - 
+                            //  Event Time NOT the alarm time
+                            KACAlarm aExisting = alarms.FirstOrDefault(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()
+                                && Math.Abs((a.AlarmTimeUT + a.AlarmMarginSecs) - UT) <= settings.WarpToDupeProximitySecs
+                                && (a.TypeOfAlarm == aType 
+                                    || a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.SOIChangeAuto && aType==KACAlarm.AlarmTypeEnum.SOIChange
+                                    || a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.ManeuverAuto && aType==KACAlarm.AlarmTypeEnum.Maneuver
+                                    )
+                                );
+
+                            //LogFormatted("UT:{0},Margin:{1},WUT:{2},Prox:{3}", alarms.First().AlarmTimeUT, alarms.First().AlarmMarginSecs, UT, settings.WarpToDupeProximitySecs);
+                            //LogFormatted("DIFF:{0}", Math.Abs((alarms.First().AlarmTimeUT + alarms.First().AlarmMarginSecs) - UT) <= settings.WarpToDupeProximitySecs);
+
 
                             //if there aint one then add one
                             if (aExisting == null)

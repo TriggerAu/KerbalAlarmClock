@@ -29,10 +29,10 @@ namespace KerbalAlarmClock
         internal enum SettingsAlarmSpecsEnum
         {
             [Description("All Alarm Defaults")] Default,
-            [Description("Warp To Alarms")] WarpTo,
             [Description("Maneuver Node Alarms")] ManNode,
             [Description("Sphere Of Influence Alarms")] SOI,
             [Description("Contract Alarms")] Contract,
+            [Description("Warp To Alarms")] WarpTo,
             [Description("Other Alarms")]Other
         }
 

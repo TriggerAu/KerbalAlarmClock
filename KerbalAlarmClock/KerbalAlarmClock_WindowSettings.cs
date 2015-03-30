@@ -135,7 +135,7 @@ namespace KerbalAlarmClock
                             break;
                         case SettingsAlarmSpecsEnum.WarpTo:
                             WindowLayout_SettingsSpecifics_WarpTo();
-                            intSettingsHeight = 419;//  395;//221; //318;
+                            intSettingsHeight = 453; // 419;//  395;//221; //318;
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
@@ -368,6 +368,23 @@ namespace KerbalAlarmClock
                 }
             }
             GUILayout.Label("Reuse existing Alarm within if node within X(s)", KACResources.styleAddHeading);
+            GUILayout.EndHorizontal();
+
+
+            GUILayout.BeginHorizontal();
+            if(DrawToggle(ref settings.WarpToLimitMaxWarp, "Max Warp Limit", KACResources.styleCheckbox))
+                settings.Save();
+
+            if (settings.WarpToLimitMaxWarp)
+            {
+                GUILayout.Space(200);
+                strTemp = settings.WarpToMaxWarp.ToString("0");
+                if (DrawTextField(ref strTemp, "\\d+", false, "Limit:", 80, 0))
+                {
+                    settings.WarpToMaxWarp = Convert.ToInt32(strTemp);
+                    settings.Save();
+                }
+            }
             GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();

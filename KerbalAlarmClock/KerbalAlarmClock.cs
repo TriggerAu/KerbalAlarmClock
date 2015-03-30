@@ -723,7 +723,10 @@ namespace KerbalAlarmClock
 
                             //now accelerate time
                             Double timeToEvent = UT - Planetarium.GetUniversalTime();
-                            Int32 rateToSet = WarpTransitionCalculator.WarpRateTransitionPeriods.Where(r => r.UTTo1Times < timeToEvent)
+                            Int32 rateToSet = WarpTransitionCalculator.WarpRateTransitionPeriods.Where(
+                                                    r => r.UTTo1Times < timeToEvent
+                                                        && (!settings.WarpToLimitMaxWarp || r.Rate<=settings.WarpToMaxWarp)
+                                                    )
                                                 .OrderBy(r => r.UTTo1Times)
                                                 .Last().Index;
                             TimeWarp.SetRate(rateToSet, false);

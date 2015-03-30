@@ -87,6 +87,9 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean WarpToAddMarginManNode = true;
         //[Persistent] internal Boolean NewWarpBehaviour = true;
 
+        [Persistent] internal Boolean WarpToLimitMaxWarp = false;
+        [Persistent] internal Int32 WarpToMaxWarp = 10000;
+
         [Persistent] internal Boolean AllowJumpFromViewOnly = true;
         [Persistent] internal Boolean AllowJumpToAsteroid = true;
         [Persistent] internal Boolean BackupSaves = true;

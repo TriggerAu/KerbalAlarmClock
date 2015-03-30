@@ -29,6 +29,16 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.2.4.0		-	KSP Version: 0.90
+- Fixed duplicate alarms with Auto and WarpTo (Issue #124)
+- Fixed log message with missing image (Issue #121)
+- Enabled KAC in Editor Scenes (Issue #120)
+- Fixed issue woth Alarm clock opening on every scene (Issue #118)
+- Added option to limit Warp rate for WarpTo Alarms (Issue #117)
+- Fixed placement issue with Minimized mode (Issue #116)
+- Fixed missing confirmation on delete on minimized window (Issue #115)
+
+
 Version 3.2.3.0		-	KSP Version: 0.90
 - Changed WarpTo buttons to only respond to left-click (Issue #112)
 - Added Confirmation option to WarpTo Buttons (Issue #111)

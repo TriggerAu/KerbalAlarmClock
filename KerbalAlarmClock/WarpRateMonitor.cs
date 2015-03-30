@@ -3,27 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using KSPPluginFramework;
+
 namespace KerbalAlarmClock
 {
-    static class WarpToMonitor
+    internal class WarpToMonitor
     {
         internal static Double dblLeadSecs = 3;
 
         internal static Int32 LastWarpRate = 0;
         internal static WarpChangeEnum LastWarpChange;
-        internal static void onTimeWarpRateChanged()
+        internal void onTimeWarpRateChanged()
         {
+            MonoBehaviourExtended.LogFormatted_DebugOnly("Caught Warp Change. Last:{0} New:{1}", LastWarpRate, TimeWarp.CurrentRateIndex);
             LastWarpChange = TimeWarp.CurrentRateIndex < LastWarpRate ? WarpChangeEnum.Slower : WarpChangeEnum.Faster;
 
             // if warp rate is slowing
             if (LastWarpChange == WarpChangeEnum.Slower) {
                 //and it wasnt slowed by KAC WarpTo
-                if (!DownShiftTriggered) {
+                if (!DownShiftTriggered_WarpTo) {
+                    ScreenMessages.PostScreenMessage("Downshift Detected");
                     //turn off WarpTo behaviour
                     KerbalAlarmClock.WarpToActive = false;
                 } else {
                     //Clear the downshift flag
-                    DownShiftTriggered = false;
+                    DownShiftTriggered_WarpTo = false;
                     ScreenMessages.PostScreenMessage("WarpTo Downshift Detected");
                 }
             }
@@ -37,7 +41,8 @@ namespace KerbalAlarmClock
                 Slower
 	    }
 
-        internal static Boolean DownShiftTriggered = false;
+        internal static Boolean DownShiftTriggered_WarpTo = false;
+        internal static Boolean DownShiftTriggered_Remaining = false;
         internal static void RepeatingWorkerCheck()
         {
             Double AltitudeFuture = FlightGlobals.ActiveVessel.orbit.getRelativePositionAtUT(Planetarium.GetUniversalTime()+dblLeadSecs).magnitude -
@@ -45,7 +50,7 @@ namespace KerbalAlarmClock
 
             //if in the next x secs we will be below a certain altitude then slow the warp rate and set a flag so the transition event doesnt koll the increase
             if (AltitudeFuture < TimeWarp.fetch.altitudeLimits[TimeWarp.CurrentRateIndex]) {
-                DownShiftTriggered = true;
+                DownShiftTriggered_WarpTo = true;
                 ScreenMessages.PostScreenMessage("WarpTo Downshift Triggered");
                 TimeWarp.SetRate(TimeWarp.CurrentRateIndex - 1, false);
             }

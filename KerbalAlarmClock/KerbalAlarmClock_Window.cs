@@ -153,6 +153,7 @@ namespace KerbalAlarmClock
             }
             set
             {
+                LogFormatted("Value:{0}", value);
                 switch (KACWorkerGameState.CurrentGUIScene)
                 {
                     case GameScenes.SPACECENTER: settings.WindowVisible_SpaceCenter = value; break;

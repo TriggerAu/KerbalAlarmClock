@@ -71,6 +71,9 @@ namespace KerbalAlarmClock
         private Double LastGameUT;
         private Vessel LastGameVessel;
 
+
+        internal static WarpToMonitor warpToMonitor = new WarpToMonitor();
+
         //Worker and Settings objects
         public static float UpdateInterval = 0.1F;
 
@@ -148,7 +151,7 @@ namespace KerbalAlarmClock
             GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
-            GameEvents.onTimeWarpRateChanged.Add(WarpToMonitor.onTimeWarpRateChanged);
+            GameEvents.onTimeWarpRateChanged.Add(warpToMonitor.onTimeWarpRateChanged);
 
             blnFilterToVessel = false;
             if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
@@ -219,7 +222,7 @@ namespace KerbalAlarmClock
             GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
-            GameEvents.onTimeWarpRateChanged.Remove(WarpToMonitor.onTimeWarpRateChanged);
+            GameEvents.onTimeWarpRateChanged.Remove(warpToMonitor.onTimeWarpRateChanged);
 
             DestroyDropDowns();
 
@@ -1607,6 +1610,9 @@ namespace KerbalAlarmClock
 								tmpAlarm.WarpInfluence = true;
 								KACWorkerGameState.CurrentlyUnderWarpInfluence = true;
 								KACWorkerGameState.CurrentWarpInfluenceStartTime = DateTime.Now;
+
+                                //if (tmpAlarm.TypeOfAlarm)
+                                    //WarpToMonitor.DownShiftTriggered_Remaining = true;
 
 								TimeWarp w = TimeWarp.fetch;
 								if (w.current_rate_index > 0 && WarpTransitionCalculator.UTToRateTimesOne > (tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT))

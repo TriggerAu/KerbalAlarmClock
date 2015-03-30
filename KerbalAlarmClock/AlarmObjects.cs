@@ -100,6 +100,11 @@ namespace KerbalAlarmClock
             {1,AlarmTypeEnum.Transfer },
             {2,AlarmTypeEnum.Contract },
         };
+        internal static Dictionary<int, AlarmTypeEnum> AlarmTypeFromButtonEditor = new Dictionary<int, AlarmTypeEnum>() {
+            {0,AlarmTypeEnum.Raw},
+            {1,AlarmTypeEnum.Transfer },
+            {2,AlarmTypeEnum.Contract },
+        };
 
 
 

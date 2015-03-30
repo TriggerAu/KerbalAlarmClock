@@ -1734,6 +1734,8 @@ namespace KerbalAlarmClock
                     selType = KACAlarm.AlarmTypeFromButtonTS[Selection];
                 else if (KACWorkerGameState.CurrentGUIScene == GameScenes.SPACECENTER)
                     selType = KACAlarm.AlarmTypeFromButtonSC[Selection];
+                else if (KACWorkerGameState.CurrentGUIScene == GameScenes.EDITOR)
+                    selType = KACAlarm.AlarmTypeFromButtonEditor[Selection];
                 else
                     selType = KACAlarm.AlarmTypeFromButton[Selection];
             }

@@ -145,7 +145,8 @@ namespace KerbalAlarmClock
                 btnToolbarKAC = InitToolbarButton();
             }
             //Hook the App Launcher
-            GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+            OnGUIAppLauncherReady();
+            //GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
 
@@ -215,7 +216,7 @@ namespace KerbalAlarmClock
             LogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
 
             //Hook the App Launcher
-            GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+            //GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
 

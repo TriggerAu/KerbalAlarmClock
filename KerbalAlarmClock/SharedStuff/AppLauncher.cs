@@ -11,6 +11,9 @@ namespace KerbalAlarmClock
 {
     public partial class KerbalAlarmClock
     {
+        /// <summary>
+        /// Sets up the App Button - no longer called by the event as that only happens on StartMenu->SpaceCenter now
+        /// </summary>
         void OnGUIAppLauncherReady()
         {
             MonoBehaviourExtended.LogFormatted_DebugOnly("AppLauncherReady");

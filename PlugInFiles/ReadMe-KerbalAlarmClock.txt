@@ -29,6 +29,9 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.3.0.1		-	KSP Version: 1.0
+- KerbalStuff Release Issue - no code changes
+
 Version 3.3.0.0		-	KSP Version: 1.0
 - Recompiled for 1.0
 - Code changes for launcher and Armosphere changes

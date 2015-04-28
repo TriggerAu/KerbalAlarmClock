@@ -235,7 +235,7 @@ if($ChoiceRtn -eq 0)
     $relKStuff = $reldescr.Replace("\r\n","`r`n")
     
     $KerbalStuffKSPVersion = $KSPVersion.Split(":")[1].Trim(" ")
-    if ($KerbalStuffKSPVersion.EndsWith(".0")){
+    if ($KerbalStuffKSPVersion.split(".").length -gt 2 -and  $KerbalStuffKSPVersion.EndsWith(".0")){
         $KerbalStuffKSPVersion = $KerbalStuffKSPVersion.Substring(0,$KerbalStuffKSPVersion.Length-2)
     }
 

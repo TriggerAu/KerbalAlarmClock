@@ -311,7 +311,7 @@ namespace KerbalAlarmClock
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Date of Event:", KACResources.styleContent);
                 if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
-                    GUILayout.Label(alarmEdit.AlarmTime.ToStringStandard(DateStringFormatsEnum.DateTimeFormat), KACResources.styleAddHeading);
+                    GUILayout.Label(alarmEdit.AlarmTime.AddSeconds(alarmEdit.AlarmMarginSecs).ToStringStandard(DateStringFormatsEnum.DateTimeFormat), KACResources.styleAddHeading);
                 else
                     GUILayout.Label(DateTime.Now.AddSeconds(alarmEdit.Remaining.UT).ToLongTimeString(), KACResources.styleAddHeading);
                 GUILayout.EndHorizontal();
@@ -372,7 +372,7 @@ namespace KerbalAlarmClock
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Date of Event:", KACResources.styleContent);
                 if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
-                    GUILayout.Label(alarmEdit.AlarmTime.ToStringStandard(DateStringFormatsEnum.DateTimeFormat), KACResources.styleAddHeading);
+                    GUILayout.Label(alarmEdit.AlarmTime.AddSeconds(alarmEdit.AlarmMarginSecs).ToStringStandard(DateStringFormatsEnum.DateTimeFormat), KACResources.styleAddHeading);
                 else
                     GUILayout.Label(DateTime.Now.AddSeconds(alarmEdit.Remaining.UT).ToLongTimeString(), KACResources.styleAddHeading);
                 GUILayout.EndHorizontal();

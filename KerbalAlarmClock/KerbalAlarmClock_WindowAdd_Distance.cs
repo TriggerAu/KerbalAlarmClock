@@ -201,10 +201,10 @@ namespace KerbalAlarmClock
                 if ((tgtSelectedDistance as CelestialBody).atmosphere)
                 {
                     GUILayout.BeginHorizontal();
-                    GUILayout.Label(string.Format("Atmosphere: {0}", (tgtSelectedDistance as CelestialBody).maxAtmosphereAltitude));
+                    GUILayout.Label(string.Format("Atmosphere: {0}", (tgtSelectedDistance as CelestialBody).atmosphereDepth));
                     if (GUILayout.Button("Set to Edge"))
                     {
-                        dblTargetDistance = (tgtSelectedDistance as CelestialBody).maxAtmosphereAltitude;
+                        dblTargetDistance = (tgtSelectedDistance as CelestialBody).atmosphereDepth;
                     }
                     GUILayout.EndHorizontal();
                     intAddDistanceHeight += 26;

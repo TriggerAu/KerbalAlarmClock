@@ -29,6 +29,12 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.3.0.0		-	KSP Version: 1.0
+- Recompiled for 1.0
+- Code changes for launcher and Armosphere changes
+- Updated KAC Wrapper
+- Fixed Date of Event displaying Date of Alarm (Fixes #126)
+
 Version 3.2.4.0		-	KSP Version: 0.90
 - Fixed duplicate alarms with Auto and WarpTo (Issue #124)
 - Fixed log message with missing image (Issue #121)

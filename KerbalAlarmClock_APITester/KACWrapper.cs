@@ -559,16 +559,19 @@ namespace KACAPITester_KACWrapper
                 TransferModelled,
                 Distance,
                 Crew,
-                EarthTime
+                EarthTime,
+                Contract,
+                ContractAuto
             }
 
             public enum AlarmActionEnum
             {
-
+                [Description("Do Nothing-Delete When Past")]        DoNothingDeleteWhenPassed,
+                [Description("Do Nothing")]                         DoNothing,
                 [Description("Message Only-No Affect on warp")]     MessageOnly,
                 [Description("Kill Warp Only-No Message")]          KillWarpOnly,
                 [Description("Kill Warp and Message")]              KillWarp,
-                [Description("Pause Game and Message")]             PauseGame
+                [Description("Pause Game and Message")]             PauseGame,
             }
 
             public enum TimeEntryPrecisionEnum

@@ -61,10 +61,10 @@ namespace KerbalAlarmClock
                 wt.UTTo1Times = warpsTo1Times.Sum(w => w.UTToRateDown);
             }
 
-            foreach (WarpTransition item in WarpRateTransitionPeriods.OrderBy(w => w.Index))
-            {
-                MonoBehaviourExtended.LogFormatted_DebugOnly("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times);
-            }
+            //foreach (WarpTransition item in WarpRateTransitionPeriods.OrderBy(w => w.Index))
+            //{
+            //    MonoBehaviourExtended.LogFormatted_DebugOnly("{0}({1}):Up-{2} Down-{3} To0-{4}", item.Rate, item.Index, item.UTToRateUp, item.UTToRateDown, item.UTTo1Times);
+            //}
         }
 
         internal static Double UTToRateDown(int FromIndex, int ToIndex)

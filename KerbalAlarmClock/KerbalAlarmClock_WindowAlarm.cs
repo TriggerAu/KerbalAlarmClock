@@ -688,7 +688,11 @@ namespace KerbalAlarmClock
 				{
 					case GameScenes.SPACECENTER: return settings.WindowPos_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.WindowPos_TrackingStation;
-                    case GameScenes.EDITOR: return settings.WindowPos_Editor;
+                    case GameScenes.EDITOR:
+                        if (isEditorVAB) 
+                            return settings.WindowPos_EditorVAB;
+                        else
+                            return settings.WindowPos_EditorSPH;
                     default: return settings.WindowPos;
 				}
 			}

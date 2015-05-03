@@ -29,6 +29,11 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.3.1.0		-	KSP Version: 1.0
+- Changed .version values to cater to CKAN and patch releases (Issue #129)
+- Updated some code around visibility of windows to fix scene changes (Issue #130)
+- Added separate values for VAB,SPH for visibility
+
 Version 3.3.0.1		-	KSP Version: 1.0
 - KerbalStuff Release Issue - no code changes
 

@@ -37,10 +37,15 @@ namespace KerbalAlarmClock
         internal Rect WindowPos_TrackingStation = new Rect(196, 45, 340, 45);
         [Persistent] private RectStorage WindowPos_TrackingStationStored = new RectStorage();
 
-        [Persistent] internal Boolean WindowVisible_Editor = false;
-        [Persistent] internal Boolean WindowMinimized_Editor = false;
-        internal Rect WindowPos_Editor = new Rect(270, 45, 340, 45);
-        [Persistent] private RectStorage WindowPos_EditorStored = new RectStorage();
+        [Persistent] internal Boolean WindowVisible_EditorVAB = false;
+        [Persistent] internal Boolean WindowMinimized_EditorVAB = false;
+        internal Rect WindowPos_EditorVAB = new Rect(270, 45, 340, 45);
+        [Persistent] private RectStorage WindowPos_EditorVABStored = new RectStorage();
+
+        [Persistent] internal Boolean WindowVisible_EditorSPH = false;
+        [Persistent] internal Boolean WindowMinimized_EditorSPH = false;
+        internal Rect WindowPos_EditorSPH = new Rect(270, 45, 340, 45);
+        [Persistent] private RectStorage WindowPos_EditorSPHStored = new RectStorage();
 
         [Persistent] internal Boolean WindowChildPosBelow = false;
 
@@ -49,8 +54,10 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean IconShow_SpaceCenter = true;
         [Persistent] internal Rect IconPos_TrackingStation = new Rect(196, 0, 32, 32);
         [Persistent] internal Boolean IconShow_TrackingStation = true;
-        [Persistent] internal Rect IconPos_Editor = new Rect(298, 0, 32, 32);
-        [Persistent] internal Boolean IconShow_Editor = true;
+        [Persistent] internal Rect IconPos_EditorVAB = new Rect(298, 0, 32, 32);
+        [Persistent] internal Boolean IconShow_EditorVAB = true;
+        [Persistent] internal Rect IconPos_EditorSPH = new Rect(298, 0, 32, 32);
+        [Persistent] internal Boolean IconShow_EditorSPH = true;
 
         [Persistent] internal MiminalDisplayType WindowMinimizedType = MiminalDisplayType.NextAlarm;
 
@@ -279,7 +286,8 @@ namespace KerbalAlarmClock
             WindowPositionStored = WindowPositionStored.FromRect(WindowPos);
             WindowPos_SpaceCenterStored = WindowPos_SpaceCenterStored.FromRect(WindowPos_SpaceCenter);
             WindowPos_TrackingStationStored = WindowPos_TrackingStationStored.FromRect(WindowPos_TrackingStation);
-            WindowPos_EditorStored = WindowPos_EditorStored.FromRect(WindowPos_Editor);
+            WindowPos_EditorVABStored = WindowPos_EditorVABStored.FromRect(WindowPos_EditorVAB);
+            WindowPos_EditorSPHStored = WindowPos_EditorVABStored.FromRect(WindowPos_EditorSPH);
             VersionCheckDate_AttemptStored = VersionCheckDate_AttemptString;
             VersionCheckDate_SuccessStored = VersionCheckDate_SuccessString;
         }
@@ -288,7 +296,8 @@ namespace KerbalAlarmClock
             WindowPos = WindowPositionStored.ToRect();
             WindowPos_SpaceCenter = WindowPos_SpaceCenterStored.ToRect();
             WindowPos_TrackingStation = WindowPos_TrackingStationStored.ToRect();
-            WindowPos_Editor = WindowPos_EditorStored.ToRect();
+            WindowPos_EditorVAB = WindowPos_EditorVABStored.ToRect();
+            WindowPos_EditorSPH = WindowPos_EditorSPHStored.ToRect();
             DateTime.TryParseExact(VersionCheckDate_AttemptStored, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out VersionCheckDate_Attempt);
             DateTime.TryParseExact(VersionCheckDate_SuccessStored, "yyyy-MM-dd", null ,System.Globalization.DateTimeStyles.None, out VersionCheckDate_Success);
         }

@@ -696,7 +696,7 @@ namespace KerbalAlarmClock
 
             DrawIconPos("Tracking Station", true, ref settings.IconShow_TrackingStation, ref settings.IconPos_TrackingStation, ref settings.WindowVisible_TrackingStation, ref settings.ClickThroughProtect_Tracking);
 
-            DrawIconPos("Editor", true, ref settings.IconShow_Editor, ref settings.IconPos_Editor, ref settings.WindowVisible_Editor, ref settings.ClickThroughProtect_Editor);
+            DrawIconPos("Editor", true, ref settings.IconShow_EditorVAB, ref settings.IconPos_EditorVAB, ref settings.WindowVisible_EditorVAB, ref settings.ClickThroughProtect_Editor);
 
         }
 

@@ -95,17 +95,26 @@ namespace KerbalAlarmClock
                 {
                     case GameScenes.SPACECENTER: return settings.IconShow_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.IconShow_TrackingStation;
-                    case GameScenes.EDITOR: return settings.IconShow_Editor;
+                    case GameScenes.EDITOR:
+                        if (isEditorVAB) 
+                            return settings.IconShow_EditorVAB;
+                        else
+                            return settings.IconShow_EditorSPH;
                     default: return true;
                 }
             }
             set
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: settings.IconShow_SpaceCenter = value; break;
                     case GameScenes.TRACKSTATION: settings.IconShow_TrackingStation = value; break;
-                    case GameScenes.EDITOR: settings.IconShow_Editor = value; break;
+                    case GameScenes.EDITOR: 
+                        if (isEditorVAB)
+                            settings.IconShow_EditorVAB = value; 
+                        else
+                            settings.IconShow_EditorSPH = value; 
+                        break;
                     default: 
                         //Settings.WindowVisible = value; 
                         break;
@@ -121,21 +130,32 @@ namespace KerbalAlarmClock
                 {
                     case GameScenes.SPACECENTER: return settings.IconPos_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.IconPos_TrackingStation;
-                    case GameScenes.EDITOR: return settings.IconPos_Editor;
+                    case GameScenes.EDITOR: 
+                        if(isEditorVAB)
+                            return settings.IconPos_EditorVAB;
+                        else
+                            return settings.IconPos_EditorSPH;
                     default: return settings.IconPos;
                 }
             }
             set
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: settings.IconPos_SpaceCenter = value; break;
                     case GameScenes.TRACKSTATION: settings.IconPos_TrackingStation = value; break;
-                    case GameScenes.EDITOR: settings.IconPos_Editor = value; break;
+                    case GameScenes.EDITOR: 
+                        if(isEditorVAB)
+                            settings.IconPos_EditorVAB = value; 
+                        else
+                            settings.IconPos_EditorSPH = value; 
+                        break;
                     default: settings.IconPos = value; break;
                 }
             }
         }
+
+        internal static Boolean isEditorVAB { get { return ((EditorLogic.VesselRotation * Vector3d.up) == Vector3.up); } }
 
 
         public Boolean WindowVisibleByActiveScene
@@ -147,17 +167,28 @@ namespace KerbalAlarmClock
                 {
                     case GameScenes.SPACECENTER: return settings.WindowVisible_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.WindowVisible_TrackingStation;
-                    case GameScenes.EDITOR: return settings.WindowVisible_Editor;
+                    case GameScenes.EDITOR:
+                        if (isEditorVAB)
+                            return settings.WindowVisible_EditorVAB;
+                        else
+                            return settings.WindowVisible_EditorSPH;
                     default: return settings.WindowVisible;
                 }
             }
             set
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+
+                //LogFormatted("Setting Visible:{0} - {1}-{2}", value, KACWorkerGameState.CurrentGUIScene,HighLogic.LoadedScene);
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: settings.WindowVisible_SpaceCenter = value; break;
                     case GameScenes.TRACKSTATION: settings.WindowVisible_TrackingStation = value; break;
-                    case GameScenes.EDITOR: settings.WindowVisible_Editor = value; break;
+                    case GameScenes.EDITOR: 
+                        if (isEditorVAB)
+                            settings.WindowVisible_EditorVAB = value; 
+                        else
+                            settings.WindowVisible_EditorSPH = value;
+                        break;
                     default: settings.WindowVisible = value; break;
                 }
             }
@@ -171,17 +202,26 @@ namespace KerbalAlarmClock
                 {
                     case GameScenes.SPACECENTER: return settings.WindowMinimized_SpaceCenter;
                     case GameScenes.TRACKSTATION: return settings.WindowMinimized_TrackingStation;
-                    case GameScenes.EDITOR: return settings.WindowMinimized_Editor;
+                    case GameScenes.EDITOR: 
+                        if(isEditorVAB)
+                            return settings.WindowMinimized_EditorVAB;
+                        else
+                            return settings.WindowMinimized_EditorSPH;
                     default: return settings.WindowMinimized;
                 }
             }
             set
             {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER: settings.WindowMinimized_SpaceCenter = value; break;
                     case GameScenes.TRACKSTATION: settings.WindowMinimized_TrackingStation = value; break;
-                    case GameScenes.EDITOR: settings.WindowMinimized_Editor = value; break;
+                    case GameScenes.EDITOR: 
+                        if(isEditorVAB)
+                            settings.WindowMinimized_EditorVAB = value; 
+                        else
+                            settings.WindowMinimized_EditorSPH = value; 
+                        break;
                     default: settings.WindowMinimized = value; break;
                 }
             }
@@ -194,16 +234,25 @@ namespace KerbalAlarmClock
                 {
                     case GameScenes.SPACECENTER:    return settings.WindowPos_SpaceCenter;
                     case GameScenes.TRACKSTATION:   return settings.WindowPos_TrackingStation;
-                    case GameScenes.EDITOR:   return settings.WindowPos_Editor;
+                    case GameScenes.EDITOR:   
+                        if(isEditorVAB)
+                            return settings.WindowPos_EditorVAB;
+                        else
+                            return settings.WindowPos_EditorSPH;
                     default:                        return settings.WindowPos;
                 }
             }
             set {
-                switch (KACWorkerGameState.CurrentGUIScene)
+                switch (HighLogic.LoadedScene)
                 {
                     case GameScenes.SPACECENTER:    settings.WindowPos_SpaceCenter = value;         break;
                     case GameScenes.TRACKSTATION: settings.WindowPos_TrackingStation = value; break;
-                    case GameScenes.EDITOR: settings.WindowPos_Editor = value; break;
+                    case GameScenes.EDITOR: 
+                        if(isEditorVAB)
+                            settings.WindowPos_EditorVAB = value; 
+                        else
+                            settings.WindowPos_EditorSPH = value; 
+                        break;
                     default: settings.WindowPos = value; break;
                 }
             }

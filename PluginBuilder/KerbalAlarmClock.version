@@ -10,7 +10,6 @@
   },
   "KSP_VERSION": {
     "MAJOR": %KSP_MAJOR%,
-    "MINOR": %KSP_MINOR%,
-    "PATCH": %KSP_PATCH%
+    "MINOR": %KSP_MINOR%
   }
 }

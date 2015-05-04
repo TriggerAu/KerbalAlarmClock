@@ -6,10 +6,21 @@
     "MAJOR": %PLUGIN_MAJOR%,
     "MINOR": %PLUGIN_MINOR%,
     "PATCH": %PLUGIN_PATCH%,
-	"BUILD": %PLUGIN_BUILD%
+    "BUILD": %PLUGIN_BUILD%
   },
   "KSP_VERSION": {
     "MAJOR": %KSP_MAJOR%,
-    "MINOR": %KSP_MINOR%
+    "MINOR": %KSP_MINOR%,
+    "PATCH": %KSP_PATCH%
+  },
+  "KSP_VERSION_MIN": {
+    "MAJOR": %KSP_MAJOR%,
+    "MINOR": %KSP_MINOR%,
+    "PATCH": 0
+  },
+  "KSP_VERSION_MAX": {
+    "MAJOR": %KSP_MAJOR%,
+    "MINOR": %KSP_MINOR%,
+    "PATCH": 99
   }
 }

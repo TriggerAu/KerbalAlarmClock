@@ -10,6 +10,7 @@ using KSPPluginFramework;
 using Contracts;
 
 using KACToolbarWrapper;
+using KAC_KERWrapper;
 
 namespace KerbalAlarmClock
 {
@@ -199,6 +200,15 @@ namespace KerbalAlarmClock
                     settings.ShowCalendarToggle = true;
                     settings.RSSShowCalendarToggled = true;
                 }
+            }
+
+
+            //Init the KAC Integration
+            KERWrapper.InitKERWrapper();
+            if (KERWrapper.APIReady)
+            {
+                LogFormatted("Successfully Hooked the KER");
+
             }
 
             RemoveInputLock();

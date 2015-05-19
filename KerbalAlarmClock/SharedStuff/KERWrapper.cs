@@ -43,7 +43,7 @@ namespace KAC_KERWrapper
         /// <summary>
         /// Whether the object has been wrapped and the APIReady flag is set in the real KAC
         /// </summary>
-        public static Boolean APIReady { get { return _KERWrapped && KER.APIReady ; } }
+        public static Boolean APIReady { get { return _KERWrapped ; } }
 
         /// <summary>
         /// This method will set up the KAC object and wrap all the methods/functions
@@ -61,15 +61,6 @@ namespace KAC_KERWrapper
             LogFormatted("Attempting to Grab KER Types...");
 
 
-            ////
-            //foreach(Type ass in  AssemblyLoader.loadedAssemblies
-            //    .Select(a => a.assembly.GetExportedTypes())
-            //    .SelectMany(t => t)){
-
-            //        LogFormatted("{0}", ass.FullName);
-            //}
-                
-
             //find the base type
             KERManoeuvreProcessorType = AssemblyLoader.loadedAssemblies
                 .Select(a => a.assembly.GetExportedTypes())
@@ -84,42 +75,7 @@ namespace KAC_KERWrapper
             LogFormatted("KER Version:{0}", KERManoeuvreProcessorType.Assembly.GetName().Version.ToString());
 
 
-            //try {
-            //    actualKER = KERManoeuvreProcessorType.GetField("ManoeuvreProcessor", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-            //} catch (Exception) {
-            //}
-            //if (actualKER == null)
-            //{
-            //    LogFormatted("Failed grabbing Instance");
-            //    return false;
-            //}
-            
-
-
-
-
-            
-            ////now grab the running instance
-            LogFormatted("Got Assembly Types, grabbing Instance");
-
-            //try
-            //{
-            //    actualKAC = KACType.GetField("APIInstance", BindingFlags.Public | BindingFlags.Static).GetValue(null);
-            //}
-            //catch (Exception)
-            //{
-            //    NeedUpgrade = true;
-            //    LogFormatted("No APIInstance found - most likely you have KAC v2 installed");
-            //    //throw;
-            //}
-            //if (actualKAC == null)
-            //{
-            //    LogFormatted("Failed grabbing Instance");
-            //    return false;
-            //}
-
-            //If we get this far we can set up the local object and its methods/functions
-            LogFormatted("Got Instance, Creating Wrapper Objects");
+            LogFormatted("Creating Wrapper Objects");
             KER = new KERAPI(actualKER);
             //}
             _KERWrapped = true;
@@ -132,7 +88,7 @@ namespace KAC_KERWrapper
         /// </summary>
         public class KERAPI
         {
-            private PropertyInfo BurnTimeProp, HalfBurnTimeProp;
+            private PropertyInfo BurnTimeProp, HalfBurnTimeProp, HasDeltaVProp;
             
             internal KERAPI(Object KER)
             {
@@ -146,6 +102,8 @@ namespace KAC_KERWrapper
                 LogFormatted("Success: " + (HalfBurnTimeProp != null).ToString());
                 //actualBurnTime = HalfBurnTimeProp.GetValue(actualKER,null));
 
+                HasDeltaVProp = KERManoeuvreProcessorType.GetProperty("HasDeltaV", BindingFlags.Public | BindingFlags.Static);
+                LogFormatted("Success: " + (HasDeltaVProp != null).ToString());
             }
 
             private Object actualKER;
@@ -162,20 +120,12 @@ namespace KAC_KERWrapper
 
             }
 
-            private FieldInfo APIReadyField;
-            /// <summary>
-            /// Whether the APIReady flag is set in the real KAC
-            /// </summary>
-            public Boolean APIReady
+            public Boolean HasDeltaV
             {
-                get
-                {
-                    if (APIReadyField == null)
-                        return false;
+                get { return (Boolean)HasDeltaVProp.GetValue(null, null); }
 
-                    return (Boolean)APIReadyField.GetValue(null);
-                }
             }
+          
         }
 
         #region Logging Stuff

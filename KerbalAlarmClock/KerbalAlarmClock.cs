@@ -204,10 +204,11 @@ namespace KerbalAlarmClock
 
 
             //Init the KAC Integration
+            LogFormatted("Searching for KER");
             KERWrapper.InitKERWrapper();
             if (KERWrapper.APIReady)
             {
-                LogFormatted("Successfully Hooked the KER");
+                LogFormatted("Successfully Hooked KER");
 
             }
 

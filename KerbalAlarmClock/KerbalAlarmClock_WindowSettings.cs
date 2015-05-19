@@ -139,7 +139,7 @@ namespace KerbalAlarmClock
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
-                            intSettingsHeight = intTestheight;// 387; //318;
+                            intSettingsHeight = 437;// 387; //318;
                             break;
                         case SettingsAlarmSpecsEnum.SOI:
                             WindowLayout_SettingsSpecifics_SOI();

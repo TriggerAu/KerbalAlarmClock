@@ -10,6 +10,7 @@ using KSPPluginFramework;
 using Contracts;
 
 using KACToolbarWrapper;
+using KAC_KERWrapper;
 
 namespace KerbalAlarmClock
 {
@@ -199,6 +200,16 @@ namespace KerbalAlarmClock
                     settings.ShowCalendarToggle = true;
                     settings.RSSShowCalendarToggled = true;
                 }
+            }
+
+
+            //Init the KAC Integration
+            LogFormatted("Searching for KER");
+            KERWrapper.InitKERWrapper();
+            if (KERWrapper.APIReady)
+            {
+                LogFormatted("Successfully Hooked KER");
+
             }
 
             RemoveInputLock();
@@ -530,17 +541,18 @@ namespace KerbalAlarmClock
                     settings.AlarmAddSOIQuickMargin
                     );
 
-                if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION && KACWorkerGameState.ManeuverNodeExists && 
+                if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION && KACWorkerGameState.ManeuverNodeExists &&
                         KACWorkerGameState.ManeuverNodeFuture != null && KACWorkerGameState.ManeuverNodeFuture.attachedGizmo == null)
+                {
 
                     DrawNodeWarpButton(true,
-                        KACWorkerGameState.ManeuverNodeFuture.UT, 
+                        KACWorkerGameState.ManeuverNodeFuture.UT,
                         KACAlarm.AlarmTypeEnum.Maneuver,
                         "ManNode",
                         settings.WarpToAddMarginManNode,
-                        settings.AlarmAddManQuickMargin
+                        settings.AlarmAddManQuickMargin + GetKERMarginSecs(settings.DefaultKERMargin)
                         );
-
+                }
                 if (KACWorkerGameState.CurrentVesselTarget != null && !KACWorkerGameState.ManeuverNodeExists && KACWorkerGameState.CurrentVesselTarget.GetOrbit()!=null)
                 {
                     if (KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()))
@@ -762,7 +774,7 @@ namespace KerbalAlarmClock
                             if (!WarpToArmed)
                                 strArm = " (Unarmed)";
                         }
-                        String strlabel = "Warp to " + NodeName + strArm + (WithMargin ? " (Margin=" + new KSPTimeSpan(MarginSecs).ToString(1) + ")" : "");
+                        String strlabel = "Warp to " + NodeName + strArm + (WithMargin ? " (Margin=" + new KSPTimeSpan(MarginSecs).ToString(2) + ")" : "");
                         GUI.Label(new Rect((Int32)screenPosNode.x + xOffset + 21, (Int32)(Screen.height - screenPosNode.y) + yOffset -2, 100, 12), strlabel, styleTip);
                     }
                 }
@@ -1350,7 +1362,7 @@ namespace KerbalAlarmClock
 			if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
 			{
                 KSPDateTime nodeAutoAlarm;
-				nodeAutoAlarm = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin);
+                nodeAutoAlarm = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin - GetKERMarginSecs(settings.DefaultKERMargin));
 				
 				List<ManeuverNode> manNodesToStore = KACWorkerGameState.ManeuverNodesFuture;
 
@@ -1360,7 +1372,7 @@ namespace KerbalAlarmClock
 				//Are we updating an alarm
 				if (tmpAlarm != null)
 				{
-					tmpAlarm.AlarmTime.UT = nodeAutoAlarm.UT;
+					tmpAlarm.AlarmTime.UT = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - tmpAlarm.AlarmMarginSecs).UT;
 					tmpAlarm.ManNodes = manNodesToStore;
 				}
 				else 
@@ -1369,7 +1381,7 @@ namespace KerbalAlarmClock
 					if (nodeAutoAlarm.UT + settings.AlarmAddManAutoMargin - settings.AlarmAddManAutoThreshold > KACWorkerGameState.CurrentTime.UT)
 					{
 						//or are we setting a new one
-						alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin, KACAlarm.AlarmTypeEnum.ManeuverAuto,
+                        alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin + GetKERMarginSecs(settings.DefaultKERMargin), KACAlarm.AlarmTypeEnum.ManeuverAuto,
 							settings.AlarmAddManAuto_Action , manNodesToStore));
 						//settings.Save();
 					}

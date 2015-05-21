@@ -540,7 +540,7 @@ namespace KerbalAlarmClock
         internal static void InitSkins()
         {
             DefUnitySkin = GUI.skin;
-            DefKSPSkin = HighLogic.Skin;
+            DefKSPSkin = (GUISkin)GUISkin.Instantiate(HighLogic.Skin);
 
             SetSkin(KerbalAlarmClock.settings.SelectedSkin);
         }

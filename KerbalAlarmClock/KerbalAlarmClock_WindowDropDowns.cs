@@ -24,6 +24,8 @@ namespace KerbalAlarmClock
         private DropDownList ddlSettingsContractAutoOffered;
         private DropDownList ddlSettingsContractAutoActive;
 
+        private DropDownList ddlKERNodeMargin;
+        private DropDownList ddlSettingsKERNodeMargin;
 
         private SettingsAlarmSpecsEnum SettingsAlarmSpecSelected = SettingsAlarmSpecsEnum.Default;
         internal enum SettingsAlarmSpecsEnum
@@ -62,6 +64,11 @@ namespace KerbalAlarmClock
             ddlSettingsCalendar.Items.Remove(CalendarTypeEnum.Custom.Description());
             ddlSettingsCalendar.OnSelectionChanged += ddlSettingsCalendar_OnSelectionChanged;
 
+            ddlKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.KERMarginEnum>(), _WindowAddRect);
+            ddlSettingsKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.KERMarginEnum>(), (int)settings.DefaultKERMargin, _WindowSettingsRect);
+            ddlSettingsKERNodeMargin.OnSelectionChanged += ddlSettingsKERNodeMargin_OnSelectionChanged;
+
+
             ddlManager.AddDDL(ddlChecksPerSec);
             ddlManager.AddDDL(ddlSettingsSkin);
             ddlManager.AddDDL(ddlSettingsButtonStyle);
@@ -69,8 +76,9 @@ namespace KerbalAlarmClock
             ddlManager.AddDDL(ddlSettingsContractAutoOffered);
             ddlManager.AddDDL(ddlSettingsContractAutoActive);
             ddlManager.AddDDL(ddlSettingsCalendar);
+            ddlManager.AddDDL(ddlKERNodeMargin);
+            ddlManager.AddDDL(ddlSettingsKERNodeMargin);
         }
-
 
         internal void DestroyDropDowns()
         {
@@ -81,6 +89,7 @@ namespace KerbalAlarmClock
             ddlSettingsContractAutoOffered.OnSelectionChanged -= ddlSettingsContractAutoOffered_OnSelectionChanged;
             ddlSettingsContractAutoActive.OnSelectionChanged -= ddlSettingsContractAutoActive_OnSelectionChanged;
             ddlSettingsCalendar.OnSelectionChanged -= ddlSettingsCalendar_OnSelectionChanged;
+            ddlSettingsKERNodeMargin.OnSelectionChanged -= ddlSettingsKERNodeMargin_OnSelectionChanged;
         }
 
         internal void SetDDLWindowPositions()
@@ -92,6 +101,8 @@ namespace KerbalAlarmClock
             ddlSettingsContractAutoOffered.WindowRect = _WindowSettingsRect;
             ddlSettingsContractAutoActive.WindowRect = _WindowSettingsRect;
             ddlSettingsCalendar.WindowRect = _WindowSettingsRect;
+            ddlKERNodeMargin.WindowRect = _WindowAddRect;
+            ddlSettingsKERNodeMargin.WindowRect = _WindowSettingsRect;
         }
 
         #region DDLEvents code
@@ -180,6 +191,12 @@ namespace KerbalAlarmClock
                     break;
                 default: KSPDateStructure.SetKSPStockCalendar(); break;
             }
+        }
+
+        void ddlSettingsKERNodeMargin_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
+        {
+            settings.DefaultKERMargin = (Settings.KERMarginEnum)ddlSettingsKERNodeMargin.SelectedIndex;
+            settings.Save();
         }
 
         #endregion

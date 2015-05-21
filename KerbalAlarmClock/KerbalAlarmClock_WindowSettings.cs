@@ -139,7 +139,7 @@ namespace KerbalAlarmClock
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
-                            intSettingsHeight = 387; //318;
+                            intSettingsHeight = 437;// 387; //318;
                             break;
                         case SettingsAlarmSpecsEnum.SOI:
                             WindowLayout_SettingsSpecifics_SOI();
@@ -470,6 +470,15 @@ namespace KerbalAlarmClock
                 settings.AlarmAddManQuickMargin = timeQuickManNodeMargin.UT;
                 settings.Save();
             }
+            GUILayout.EndVertical();
+            GUILayout.Label("Default Kerbal Engineer Node Margin", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+            GUILayout.BeginHorizontal();
+
+            GUILayout.Label("Add KER Burn Time: ", KACResources.styleAddHeading);
+            ddlSettingsKERNodeMargin.DrawButton();
+            GUILayout.EndHorizontal();
             GUILayout.EndVertical();
         }
         private void WindowLayout_SettingsSpecifics_SOI()

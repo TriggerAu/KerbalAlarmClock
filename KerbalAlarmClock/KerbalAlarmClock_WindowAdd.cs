@@ -8,6 +8,8 @@ using UnityEngine;
 using KSP;
 using KSPPluginFramework;
 
+using KAC_KERWrapper;
+
 using Contracts;
 
 namespace KerbalAlarmClock
@@ -97,6 +99,8 @@ namespace KerbalAlarmClock
             intSelectedCrew = 0;
             intSelectedContract = 0;
             strCrewUT = "";
+
+            ddlKERNodeMargin.SelectedIndex = (Int32)settings.DefaultKERMargin;
         }
 
         List<KACAlarm.AlarmTypeEnum> AlarmsThatBuildStrings = new List<KACAlarm.AlarmTypeEnum>() {
@@ -364,6 +368,7 @@ namespace KerbalAlarmClock
 
         private int intHeight_AddWindowCommon;
         private int intHeight_AddWindowRepeat;
+        private int intHeight_AddWindowKER;
         /// <summary>
         /// Draw the Add Window contents
         /// </summary>
@@ -986,6 +991,50 @@ namespace KerbalAlarmClock
         ///// </summary>
         private void WindowLayout_AddPane_Maneuver()
         {
+            if (KERWrapper.APIReady && HighLogic.LoadedScene == GameScenes.FLIGHT)
+            {
+                intHeight_AddWindowKER = 73;
+
+                if (KACWorkerGameState.CurrentVessel == null)
+                {
+                    GUILayout.Label("No Active Vessel");
+                }
+                else
+                {
+                    if (!KACWorkerGameState.ManeuverNodeExists)
+                    {
+                        GUILayout.Label("No Maneuver Nodes Found", GUILayout.ExpandWidth(true));
+                    }
+                    else
+                    {
+
+                        GUILayout.Label("Kerbal Engineer Node Margin", KACResources.styleAddSectionHeading);
+                        GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+                        GUILayout.BeginHorizontal();
+
+                        GUILayout.Label("Add KER Burn Time: ", KACResources.styleAddHeading);
+                        ddlKERNodeMargin.DrawButton();
+                        GUILayout.EndHorizontal();
+
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Label("Enough Δv:", KACResources.styleAddHeading);
+                        GUILayout.Label(KERWrapper.KER.HasDeltaV.ToString(), KACResources.styleAddXferName);
+                        GUILayout.Label("   Burn:", KACResources.styleAddHeading);
+                        GUILayout.Label(String.Format("{0:0.0}s", KERWrapper.KER.BurnTime), KACResources.styleAddXferName);
+                        GUILayout.Label("   ½ Burn:", KACResources.styleAddHeading);
+                        GUILayout.Label(String.Format("{0:0.0}s", KERWrapper.KER.HalfBurnTime), KACResources.styleAddXferName);
+                        GUILayout.EndHorizontal();
+
+                        GUILayout.EndVertical();
+                    }
+                }
+            }
+            else
+            {
+                intHeight_AddWindowKER = 0;
+            }
+
             GUILayout.BeginVertical();
             GUILayout.Label("Node Details...", KACResources.styleAddSectionHeading);
 
@@ -1011,10 +1060,13 @@ namespace KerbalAlarmClock
 
                         KSPDateTime nodeAlarm;
                         KSPTimeSpan nodeAlarmInterval;
+
+                        Double KERMarginAdd = GetKERMarginSecs((Settings.KERMarginEnum)ddlKERNodeMargin.SelectedIndex);
+
                         try
                         {
-                            nodeAlarm = new KSPDateTime(nodeTime.UT - timeMargin.UT);
-                            nodeAlarmInterval = new KSPTimeSpan(nodeTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT);
+                            nodeAlarm = new KSPDateTime(nodeTime.UT - timeMargin.UT - KERMarginAdd);
+                            nodeAlarmInterval = new KSPTimeSpan(nodeTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT - KERMarginAdd);
                         }
                         catch (Exception)
                         {
@@ -1030,7 +1082,7 @@ namespace KerbalAlarmClock
                                 //Get a list of all future Maneuver Nodes - thats what the skip does
                                 List<ManeuverNode> manNodesToStore = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Skip(intNode).ToList<ManeuverNode>();
 
-                                alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT, KACAlarm.AlarmTypeEnum.Maneuver,
+                                alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT + KERMarginAdd, KACAlarm.AlarmTypeEnum.Maneuver,
                                     AddAction, manNodesToStore));
                                 //settings.Save();
                                 _ShowAddPane = false;
@@ -1047,6 +1099,19 @@ namespace KerbalAlarmClock
             }
 
             GUILayout.EndVertical();
+        }
+
+        internal double GetKERMarginSecs(Settings.KERMarginEnum KerMarginType)
+        {
+            Double retKERMargin = 0;
+            switch (KerMarginType)
+            {
+                case Settings.KERMarginEnum.None: retKERMargin = 0; break;
+                case Settings.KERMarginEnum.Half: retKERMargin = KERWrapper.KER.HalfBurnTime; break;
+                case Settings.KERMarginEnum.Full: retKERMargin = KERWrapper.KER.BurnTime; break;
+                default: retKERMargin = 0; break;
+            }
+            return retKERMargin;
         }
 
 

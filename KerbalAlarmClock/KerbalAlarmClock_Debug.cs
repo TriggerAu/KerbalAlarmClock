@@ -312,6 +312,12 @@ namespace KerbalAlarmClock
             {
                 
             }
+
+
+            if (GUILayout.Button("KER ME"))
+            {
+                LogFormatted("B:{0} - H:{1} - HASIT:{2}", KAC_KERWrapper.KERWrapper.KER.BurnTime, KAC_KERWrapper.KERWrapper.KER.HalfBurnTime,KAC_KERWrapper.KERWrapper.KER.HasDeltaV);
+            }
             //GUILayout.Label(WindowPosByActiveScene.ToString());
             //GUILayout.Label(Input.mousePosition.ToString());
             //GUILayout.Label(Event.current.mousePosition.ToString());

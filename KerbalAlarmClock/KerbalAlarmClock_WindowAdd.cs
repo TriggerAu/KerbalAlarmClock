@@ -1104,12 +1104,15 @@ namespace KerbalAlarmClock
         internal double GetKERMarginSecs(Settings.KERMarginEnum KerMarginType)
         {
             Double retKERMargin = 0;
-            switch (KerMarginType)
+            if (KERWrapper.APIReady)
             {
-                case Settings.KERMarginEnum.None: retKERMargin = 0; break;
-                case Settings.KERMarginEnum.Half: retKERMargin = KERWrapper.KER.HalfBurnTime; break;
-                case Settings.KERMarginEnum.Full: retKERMargin = KERWrapper.KER.BurnTime; break;
-                default: retKERMargin = 0; break;
+                switch (KerMarginType)
+                {
+                    case Settings.KERMarginEnum.None: retKERMargin = 0; break;
+                    case Settings.KERMarginEnum.Half: retKERMargin = KERWrapper.KER.HalfBurnTime; break;
+                    case Settings.KERMarginEnum.Full: retKERMargin = KERWrapper.KER.BurnTime; break;
+                    default: retKERMargin = 0; break;
+                }
             }
             return retKERMargin;
         }

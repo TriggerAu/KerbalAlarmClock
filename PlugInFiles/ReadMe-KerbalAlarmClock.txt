@@ -29,6 +29,9 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 VERSION HISTORY
+Version 3.3.2.1		-	KSP Version: 1.0.2
+- Missed an if statement
+
 Version 3.3.2.0		-	KSP Version: 1.0.2
 - Added KER Wrapper/Integration to provide BurnTime based margins (Issue #14)
 - Fixed issue with editing Automatic ManNode Margins (Issue #135)

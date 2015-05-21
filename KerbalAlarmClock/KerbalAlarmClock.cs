@@ -1372,7 +1372,7 @@ namespace KerbalAlarmClock
 				//Are we updating an alarm
 				if (tmpAlarm != null)
 				{
-					tmpAlarm.AlarmTime.UT = nodeAutoAlarm.UT;
+					tmpAlarm.AlarmTime.UT = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - tmpAlarm.AlarmMarginSecs).UT;
 					tmpAlarm.ManNodes = manNodesToStore;
 				}
 				else 

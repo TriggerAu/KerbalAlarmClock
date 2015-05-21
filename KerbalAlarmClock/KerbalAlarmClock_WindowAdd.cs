@@ -1061,14 +1061,7 @@ namespace KerbalAlarmClock
                         KSPDateTime nodeAlarm;
                         KSPTimeSpan nodeAlarmInterval;
 
-                        Double KERMarginAdd = 0;
-                        switch ((Settings.KERMarginEnum)ddlKERNodeMargin.SelectedIndex)
-                        {
-                            case Settings.KERMarginEnum.None: KERMarginAdd = 0; break;
-                            case Settings.KERMarginEnum.Half: KERMarginAdd = KERWrapper.KER.HalfBurnTime; break;
-                            case Settings.KERMarginEnum.Full: KERMarginAdd = KERWrapper.KER.BurnTime; break;
-                            default: KERMarginAdd = 0; break;
-                        }
+                        Double KERMarginAdd = GetKERMarginSecs((Settings.KERMarginEnum)ddlKERNodeMargin.SelectedIndex);
 
                         try
                         {
@@ -1106,6 +1099,19 @@ namespace KerbalAlarmClock
             }
 
             GUILayout.EndVertical();
+        }
+
+        internal double GetKERMarginSecs(Settings.KERMarginEnum KerMarginType)
+        {
+            Double retKERMargin = 0;
+            switch (KerMarginType)
+            {
+                case Settings.KERMarginEnum.None: retKERMargin = 0; break;
+                case Settings.KERMarginEnum.Half: retKERMargin = KERWrapper.KER.HalfBurnTime; break;
+                case Settings.KERMarginEnum.Full: retKERMargin = KERWrapper.KER.BurnTime; break;
+                default: retKERMargin = 0; break;
+            }
+            return retKERMargin;
         }
 
 

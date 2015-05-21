@@ -21,7 +21,7 @@ namespace KerbalAlarmClock
             if (KACWorkerGameState.CurrentVessel != null)
             {
                 if (KACWorkerGameState.ManeuverNodeExists && KACWorkerGameState.ManeuverNodeFuture != null)
-                    lstQuickButtons.Add(new QuickAddItem(String.Format("Maneuver Alarm ({0})", (new KSPTimeSpan(settings.AlarmAddManQuickMargin).ToString(6))), KACResources.iconMNode, QuickAddManNode));
+                    lstQuickButtons.Add(new QuickAddItem(String.Format("Maneuver Alarm ({0})", (new KSPTimeSpan(settings.AlarmAddManQuickMargin + GetKERMarginSecs(settings.DefaultKERMargin)).ToString(6))), KACResources.iconMNode, QuickAddManNode));
 
                 if (KACWorkerGameState.SOIPointExists )
                     lstQuickButtons.Add(new QuickAddItem(String.Format("SOI Change Alarm ({0})", (new KSPTimeSpan(settings.AlarmAddSOIQuickMargin).ToString(6))), KACResources.iconSOI, QuickAddSOI));

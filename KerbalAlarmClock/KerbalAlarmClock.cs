@@ -11,6 +11,7 @@ using Contracts;
 
 using KACToolbarWrapper;
 using KAC_KERWrapper;
+using KAC_VOIDWrapper;
 
 namespace KerbalAlarmClock
 {
@@ -203,12 +204,20 @@ namespace KerbalAlarmClock
             }
 
 
-            //Init the KAC Integration
+            //Init the KER Integration
             LogFormatted("Searching for KER");
             KERWrapper.InitKERWrapper();
             if (KERWrapper.APIReady)
             {
                 LogFormatted("Successfully Hooked KER");
+
+            }
+            //Init the VOID Integration
+            LogFormatted("Searching for VOID");
+            VOIDWrapper.InitVOIDWrapper();
+            if (VOIDWrapper.APIReady)
+            {
+                LogFormatted("Successfully Hooked VOID");
 
             }
 
@@ -550,7 +559,7 @@ namespace KerbalAlarmClock
                         KACAlarm.AlarmTypeEnum.Maneuver,
                         "ManNode",
                         settings.WarpToAddMarginManNode,
-                        settings.AlarmAddManQuickMargin + GetKERMarginSecs(settings.DefaultKERMargin)
+                        settings.AlarmAddManQuickMargin + GetBurnMarginSecs(settings.DefaultKERMargin)
                         );
                 }
                 if (KACWorkerGameState.CurrentVesselTarget != null && !KACWorkerGameState.ManeuverNodeExists && KACWorkerGameState.CurrentVesselTarget.GetOrbit()!=null)
@@ -1362,7 +1371,7 @@ namespace KerbalAlarmClock
 			if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
 			{
                 KSPDateTime nodeAutoAlarm;
-                nodeAutoAlarm = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin - GetKERMarginSecs(settings.DefaultKERMargin));
+                nodeAutoAlarm = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin - GetBurnMarginSecs(settings.DefaultKERMargin));
 				
 				List<ManeuverNode> manNodesToStore = KACWorkerGameState.ManeuverNodesFuture;
 
@@ -1381,7 +1390,7 @@ namespace KerbalAlarmClock
 					if (nodeAutoAlarm.UT + settings.AlarmAddManAutoMargin - settings.AlarmAddManAutoThreshold > KACWorkerGameState.CurrentTime.UT)
 					{
 						//or are we setting a new one
-                        alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin + GetKERMarginSecs(settings.DefaultKERMargin), KACAlarm.AlarmTypeEnum.ManeuverAuto,
+                        alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin + GetBurnMarginSecs(settings.DefaultKERMargin), KACAlarm.AlarmTypeEnum.ManeuverAuto,
 							settings.AlarmAddManAuto_Action , manNodesToStore));
 						//settings.Save();
 					}

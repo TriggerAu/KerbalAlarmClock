@@ -178,13 +178,13 @@ namespace KerbalAlarmClock
         [Persistent] internal Double AlarmAddManAutoThreshold = 180;
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManAuto_Action = KACAlarm.AlarmActionEnum.KillWarp;
 
-        internal enum KERMarginEnum
+        internal enum BurnMarginEnum
         {
             [Description("No Burn Margin")] None,
             [Description("Half Burn")] Half,
             [Description("Full Burn")] Full,
         }
-        [Persistent] internal KERMarginEnum DefaultKERMargin = KERMarginEnum.Half;
+        [Persistent] internal BurnMarginEnum DefaultKERMargin = BurnMarginEnum.Half;
 
         [Persistent] internal Double AlarmAddManQuickMargin = 180;
         [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManQuickAction = KACAlarm.AlarmActionEnum.KillWarp;

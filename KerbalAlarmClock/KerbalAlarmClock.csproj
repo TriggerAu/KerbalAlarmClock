@@ -64,6 +64,7 @@
     <Compile Include="Framework\MonoBehaviourExtended.cs" />
     <Compile Include="KerbalAlarmClock_WindowQuick.cs" />
     <Compile Include="SharedStuff\AppLauncher.cs" />
+    <Compile Include="SharedStuff\VOIDWrapper.cs" />
     <Compile Include="SharedStuff\KERWrapper.cs" />
     <Compile Include="SharedStuff\ToolbarWrapper.cs" />
     <Compile Include="KerbalAlarmClock_WindowDropDowns.cs" />

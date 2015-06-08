@@ -9,6 +9,7 @@ using KSP;
 using KSPPluginFramework;
 
 using KAC_KERWrapper;
+using KAC_VOIDWrapper;
 
 using Contracts;
 
@@ -991,7 +992,8 @@ namespace KerbalAlarmClock
         ///// </summary>
         private void WindowLayout_AddPane_Maneuver()
         {
-            if (KERWrapper.APIReady && HighLogic.LoadedScene == GameScenes.FLIGHT)
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT &&
+                (KERWrapper.APIReady || VOIDWrapper.APIReady))
             {
                 intHeight_AddWindowKER = 73;
 
@@ -1007,26 +1009,50 @@ namespace KerbalAlarmClock
                     }
                     else
                     {
+                        if (KERWrapper.APIReady)
+                        {
+                            GUILayout.Label("Kerbal Engineer Node Margin", KACResources.styleAddSectionHeading);
+                            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-                        GUILayout.Label("Kerbal Engineer Node Margin", KACResources.styleAddSectionHeading);
-                        GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+                            GUILayout.BeginHorizontal();
 
-                        GUILayout.BeginHorizontal();
+                            GUILayout.Label("Add KER Burn Time: ", KACResources.styleAddHeading);
+                            ddlKERNodeMargin.DrawButton();
+                            GUILayout.EndHorizontal();
 
-                        GUILayout.Label("Add KER Burn Time: ", KACResources.styleAddHeading);
-                        ddlKERNodeMargin.DrawButton();
-                        GUILayout.EndHorizontal();
+                            GUILayout.BeginHorizontal();
+                            GUILayout.Label("Enough Δv:", KACResources.styleAddHeading);
+                            GUILayout.Label(KERWrapper.KER.HasDeltaV.ToString(), KACResources.styleAddXferName);
+                            GUILayout.Label("   Burn:", KACResources.styleAddHeading);
+                            GUILayout.Label(String.Format("{0:0.0}s", KERWrapper.KER.BurnTime), KACResources.styleAddXferName);
+                            GUILayout.Label("   ½ Burn:", KACResources.styleAddHeading);
+                            GUILayout.Label(String.Format("{0:0.0}s", KERWrapper.KER.HalfBurnTime), KACResources.styleAddXferName);
+                            GUILayout.EndHorizontal();
 
-                        GUILayout.BeginHorizontal();
-                        GUILayout.Label("Enough Δv:", KACResources.styleAddHeading);
-                        GUILayout.Label(KERWrapper.KER.HasDeltaV.ToString(), KACResources.styleAddXferName);
-                        GUILayout.Label("   Burn:", KACResources.styleAddHeading);
-                        GUILayout.Label(String.Format("{0:0.0}s", KERWrapper.KER.BurnTime), KACResources.styleAddXferName);
-                        GUILayout.Label("   ½ Burn:", KACResources.styleAddHeading);
-                        GUILayout.Label(String.Format("{0:0.0}s", KERWrapper.KER.HalfBurnTime), KACResources.styleAddXferName);
-                        GUILayout.EndHorizontal();
+                            GUILayout.EndVertical();
+                        }
+                        else if (VOIDWrapper.APIReady)
+                        {
+                            GUILayout.Label("VOID Node Margin", KACResources.styleAddSectionHeading);
+                            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-                        GUILayout.EndVertical();
+                            GUILayout.BeginHorizontal();
+
+                            GUILayout.Label("Add VOID Burn Time: ", KACResources.styleAddHeading);
+                            ddlKERNodeMargin.DrawButton();
+                            GUILayout.EndHorizontal();
+
+                            GUILayout.BeginHorizontal();
+                            GUILayout.Label("Enough Δv:", KACResources.styleAddHeading);
+                            GUILayout.Label(VOIDWrapper.VOID.HasDeltaV.ToString(), KACResources.styleAddXferName);
+                            GUILayout.Label("   Burn:", KACResources.styleAddHeading);
+                            GUILayout.Label(String.Format("{0:0.0}s", VOIDWrapper.VOID.BurnTime), KACResources.styleAddXferName);
+                            GUILayout.Label("   ½ Burn:", KACResources.styleAddHeading);
+                            GUILayout.Label(String.Format("{0:0.0}s", VOIDWrapper.VOID.HalfBurnTime), KACResources.styleAddXferName);
+                            GUILayout.EndHorizontal();
+
+                            GUILayout.EndVertical();
+                        }
                     }
                 }
             }
@@ -1061,7 +1087,7 @@ namespace KerbalAlarmClock
                         KSPDateTime nodeAlarm;
                         KSPTimeSpan nodeAlarmInterval;
 
-                        Double KERMarginAdd = GetKERMarginSecs((Settings.KERMarginEnum)ddlKERNodeMargin.SelectedIndex);
+                        Double KERMarginAdd = GetBurnMarginSecs((Settings.BurnMarginEnum)ddlKERNodeMargin.SelectedIndex);
 
                         try
                         {
@@ -1101,20 +1127,31 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
         }
 
-        internal double GetKERMarginSecs(Settings.KERMarginEnum KerMarginType)
+        internal double GetBurnMarginSecs(Settings.BurnMarginEnum KerMarginType)
         {
-            Double retKERMargin = 0;
+            Double retBurnMargin = 0;
             if (KERWrapper.APIReady)
             {
                 switch (KerMarginType)
                 {
-                    case Settings.KERMarginEnum.None: retKERMargin = 0; break;
-                    case Settings.KERMarginEnum.Half: retKERMargin = KERWrapper.KER.HalfBurnTime; break;
-                    case Settings.KERMarginEnum.Full: retKERMargin = KERWrapper.KER.BurnTime; break;
-                    default: retKERMargin = 0; break;
+                    case Settings.BurnMarginEnum.None: retBurnMargin = 0; break;
+                    case Settings.BurnMarginEnum.Half: retBurnMargin = KERWrapper.KER.HalfBurnTime; break;
+                    case Settings.BurnMarginEnum.Full: retBurnMargin = KERWrapper.KER.BurnTime; break;
+                    default: retBurnMargin = 0; break;
                 }
             }
-            return retKERMargin;
+            else if (VOIDWrapper.APIReady)
+            {
+                switch (KerMarginType)
+                {
+                    case Settings.BurnMarginEnum.None: retBurnMargin = 0; break;
+                    case Settings.BurnMarginEnum.Half: retBurnMargin = VOIDWrapper.VOID.HalfBurnTime; break;
+                    case Settings.BurnMarginEnum.Full: retBurnMargin = VOIDWrapper.VOID.BurnTime; break;
+                    default: retBurnMargin = 0; break;
+                }
+
+            }
+            return retBurnMargin;
         }
 
 

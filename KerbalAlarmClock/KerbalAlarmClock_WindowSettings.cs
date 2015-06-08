@@ -471,12 +471,12 @@ namespace KerbalAlarmClock
                 settings.Save();
             }
             GUILayout.EndVertical();
-            GUILayout.Label("Default Kerbal Engineer Node Margin", KACResources.styleAddSectionHeading);
+            GUILayout.Label("Default Burn Node Margin (KER/VOID)", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
             GUILayout.BeginHorizontal();
 
-            GUILayout.Label("Add KER Burn Time: ", KACResources.styleAddHeading);
+            GUILayout.Label("Add Burn Time: ", KACResources.styleAddHeading);
             ddlSettingsKERNodeMargin.DrawButton();
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();

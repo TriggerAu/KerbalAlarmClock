@@ -64,8 +64,8 @@ namespace KerbalAlarmClock
             ddlSettingsCalendar.Items.Remove(CalendarTypeEnum.Custom.Description());
             ddlSettingsCalendar.OnSelectionChanged += ddlSettingsCalendar_OnSelectionChanged;
 
-            ddlKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.KERMarginEnum>(), _WindowAddRect);
-            ddlSettingsKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.KERMarginEnum>(), (int)settings.DefaultKERMargin, _WindowSettingsRect);
+            ddlKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.BurnMarginEnum>(), _WindowAddRect);
+            ddlSettingsKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.BurnMarginEnum>(), (int)settings.DefaultKERMargin, _WindowSettingsRect);
             ddlSettingsKERNodeMargin.OnSelectionChanged += ddlSettingsKERNodeMargin_OnSelectionChanged;
 
 
@@ -195,7 +195,7 @@ namespace KerbalAlarmClock
 
         void ddlSettingsKERNodeMargin_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
         {
-            settings.DefaultKERMargin = (Settings.KERMarginEnum)ddlSettingsKERNodeMargin.SelectedIndex;
+            settings.DefaultKERMargin = (Settings.BurnMarginEnum)ddlSettingsKERNodeMargin.SelectedIndex;
             settings.Save();
         }
 

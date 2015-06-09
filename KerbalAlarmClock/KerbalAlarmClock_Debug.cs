@@ -321,6 +321,7 @@ namespace KerbalAlarmClock
             if (GUILayout.Button("VOID ME"))
             {
                 LogFormatted("B:{0} - H:{1} - HASIT:{2}", KAC_VOIDWrapper.VOIDWrapper.VOID.BurnTime, KAC_VOIDWrapper.VOIDWrapper.VOID.HalfBurnTime, KAC_VOIDWrapper.VOIDWrapper.VOID.HasDeltaV);
+
             }
             //GUILayout.Label(WindowPosByActiveScene.ToString());
             //GUILayout.Label(Input.mousePosition.ToString());

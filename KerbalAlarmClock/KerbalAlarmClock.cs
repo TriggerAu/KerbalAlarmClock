@@ -956,7 +956,7 @@ namespace KerbalAlarmClock
 					LogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
 				}
 
-				// Do we need to restore a maneuverNode after a ship jump - give it 4 secs of attempts for changes to ship
+				// Do we need to restore a maneuverNode after a ship jump - give it 5 secs of attempts for changes to ship
 				if (settings.LoadManNode != null && settings.LoadManNode != "" && KACWorkerGameState.IsVesselActive)
 				{
 					List<ManeuverNode> manNodesToRestore = KACAlarm.ManNodeDeserializeList(settings.LoadManNode);
@@ -1381,6 +1381,9 @@ namespace KerbalAlarmClock
 				//Are we updating an alarm
 				if (tmpAlarm != null)
 				{
+                    //update the margin
+                    tmpAlarm.AlarmMarginSecs = settings.AlarmAddManAutoMargin + GetBurnMarginSecs(settings.DefaultKERMargin);
+                    //and the UT
 					tmpAlarm.AlarmTime.UT = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - tmpAlarm.AlarmMarginSecs).UT;
 					tmpAlarm.ManNodes = manNodesToStore;
 				}

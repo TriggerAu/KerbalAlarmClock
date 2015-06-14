@@ -183,7 +183,7 @@ namespace KerbalAlarmClock
             catch (Exception) { }
             //if (Planetarium.fetch!=null)KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime();
 
-            if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT && FlightGlobals.ActiveVessel!=null)
             {
                KACWorkerGameState.CurrentVessel = FlightGlobals.ActiveVessel;
                KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;

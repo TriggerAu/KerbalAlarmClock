@@ -1835,8 +1835,8 @@ namespace KerbalAlarmClock
 				{
 					//straight to spacecenter
 					HighLogic.CurrentGame = game;
-					HighLogic.LoadScene(GameScenes.SPACECENTER);
-                    //HighLogic.LoadScene(GameScenes.TRACKSTATION);
+					//HighLogic.LoadScene(GameScenes.SPACECENTER);
+                    HighLogic.LoadScene(GameScenes.TRACKSTATION);
 					return;
 
 					Int32 FirstVessel;

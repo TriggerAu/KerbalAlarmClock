@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Text;
 using System.Linq;
 
+using System.Reflection;
+
 using UnityEngine;
 using KSP;
 using KSPPluginFramework;
@@ -523,45 +525,53 @@ namespace KerbalAlarmClock
 					JumpToVessel(tmpVessel);
 				}
 
-                ////////////////////////////////////////////////////////////////////////////////////
-                //// Focus Vessel Code - unable to get SetVesselFocus in TS
-                ////////////////////////////////////////////////////////////////////////////////////
-                //if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
-                //{
-                //    SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
-                //    //if (st.mainCamera.target != null && st.mainCamera.target.type == MapObject.MapObjectType.VESSEL && tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
-                //    //{
-                //    //    //this is the targetted vessel
-                //    //}
-                //    //else
-                //    //{
-                //        Vessel vTarget = FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString().ToLower() == tmpAlarm.VesselID);
-                //        //FlightGlobals.Vessels.Find(delegate(Vessel v)
-                //        //    {
-                //        //        return (tmpAlarm.VesselID == v.id.ToString());
-                //        //    }
-                //        //);
-                //        if (vTarget != null)
-                //        {
-                //            intReturnNoOfButtons++;
-                //            if (GUILayout.Button("Set Vessel Active", KACResources.styleButton))
-                //            {
-                //                FlightGlobals.Vessels.ForEach(v=>
-                //                    {
-                //                        v.DetachPatchedConicsSolver();
-                //                        v.orbitRenderer.isFocused = false;
-                //                    });
+                //////////////////////////////////////////////////////////////////////////////////
+                // Focus Vessel Code - unable to get SetVesselFocus in TS
+                //////////////////////////////////////////////////////////////////////////////////
+                if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+                {
+                    SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
+                    //if (st.mainCamera.target != null && st.mainCamera.target.type == MapObject.MapObjectType.VESSEL && tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
+                    //{
+                    //    //this is the targetted vessel
+                    //}
+                    //else
+                    //{
+                    Vessel vTarget = FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString().ToLower() == tmpAlarm.VesselID);
+                    //FlightGlobals.Vessels.Find(delegate(Vessel v)
+                    //    {
+                    //        return (tmpAlarm.VesselID == v.id.ToString());
+                    //    }
+                    //);
+                    if (vTarget != null)
+                    {
+                        intReturnNoOfButtons++;
+                        if (GUILayout.Button("Set Vessel Active", KACResources.styleButton))
+                        {
 
-                //                vTarget.orbitRenderer.isFocused = true;
-                //                vTarget.AttachPatchedConicsSolver();
-                //                //FlightGlobals.SetActiveVessel(vTarget);
+                            //st.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).ToList().ForEach(
+                            //    mi=>LogFormatted("Method-{0}-{1}",mi.Name,mi.IsPrivate));
+                            MethodInfo setvesselMethod = st.GetType().GetMethod("SetVessel", BindingFlags.NonPublic | BindingFlags.Instance);
+                            
+                            setvesselMethod.Invoke(st, new object[] { vTarget, true });
 
-                //                //SpaceTracking.GoToAndFocusVessel(vTarget);
-                //                //st.mainCamera.SetTarget(getVesselIdx(vTarget));
-                //            }
-                //        }
-                //    //}
-                //}
+
+                            //FlightGlobals.Vessels.ForEach(v =>
+                            //    {
+                            //        v.DetachPatchedConicsSolver();
+                            //        v.orbitRenderer.isFocused = false;
+                            //    });
+
+                            //vTarget.orbitRenderer.isFocused = true;
+                            //vTarget.AttachPatchedConicsSolver();
+                            //FlightGlobals.SetActiveVessel(vTarget);
+
+                            //SpaceTracking.GoToAndFocusVessel(vTarget);
+                            //st.mainCamera.SetTarget(getVesselIdx(vTarget));
+                        }
+                    }
+                    //}
+                }
 			}
 			return intReturnNoOfButtons;
 		}

@@ -155,7 +155,20 @@ namespace KerbalAlarmClock
             }
         }
 
-        internal static Boolean isEditorVAB { get { return ((EditorLogic.VesselRotation * Vector3d.up) == Vector3.up); } }
+        internal static Boolean isEditorVAB
+        {
+            get
+            {
+                try
+                {
+                    return ((EditorLogic.VesselRotation * Vector3d.up) == Vector3.up);
+                }
+                catch (Exception)
+                {
+                    return true;
+                }
+            }
+        }
 
 
         public Boolean WindowVisibleByActiveScene

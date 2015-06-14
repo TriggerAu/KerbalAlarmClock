@@ -526,35 +526,18 @@ namespace KerbalAlarmClock
 				}
 
                 //////////////////////////////////////////////////////////////////////////////////
-                // Focus Vessel Code - unable to get SetVesselFocus in TS
+                // Focus Vessel Code - reflecting to get SetVessel Focus in TS
                 //////////////////////////////////////////////////////////////////////////////////
                 if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
                 {
-                    SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
-                    //if (st.mainCamera.target != null && st.mainCamera.target.type == MapObject.MapObjectType.VESSEL && tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
-                    //{
-                    //    //this is the targetted vessel
-                    //}
-                    //else
-                    //{
                     Vessel vTarget = FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString().ToLower() == tmpAlarm.VesselID);
-                    //FlightGlobals.Vessels.Find(delegate(Vessel v)
-                    //    {
-                    //        return (tmpAlarm.VesselID == v.id.ToString());
-                    //    }
-                    //);
                     if (vTarget != null)
                     {
                         intReturnNoOfButtons++;
                         if (GUILayout.Button("Set Vessel Active", KACResources.styleButton))
                         {
 
-                            //st.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).ToList().ForEach(
-                            //    mi=>LogFormatted("Method-{0}-{1}",mi.Name,mi.IsPrivate));
-                            MethodInfo setvesselMethod = st.GetType().GetMethod("SetVessel", BindingFlags.NonPublic | BindingFlags.Instance);
-                            
-                            setvesselMethod.Invoke(st, new object[] { vTarget, true });
-
+                            SetVesselActiveInTS(vTarget);
 
                             //FlightGlobals.Vessels.ForEach(v =>
                             //    {
@@ -575,6 +558,28 @@ namespace KerbalAlarmClock
 			}
 			return intReturnNoOfButtons;
 		}
+
+        private static void SetVesselActiveInTS(Vessel vTarget)
+        {
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+            {
+                try
+                {
+                    SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
+
+                    //st.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).ToList().ForEach(
+                    //    mi=>LogFormatted("Method-{0}-{1}",mi.Name,mi.IsPrivate));
+
+                    MethodInfo setvesselMethod = st.GetType().GetMethod("SetVessel", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                    setvesselMethod.Invoke(st, new object[] { vTarget, true });
+                }
+                catch (Exception ex)
+                {
+                    LogFormatted("Unable to set vessel as active in Tracking station:\r\n{0}", ex.Message);
+                }
+            }
+        }
 
 		private Boolean JumpToVessel(Vessel vTarget)
 		{

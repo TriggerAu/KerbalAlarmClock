@@ -641,9 +641,9 @@ namespace KerbalAlarmClock
                     //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Maneuver"
                     String strVesselID = "";
                     if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                    KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingXferAlarm ? "Alarm Repeats\r\n" : "") + strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmTypeEnum.Raw,
+                    KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingAlarmFlag ? "Alarm Repeats\r\n" : "") + strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmTypeEnum.Raw,
                         AddAction);
-                    alarmNew.RepeatAlarm = blnRepeatingXferAlarm;
+                    alarmNew.RepeatAlarm = blnRepeatingAlarmFlag;
                     alarmNew.RepeatAlarmPeriod = new KSPTimeSpan(timeRepeatPeriod.UT);
                     alarms.Add(alarmNew);
 
@@ -777,14 +777,14 @@ namespace KerbalAlarmClock
                         if (DrawAddAlarm(CrewTime, null, CrewTimeToAlarm))
                         {
                             //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Maneuver"
-                            KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, (blnRepeatingXferAlarm ? "Alarm Repeats\r\n" : "") + strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmTypeEnum.Crew,
+                            KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, (blnRepeatingAlarmFlag ? "Alarm Repeats\r\n" : "") + strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmTypeEnum.Crew,
                                 AddAction);
                             if (CrewAlarmStoreNode)
                             {
                                 if (KACWorkerGameState.ManeuverNodeExists) addAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
                                 if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                             }
-                            addAlarm.RepeatAlarm = blnRepeatingXferAlarm;
+                            addAlarm.RepeatAlarm = blnRepeatingAlarmFlag;
                             addAlarm.RepeatAlarmPeriod = new KSPTimeSpan(timeRepeatPeriod.UT);
 
                             alarms.Add(addAlarm);
@@ -939,7 +939,7 @@ namespace KerbalAlarmClock
                 intHeight_AddWindowRepeat += 53;
                 GUILayout.Label("Alarm Repeat Options...", KACResources.styleAddSectionHeading);
                 GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-                DrawCheckbox(ref blnRepeatingXferAlarm, new GUIContent("Make this alarm repeat when triggered", "If enabled then when one alarm fires another will be created based on the existing alarm"));
+                DrawCheckbox(ref blnRepeatingAlarmFlag, new GUIContent("Make this alarm repeat when triggered", "If enabled then when one alarm fires another will be created based on the existing alarm"));
                 if (KACAlarm.AlarmTypeSupportsRepeatPeriod.Contains(AddType))
                 {
                     intHeight_AddWindowRepeat += 24;
@@ -1213,6 +1213,9 @@ namespace KerbalAlarmClock
                             if (lstAlarmsWithTarget.Contains(AddType))
                                 newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
 
+                            if (newAlarm.SupportsRepeat)
+                                newAlarm.RepeatAlarm = blnRepeatingAlarmFlag;
+
                             alarms.Add(newAlarm);
                             //settings.Save();
                             _ShowAddPane = false;
@@ -1248,7 +1251,7 @@ namespace KerbalAlarmClock
         private int intXferCurrentOrigin = 0;
         private int intXferCurrentTarget = 0;
         //private KerbalTime XferCurrentTargetEventTime;
-        private Boolean blnRepeatingXferAlarm = false;
+        private Boolean blnRepeatingAlarmFlag = false;
 
         private void SetUpXferParents()
         {
@@ -1532,10 +1535,10 @@ namespace KerbalAlarmClock
                         {
                             String strVesselID = "";
                             if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                            KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingXferAlarm ? "Alarm Repeats\r\n" : "") + strAlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
+                            KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingAlarmFlag ? "Alarm Repeats\r\n" : "") + strAlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
                                 (XferCurrentTargetEventTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.TransferModelled,
                                 AddAction, XferTargetBodies[intXferCurrentTarget]); 
-                            alarmNew.RepeatAlarm = blnRepeatingXferAlarm;
+                            alarmNew.RepeatAlarm = blnRepeatingAlarmFlag;
                             alarms.Add(alarmNew);
                             //settings.Save();
                             _ShowAddPane = false;

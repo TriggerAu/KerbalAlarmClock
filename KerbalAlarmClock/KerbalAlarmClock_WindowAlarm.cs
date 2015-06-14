@@ -621,7 +621,7 @@ namespace KerbalAlarmClock
 
 		private static Vessel FindVesselForAlarm(KACAlarm tmpAlarm)
 		{
-			Vessel tmpVessel;
+            Vessel tmpVessel;
 			String strVesselID = "";
 			if (tmpAlarm.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Crew)
 			{

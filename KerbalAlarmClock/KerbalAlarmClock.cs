@@ -836,7 +836,7 @@ namespace KerbalAlarmClock
 					}
 					if (AddLock)
 					{
-						LogFormatted_DebugOnly("AddingLock-{0}", "KACControlLock");
+						//LogFormatted_DebugOnly("AddingLock-{0}", "KACControlLock");
 
 						switch (HighLogic.LoadedScene)
 						{
@@ -872,7 +872,7 @@ namespace KerbalAlarmClock
 			//    InputLockManager.GetControlLock("KACControlLock") == ControlTypes.All)
 			if (InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None)
 			{
-				LogFormatted_DebugOnly("Removing-{0}", "KACControlLock");
+				//LogFormatted_DebugOnly("Removing-{0}", "KACControlLock");
 				InputLockManager.RemoveControlLock("KACControlLock");
 			}
 			InputLockExists = false;
@@ -1738,12 +1738,53 @@ namespace KerbalAlarmClock
 						LogFormatted("Unable to find a future model data point for this transfer({0}->{1})\r\n{2}", alarmToCheck.XferOriginBodyName, alarmToCheck.XferTargetBodyName, ex.Message);
 					}
 				}
-				else if (alarmToCheck.RepeatAlarmPeriod.UT > 0)
-				{
-					LogFormatted("Adding repeat alarm for {0}:{1}-{2}+{3}", alarmToCheck.TypeOfAlarm, alarmToCheck.Name, alarmToCheck.AlarmTime.UT, alarmToCheck.RepeatAlarmPeriod.UT);
-					alarmToAdd = alarmToCheck.Duplicate(alarmToCheck.AlarmTime.UT + alarmToCheck.RepeatAlarmPeriod.UT);
-					return true;
-				}
+                else if (alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Apoapsis || alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Periapsis)
+                {
+                    try
+                    {
+                        Vessel v = FindVesselForAlarm(alarmToCheck);
+
+                        if(v == null)
+                        {
+                            LogFormatted("Unable to find the vessel to work out the repeat ({0})", alarmToCheck.VesselID);
+                        }
+                        else
+                        {
+
+                            LogFormatted("Adding repeat alarm for Ap/Pe ({0})", alarmToCheck.VesselID);
+
+                            //get the time of the next node if the margin is greater than 0
+                            Double nextApPe = Planetarium.GetUniversalTime() + v.orbit.timeToAp + (alarmToCheck.AlarmMarginSecs>0?v.orbit.period:0);
+                            if (alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Periapsis)
+                                nextApPe = Planetarium.GetUniversalTime() + v.orbit.timeToPe + +(alarmToCheck.AlarmMarginSecs > 0 ? v.orbit.period : 0);
+
+                            if (!alarms.Any(a => a.TypeOfAlarm == alarmToCheck.TypeOfAlarm &&
+                                    a.AlarmTime.UT == nextApPe))
+                            {
+                                alarmToAdd = alarmToCheck.Duplicate(nextApPe);
+                                return true;
+                            }
+                            else
+                            {
+                                LogFormatted("Alarm already exists, not adding repeat ({0}): UT={1}", alarmToCheck.VesselID, nextApPe);
+                            }
+                            
+                            alarmToAdd = alarmToCheck.Duplicate(nextApPe);
+                            return true;
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        LogFormatted("Unable to add a repeat alarm ({0})\r\n{1}", alarmToCheck.VesselID, ex.Message);
+                    }
+                }
+                else if (alarmToCheck.RepeatAlarmPeriod.UT > 0)
+                {
+                    LogFormatted("Adding repeat alarm for {0}:{1}-{2}+{3}", alarmToCheck.TypeOfAlarm, alarmToCheck.Name, alarmToCheck.AlarmTime.UT, alarmToCheck.RepeatAlarmPeriod.UT);
+                    alarmToAdd = alarmToCheck.Duplicate(alarmToCheck.AlarmTime.UT + alarmToCheck.RepeatAlarmPeriod.UT);
+                    return true;
+                }
 			}
 			alarmToAdd = null;
 			return false;

@@ -122,7 +122,14 @@ namespace KAC_VOIDWrapper
                     object BurnTimeVOID_DoubleValue = BurnTimeProp.GetValue(null);
 
                     //get the Value property off the Object
-                    return (Double)BurnTimeVOID_DoubleValue.GetType().GetProperty("Value").GetValue(BurnTimeVOID_DoubleValue, null);
+                    Double res = (Double)BurnTimeVOID_DoubleValue.GetType().GetProperty("Value").GetValue(BurnTimeVOID_DoubleValue, null);
+                    
+                    //if its infinity as theres not enough dV
+                    if (Double.IsInfinity(res))
+                    {
+                        res = 0;
+                    }
+                    return res;
                 }
 
             }
@@ -132,7 +139,14 @@ namespace KAC_VOIDWrapper
                     object HalfBurnTimeVOID_DoubleValue = HalfBurnTimeProp.GetValue(null);
 
                     //get the Value property off the Object
-                    return (Double)HalfBurnTimeVOID_DoubleValue.GetType().GetProperty("Value").GetValue(HalfBurnTimeVOID_DoubleValue, null);
+                    Double res = (Double)HalfBurnTimeVOID_DoubleValue.GetType().GetProperty("Value").GetValue(HalfBurnTimeVOID_DoubleValue, null);
+
+                    //if its infinity as theres not enough dV
+                    if (Double.IsInfinity(res))
+                    {
+                        res = 0;
+                    }
+                    return res;
                 }
             }
 

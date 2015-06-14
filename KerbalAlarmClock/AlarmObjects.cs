@@ -111,7 +111,10 @@ namespace KerbalAlarmClock
         internal static List<AlarmTypeEnum> AlarmTypeSupportsRepeat = new List<AlarmTypeEnum>() {
             AlarmTypeEnum.Raw,
             AlarmTypeEnum.Crew,
-            AlarmTypeEnum.TransferModelled
+            AlarmTypeEnum.TransferModelled,
+            AlarmTypeEnum.Apoapsis,
+            AlarmTypeEnum.Periapsis
+
         };
         internal static List<AlarmTypeEnum> AlarmTypeSupportsRepeatPeriod = new List<AlarmTypeEnum>() {
             AlarmTypeEnum.Raw,

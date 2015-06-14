@@ -44,7 +44,7 @@ namespace KerbalAlarmClock
             ApplicationLauncherButton retButton = null;
 
             ApplicationLauncherButton[] lstButtons = KerbalAlarmClock.FindObjectsOfType<ApplicationLauncherButton>();
-            LogFormatted("AppLauncher: Creating Button-BEFORE", lstButtons.Length);
+            //LogFormatted("AppLauncher: Creating Button-BEFORE", lstButtons.Length);
             try
             {
                 retButton = ApplicationLauncher.Instance.AddModApplication(
@@ -70,7 +70,7 @@ namespace KerbalAlarmClock
                 retButton = null;
             }
             lstButtons = KerbalAlarmClock.FindObjectsOfType<ApplicationLauncherButton>();
-            LogFormatted("AppLauncher: Creating Button-AFTER", lstButtons.Length);
+            //LogFormatted("AppLauncher: Creating Button-AFTER", lstButtons.Length);
 
             return retButton;
         }
@@ -78,7 +78,7 @@ namespace KerbalAlarmClock
 
         internal void DestroyAppLauncherButton()
         {
-            LogFormatted("AppLauncher: Destroying Button-BEFORE NULL CHECK");
+            //LogFormatted("AppLauncher: Destroying Button-BEFORE NULL CHECK");
             if (btnAppLauncher != null)
             {
                 ApplicationLauncherButton[] lstButtons = KerbalAlarmClock.FindObjectsOfType<ApplicationLauncherButton>();
@@ -86,7 +86,7 @@ namespace KerbalAlarmClock
                 ApplicationLauncher.Instance.RemoveModApplication(btnAppLauncher);
                 btnAppLauncher = null;
             }
-            LogFormatted("AppLauncher: Destroying Button-AFTER NULL CHECK");
+            //LogFormatted("AppLauncher: Destroying Button-AFTER NULL CHECK");
         }
 
 

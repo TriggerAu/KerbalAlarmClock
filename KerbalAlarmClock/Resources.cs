@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 
+using System.IO;
+
 using UnityEngine;
 using KSP;
 using KSPPluginFramework;
@@ -518,6 +520,72 @@ namespace KerbalAlarmClock
         }
         #endregion
 
+        #region Audio Stuff
+
+        //Alarm Library
+        internal static Dictionary<String, AudioClip> clipAlarms;
+
+        internal static void LoadSounds()
+        {
+            MonoBehaviourExtended.LogFormatted("Loading Sounds");
+
+            clipAlarms = new Dictionary<string, AudioClip>();
+            clipAlarms.Add("None", null);
+            if (Directory.Exists(KACUtils.PathPluginSounds))
+            {
+                //get all the png and tga's
+                FileInfo[] fileClips = new System.IO.DirectoryInfo(KACUtils.PathPluginSounds).GetFiles("*.wav");
+
+                foreach (FileInfo fileClip in fileClips)
+                {
+                    try
+                    {
+                        //load the file from the GameDB
+                        AudioClip clipLoading = null;
+                        if (LoadAudioClipFromGameDB(ref clipLoading, fileClip.Name))
+                        {
+                            String ClipKey = fileClip.Name;
+                            if (ClipKey.ToLower().EndsWith(".wav"))
+                                ClipKey = ClipKey.Substring(0, ClipKey.Length - 4);
+                            clipAlarms.Add(ClipKey, clipLoading);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //MonoBehaviourExtended.LogFormatted("Unable to load AudioClip from GameDB:{0}/{1}", PathPluginSounds,fileClip.Name);
+                    }
+                }
+            }
+
+        }
+
+        internal static Boolean LoadAudioClipFromGameDB(ref AudioClip clip, String FileName, String FolderPath = "")
+        {
+            Boolean blnReturn = false;
+            try
+            {
+                //trim off the tga and png extensions
+                if (FileName.ToLower().EndsWith(".wav")) FileName = FileName.Substring(0, FileName.Length - 4);
+                //default folder
+                if (FolderPath == "") FolderPath = KACUtils.DBPathPluginSounds;
+
+                //Look for case mismatches
+                if (!GameDatabase.Instance.ExistsAudioClip(String.Format("{0}/{1}", FolderPath, FileName)))
+                    throw new Exception();
+
+                //now load it
+                clip = GameDatabase.Instance.GetAudioClip(String.Format("{0}/{1}", FolderPath, FileName));
+                blnReturn = true;
+            }
+            catch (Exception)
+            {
+                MonoBehaviourExtended.LogFormatted("Failed to load (are you missing a file - and check case):{0}/{1}", FolderPath, FileName);
+            }
+            return blnReturn;
+        }
+
+
+        #endregion
 
         #region Skins
 

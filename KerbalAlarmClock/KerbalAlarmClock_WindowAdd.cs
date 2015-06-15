@@ -102,6 +102,8 @@ namespace KerbalAlarmClock
             strCrewUT = "";
 
             ddlKERNodeMargin.SelectedIndex = (Int32)settings.DefaultKERMargin;
+
+            ddlAddAlarm.SelectedIndex = ddlAddAlarm.Items.IndexOf(settings.AlarmsSoundName);
         }
 
         List<KACAlarm.AlarmTypeEnum> AlarmsThatBuildStrings = new List<KACAlarm.AlarmTypeEnum>() {
@@ -206,6 +208,9 @@ namespace KerbalAlarmClock
                 BuildContractStringsAndMargin(true);
             else
                 timeMargin.BuildFromUT(settings.AlarmDefaultMargin);
+
+
+            //Change Audio Sound?
         }
 
         private void BuildTransferStrings()

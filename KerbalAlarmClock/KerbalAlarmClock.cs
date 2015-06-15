@@ -76,6 +76,9 @@ namespace KerbalAlarmClock
         //Worker and Settings objects
         public static float UpdateInterval = 0.1F;
 
+
+        internal static AudioController audioController;
+
         //Constructor to set KACWorker parent object to this and access to the settings
         public KerbalAlarmClock()
         {
@@ -138,6 +141,10 @@ namespace KerbalAlarmClock
             if (settings.XferModelLoadData)
                     settings.XferModelDataLoaded = KACResources.LoadModelPoints();
 
+            //get the sounds and set things up
+            KACResources.LoadSounds();
+            InitAudio();
+
             //Get whether the toolbar is there
             settings.BlizzyToolbarIsAvailable = ToolbarManager.ToolbarAvailable;
 
@@ -172,6 +179,13 @@ namespace KerbalAlarmClock
             WarpTransitionCalculator.CalcWarpRateTransitions();
 
             APIAwake();
+        }
+
+        private void InitAudio()
+        {
+            audioController = AddComponent<AudioController>();
+            audioController.mbKAC = this;
+            audioController.Init();
         }
 
         internal override void Start()

@@ -1407,7 +1407,56 @@ namespace KerbalAlarmClock
             {
                 DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Margin:", 60);
             }
+
+
+
+            //Add the Audio Section
+            //GUILayout.BeginHorizontal();
+            //GUILayout.Label("Alert:", GUILayout.Width(70));
+            //ddlAddAlarm.DrawButton();
+            //DrawTestSoundButton(KACResources.clipAlarms[ddlAddAlarm.SelectedValue], AddAlarmRepeat);
+            //GUILayout.EndHorizontal();
+            //GUILayout.BeginHorizontal();
+            //GUILayout.Label("Repeat:", GUILayout.Width(70));
+            ////settings.AlarmsAlertRepeats = (Int32)GUILayout.HorizontalSlider(settings.AlarmsAlertRepeats, 1, 6, GUILayout.Width(130));
+            //if (DrawHorizontalSlider(ref AddAlarmRepeat, 1, 6, GUILayout.Width(130)))
+            //{
+            //    //settings.Save();
+            //}
+            //GUILayout.Space(3);
+            //GUILayout.Label(AddAlarmRepeat.ToString());
+            //GUILayout.EndHorizontal();
+
             GUILayout.EndVertical();
+        }
+        internal Int32 AddAlarmRepeat = 3;
+
+        private DropDownList LoadSoundsListForAdd(String[] Names, String Selected)
+        {
+            DropDownList retDDl = new DropDownList(Names, _WindowAddRect);
+
+            if (Names.Contains(Selected))
+            {
+                retDDl.SelectedIndex = Array.FindIndex(Names, x => x == Selected);
+            }
+            return retDDl;
+        }
+        private void DrawTestSoundButton(AudioClip clip, Int32 Repeats)
+        {
+            Boolean blnStop = false;
+            GUIContent btn = new GUIContent(KACResources.btnPlay, "Test Sound");
+            if (KerbalAlarmClock.audioController.isClipPlaying(clip))
+            {
+                btn = new GUIContent(KACResources.btnStop, "StopPlaying");
+                blnStop = true;
+            }
+            if (GUILayout.Button(btn, GUILayout.Width(20)))
+            {
+                if (blnStop)
+                    KerbalAlarmClock.audioController.Stop();
+                else
+                    KerbalAlarmClock.audioController.Play(clip, Repeats);
+            }
         }
 
 
@@ -1645,6 +1694,34 @@ namespace KerbalAlarmClock
             return !(InitialChoice == Selected);
         }
 
+
+        internal static Boolean DrawHorizontalSlider(ref Int32 intVar, Int32 leftValue, Int32 rightValue, params GUILayoutOption[] options)
+        {
+            Int32 intOld = intVar;
+
+            intVar = (Int32)GUILayout.HorizontalSlider((Single)intVar, (Single)leftValue, (Single)rightValue, options);
+            return DrawResultChanged(intOld, intVar, "Integer HorizSlider");
+        }
+        internal static Boolean DrawHorizontalSlider(ref Single dblVar, Single leftValue, Single rightValue, params GUILayoutOption[] options)
+        {
+            Single intOld = dblVar;
+
+            dblVar = GUILayout.HorizontalSlider(dblVar, leftValue, rightValue, options);
+            return DrawResultChanged(intOld, dblVar, "Integer HorizSlider");
+        }
+        private static Boolean DrawResultChanged<T>(T Original, T New, String Message)
+        {
+            if (Original.Equals(New))
+            {
+                return false;
+            }
+            else
+            {
+                LogFormatted_DebugOnly("{0} Changed. {1}->{2}", Message, Original.ToString(), New.ToString());
+                return true;
+            }
+
+        }
         //public Boolean DrawAlarmActionChoice(ref Int32 intChoice, String LabelText, Int32 LabelWidth)
         //{
         //    Boolean blnReturn = false;

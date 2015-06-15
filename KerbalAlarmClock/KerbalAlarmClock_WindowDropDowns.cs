@@ -27,6 +27,8 @@ namespace KerbalAlarmClock
         private DropDownList ddlKERNodeMargin;
         private DropDownList ddlSettingsKERNodeMargin;
 
+        private DropDownList ddlAddAlarm;
+
         private SettingsAlarmSpecsEnum SettingsAlarmSpecSelected = SettingsAlarmSpecsEnum.Default;
         internal enum SettingsAlarmSpecsEnum
         {
@@ -69,6 +71,9 @@ namespace KerbalAlarmClock
             ddlSettingsKERNodeMargin.OnSelectionChanged += ddlSettingsKERNodeMargin_OnSelectionChanged;
 
 
+            ddlAddAlarm = LoadSoundsListForAdd(KACResources.clipAlarms.Keys.ToArray(), settings.AlarmsSoundName);
+            ddlAddAlarm.OnSelectionChanged += ddlAddAlarm_OnSelectionChanged;
+
             ddlManager.AddDDL(ddlChecksPerSec);
             ddlManager.AddDDL(ddlSettingsSkin);
             ddlManager.AddDDL(ddlSettingsButtonStyle);
@@ -78,6 +83,7 @@ namespace KerbalAlarmClock
             ddlManager.AddDDL(ddlSettingsCalendar);
             ddlManager.AddDDL(ddlKERNodeMargin);
             ddlManager.AddDDL(ddlSettingsKERNodeMargin);
+            ddlManager.AddDDL(ddlAddAlarm);
         }
 
         internal void DestroyDropDowns()
@@ -90,6 +96,7 @@ namespace KerbalAlarmClock
             ddlSettingsContractAutoActive.OnSelectionChanged -= ddlSettingsContractAutoActive_OnSelectionChanged;
             ddlSettingsCalendar.OnSelectionChanged -= ddlSettingsCalendar_OnSelectionChanged;
             ddlSettingsKERNodeMargin.OnSelectionChanged -= ddlSettingsKERNodeMargin_OnSelectionChanged;
+            ddlAddAlarm.OnSelectionChanged -= ddlAddAlarm_OnSelectionChanged;
         }
 
         internal void SetDDLWindowPositions()
@@ -103,6 +110,7 @@ namespace KerbalAlarmClock
             ddlSettingsCalendar.WindowRect = _WindowSettingsRect;
             ddlKERNodeMargin.WindowRect = _WindowAddRect;
             ddlSettingsKERNodeMargin.WindowRect = _WindowSettingsRect;
+            ddlAddAlarm.WindowRect = _WindowAddRect;
         }
 
         #region DDLEvents code
@@ -198,6 +206,12 @@ namespace KerbalAlarmClock
             settings.DefaultKERMargin = (Settings.BurnMarginEnum)ddlSettingsKERNodeMargin.SelectedIndex;
             settings.Save();
         }
+
+        void ddlAddAlarm_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
+        {
+//            throw new NotImplementedException();
+        }
+
 
         #endregion
 

@@ -67,6 +67,7 @@ namespace KerbalAlarmClock
         //Audio Volume
         [Persistent] internal Boolean AlarmsVolumeFromUI=true;
         [Persistent] internal Single AlarmsVolume=0.25f;
+        [Persistent] internal String AlarmsSoundName="";
 
         //Visuals
         [Persistent] internal DisplaySkin SelectedSkin = DisplaySkin.Default;

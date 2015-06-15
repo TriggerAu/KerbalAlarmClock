@@ -54,6 +54,7 @@
     <Compile Include="AlarmObjects.cs" />
     <Compile Include="API.cs" />
     <Compile Include="API\KACWrapper.cs" />
+    <Compile Include="FrameworkExt\AudioController.cs" />
     <Compile Include="FrameworkExt\Extensions.cs" />
     <Compile Include="SharedStuff\ExtensionsKSP.cs" />
     <Compile Include="FrameworkExt\KSPDateStructure.cs" />

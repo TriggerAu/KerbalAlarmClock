@@ -1343,7 +1343,7 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
+        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight,ref Boolean PlaySound)
         {
             //Two Columns
             String strTitle = "";
@@ -1408,7 +1408,7 @@ namespace KerbalAlarmClock
                 DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Margin:", 60);
             }
 
-
+            DrawToggle(ref PlaySound, "Play Sound:", KACResources.styleCheckbox);
 
             //Add the Audio Section
             //GUILayout.BeginHorizontal();

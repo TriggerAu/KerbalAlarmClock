@@ -427,7 +427,7 @@ namespace KerbalAlarmClock
 
             //layout the right fields for the common components
             Boolean blnAttachPre = blnAlarmAttachToVessel;
-            WindowLayout_CommonFields2(ref strAlarmName, ref blnAlarmAttachToVessel, ref AddAction, ref timeMargin, AddType, intHeight_AddWindowCommon);
+            WindowLayout_CommonFields2(ref strAlarmName, ref blnAlarmAttachToVessel, ref AddAction, ref timeMargin, AddType, intHeight_AddWindowCommon,ref PlaySound);
 
             Double dblTimeToPoint = 0;
 

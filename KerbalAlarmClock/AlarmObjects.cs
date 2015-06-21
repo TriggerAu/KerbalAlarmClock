@@ -237,6 +237,9 @@ namespace KerbalAlarmClock
         public Boolean SupportsRepeat { get { return AlarmTypeSupportsRepeat.Contains(this.TypeOfAlarm); } }
         public Boolean SupportsRepeatPeriod { get { return AlarmTypeSupportsRepeatPeriod.Contains(this.TypeOfAlarm); } }
 
+        /// <summary>Should the alarm play a sound</summary>
+        [Persistent] public Boolean PlaySound = false;
+
         //Have to generate these details when the target object is set
         private ITargetable _TargetObject = null;                                   //Stored Target Details
         [Persistent] private String TargetObjectStorage;

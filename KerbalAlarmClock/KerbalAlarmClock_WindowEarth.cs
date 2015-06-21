@@ -32,7 +32,7 @@ namespace KerbalAlarmClock
 			GUILayout.BeginVertical();
 
 			intHeight_AddWindowCommon = 64;
-			WindowLayout_CommonFields2(ref strAlarmName, ref blnAlarmAttachToVessel, ref AddAction, ref timeMargin, AddType, intHeight_AddWindowCommon);
+			WindowLayout_CommonFields2(ref strAlarmName, ref blnAlarmAttachToVessel, ref AddAction, ref timeMargin, AddType, intHeight_AddWindowCommon,ref PlaySound);
 
 			GUILayout.Label("Enter Time for reminder...", KACResources.styleAddSectionHeading);
 

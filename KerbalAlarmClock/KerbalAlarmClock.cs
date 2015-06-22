@@ -127,6 +127,9 @@ namespace KerbalAlarmClock
                     }
                     settings.Save();
                 }
+
+                //Set up Default Sounds
+                settings.VerifySoundsList();
             }
 
             if (settings.SelectedCalendar == CalendarTypeEnum.Earth) {

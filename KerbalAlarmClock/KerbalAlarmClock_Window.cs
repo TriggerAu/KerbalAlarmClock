@@ -461,6 +461,7 @@ namespace KerbalAlarmClock
         private Int32 intMainWindowEarthTimeHeight = 25;
 
         private Int32 intPaneWindowWidth = 380;
+        private Int32 intSettingsPaneWindowWidth = 420;
         private Int32 intAddPaneWindowWidth = 340;
         private Int32 AddWindowHeight;
 
@@ -531,7 +532,7 @@ namespace KerbalAlarmClock
             //Do we have anything to show in the right pane
             if (_ShowSettings)
             {
-                _WindowSettingsRect = GUILayout.Window(_WindowSettingsID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intPaneWindowWidth, intSettingsHeight, ref _ShowShowSettingsOnLeft,settings.WindowChildPosBelow), FillSettingsWindow, "Settings and Globals", KACResources.styleWindow);
+                _WindowSettingsRect = GUILayout.Window(_WindowSettingsID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intSettingsPaneWindowWidth, intSettingsHeight, ref _ShowShowSettingsOnLeft, settings.WindowChildPosBelow), FillSettingsWindow, "Settings and Globals", KACResources.styleWindow);
             }
             else if (_ShowAddPane)
             {

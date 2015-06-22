@@ -261,7 +261,7 @@ namespace KerbalAlarmClock
 			return UT;
 		}
 
-		int intTestheight = 0;
+		int intTestheight = 500;
 		int intTestheight2 = 0;
 		int intTestheight3 = 0;
 		static int intTestheight4 = 0;

@@ -80,7 +80,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
 
             //String[] strSettingsTabs = new String[] { "All Alarms", "Specific Types", "Sounds", "About" };
-            String[] strSettingsTabs = new String[] { "All Alarms", "Specific Types", "About" };
+            //String[] strSettingsTabs = new String[] { "All Alarms", "Specific Types", "About" };
             GUIContent[] contSettingsTabs = new GUIContent[] 
             { 
                 new GUIContent("General","Global Settings"), 
@@ -88,6 +88,7 @@ namespace KerbalAlarmClock
                 //new GUIContent("Specifics-2","Man Node Specific Settings"), 
                 //new GUIContent("Alarm Settings","Specific Settings for Alarm Types"), 
                 new GUIContent("Specifics","Specific Settings for Alarm Types"), 
+                new GUIContent("Audio","Audio Settings"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
                 new GUIContent("Calendar", "Chosen Calendar and Details"), 
                 new GUIContent("About") 
@@ -99,6 +100,7 @@ namespace KerbalAlarmClock
                 //new GUIContent("Specifics-2","Man Node Specific Settings"), 
                 //new GUIContent("Alarm Specifics","Specific Settings for Alarm Types"), 
                 new GUIContent("Specifics","Specific Settings for Alarm Types"), 
+                new GUIContent("Audio","Audio Settings"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
                 new GUIContent("Calendar", "Chosen Calendar and Details"), 
                 new GUIContent(" About", KACResources.btnSettingsAttention) 
@@ -160,14 +162,18 @@ namespace KerbalAlarmClock
                     }
                     break;
                 case 2:
+                    WindowLayout_SettingsAudio();
+                    intSettingsHeight = intTestheight;
+                    break;
+                case 3:
                     WindowLayout_SettingsIcons();
                     intSettingsHeight = 509; //518;//466 //406;
                     break;
-                case 3:
+                case 4:
                     WindowLayout_SettingsCalendar();
                     intSettingsHeight = 226;
                     break;
-                case 4:
+                case 5:
                     WindowLayout_SettingsAbout();
                     intSettingsHeight = 350; // 294; //306;
                     break;
@@ -657,6 +663,47 @@ namespace KerbalAlarmClock
                 }
             }
             GUILayout.EndVertical();
+        }
+
+        private void WindowLayout_SettingsAudio()
+        {
+            GUILayout.Label("Global Settings", KACResources.styleAddSectionHeading);
+            GUILayout.BeginHorizontal(KACResources.styleAddFieldAreas);
+
+            GUILayout.BeginVertical(GUILayout.Width(70));
+            GUILayout.Space(0);
+            GUILayout.Label("Volume:", KACResources.styleAddSectionHeading);
+            GUILayout.Space(4);
+            GUILayout.Label("     Level:", KACResources.styleAddHeading);
+            GUILayout.EndVertical();
+            GUILayout.BeginVertical();
+            GUILayout.Space(-5);
+            if (DrawToggle(ref settings.AlarmsVolumeFromUI, "Use KSP UI Volume", KACResources.styleCheckbox))
+            {
+                settings.Save();
+            }
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(10);
+            if (settings.AlarmsVolumeFromUI)
+                GUILayout.HorizontalSlider((Int32)(GameSettings.UI_VOLUME * 100), 0, 100, GUILayout.Width(160));
+            else
+                settings.AlarmsVolume = GUILayout.HorizontalSlider(settings.AlarmsVolume * 100, 0, 100, GUILayout.Width(160)) / 100;
+            GUILayout.Label(KerbalAlarmClock.audioController.VolumePct.ToString() + "%", KACResources.styleAddHeading);
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+
+            GUILayout.Label("Alarm Specifics", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            GUILayout.Label("Enable to select unique sounds or the Raw sound will be used as the default", KACResources.styleAddHeading);
+
+            foreach (AlarmSound s in settings.AlarmSounds)
+            {
+                GUILayout.Label(s.Type.ToString());
+            }
+
+            GUILayout.EndVertical();
+
         }
 
         private void WindowLayout_SettingsIcons()

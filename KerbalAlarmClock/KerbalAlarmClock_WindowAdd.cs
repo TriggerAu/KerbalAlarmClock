@@ -24,6 +24,8 @@ namespace KerbalAlarmClock
         private KACTimeStringArray timeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeRepeatPeriod = new KACTimeStringArray(50 * KSPDateStructure.SecondsPerDay, KACTimeStringArray.TimeEntryPrecisionEnum.Days);
 
+        private Boolean PlaySound = false;
+
         private String strAlarmName = "";
         private String strAlarmNotes = "";
         //private String strAlarmNotes = "";
@@ -103,7 +105,9 @@ namespace KerbalAlarmClock
 
             ddlKERNodeMargin.SelectedIndex = (Int32)settings.DefaultKERMargin;
 
-            ddlAddAlarm.SelectedIndex = ddlAddAlarm.Items.IndexOf(settings.AlarmsSoundName);
+            //ddlAddAlarm.SelectedIndex = ddlAddAlarm.Items.IndexOf(settings.AlarmsSoundName);
+            //PlaySound = settings.AlarmPlaySound;
+
         }
 
         List<KACAlarm.AlarmTypeEnum> AlarmsThatBuildStrings = new List<KACAlarm.AlarmTypeEnum>() {

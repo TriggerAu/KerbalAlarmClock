@@ -668,39 +668,24 @@ namespace KerbalAlarmClock
 
 
         #region Sound Stuff
-
-        List<KACAlarm.AlarmTypeEnum> lstSoundsToConfigure = new List<KACAlarm.AlarmTypeEnum>() {
-            KACAlarm.AlarmTypeEnum.Raw,
-            KACAlarm.AlarmTypeEnum.Maneuver,
-            KACAlarm.AlarmTypeEnum.Apoapsis,
-            KACAlarm.AlarmTypeEnum.AscendingNode,
-            KACAlarm.AlarmTypeEnum.Closest,
-            KACAlarm.AlarmTypeEnum.LaunchRendevous,
-            KACAlarm.AlarmTypeEnum.SOIChange,
-            KACAlarm.AlarmTypeEnum.Transfer,
-            KACAlarm.AlarmTypeEnum.EarthTime,
-            KACAlarm.AlarmTypeEnum.Contract
-        };
-
         internal Boolean VerifySoundsList()
         {
             Boolean blnRet = false;
-
             try
             {
                 Boolean NewTypeAdded = false;
-                foreach (var AlarmDef in lstSoundsToConfigure)
-                {
-                    if (!AlarmSounds.Any(s => s.Type == (KACAlarm.AlarmTypeEnum)AlarmDef))
-                    {
-                        AlarmSound s = new AlarmSound();
-                        s.Type = (KACAlarm.AlarmTypeEnum)AlarmDef;
-                        s.RepeatCount = 3;
-                        s.SoundName = "";
-                        AlarmSounds.Add(s);
-                        NewTypeAdded = true;
-                    }
-                }
+
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Raw", KACAlarm.AlarmTypeEnum.Raw);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Manuever", KACAlarm.AlarmTypeEnum.Maneuver, KACAlarm.AlarmTypeEnum.ManeuverAuto);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("AP/Pe", KACAlarm.AlarmTypeEnum.Apoapsis, KACAlarm.AlarmTypeEnum.Periapsis);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("AN/DN", KACAlarm.AlarmTypeEnum.AscendingNode, KACAlarm.AlarmTypeEnum.DescendingNode);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Distance", KACAlarm.AlarmTypeEnum.Closest, KACAlarm.AlarmTypeEnum.Distance);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Rendezvous", KACAlarm.AlarmTypeEnum.LaunchRendevous);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("SOI", KACAlarm.AlarmTypeEnum.SOIChange, KACAlarm.AlarmTypeEnum.SOIChangeAuto);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Transfer", KACAlarm.AlarmTypeEnum.Transfer, KACAlarm.AlarmTypeEnum.TransferModelled);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Contract", KACAlarm.AlarmTypeEnum.Contract, KACAlarm.AlarmTypeEnum.ContractAuto);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Crew", KACAlarm.AlarmTypeEnum.Crew);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Earth", KACAlarm.AlarmTypeEnum.EarthTime);
 
                 if (NewTypeAdded)
                     this.Save();
@@ -713,15 +698,26 @@ namespace KerbalAlarmClock
             }
 
 
-            foreach (AlarmSound AlarmDef in AlarmSounds)
-            {
-                LogFormatted("{0}:{1}-{2}", AlarmDef.Type, AlarmDef.SoundName, AlarmDef.RepeatCount);
-            }
+            //foreach (AlarmSound AlarmDef in AlarmSounds)
+            //{
+            //    LogFormatted("{0}:{1}-{2}", AlarmDef.Name, AlarmDef.SoundName, AlarmDef.RepeatCount);
+            //}
 
             return blnRet;
         }
 
+        private Boolean AddMissingSoundConfig(String Name, params KACAlarm.AlarmTypeEnum[] Types)
+        {
+            if (!AlarmSounds.Any(s=>s.Name==Name)){
+                LogFormatted("Initing Sound Config for:{0}", Name);
+                AlarmSounds.Add(new AlarmSound(Name,Types));
+                return true;
+            }
+
+            return false;
+        }
     }
+
 	#endregion    
 
     internal class RectStorage:ConfigNodeStorage
@@ -747,8 +743,21 @@ namespace KerbalAlarmClock
 
     internal class AlarmSound:ConfigNodeStorage
     {
-        [Persistent] internal KACAlarm.AlarmTypeEnum Type;
+        [Persistent] internal String Name;
+        [Persistent] internal List<KACAlarm.AlarmTypeEnum> Types;
+        [Persistent] internal Boolean Enabled;
         [Persistent] internal Int32 RepeatCount;
         [Persistent] internal String SoundName;
+        internal KerbalAlarmClock.DropDownList ddl;
+
+        internal AlarmSound() { }
+        internal AlarmSound(String Name, params KACAlarm.AlarmTypeEnum[] Types )
+        {
+            this.Name = Name;
+            this.Types = Types.ToList();
+            this.Enabled = false;
+            this.RepeatCount = 3;
+            this.SoundName = "";
+        }
     }
 }

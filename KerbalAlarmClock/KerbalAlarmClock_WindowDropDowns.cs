@@ -86,6 +86,17 @@ namespace KerbalAlarmClock
             //ddlManager.AddDDL(ddlAddAlarm);
         }
 
+        internal void ConfigSoundsDDLs()
+        {
+            foreach (AlarmSound s in settings.AlarmSounds)
+            {
+                s.ddl = LoadSoundsListForDDL(KACResources.clipAlarms.Keys.ToArray(), s.SoundName);
+                s.ddl.OnSelectionChanged+=ddlSettingsSound_OnSelectionChanged;
+                ddlManager.AddDDL(s.ddl);
+            }
+        }
+
+
         internal void DestroyDropDowns()
         {
             ddlChecksPerSec.OnSelectionChanged -= ddlChecksPerSec_OnSelectionChanged;
@@ -96,7 +107,12 @@ namespace KerbalAlarmClock
             ddlSettingsContractAutoActive.OnSelectionChanged -= ddlSettingsContractAutoActive_OnSelectionChanged;
             ddlSettingsCalendar.OnSelectionChanged -= ddlSettingsCalendar_OnSelectionChanged;
             ddlSettingsKERNodeMargin.OnSelectionChanged -= ddlSettingsKERNodeMargin_OnSelectionChanged;
-            //ddlAddAlarm.OnSelectionChanged -= ddlAddAlarm_OnSelectionChanged;
+
+            foreach (AlarmSound s in settings.AlarmSounds)
+            {
+                if (s.ddl != null)
+                    s.ddl.OnSelectionChanged -= ddlSettingsSound_OnSelectionChanged;
+            }
         }
 
         internal void SetDDLWindowPositions()
@@ -110,7 +126,13 @@ namespace KerbalAlarmClock
             ddlSettingsCalendar.WindowRect = _WindowSettingsRect;
             ddlKERNodeMargin.WindowRect = _WindowAddRect;
             ddlSettingsKERNodeMargin.WindowRect = _WindowSettingsRect;
-            //ddlAddAlarm.WindowRect = _WindowAddRect;
+            
+
+            foreach (AlarmSound s in settings.AlarmSounds)
+            {
+                if (s.ddl != null)
+                    s.ddl.WindowRect = _WindowSettingsRect;
+            }
         }
 
         #region DDLEvents code
@@ -207,9 +229,15 @@ namespace KerbalAlarmClock
             settings.Save();
         }
 
-        void ddlAddAlarm_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
+
+        void ddlSettingsSound_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
         {
-//            throw new NotImplementedException();
+            foreach (AlarmSound s in settings.AlarmSounds) {
+                if (s.ddl.SelectedValue != s.SoundName) {
+                    s.SoundName = s.ddl.SelectedValue;
+                    settings.Save();
+                }
+            }
         }
 
 

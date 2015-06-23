@@ -146,6 +146,7 @@ namespace KerbalAlarmClock
 
             //get the sounds and set things up
             KACResources.LoadSounds();
+            this.ConfigSoundsDDLs();
             InitAudio();
 
             //Get whether the toolbar is there

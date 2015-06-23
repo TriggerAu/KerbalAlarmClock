@@ -1430,9 +1430,9 @@ namespace KerbalAlarmClock
 
             GUILayout.EndVertical();
         }
-        internal Int32 AddAlarmRepeat = 3;
+        //internal Int32 AddAlarmRepeat = 3;
 
-        private DropDownList LoadSoundsListForAdd(String[] Names, String Selected)
+        internal DropDownList LoadSoundsListForDDL(String[] Names, String Selected)
         {
             DropDownList retDDl = new DropDownList(Names, _WindowAddRect);
 
@@ -1442,7 +1442,7 @@ namespace KerbalAlarmClock
             }
             return retDDl;
         }
-        private void DrawTestSoundButton(AudioClip clip, Int32 Repeats)
+        internal void DrawTestSoundButton(AudioClip clip, Int32 Repeats)
         {
             Boolean blnStop = false;
             GUIContent btn = new GUIContent(KACResources.btnPlay, "Test Sound");
@@ -1459,6 +1459,8 @@ namespace KerbalAlarmClock
                     KerbalAlarmClock.audioController.Play(clip, Repeats);
             }
         }
+
+
 
 
         #region "Control Drawing"

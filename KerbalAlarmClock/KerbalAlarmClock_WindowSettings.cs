@@ -163,7 +163,7 @@ namespace KerbalAlarmClock
                     break;
                 case 2:
                     WindowLayout_SettingsAudio();
-                    intSettingsHeight = intTestheight;
+                    intSettingsHeight = 514;
                     break;
                 case 3:
                     WindowLayout_SettingsIcons();
@@ -668,14 +668,20 @@ namespace KerbalAlarmClock
         private void WindowLayout_SettingsAudio()
         {
             GUILayout.Label("Global Settings", KACResources.styleAddSectionHeading);
-            GUILayout.BeginHorizontal(KACResources.styleAddFieldAreas);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
+            //Columns
+            GUILayout.BeginHorizontal();
+            
+            //Column1
             GUILayout.BeginVertical(GUILayout.Width(70));
             GUILayout.Space(0);
             GUILayout.Label("Volume:", KACResources.styleAddSectionHeading);
             GUILayout.Space(4);
             GUILayout.Label("     Level:", KACResources.styleAddHeading);
             GUILayout.EndVertical();
+
+            //Column2
             GUILayout.BeginVertical();
             GUILayout.Space(-5);
             if (DrawToggle(ref settings.AlarmsVolumeFromUI, "Use KSP UI Volume", KACResources.styleCheckbox))
@@ -688,22 +694,68 @@ namespace KerbalAlarmClock
                 GUILayout.HorizontalSlider((Int32)(GameSettings.UI_VOLUME * 100), 0, 100, GUILayout.Width(160));
             else
                 settings.AlarmsVolume = GUILayout.HorizontalSlider(settings.AlarmsVolume * 100, 0, 100, GUILayout.Width(160)) / 100;
-            GUILayout.Label(KerbalAlarmClock.audioController.VolumePct.ToString() + "%", KACResources.styleAddHeading);
+            GUIStyle stylePct = new GUIStyle(KACResources.styleAddHeading);
+            stylePct.padding.top = -2;
+            GUILayout.Label(KerbalAlarmClock.audioController.VolumePct.ToString() + "%", stylePct);
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
+            
+            //End Columns
             GUILayout.EndHorizontal();
+
+            //Draw Raw Sound
+            AlarmSound raw = settings.AlarmSounds.First(s => s.Name == "Raw");
+            DrawSoundLine(ref raw,true);
+            GUILayout.EndVertical();
 
             GUILayout.Label("Alarm Specifics", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            GUILayout.Label("Enable to select unique sounds or the Raw sound will be used as the default", KACResources.styleAddHeading);
+            GUILayout.Label("Enable to select unique sounds or the Raw sound will be used", KACResources.styleAddHeading);
 
-            foreach (AlarmSound s in settings.AlarmSounds)
-            {
-                GUILayout.Label(s.Type.ToString());
+            for (int i = 0; i < settings.AlarmSounds.Count-1; i++)
+			{
+                AlarmSound sound = settings.AlarmSounds.Where(s => s.Name != "Raw").ElementAt(i);
+                DrawSoundLine(ref sound);
             }
 
             GUILayout.EndVertical();
 
+        }
+
+        private void DrawSoundLine(ref AlarmSound sound,Boolean HideCheck=false)
+        {
+            GUILayout.BeginHorizontal();
+
+            if (HideCheck) {
+                GUILayout.Label("     " + sound.Name, KACResources.styleCheckboxLabel,GUILayout.Width(100));
+            } else {
+                GUIStyle styleC = new GUIStyle(KACResources.styleCheckbox);
+                styleC.padding.left = intTestheight2;
+                if (DrawToggle(ref sound.Enabled, sound.Name, KACResources.styleCheckbox,GUILayout.Width(100)))
+                {
+                    settings.Save();
+                }
+            }
+            sound.ddl.DrawButton();
+
+            if (KACResources.clipAlarms.ContainsKey(sound.SoundName))
+                DrawTestSoundButton(KACResources.clipAlarms[sound.SoundName], sound.RepeatCount);
+            else
+                DrawTestSoundButton(null, sound.RepeatCount);
+
+            GUILayout.Label(new GUIContent("R:","Repeat"),KACResources.styleAddHeading,GUILayout.Width(14));
+            //sound.RepeatCount = (Int32)GUILayout.HorizontalSlider(sound.RepeatCount, 1, 6, GUILayout.Width(intTestheight3));
+            GUILayout.BeginVertical(GUILayout.Width(60));
+            GUILayout.Space(8);
+            if (DrawHorizontalSlider(ref sound.RepeatCount, 1, 6, GUILayout.Width(60)))
+            {
+                settings.Save();
+            }
+            GUILayout.EndVertical();
+            GUILayout.Space(3);
+            GUILayout.Label(sound.RepeatCount < 6 ? sound.RepeatCount.ToString() : "6+", KACResources.styleAddHeading, GUILayout.Width(14));
+
+            GUILayout.EndHorizontal();
         }
 
         private void WindowLayout_SettingsIcons()

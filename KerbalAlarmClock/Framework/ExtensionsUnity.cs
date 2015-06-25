@@ -51,5 +51,11 @@ namespace KSPPluginFramework
             gReturn.padding.bottom = PaddingValue;
             return gReturn;
         }
+        public static GUIStyle PaddingChangeLeft(this GUIStyle g, Int32 PaddingValue)
+        {
+            GUIStyle gReturn = new GUIStyle(g);
+            gReturn.padding.left = PaddingValue;
+            return gReturn;
+        }
     }
 }

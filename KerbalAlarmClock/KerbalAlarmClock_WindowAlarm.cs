@@ -284,9 +284,9 @@ namespace KerbalAlarmClock
 				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
 					intHeight_EditWindowCommon += 28;
 
-                KACAlarm.AlarmActionEnum atemp = alarmEdit.AlarmActionConvert;
+                AlarmActions atemp = alarmEdit.Actions;
 				WindowLayout_CommonFields(ref alarmEdit.Name, ref alarmEdit.Notes, ref atemp, ref alarmEdit.AlarmMarginSecs, alarmEdit.TypeOfAlarm, intHeight_EditWindowCommon);
-                alarmEdit.AlarmActionConvert = atemp;
+                alarmEdit.Actions = atemp;
 				//Adjust the UT of the alarm if the margin changed
 				if (alarmEdit.AlarmMarginSecs != MarginStarting)
 				{

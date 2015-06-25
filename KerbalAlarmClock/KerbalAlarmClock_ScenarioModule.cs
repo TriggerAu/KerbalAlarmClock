@@ -48,6 +48,14 @@ namespace KerbalAlarmClock
         public override void OnSave(ConfigNode gameNode)
         {
             base.OnSave(gameNode);
+
+            foreach (KACAlarm a in KerbalAlarmClock.alarms.Where(a=>!a.AlarmActionConverted && a.AlarmAction== KACAlarm.AlarmActionEnum.Converted) ) {
+                a.AlarmActionConverted = true;
+            }
+            foreach (KACAlarm a in KerbalAlarmClock.alarms.Where(a => a.Actions.Warp== AlarmActions.WarpEnum.PauseGame)) {
+                a.Actions.Message = AlarmActions.MessageEnum.Yes;
+            }
+
             MonoBehaviourExtended.LogFormatted_DebugOnly("OnSave: ");
             MonoBehaviourExtended.LogFormatted_DebugOnly("{0}", gameNode);
             gameNode.AddNode(KerbalAlarmClock.alarms.EncodeToCN());

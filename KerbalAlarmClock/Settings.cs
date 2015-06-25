@@ -126,7 +126,7 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean ConfirmAlarmDeletes = false;
 
 
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmDefaultAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmDefaultAction = new AlarmActions();
         [Persistent] internal Double AlarmDefaultMargin = 60;
         [Persistent] internal Int32 AlarmPosition = 1;
         [Persistent] internal Boolean AlarmDeleteOnClose = false;
@@ -183,7 +183,7 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean AlarmAddManAuto_andRemove = false;
         [Persistent] internal Double AlarmAddManAutoMargin = 180;
         [Persistent] internal Double AlarmAddManAutoThreshold = 180;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManAuto_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmAddManAuto_Action = new AlarmActions();
 
         internal enum BurnMarginEnum
         {
@@ -197,18 +197,18 @@ namespace KerbalAlarmClock
         [Persistent] internal BurnMarginEnum DefaultKERMargin = BurnMarginEnum.Half;
 
         [Persistent] internal Double AlarmAddManQuickMargin = 180;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmAddManQuickAction =  new AlarmActions();
         [Persistent] internal Double AlarmAddSOIQuickMargin = 180;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddSOIQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmAddSOIQuickAction =  new AlarmActions();
 
         [Persistent] internal Double AlarmAddNodeQuickMargin = 30;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddNodeQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmAddNodeQuickAction =  new AlarmActions();
 
 
         [Persistent] internal Double AlarmOnContractExpireMargin = 3600;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnContractExpire_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmOnContractExpire_Action =  new AlarmActions();
         [Persistent] internal Double AlarmOnContractDeadlineMargin = 86400;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnContractDeadline_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmOnContractDeadline_Action = new AlarmActions();
 
         internal enum AutoContractBehaviorEnum
         {
@@ -226,19 +226,9 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean ContractDeadlineDontCreateInsideMargin = true;
         [Persistent] internal Boolean ContractExpireDontCreateInsideMargin = true;
 
-
-        //[Persistent] internal Double AlarmAddApQuickMargin = 60;
-        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddApQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
-        //[Persistent] internal Double AlarmAddPeQuickMargin = 60;
-        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddPeQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
-        //[Persistent] internal Double AlarmAddANQuickMargin = 60;
-        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddANQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
-        //[Persistent] internal Double AlarmAddDNQuickMargin = 60;
-        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddDNQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
-
         //public double AlarmAddSOIMargin = 120;
         //[Persistent] internal Boolean AlarmCatchSOIChange = false;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnSOIChange_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmOnSOIChange_Action = new AlarmActions();
 
         [Persistent] internal Boolean AlarmCrewDefaultStoreNode = false;
 

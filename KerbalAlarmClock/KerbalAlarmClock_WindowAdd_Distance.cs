@@ -117,7 +117,7 @@ namespace KerbalAlarmClock
                         {
                             KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes,
                                 eventAlarm.UT, timeMargin.UT, AddType,
-                                AddAction);
+                                AddActions);
                             newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                             newAlarm.ManNodes = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes;
 
@@ -315,7 +315,7 @@ namespace KerbalAlarmClock
                 {
                     KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes,
                         eventAlarm.UT, timeMargin.UT, AddType,
-                        AddAction);
+                        AddActions);
                     newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                     newAlarm.ManNodes = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes;
 

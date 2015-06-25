@@ -746,12 +746,12 @@ namespace KerbalAlarmClock
                             if (aExisting == null)
                             {
                                 KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), "Warp to " + NodeName, "", UT - (WithMargin ? MarginSecs : 0), (WithMargin ? MarginSecs : 0), aType,
-                                        KACAlarm.AlarmActionEnum.KillWarpOnly);
+                                        AlarmActions.DefaultsKillWarpOnly());
                                 if (lstAlarmsWithTarget.Contains(aType))
                                     newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                                 if (KACWorkerGameState.ManeuverNodeExists)
                                     newAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
-                                newAlarm.ActionDeleteWhenDone = true;
+                                newAlarm.Actions.DeleteWhenDone = true;
 
                                 alarms.Add(newAlarm);
                             }
@@ -1479,7 +1479,7 @@ namespace KerbalAlarmClock
 			}
 		}
 
-		private void CreateAutoContracts(Settings.AutoContractBehaviorEnum TypeOfAuto, Contract.State state, Boolean DontCreateAlarmsInsideMargin, Double margin, KACAlarm.AlarmActionEnum action)
+		private void CreateAutoContracts(Settings.AutoContractBehaviorEnum TypeOfAuto, Contract.State state, Boolean DontCreateAlarmsInsideMargin, Double margin, AlarmActions action)
 		{
 			if (TypeOfAuto == Settings.AutoContractBehaviorEnum.Next && DontCreateAlarmsInsideMargin)
 			{
@@ -1510,7 +1510,7 @@ namespace KerbalAlarmClock
 			}
 		}
 
-		private void AddContractAutoAlarm(Contract contract, Double margin, KACAlarm.AlarmActionEnum action)
+		private void AddContractAutoAlarm(Contract contract, Double margin, AlarmActions action)
 		{
 			//If theres already an alarm then leave it alone
 			if (alarms.Any(a => a.ContractGUID == contract.ContractGuid))
@@ -1601,7 +1601,9 @@ namespace KerbalAlarmClock
 							if (tmpAlarm.PauseGame)
 							{
 								LogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
-								TimeWarp.SetRate(0, true);
+                                if (tmpAlarm.Actions.Message != AlarmActions.MessageEnum.Yes)
+                                    tmpAlarm.Actions.Message = AlarmActions.MessageEnum.Yes;
+                                TimeWarp.SetRate(0, true);
 								FlightDriver.SetPause(true);
 							}
 							else if (tmpAlarm.HaltWarp)
@@ -1676,7 +1678,12 @@ namespace KerbalAlarmClock
                         //if (tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.KillWarpOnly 
                         //    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed
                         //    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothing)
-                        if(!tmpAlarm.ActionShowMessage)
+                        if((tmpAlarm.Actions.Message==AlarmActions.MessageEnum.No) ||
+                            (
+                                tmpAlarm.Actions.Message == AlarmActions.MessageEnum.YesIfOtherVessel &&
+                                KACWorkerGameState.CurrentVessel!=null &&
+                                tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()
+                            ))
 						{
 							tmpAlarm.AlarmWindowClosed = true;
 							try
@@ -1691,7 +1698,8 @@ namespace KerbalAlarmClock
 						}
 
                         LogFormatted("Actioning Alarm");
-					}
+                        LogFormatted("{0}",tmpAlarm.Actions);
+                    }
 
 			}
 
@@ -1704,7 +1712,7 @@ namespace KerbalAlarmClock
             // Delete the do nothing/delete alarms - One loop to find the ones to delete - cant delete inside the foreach or it breaks the iterator
             List<KACAlarm> ToDelete = new List<KACAlarm>();
             //foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.ActionDeleteWhenDone)))
-            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.ActionWarp == KACAlarm.AlarmActionWarpEnum.DoNothing ))
+            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.Actions.Warp == AlarmActions.WarpEnum.DoNothing && a.Actions.DeleteWhenDone ))
             {
                 if (tmpAlarm.Triggered && tmpAlarm.Actioned)
                     ToDelete.Add(tmpAlarm);

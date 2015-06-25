@@ -129,12 +129,14 @@ namespace KerbalAlarmClock
 
         internal static Texture2D btnCalendar = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
-        internal static Texture2D btnActionNothingAndDelete = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnActionNothing = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnActionMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnActionWarp = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnActionWarpMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnActionPause = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionNothing = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionWarp = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionPause = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionNoMsg = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionMsg = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionMsgVessel = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionDelete = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionSound = new Texture2D(28, 16, TextureFormat.ARGB32, false);
 
         internal static Texture2D btnDropDown = new Texture2D(10,10, TextureFormat.ARGB32, false);
         internal static Texture2D btnPlay = new Texture2D(10, 10, TextureFormat.ARGB32, false);
@@ -269,12 +271,14 @@ namespace KerbalAlarmClock
 
                 KACUtils.LoadImageFromFile(ref btnCalendar, "img_buttonCalendar.png");
 
-                KACUtils.LoadImageFromFile(ref btnActionNothingAndDelete, "img_buttonActionNothingAndDelete.png");
                 KACUtils.LoadImageFromFile(ref btnActionNothing, "img_buttonActionNothing.png");
-                KACUtils.LoadImageFromFile(ref btnActionMsg, "img_buttonActionMsg.png");
                 KACUtils.LoadImageFromFile(ref btnActionWarp, "img_buttonActionWarp.png");
-                KACUtils.LoadImageFromFile(ref btnActionWarpMsg, "img_buttonActionWarpMsg.png");
                 KACUtils.LoadImageFromFile(ref btnActionPause, "img_buttonActionPause.png");
+                KACUtils.LoadImageFromFile(ref btnActionNoMsg, "img_buttonActionNoMsg.png");
+                KACUtils.LoadImageFromFile(ref btnActionMsg, "img_buttonActionMsg.png");
+                KACUtils.LoadImageFromFile(ref btnActionMsgVessel, "img_buttonActionMsgVessel.png");
+                KACUtils.LoadImageFromFile(ref btnActionSound, "img_buttonActionSound.png");
+                KACUtils.LoadImageFromFile(ref btnActionDelete, "img_buttonActionDelete.png");
 
                 KACUtils.LoadImageFromFile(ref btnDropDown, "img_DropDown.png");
                 KACUtils.LoadImageFromFile(ref btnPlay, "img_Play.png");
@@ -819,6 +823,8 @@ namespace KerbalAlarmClock
         #endregion
 
         internal static List<GUIContent> lstAlarmChoices;
+        internal static List<GUIContent> lstAlarmWarpChoices;
+        internal static List<GUIContent> lstAlarmMessageChoices;
 
         /// <summary>
         /// Sets up the styles for the different parts of the drawing
@@ -1110,13 +1116,25 @@ namespace KerbalAlarmClock
             styleSeparatorH.border = new RectOffset(6, 6, 0, 0);
             styleSeparatorH.fixedHeight = 2;
 
-            lstAlarmChoices = new List<GUIContent>();
-            lstAlarmChoices.Add(new GUIContent(btnActionNothingAndDelete, KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed.Description()));
-            lstAlarmChoices.Add(new GUIContent(btnActionNothing, KACAlarm.AlarmActionEnum.DoNothing.Description()));
-            lstAlarmChoices.Add(new GUIContent(btnActionMsg, KACAlarm.AlarmActionEnum.MessageOnly.Description()));
-            lstAlarmChoices.Add(new GUIContent(btnActionWarp, KACAlarm.AlarmActionEnum.KillWarpOnly.Description()));
-            lstAlarmChoices.Add(new GUIContent(btnActionWarpMsg, KACAlarm.AlarmActionEnum.KillWarp.Description()));
-            lstAlarmChoices.Add(new GUIContent(btnActionPause, KACAlarm.AlarmActionEnum.PauseGame.Description()));
+            //lstAlarmChoices = new List<GUIContent>();
+            //lstAlarmChoices.Add(new GUIContent(btnActionNothingAndDelete, KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed.Description()));
+            //lstAlarmChoices.Add(new GUIContent(btnActionNothing, KACAlarm.AlarmActionEnum.DoNothing.Description()));
+            //lstAlarmChoices.Add(new GUIContent(btnActionMsg, KACAlarm.AlarmActionEnum.MessageOnly.Description()));
+            //lstAlarmChoices.Add(new GUIContent(btnActionWarp, KACAlarm.AlarmActionEnum.KillWarpOnly.Description()));
+            //lstAlarmChoices.Add(new GUIContent(btnActionWarpMsg, KACAlarm.AlarmActionEnum.KillWarp.Description()));
+            //lstAlarmChoices.Add(new GUIContent(btnActionPause, KACAlarm.AlarmActionEnum.PauseGame.Description()));
+
+
+            lstAlarmWarpChoices = new List<GUIContent>();
+            lstAlarmWarpChoices.Add(new GUIContent(btnActionNothing, AlarmActions.WarpEnum.DoNothing.Description()));
+            lstAlarmWarpChoices.Add(new GUIContent(btnActionWarp, AlarmActions.WarpEnum.KillWarp.Description()));
+            lstAlarmWarpChoices.Add(new GUIContent(btnActionPause, AlarmActions.WarpEnum.PauseGame.Description()));
+
+            lstAlarmMessageChoices = new List<GUIContent>();
+            lstAlarmMessageChoices.Add(new GUIContent(btnActionNoMsg, AlarmActions.MessageEnum.No.Description()));
+            lstAlarmMessageChoices.Add(new GUIContent(btnActionMsg, AlarmActions.MessageEnum.Yes.Description()));
+            lstAlarmMessageChoices.Add(new GUIContent(btnActionMsgVessel, AlarmActions.MessageEnum.YesIfOtherVessel.Description()));
+
         }
 
         /// <summary>

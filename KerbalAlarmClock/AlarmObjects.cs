@@ -135,13 +135,6 @@ namespace KerbalAlarmClock
             [Description("Converted to Components")]            Converted,
         }
 
-        public enum AlarmActionWarpEnum
-        {
-            [Description("Do Nothing")]             DoNothing,
-            [Description("Kill Warp")]              KillWarp,
-            [Description("Pause Game")]             PauseGame
-        }
-
         public enum ContractAlarmTypeEnum
         {
             [Description("Contract Offer will Expire")] Expire,
@@ -160,35 +153,35 @@ namespace KerbalAlarmClock
             Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
         }
 
-        public KACAlarm(String NewName, double UT, AlarmTypeEnum atype, AlarmActionEnum aAction)
+        public KACAlarm(String NewName, double UT, AlarmTypeEnum atype, AlarmActions aAction)
             : this(UT)
         {
             Name = NewName;
             TypeOfAlarm = atype;
-            AlarmActionConvert = aAction;
+            this.Actions = aAction.Duplicate();
         }
 
-        public KACAlarm(String vID, String NewName, double UT, AlarmTypeEnum atype, AlarmActionEnum aAction)
+        public KACAlarm(String vID, String NewName, double UT, AlarmTypeEnum atype, AlarmActions aAction)
             : this(NewName,UT,atype,aAction)
         {
             VesselID = vID;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActions aAction)
             : this (vID,NewName,UT,atype,aAction)
         {
             Notes = NewNotes;
             AlarmMarginSecs = Margin;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction, List<ManeuverNode> NewManeuvers)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActions aAction, List<ManeuverNode> NewManeuvers)
             : this(vID, NewName, NewNotes, UT, Margin, atype, aAction)
         {
             //set maneuver node
             ManNodes = NewManeuvers;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction, KACXFerTarget NewTarget)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActions aAction, KACXFerTarget NewTarget)
             : this(vID, NewName, NewNotes, UT, Margin, atype, aAction)
         {
             //Set target details
@@ -196,7 +189,7 @@ namespace KerbalAlarmClock
             XferTargetBodyName = NewTarget.Target.bodyName;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction, ITargetable NewTarget)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActions aAction, ITargetable NewTarget)
             : this(vID,NewName,NewNotes,UT,Margin,atype,aAction)
         {
             //Set the ITargetable proerty
@@ -227,35 +220,31 @@ namespace KerbalAlarmClock
         //[Persistent] public Boolean DeleteWhenPassed = false;                       //Whether it will be cleaned up after its time
 
         #region Alarm Action Stuff
-        [Persistent] public AlarmActionWarpEnum ActionWarp = AlarmActionWarpEnum.KillWarp;
-        [Persistent] public Boolean ActionShowMessage = true;
-        [Persistent] public Boolean ActionDeleteWhenDone = false;
-        [Persistent] public Boolean ActionPlaySound = false;
 
+        [Persistent] public AlarmActions Actions = new AlarmActions();
 
-        public Boolean PauseGame { get { return ActionWarp == AlarmActionWarpEnum.PauseGame; } }
-        public Boolean HaltWarp { get { return ActionWarp == AlarmActionWarpEnum.KillWarp; } }
-
-
+        public Boolean PauseGame { get { return Actions.Warp == AlarmActions.WarpEnum.PauseGame; } }
+        public Boolean HaltWarp { get { return Actions.Warp == AlarmActions.WarpEnum.KillWarp; } }
+        
         #region Old ActionEnum
-        [Persistent] public AlarmActionEnum AlarmAction;
+        [Persistent] public AlarmActionEnum AlarmAction = AlarmActionEnum.Converted;
         [Persistent] public Boolean AlarmActionConverted = false;
 
         public AlarmActionEnum AlarmActionConvert
         {
             get
             {
-                if (ActionWarp == AlarmActionWarpEnum.DoNothing && !ActionShowMessage & !ActionDeleteWhenDone & !ActionPlaySound)
+                if ((Actions.Warp == AlarmActions.WarpEnum.DoNothing) && (Actions.Message==AlarmActions.MessageEnum.No) & !Actions.DeleteWhenDone & !Actions.PlaySound)
                     return AlarmActionEnum.DoNothing;
-                else if (ActionWarp == AlarmActionWarpEnum.DoNothing && !ActionShowMessage & ActionDeleteWhenDone & !ActionPlaySound)
+                else if ((Actions.Warp == AlarmActions.WarpEnum.DoNothing) && (Actions.Message == AlarmActions.MessageEnum.No) & Actions.DeleteWhenDone & !Actions.PlaySound)
                     return AlarmActionEnum.DoNothingDeleteWhenPassed;
-                else if (ActionWarp == AlarmActionWarpEnum.KillWarp && ActionShowMessage & !ActionDeleteWhenDone & !ActionPlaySound)
+                else if ((Actions.Warp == AlarmActions.WarpEnum.KillWarp) && (Actions.Message == AlarmActions.MessageEnum.Yes) & !Actions.DeleteWhenDone & !Actions.PlaySound)
                     return AlarmActionEnum.KillWarp;
-                else if (ActionWarp == AlarmActionWarpEnum.KillWarp && !ActionShowMessage & !ActionDeleteWhenDone & !ActionPlaySound)
+                else if ((Actions.Warp == AlarmActions.WarpEnum.KillWarp) && (Actions.Message == AlarmActions.MessageEnum.No) & !Actions.DeleteWhenDone & !Actions.PlaySound)
                     return AlarmActionEnum.KillWarpOnly;
-                else if (ActionWarp == AlarmActionWarpEnum.DoNothing && ActionShowMessage & !ActionDeleteWhenDone & !ActionPlaySound)
+                else if ((Actions.Warp == AlarmActions.WarpEnum.DoNothing) && (Actions.Message == AlarmActions.MessageEnum.Yes) & !Actions.DeleteWhenDone & !Actions.PlaySound)
                     return AlarmActionEnum.MessageOnly;
-                else if (ActionWarp == AlarmActionWarpEnum.PauseGame && ActionShowMessage & !ActionDeleteWhenDone & !ActionPlaySound)
+                else if ((Actions.Warp == AlarmActions.WarpEnum.PauseGame) && (Actions.Message == AlarmActions.MessageEnum.Yes) & !Actions.DeleteWhenDone & !Actions.PlaySound)
                     return AlarmActionEnum.PauseGame;
                 else
                     return AlarmActionEnum.Custom;
@@ -265,40 +254,40 @@ namespace KerbalAlarmClock
                 switch (value)
                 {
                     case AlarmActionEnum.DoNothingDeleteWhenPassed:
-                        ActionWarp = AlarmActionWarpEnum.DoNothing;
-                        ActionShowMessage = false;
-                        ActionDeleteWhenDone = true;
-                        ActionPlaySound = false;
+                        Actions.Warp = AlarmActions.WarpEnum.DoNothing;
+                        Actions.Message = AlarmActions.MessageEnum.No;
+                        Actions.DeleteWhenDone = true;
+                        Actions.PlaySound = false;
                         break;
                     case AlarmActionEnum.DoNothing:
-                        ActionWarp = AlarmActionWarpEnum.DoNothing;
-                        ActionShowMessage = false;
-                        ActionDeleteWhenDone = false;
-                        ActionPlaySound = false;
+                        Actions.Warp = AlarmActions.WarpEnum.DoNothing;
+                        Actions.Message = AlarmActions.MessageEnum.No;
+                        Actions.DeleteWhenDone = false;
+                        Actions.PlaySound = false;
                         break;
                     case AlarmActionEnum.MessageOnly:
-                        ActionWarp = AlarmActionWarpEnum.DoNothing;
-                        ActionShowMessage = true;
-                        ActionDeleteWhenDone = false;
-                        ActionPlaySound = false;
+                        Actions.Warp = AlarmActions.WarpEnum.DoNothing;
+                        Actions.Message = AlarmActions.MessageEnum.Yes;
+                        Actions.DeleteWhenDone = false;
+                        Actions.PlaySound = false;
                         break;
                     case AlarmActionEnum.KillWarpOnly:
-                        ActionWarp = AlarmActionWarpEnum.KillWarp;
-                        ActionShowMessage = false;
-                        ActionDeleteWhenDone = false;
-                        ActionPlaySound = false;
+                        Actions.Warp = AlarmActions.WarpEnum.KillWarp;
+                        Actions.Message = AlarmActions.MessageEnum.No;
+                        Actions.DeleteWhenDone = false;
+                        Actions.PlaySound = false;
                         break;
                     case AlarmActionEnum.KillWarp:
-                        ActionWarp = AlarmActionWarpEnum.KillWarp;
-                        ActionShowMessage = true;
-                        ActionDeleteWhenDone = false;
-                        ActionPlaySound = false;
+                        Actions.Warp = AlarmActions.WarpEnum.KillWarp;
+                        Actions.Message = AlarmActions.MessageEnum.Yes;
+                        Actions.DeleteWhenDone = false;
+                        Actions.PlaySound = false;
                         break;
                     case AlarmActionEnum.PauseGame:
-                        ActionWarp = AlarmActionWarpEnum.PauseGame;
-                        ActionShowMessage = true;
-                        ActionDeleteWhenDone = false;
-                        ActionPlaySound = false;
+                        Actions.Warp = AlarmActions.WarpEnum.PauseGame;
+                        Actions.Message = AlarmActions.MessageEnum.Yes;
+                        Actions.DeleteWhenDone = false;
+                        Actions.PlaySound = false;
                         break;
                     case AlarmActionEnum.Custom:
                     case AlarmActionEnum.Converted:
@@ -556,7 +545,7 @@ namespace KerbalAlarmClock
         }
         public KACAlarm Duplicate()
         {
-            KACAlarm newAlarm = new KACAlarm(this.VesselID, this.Name, this.Notes, this.AlarmTime.UT, this.AlarmMarginSecs, this.TypeOfAlarm, this.AlarmActionConvert); ;
+            KACAlarm newAlarm = new KACAlarm(this.VesselID, this.Name, this.Notes, this.AlarmTime.UT, this.AlarmMarginSecs, this.TypeOfAlarm, this.Actions); ;
             newAlarm.ContractAlarmType = this.ContractAlarmType;
             newAlarm.ContractGUID = this.ContractGUID;
             newAlarm.DeleteOnClose = this.DeleteOnClose;
@@ -566,12 +555,67 @@ namespace KerbalAlarmClock
             newAlarm.TargetObject = this.TargetObject;
             newAlarm.XferOriginBodyName = this.XferOriginBodyName;
             newAlarm.XferTargetBodyName= this.XferTargetBodyName;
-            newAlarm.ActionWarp = this.ActionWarp;
-            newAlarm.ActionShowMessage = this.ActionShowMessage;
-            newAlarm.ActionDeleteWhenDone = this.ActionDeleteWhenDone;
-            newAlarm.ActionPlaySound = this.ActionPlaySound;
 
             return newAlarm;
+        }
+    }
+
+
+    public class AlarmActions
+    {
+        public AlarmActions() { }
+        public AlarmActions(WarpEnum Warp, MessageEnum Message, Boolean PlaySound, Boolean DeleteWhenDone) {
+            this.Warp = Warp;
+            this.Message = Message;
+            this.PlaySound = PlaySound;
+            this.DeleteWhenDone = DeleteWhenDone;
+        }
+
+        [Persistent] public WarpEnum Warp = WarpEnum.KillWarp;
+        [Persistent] public MessageEnum Message = MessageEnum.Yes;
+        [Persistent] public Boolean DeleteWhenDone = false;
+        [Persistent] public Boolean PlaySound = false;
+
+        public override string ToString()
+        {
+            return String.Format("{0}-{1}-{2}-{3}",Warp,Message,PlaySound,DeleteWhenDone);
+        }
+
+        public enum WarpEnum
+        {
+            [Description("Do Nothing")]             DoNothing,
+            [Description("Kill Warp")]              KillWarp,
+            [Description("Pause Game")]             PauseGame
+        }
+
+        public enum MessageEnum
+        {
+            [Description("Display Message")]                        Yes,
+            [Description("No Message")]                         No,
+            [Description("Show Message if vessel not active")]   YesIfOtherVessel
+
+        }
+
+        public AlarmActions Duplicate()
+        {
+            return new AlarmActions(this.Warp, this.Message, this.PlaySound, this.DeleteWhenDone);
+        }
+
+        public static AlarmActions DefaultsKillWarpOnly()
+        {
+            return new AlarmActions(WarpEnum.KillWarp, MessageEnum.No, false, false);
+        }
+        public static AlarmActions DefaultsKillWarp()
+        {
+            return new AlarmActions(WarpEnum.KillWarp, MessageEnum.Yes, false, false);
+        }
+        public static AlarmActions DefaultsPauseGame()
+        {
+            return new AlarmActions(WarpEnum.PauseGame, MessageEnum.Yes, false, false);
+        }
+        public static AlarmActions DefaultsDoNothing()
+        {
+            return new AlarmActions(WarpEnum.DoNothing, MessageEnum.No, false, false);
         }
     }
 

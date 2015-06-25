@@ -751,7 +751,7 @@ namespace KerbalAlarmClock
                                     newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                                 if (KACWorkerGameState.ManeuverNodeExists)
                                     newAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
-                                newAlarm.DeleteWhenPassed = true;
+                                newAlarm.ActionDeleteWhenDone = true;
 
                                 alarms.Add(newAlarm);
                             }
@@ -1673,9 +1673,10 @@ namespace KerbalAlarmClock
 					if (tmpAlarm.Triggered && !tmpAlarm.Actioned)
 					{
 						tmpAlarm.Actioned = true;
-                        if (tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.KillWarpOnly 
-                            || tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed
-                            || tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.DoNothing)
+                        //if (tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.KillWarpOnly 
+                        //    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed
+                        //    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothing)
+                        if(!tmpAlarm.ActionShowMessage)
 						{
 							tmpAlarm.AlarmWindowClosed = true;
 							try
@@ -1702,8 +1703,9 @@ namespace KerbalAlarmClock
 
             // Delete the do nothing/delete alarms - One loop to find the ones to delete - cant delete inside the foreach or it breaks the iterator
             List<KACAlarm> ToDelete = new List<KACAlarm>();
-            foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmAction == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.DeleteWhenPassed)))
-			{
+            //foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.ActionDeleteWhenDone)))
+            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.ActionWarp == KACAlarm.AlarmActionWarpEnum.DoNothing ))
+            {
                 if (tmpAlarm.Triggered && tmpAlarm.Actioned)
                     ToDelete.Add(tmpAlarm);
             }

@@ -24,147 +24,90 @@ namespace KerbalAlarmClock
         }
 
         //Windows and Visible Settings
-        [Persistent]
-        internal Boolean WindowVisible = false;
-        [Persistent]
-        internal Boolean WindowMinimized = false;
+        [Persistent] internal Boolean WindowVisible = false;
+        [Persistent] internal Boolean WindowMinimized = false;
         internal Rect WindowPos = new Rect(3, 55, 340, 45);
-        [Persistent]
-        private RectStorage WindowPositionStored = new RectStorage();
+        [Persistent] private RectStorage WindowPositionStored = new RectStorage();
 
-        [Persistent]
-        internal Boolean WindowVisible_SpaceCenter = false;
-        [Persistent]
-        internal Boolean WindowMinimized_SpaceCenter = false;
+        [Persistent] internal Boolean WindowVisible_SpaceCenter = false;
+        [Persistent] internal Boolean WindowMinimized_SpaceCenter = false;
         internal Rect WindowPos_SpaceCenter = new Rect(3, 36, 340, 45);
-        [Persistent]
-        private RectStorage WindowPos_SpaceCenterStored = new RectStorage();
+        [Persistent] private RectStorage WindowPos_SpaceCenterStored = new RectStorage();
 
-        [Persistent]
-        internal Boolean WindowVisible_TrackingStation = false;
-        [Persistent]
-        internal Boolean WindowMinimized_TrackingStation = false;
+        [Persistent] internal Boolean WindowVisible_TrackingStation = false;
+        [Persistent] internal Boolean WindowMinimized_TrackingStation = false;
         internal Rect WindowPos_TrackingStation = new Rect(196, 45, 340, 45);
-        [Persistent]
-        private RectStorage WindowPos_TrackingStationStored = new RectStorage();
+        [Persistent] private RectStorage WindowPos_TrackingStationStored = new RectStorage();
 
-        [Persistent]
-        internal Boolean WindowVisible_EditorVAB = false;
-        [Persistent]
-        internal Boolean WindowMinimized_EditorVAB = false;
+        [Persistent] internal Boolean WindowVisible_EditorVAB = false;
+        [Persistent] internal Boolean WindowMinimized_EditorVAB = false;
         internal Rect WindowPos_EditorVAB = new Rect(270, 45, 340, 45);
-        [Persistent]
-        private RectStorage WindowPos_EditorVABStored = new RectStorage();
+        [Persistent] private RectStorage WindowPos_EditorVABStored = new RectStorage();
 
-        [Persistent]
-        internal Boolean WindowVisible_EditorSPH = false;
-        [Persistent]
-        internal Boolean WindowMinimized_EditorSPH = false;
+        [Persistent] internal Boolean WindowVisible_EditorSPH = false;
+        [Persistent] internal Boolean WindowMinimized_EditorSPH = false;
         internal Rect WindowPos_EditorSPH = new Rect(270, 45, 340, 45);
-        [Persistent]
-        private RectStorage WindowPos_EditorSPHStored = new RectStorage();
+        [Persistent] private RectStorage WindowPos_EditorSPHStored = new RectStorage();
 
-        [Persistent]
-        internal Boolean WindowChildPosBelow = false;
+        [Persistent] internal Boolean WindowChildPosBelow = false;
 
-        [Persistent]
-        internal Rect IconPos = new Rect(152, 0, 32, 32);
-        [Persistent]
-        internal Rect IconPos_SpaceCenter = new Rect(3, 3, 32, 32);
-        [Persistent]
-        internal Boolean IconShow_SpaceCenter = true;
-        [Persistent]
-        internal Rect IconPos_TrackingStation = new Rect(196, 0, 32, 32);
-        [Persistent]
-        internal Boolean IconShow_TrackingStation = true;
-        [Persistent]
-        internal Rect IconPos_EditorVAB = new Rect(298, 0, 32, 32);
-        [Persistent]
-        internal Boolean IconShow_EditorVAB = true;
-        [Persistent]
-        internal Rect IconPos_EditorSPH = new Rect(298, 0, 32, 32);
-        [Persistent]
-        internal Boolean IconShow_EditorSPH = true;
+        [Persistent] internal Rect IconPos = new Rect(152, 0, 32, 32);
+        [Persistent] internal Rect IconPos_SpaceCenter = new Rect(3, 3, 32, 32);
+        [Persistent] internal Boolean IconShow_SpaceCenter = true;
+        [Persistent] internal Rect IconPos_TrackingStation = new Rect(196, 0, 32, 32);
+        [Persistent] internal Boolean IconShow_TrackingStation = true;
+        [Persistent] internal Rect IconPos_EditorVAB = new Rect(298, 0, 32, 32);
+        [Persistent] internal Boolean IconShow_EditorVAB = true;
+        [Persistent] internal Rect IconPos_EditorSPH = new Rect(298, 0, 32, 32);
+        [Persistent] internal Boolean IconShow_EditorSPH = true;
 
-        [Persistent]
-        internal MiminalDisplayType WindowMinimizedType = MiminalDisplayType.NextAlarm;
+        [Persistent] internal MiminalDisplayType WindowMinimizedType = MiminalDisplayType.NextAlarm;
 
-        [Persistent]
-        internal Boolean F11KeystrokeDisabled = true;
-        [Persistent]
-        internal Boolean KillWarpOnThrottleCutOffKeystroke = true;
+        [Persistent] internal Boolean F11KeystrokeDisabled = true;
+        [Persistent] internal Boolean KillWarpOnThrottleCutOffKeystroke = true;
 
         //Audio Volume
-        [Persistent]
-        internal Boolean AlarmsVolumeFromUI = true;
-        [Persistent]
-        internal Single AlarmsVolume = 0.25f;
+        [Persistent] internal Boolean AlarmsVolumeFromUI = true;
+        [Persistent] internal Single AlarmsVolume = 0.25f;
 
-        [Persistent]
-        internal List<AlarmSound> AlarmSounds = new List<AlarmSound>();
+        [Persistent] internal List<AlarmSound> AlarmSounds = new List<AlarmSound>();
 
         //Visuals
-        [Persistent]
-        internal DisplaySkin SelectedSkin = DisplaySkin.Default;
+        [Persistent] internal DisplaySkin SelectedSkin = DisplaySkin.Default;
 
         //Behaviours
-        [Persistent]
-        internal Int32 BehaviourChecksPerSec = 10;
-        [Persistent]
-        internal Int32 BehaviourChecksPerSec_Custom = 40;
+        [Persistent] internal Int32 BehaviourChecksPerSec = 10;
+        [Persistent] internal Int32 BehaviourChecksPerSec_Custom = 40;
 
-        [Persistent]
-        internal Boolean WarpTransitions_Instant = false;
-        [Persistent]
-        internal Int32 WarpTransitions_UpdateSecs = 5;
-        [Persistent]
-        internal Int32 WarpTransitions_UTToRateTimesOneTenths = 15;
-        [Persistent]
-        internal Int32 WarpTransitions_ShowIndicatorSecs = 4;
+        [Persistent] internal Boolean WarpTransitions_Instant = false;
+        [Persistent] internal Int32 WarpTransitions_UpdateSecs = 5;
+        [Persistent] internal Int32 WarpTransitions_UTToRateTimesOneTenths = 15;
+        [Persistent] internal Int32 WarpTransitions_ShowIndicatorSecs = 4;
 
-        [Persistent]
-        internal Boolean WarpToEnabled = true;
-        [Persistent]
-        internal Boolean WarpToTipsHidden = false;
-        [Persistent]
-        internal Int32 WarpToTSIconDelayMSecs = 200;
-        [Persistent]
-        internal Int32 WarpToDupeProximitySecs = 60;
-        [Persistent]
-        internal Boolean WarpToRequiresConfirm = false;
+        [Persistent] internal Boolean WarpToEnabled = true;
+        [Persistent] internal Boolean WarpToTipsHidden = false;
+        [Persistent] internal Int32 WarpToTSIconDelayMSecs = 200;
+        [Persistent] internal Int32 WarpToDupeProximitySecs = 60;
+        [Persistent] internal Boolean WarpToRequiresConfirm = false;
 
-        [Persistent]
-        internal Boolean WarpToAddMarginAp = false;
-        [Persistent]
-        internal Boolean WarpToAddMarginPe = false;
-        [Persistent]
-        internal Boolean WarpToAddMarginAN = false;
-        [Persistent]
-        internal Boolean WarpToAddMarginDN = false;
-        [Persistent]
-        internal Boolean WarpToAddMarginSOI = true;
-        [Persistent]
-        internal Boolean WarpToAddMarginManNode = true;
+        [Persistent] internal Boolean WarpToAddMarginAp = false;
+        [Persistent] internal Boolean WarpToAddMarginPe = false;
+        [Persistent] internal Boolean WarpToAddMarginAN = false;
+        [Persistent] internal Boolean WarpToAddMarginDN = false;
+        [Persistent] internal Boolean WarpToAddMarginSOI = true;
+        [Persistent] internal Boolean WarpToAddMarginManNode = true;
         //[Persistent] internal Boolean NewWarpBehaviour = true;
 
-        [Persistent]
-        internal Boolean WarpToLimitMaxWarp = false;
-        [Persistent]
-        internal Int32 WarpToMaxWarp = 10000;
+        [Persistent] internal Boolean WarpToLimitMaxWarp = false;
+        [Persistent] internal Int32 WarpToMaxWarp = 10000;
 
-        [Persistent]
-        internal Boolean AllowJumpFromViewOnly = true;
-        [Persistent]
-        internal Boolean AllowJumpToAsteroid = true;
-        [Persistent]
-        internal Boolean BackupSaves = true;
-        [Persistent]
-        internal Boolean CancelFlightModeJumpOnBackupFailure = false;
-        [Persistent]
-        internal int BackupSavesToKeep = 20;
+        [Persistent] internal Boolean AllowJumpFromViewOnly = true;
+        [Persistent] internal Boolean AllowJumpToAsteroid = true;
+        [Persistent] internal Boolean BackupSaves = true;
+        [Persistent] internal Boolean CancelFlightModeJumpOnBackupFailure = false;
+        [Persistent] internal int BackupSavesToKeep = 20;
 
-        [Persistent]
-        internal String AlarmListMaxAlarms = "10";
+        [Persistent] internal String AlarmListMaxAlarms = "10";
         public int AlarmListMaxAlarmsInt
         {
             get
@@ -180,27 +123,18 @@ namespace KerbalAlarmClock
 
             }
         }
-        [Persistent]
-        internal Boolean ConfirmAlarmDeletes = false;
+        [Persistent] internal Boolean ConfirmAlarmDeletes = false;
 
 
-        [Persistent]
-        internal KACAlarm.AlarmActionEnum AlarmDefaultAction = KACAlarm.AlarmActionEnum.KillWarp;
-        [Persistent]
-        internal Double AlarmDefaultMargin = 60;
-        [Persistent]
-        internal Int32 AlarmPosition = 1;
-        [Persistent]
-        internal Boolean AlarmDeleteOnClose = false;
-        [Persistent]
-        internal Boolean HideOnPause = true;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmDefaultAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal Double AlarmDefaultMargin = 60;
+        [Persistent] internal Int32 AlarmPosition = 1;
+        [Persistent] internal Boolean AlarmDeleteOnClose = false;
+        [Persistent] internal Boolean HideOnPause = true;
         //public Boolean TimeAsUT = false;
-        [Persistent]
-        internal OldPrintTimeFormat TimeFormat = OldPrintTimeFormat.KSPString;
-        [Persistent]
-        internal DateStringFormatsEnum DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs;
-        [Persistent]
-        internal Boolean TimeFormatConverted = false;
+        [Persistent] internal OldPrintTimeFormat TimeFormat = OldPrintTimeFormat.KSPString;
+        [Persistent] internal DateStringFormatsEnum DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs;
+        [Persistent] internal Boolean TimeFormatConverted = false;
         internal TimeSpanStringFormatsEnum TimeSpanFormat
         {
             get
@@ -222,56 +156,34 @@ namespace KerbalAlarmClock
         }
 
 
-        [Persistent]
-        internal Boolean ShowTooltips = true;
-        [Persistent]
-        internal Boolean ShowEarthTime = false;
+        [Persistent] internal Boolean ShowTooltips = true;
+        [Persistent] internal Boolean ShowEarthTime = false;
 
-        [Persistent]
-        internal Boolean AlarmXferRecalc = true;
-        [Persistent]
-        internal Double AlarmXferRecalcThreshold = 180;
-        [Persistent]
-        internal Boolean AlarmXferDisplayList = false;
-        [Persistent]
-        internal Boolean XferModelLoadData = true;
-        [Persistent]
-        internal Boolean XferModelDataLoaded = false;
-        [Persistent]
-        internal Boolean XferUseModelData = false;
+        [Persistent] internal Boolean AlarmXferRecalc = true;
+        [Persistent] internal Double AlarmXferRecalcThreshold = 180;
+        [Persistent] internal Boolean AlarmXferDisplayList = false;
+        [Persistent] internal Boolean XferModelLoadData = true;
+        [Persistent] internal Boolean XferModelDataLoaded = false;
+        [Persistent] internal Boolean XferUseModelData = false;
 
-        [Persistent]
-        internal Boolean AlarmNodeRecalc = false;
-        [Persistent]
-        internal Double AlarmNodeRecalcThreshold = 180;
+        [Persistent] internal Boolean AlarmNodeRecalc = false;
+        [Persistent] internal Double AlarmNodeRecalcThreshold = 180;
 
-        [Persistent]
-        internal Boolean AlarmAddSOIAuto = false;
-        [Persistent]
-        internal Double AlarmAddSOIAutoThreshold = 180;
-        [Persistent]
-        internal Double AlarmAutoSOIMargin = 900;
+        [Persistent] internal Boolean AlarmAddSOIAuto = false;
+        [Persistent] internal Double AlarmAddSOIAutoThreshold = 180;
+        [Persistent] internal Double AlarmAutoSOIMargin = 900;
 
-        [Persistent]
-        internal Boolean AlarmAddSOIAuto_ExcludeEVA = true;
-        [Persistent]
-        internal Boolean AlarmAddSOIAuto_ExcludeDebris = true;
+        [Persistent] internal Boolean AlarmAddSOIAuto_ExcludeEVA = true;
+        [Persistent] internal Boolean AlarmAddSOIAuto_ExcludeDebris = true;
 
-        [Persistent]
-        internal Boolean AlarmSOIRecalc = false;
-        [Persistent]
-        internal Double AlarmSOIRecalcThreshold = 180;
+        [Persistent] internal Boolean AlarmSOIRecalc = false;
+        [Persistent] internal Double AlarmSOIRecalcThreshold = 180;
 
-        [Persistent]
-        internal Boolean AlarmAddManAuto = false;
-        [Persistent]
-        internal Boolean AlarmAddManAuto_andRemove = false;
-        [Persistent]
-        internal Double AlarmAddManAutoMargin = 180;
-        [Persistent]
-        internal Double AlarmAddManAutoThreshold = 180;
-        [Persistent]
-        internal KACAlarm.AlarmActionEnum AlarmAddManAuto_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal Boolean AlarmAddManAuto = false;
+        [Persistent] internal Boolean AlarmAddManAuto_andRemove = false;
+        [Persistent] internal Double AlarmAddManAutoMargin = 180;
+        [Persistent] internal Double AlarmAddManAutoThreshold = 180;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManAuto_Action = KACAlarm.AlarmActionEnum.KillWarp;
 
         internal enum BurnMarginEnum
         {
@@ -282,32 +194,21 @@ namespace KerbalAlarmClock
             [Description("Full Burn")]
             Full,
         }
-        [Persistent]
-        internal BurnMarginEnum DefaultKERMargin = BurnMarginEnum.Half;
+        [Persistent] internal BurnMarginEnum DefaultKERMargin = BurnMarginEnum.Half;
 
-        [Persistent]
-        internal Double AlarmAddManQuickMargin = 180;
-        [Persistent]
-        internal KACAlarm.AlarmActionEnum AlarmAddManQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
-        [Persistent]
-        internal Double AlarmAddSOIQuickMargin = 180;
-        [Persistent]
-        internal KACAlarm.AlarmActionEnum AlarmAddSOIQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal Double AlarmAddManQuickMargin = 180;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal Double AlarmAddSOIQuickMargin = 180;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddSOIQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
 
-        [Persistent]
-        internal Double AlarmAddNodeQuickMargin = 30;
-        [Persistent]
-        internal KACAlarm.AlarmActionEnum AlarmAddNodeQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal Double AlarmAddNodeQuickMargin = 30;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddNodeQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
 
 
-        [Persistent]
-        internal Double AlarmOnContractExpireMargin = 3600;
-        [Persistent]
-        internal KACAlarm.AlarmActionEnum AlarmOnContractExpire_Action = KACAlarm.AlarmActionEnum.KillWarp;
-        [Persistent]
-        internal Double AlarmOnContractDeadlineMargin = 86400;
-        [Persistent]
-        internal KACAlarm.AlarmActionEnum AlarmOnContractDeadline_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal Double AlarmOnContractExpireMargin = 3600;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnContractExpire_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal Double AlarmOnContractDeadlineMargin = 86400;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnContractDeadline_Action = KACAlarm.AlarmActionEnum.KillWarp;
 
         internal enum AutoContractBehaviorEnum
         {
@@ -318,18 +219,12 @@ namespace KerbalAlarmClock
             [Description("All Contracts")]
             All,
         }
-        [Persistent]
-        internal AutoContractBehaviorEnum AlarmAddContractAutoOffered = AutoContractBehaviorEnum.None;
-        [Persistent]
-        internal AutoContractBehaviorEnum AlarmAddContractAutoActive = AutoContractBehaviorEnum.None;
-        [Persistent]
-        internal Boolean ContractDeadlineDelete = true;
-        [Persistent]
-        internal Boolean ContractExpireDelete = true;
-        [Persistent]
-        internal Boolean ContractDeadlineDontCreateInsideMargin = true;
-        [Persistent]
-        internal Boolean ContractExpireDontCreateInsideMargin = true;
+        [Persistent] internal AutoContractBehaviorEnum AlarmAddContractAutoOffered = AutoContractBehaviorEnum.None;
+        [Persistent] internal AutoContractBehaviorEnum AlarmAddContractAutoActive = AutoContractBehaviorEnum.None;
+        [Persistent] internal Boolean ContractDeadlineDelete = true;
+        [Persistent] internal Boolean ContractExpireDelete = true;
+        [Persistent] internal Boolean ContractDeadlineDontCreateInsideMargin = true;
+        [Persistent] internal Boolean ContractExpireDontCreateInsideMargin = true;
 
 
         //[Persistent] internal Double AlarmAddApQuickMargin = 60;
@@ -343,17 +238,13 @@ namespace KerbalAlarmClock
 
         //public double AlarmAddSOIMargin = 120;
         //[Persistent] internal Boolean AlarmCatchSOIChange = false;
-        [Persistent]
-        internal KACAlarm.AlarmActionEnum AlarmOnSOIChange_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnSOIChange_Action = KACAlarm.AlarmActionEnum.KillWarp;
 
-        [Persistent]
-        internal Boolean AlarmCrewDefaultStoreNode = false;
+        [Persistent] internal Boolean AlarmCrewDefaultStoreNode = false;
 
         //Strings to store objects to reset after ship switch;
-        [Persistent]
-        internal String LoadManNode = "";
-        [Persistent]
-        internal String LoadVesselTarget = "";
+        [Persistent] internal String LoadManNode = "";
+        [Persistent] internal String LoadVesselTarget = "";
 
         //public KACAlarmList Alarms = new KACAlarmList();
 
@@ -376,8 +267,7 @@ namespace KerbalAlarmClock
                     return ButtonStyleEnum.Launcher;
             }
         }
-        [Persistent]
-        internal ButtonStyleEnum ButtonStyleChosen = ButtonStyleEnum.Launcher;
+        [Persistent] internal ButtonStyleEnum ButtonStyleChosen = ButtonStyleEnum.Launcher;
 
         internal enum ButtonStyleEnum
         {
@@ -391,42 +281,30 @@ namespace KerbalAlarmClock
 
 
         //Click through protection
-        [Persistent]
-        internal Boolean ClickThroughProtect_KSC = true;
-        [Persistent]
-        internal Boolean ClickThroughProtect_Tracking = true;
-        [Persistent]
-        internal Boolean ClickThroughProtect_Editor = true;
-        [Persistent]
-        internal Boolean ClickThroughProtect_Flight = true;
+        [Persistent] internal Boolean ClickThroughProtect_KSC = true;
+        [Persistent] internal Boolean ClickThroughProtect_Tracking = true;
+        [Persistent] internal Boolean ClickThroughProtect_Editor = true;
+        [Persistent] internal Boolean ClickThroughProtect_Flight = true;
 
 
-        [Persistent]
-        internal CalendarTypeEnum SelectedCalendar = CalendarTypeEnum.KSPStock;
-        [Persistent]
-        internal String EarthEpoch = "1951-01-01";
+        [Persistent] internal CalendarTypeEnum SelectedCalendar = CalendarTypeEnum.KSPStock;
+        [Persistent] internal String EarthEpoch = "1951-01-01";
 
-        [Persistent]
-        internal Boolean ShowCalendarToggle = false;
+        [Persistent] internal Boolean ShowCalendarToggle = false;
         internal Boolean RSSActive = false;
-        [Persistent]
-        internal Boolean RSSShowCalendarToggled = false;
+        [Persistent] internal Boolean RSSShowCalendarToggled = false;
 
-        [Persistent]
-        internal Int32 AppLauncherSetTrueTimeOut = 6;
+        [Persistent] internal Int32 AppLauncherSetTrueTimeOut = 6;
 
         //Version Stuff
-        [Persistent]
-        internal Boolean DailyVersionCheck = true;
+        [Persistent] internal Boolean DailyVersionCheck = true;
         internal Boolean VersionAttentionFlag = false;
         //When did we last check??
         internal DateTime VersionCheckDate_Attempt = new DateTime();
-        [Persistent]
-        internal String VersionCheckDate_AttemptStored;
+        [Persistent] internal String VersionCheckDate_AttemptStored;
         public String VersionCheckDate_AttemptString { get { return ConvertVersionCheckDateToString(this.VersionCheckDate_Attempt); } }
         internal DateTime VersionCheckDate_Success = new DateTime();
-        [Persistent]
-        internal String VersionCheckDate_SuccessStored;
+        [Persistent] internal String VersionCheckDate_SuccessStored;
         public String VersionCheckDate_SuccessString { get { return ConvertVersionCheckDateToString(this.VersionCheckDate_Success); } }
 
         public override void OnEncodeToConfigNode()
@@ -473,8 +351,7 @@ namespace KerbalAlarmClock
         }
 
         public String Version = "";
-        [Persistent]
-        public String VersionWeb = "";
+        [Persistent] public String VersionWeb = "";
         public Boolean VersionAvailable
         {
             get

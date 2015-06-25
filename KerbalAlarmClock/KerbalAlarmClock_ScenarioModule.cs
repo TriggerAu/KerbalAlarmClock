@@ -29,6 +29,15 @@ namespace KerbalAlarmClock
             if(gameNode.HasNode("KACAlarmListStorage"))
             {
                 KerbalAlarmClock.alarms.DecodeFromCN(gameNode.GetNode("KACAlarmListStorage"));
+
+                foreach (KACAlarm a in KerbalAlarmClock.alarms)
+                {
+                    if (!a.AlarmActionConverted) {
+                        a.AlarmActionConvert = a.AlarmAction;
+                        a.AlarmAction = KACAlarm.AlarmActionEnum.Converted;
+                        a.AlarmActionConverted = true;
+                    }
+                }
             }
 
             MonoBehaviourExtended.LogFormatted("ScenarioLoadDone. Alarms Count:{0}", KerbalAlarmClock.alarms.Count);

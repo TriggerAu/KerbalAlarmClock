@@ -1266,7 +1266,8 @@ namespace KerbalAlarmClock
             }
             else if (tmpAlarm.HaltWarp)
             {
-                if (tmpAlarm.AlarmAction== KACAlarm.AlarmActionEnum.KillWarp)
+                //if (tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.KillWarp)
+                if (tmpAlarm.ActionShowMessage)
                     GUILayout.Label(new GUIContent(KACResources.GetWarpListIcon(tmpAlarm.WarpInfluence), "Kill Warp and Message"), KACResources.styleLabelWarp);
                 else
                     GUILayout.Label(new GUIContent(KACResources.GetWarpListIcon(tmpAlarm.WarpInfluence), "Kill Warp Only"), KACResources.styleLabelWarp);

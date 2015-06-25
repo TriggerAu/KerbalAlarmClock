@@ -131,6 +131,15 @@ namespace KerbalAlarmClock
             [Description("Kill Warp Only-No Message")]          KillWarpOnly,
             [Description("Kill Warp and Message")]              KillWarp,
             [Description("Pause Game and Message")]             PauseGame,
+            [Description("Custom Config")]                      Custom,
+            [Description("Converted to Components")]            Converted,
+        }
+
+        public enum AlarmActionWarpEnum
+        {
+            [Description("Do Nothing")]             DoNothing,
+            [Description("Kill Warp")]              KillWarp,
+            [Description("Pause Game")]             PauseGame
         }
 
         public enum ContractAlarmTypeEnum
@@ -156,7 +165,7 @@ namespace KerbalAlarmClock
         {
             Name = NewName;
             TypeOfAlarm = atype;
-            AlarmAction = aAction;
+            AlarmActionConvert = aAction;
         }
 
         public KACAlarm(String vID, String NewName, double UT, AlarmTypeEnum atype, AlarmActionEnum aAction)
@@ -215,9 +224,96 @@ namespace KerbalAlarmClock
 
         [Persistent] public Double AlarmMarginSecs = 0;                             //What the margin from the event was
         [Persistent] public Boolean Enabled = true;                                 //Whether it is enabled - not in use currently
-        [Persistent] public AlarmActionEnum AlarmAction= AlarmActionEnum.KillWarp;
-        [Persistent] public Boolean DeleteWhenPassed = false;                       //Whether it will be cleaned up after its time
-        
+        //[Persistent] public Boolean DeleteWhenPassed = false;                       //Whether it will be cleaned up after its time
+
+        #region Alarm Action Stuff
+        [Persistent] public AlarmActionWarpEnum ActionWarp = AlarmActionWarpEnum.KillWarp;
+        [Persistent] public Boolean ActionShowMessage = true;
+        [Persistent] public Boolean ActionDeleteWhenDone = false;
+        [Persistent] public Boolean ActionPlaySound = false;
+
+
+        public Boolean PauseGame { get { return ActionWarp == AlarmActionWarpEnum.PauseGame; } }
+        public Boolean HaltWarp { get { return ActionWarp == AlarmActionWarpEnum.KillWarp; } }
+
+
+        #region Old ActionEnum
+        [Persistent] public AlarmActionEnum AlarmAction;
+        [Persistent] public Boolean AlarmActionConverted = false;
+
+        public AlarmActionEnum AlarmActionConvert
+        {
+            get
+            {
+                if (ActionWarp == AlarmActionWarpEnum.DoNothing && !ActionShowMessage & !ActionDeleteWhenDone & !ActionPlaySound)
+                    return AlarmActionEnum.DoNothing;
+                else if (ActionWarp == AlarmActionWarpEnum.DoNothing && !ActionShowMessage & ActionDeleteWhenDone & !ActionPlaySound)
+                    return AlarmActionEnum.DoNothingDeleteWhenPassed;
+                else if (ActionWarp == AlarmActionWarpEnum.KillWarp && ActionShowMessage & !ActionDeleteWhenDone & !ActionPlaySound)
+                    return AlarmActionEnum.KillWarp;
+                else if (ActionWarp == AlarmActionWarpEnum.KillWarp && !ActionShowMessage & !ActionDeleteWhenDone & !ActionPlaySound)
+                    return AlarmActionEnum.KillWarpOnly;
+                else if (ActionWarp == AlarmActionWarpEnum.DoNothing && ActionShowMessage & !ActionDeleteWhenDone & !ActionPlaySound)
+                    return AlarmActionEnum.MessageOnly;
+                else if (ActionWarp == AlarmActionWarpEnum.PauseGame && ActionShowMessage & !ActionDeleteWhenDone & !ActionPlaySound)
+                    return AlarmActionEnum.PauseGame;
+                else
+                    return AlarmActionEnum.Custom;
+            }
+            set
+            {
+                switch (value)
+                {
+                    case AlarmActionEnum.DoNothingDeleteWhenPassed:
+                        ActionWarp = AlarmActionWarpEnum.DoNothing;
+                        ActionShowMessage = false;
+                        ActionDeleteWhenDone = true;
+                        ActionPlaySound = false;
+                        break;
+                    case AlarmActionEnum.DoNothing:
+                        ActionWarp = AlarmActionWarpEnum.DoNothing;
+                        ActionShowMessage = false;
+                        ActionDeleteWhenDone = false;
+                        ActionPlaySound = false;
+                        break;
+                    case AlarmActionEnum.MessageOnly:
+                        ActionWarp = AlarmActionWarpEnum.DoNothing;
+                        ActionShowMessage = true;
+                        ActionDeleteWhenDone = false;
+                        ActionPlaySound = false;
+                        break;
+                    case AlarmActionEnum.KillWarpOnly:
+                        ActionWarp = AlarmActionWarpEnum.KillWarp;
+                        ActionShowMessage = false;
+                        ActionDeleteWhenDone = false;
+                        ActionPlaySound = false;
+                        break;
+                    case AlarmActionEnum.KillWarp:
+                        ActionWarp = AlarmActionWarpEnum.KillWarp;
+                        ActionShowMessage = true;
+                        ActionDeleteWhenDone = false;
+                        ActionPlaySound = false;
+                        break;
+                    case AlarmActionEnum.PauseGame:
+                        ActionWarp = AlarmActionWarpEnum.PauseGame;
+                        ActionShowMessage = true;
+                        ActionDeleteWhenDone = false;
+                        ActionPlaySound = false;
+                        break;
+                    case AlarmActionEnum.Custom:
+                    case AlarmActionEnum.Converted:
+                    default:
+                        break;
+                }
+
+            }
+        }
+
+        #endregion       
+        #endregion
+
+
+
         //public ManeuverNode ManNode;                                              //Stored ManeuverNode attached to alarm
         public List<ManeuverNode> ManNodes = new List<ManeuverNode>();                                  //Stored ManeuverNode's attached to alarm
         [Persistent] String ManNodesStorage = "";
@@ -307,9 +403,6 @@ namespace KerbalAlarmClock
         public Int32 AlarmLineHeight = 0;
         public Int32 AlarmLineHeightExtra { get { return (AlarmLineHeight > 22) ? AlarmLineHeight - 22 : 0; } }
 
-
-        public Boolean PauseGame { get { return AlarmAction == AlarmActionEnum.PauseGame; } }
-        public Boolean HaltWarp { get { return (AlarmAction == AlarmActionEnum.KillWarp || AlarmAction == AlarmActionEnum.KillWarpOnly); } }
 
         public override void OnEncodeToConfigNode()
         {
@@ -463,7 +556,7 @@ namespace KerbalAlarmClock
         }
         public KACAlarm Duplicate()
         {
-            KACAlarm newAlarm = new KACAlarm(this.VesselID, this.Name, this.Notes, this.AlarmTime.UT, this.AlarmMarginSecs, this.TypeOfAlarm, this.AlarmAction); ;
+            KACAlarm newAlarm = new KACAlarm(this.VesselID, this.Name, this.Notes, this.AlarmTime.UT, this.AlarmMarginSecs, this.TypeOfAlarm, this.AlarmActionConvert); ;
             newAlarm.ContractAlarmType = this.ContractAlarmType;
             newAlarm.ContractGUID = this.ContractGUID;
             newAlarm.DeleteOnClose = this.DeleteOnClose;
@@ -473,6 +566,10 @@ namespace KerbalAlarmClock
             newAlarm.TargetObject = this.TargetObject;
             newAlarm.XferOriginBodyName = this.XferOriginBodyName;
             newAlarm.XferTargetBodyName= this.XferTargetBodyName;
+            newAlarm.ActionWarp = this.ActionWarp;
+            newAlarm.ActionShowMessage = this.ActionShowMessage;
+            newAlarm.ActionDeleteWhenDone = this.ActionDeleteWhenDone;
+            newAlarm.ActionPlaySound = this.ActionPlaySound;
 
             return newAlarm;
         }
@@ -638,7 +735,6 @@ namespace KerbalAlarmClock
 
     internal class KACAlarmListStorage : ConfigNodeStorage
     {
-        [Persistent]
-        public List<KACAlarm> list;
+        [Persistent] public List<KACAlarm> list;
     }
 }

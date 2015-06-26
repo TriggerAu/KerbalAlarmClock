@@ -306,11 +306,10 @@ namespace KerbalAlarmClock
 
             try
             {
-                GUILayout.Label(audioIndicatorStartTime.ToString());
-                GUILayout.Label(Time.time.ToString());
-                GUILayout.Label(audioIndicatorValue.ToString());
-                GUILayout.Label(audioIndicatorStart.ToString());
-                GUILayout.Label(audioIndicatorEnd.ToString());
+                GUILayout.Label(String.Format("ManNodeExists:{0}",KACWorkerGameState.ManeuverNodeExists));
+                GUILayout.Label(String.Format("ManNodeGizmoAttached:{0}",KACWorkerGameState.ManeuverNodeFuture.attachedGizmo!=null));
+
+                GUILayout.Label(String.Format("AnyManNodeGizmo:{0}", KACWorkerGameState.ManeuverNodesAll.Any(n=>n.attachedGizmo!=null)));
             }
             catch (Exception)
             {

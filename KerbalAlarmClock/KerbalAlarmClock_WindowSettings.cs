@@ -137,7 +137,7 @@ namespace KerbalAlarmClock
                             break;
                         case SettingsAlarmSpecsEnum.WarpTo:
                             WindowLayout_SettingsSpecifics_WarpTo();
-                            intSettingsHeight = 453; // 419;//  395;//221; //318;
+                            intSettingsHeight = 477; // 453; // 419;//  395;//221; //318;
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
@@ -364,6 +364,11 @@ namespace KerbalAlarmClock
             {
                 settings.Save();
             }
+            if (DrawCheckbox(ref settings.WarpToHideWhenManGizmoShown, new GUIContent("Hide all WarpTo's when Node Gizmo shown", "Hides all warpto stuff when the man node gizmo is visible")))
+            {
+                settings.Save();
+            }
+
             GUILayout.BeginHorizontal();
             String strTemp = settings.WarpToDupeProximitySecs.ToString("0");
             if (DrawTextBox(ref strTemp, KACResources.styleAddField, GUILayout.Width(45)))

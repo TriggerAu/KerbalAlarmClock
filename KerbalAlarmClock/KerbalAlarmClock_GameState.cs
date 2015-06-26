@@ -104,6 +104,20 @@ namespace KerbalAlarmClock
             }
         }
 
+        internal static List<ManeuverNode> ManeuverNodesAll
+        {
+            get
+            {
+                return (CurrentVessel.patchedConicSolver.maneuverNodes.OrderBy(x => x.UT).ToList<ManeuverNode>());
+            }
+        }
+        internal static Boolean ManeuverNodesAll_GizmoShown
+        {
+            get
+            {
+                return KACWorkerGameState.ManeuverNodesAll.Any(n => n.attachedGizmo != null);
+            }
+        }
 
         internal static Boolean SOIPointExists
         {

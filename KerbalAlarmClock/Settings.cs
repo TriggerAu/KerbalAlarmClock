@@ -85,6 +85,8 @@ namespace KerbalAlarmClock
         [Persistent] internal Int32 WarpTransitions_ShowIndicatorSecs = 4;
 
         [Persistent] internal Boolean WarpToEnabled = true;
+        [Persistent] internal Boolean WarpToHideWhenManGizmoShown = true;
+
         [Persistent] internal Boolean WarpToTipsHidden = false;
         [Persistent] internal Int32 WarpToTSIconDelayMSecs = 200;
         [Persistent] internal Int32 WarpToDupeProximitySecs = 60;

@@ -647,11 +647,47 @@ namespace KerbalAlarmClock
         Boolean blnFilterToVessel = false;
         Boolean blnShowFilterToVessel = false;
 
+
+        private Single audioIndicatorPulseTime = 0.5f;
+        private Single audioIndicatorStartTime = 0;
+
+        private Single audioIndicatorValue = 0f;
+        private Boolean audioIndicatorFadeIn = true;
+        private Single audioIndicatorStart, audioIndicatorEnd;
         //Now the layout
         internal void FillWindow(Int32 intWindowID)
         {
             try { GUILayout.BeginVertical(); }
             catch (Exception) { LogFormatted("FillWindow: GUILayout not ready yet"); return; }
+
+            //Audio Indicator
+            if (audioController.isPlaying)
+            {
+                //Are we starting the pulsing?
+                if (audioIndicatorStartTime == 0)
+                    audioIndicatorStartTime = Time.time;
+
+                //Have we gotten close to the limit and need to reverse direction and reset the start time
+                if (Math.Abs(audioIndicatorEnd-audioIndicatorValue) < 0.001)
+                {
+                    audioIndicatorFadeIn = !audioIndicatorFadeIn;
+                    audioIndicatorStartTime = Time.time;
+                }
+
+                //Set the Start and end valued
+                audioIndicatorEnd = 1f; audioIndicatorStart = 0f;
+                if (!audioIndicatorFadeIn) { audioIndicatorEnd = 0f; audioIndicatorStart = 1f; }
+
+                audioIndicatorValue = Mathf.Lerp(audioIndicatorStart, audioIndicatorEnd, Mathf.Clamp01((Time.time - audioIndicatorStartTime) / audioIndicatorPulseTime));
+                GUI.color = new Color(1, 1, 1, audioIndicatorValue);
+                if (GUI.Button(new Rect(-1, 3, 28, 16), new GUIContent(KACResources.btnActionSound, "Click to stop sound."), new GUIStyle()))
+                {
+                    audioController.Stop();
+                }
+                GUI.color = new Color(1, 1, 1, 1);
+            }
+            else if (audioIndicatorStartTime != 0)
+                audioIndicatorStartTime = 0;
 
             //Heading Part
             GUILayout.BeginHorizontal();
@@ -1331,7 +1367,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice4(ref Actions, "On Alarm:", 100); //62
+            DrawAlarmActionChoice4(ref Actions, "On Alarm:", 90); //62
 
             if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {
@@ -1819,6 +1855,8 @@ namespace KerbalAlarmClock
         internal Boolean DrawAlarmActionChoice4(ref AlarmActions Actions, String LabelText, Int32 LabelWidth)
         {
             Boolean blnReturn = false;
+            if (Actions.Warp == AlarmActions.WarpEnum.PauseGame)
+                GUILayout.Space(-4);
             GUILayout.BeginHorizontal();
             //GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth - 10));
             GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth - 10));
@@ -1851,10 +1889,13 @@ namespace KerbalAlarmClock
             {
                 blnReturn = blnReturn | DrawButtonList(ref intMessageChoice, styleButton, -5, KACResources.lstAlarmMessageChoices.ToArray());
                 Actions.Message = (AlarmActions.MessageEnum)intMessageChoice;
+                GUILayout.Space(-7);
+                GUILayout.Label("  Message Choice", KACResources.styleAddHeading);
             }
             else
             {
-                GUILayout.Label("Pause Action must have Msg", KACResources.styleAddXferName, GUILayout.Width(34 * 3));
+                GUILayout.Space(3);
+                GUILayout.Label("Pause Action must show Msg", KACResources.styleAddXferName, GUILayout.Width(90),GUILayout.Height(3));
                 if (Actions.Message != AlarmActions.MessageEnum.Yes)
                 {
                     Actions.Message = AlarmActions.MessageEnum.Yes;
@@ -1863,8 +1904,6 @@ namespace KerbalAlarmClock
 
             }
 
-            GUILayout.Space(-7);
-            GUILayout.Label("  Message Choice", KACResources.styleAddHeading);
             GUILayout.EndVertical();
 
             //GUILayout.BeginVertical();

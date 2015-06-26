@@ -36,7 +36,7 @@ namespace KerbalAlarmClock
 								else if (settings.AlarmPosition == 2)
 									tmpAlarm.AlarmWindow.x = Screen.width - tmpAlarm.AlarmWindow.width - 5;
 
-								tmpAlarm.DeleteOnClose = settings.AlarmDeleteOnClose;
+								//tmpAlarm.DeleteOnClose = settings.AlarmDeleteOnClose;
 							}
 							else
 							{
@@ -108,7 +108,7 @@ namespace KerbalAlarmClock
 			GUILayout.Label(tmpAlarm.Notes, KACResources.styleAlarmMessage);
 
 			GUILayout.BeginHorizontal();
-			DrawCheckbox(ref tmpAlarm.DeleteOnClose, "Delete On Close",0 );
+			DrawCheckbox(ref tmpAlarm.Actions.DeleteWhenDone, "Delete On Close",0 );
 			if (tmpAlarm.PauseGame)
 			{
 				if (FlightDriver.Pause)
@@ -145,6 +145,11 @@ namespace KerbalAlarmClock
 			if (GUILayout.Button(strText, KACResources.styleButton))
 			{
 				tmpAlarm.AlarmWindowClosed = true;
+
+                //Stop playing the sound if it is playing
+                if (audioController.isPlaying)
+                    audioController.Stop();
+
 				//tmpAlarm.ActionedAt = KACWorkerGameState.CurrentTime.UT;
 				if (tmpAlarm.PauseGame)
 					FlightDriver.SetPause(false);
@@ -155,7 +160,7 @@ namespace KerbalAlarmClock
 					MonoBehaviourExtended.LogFormatted("Error Raising API Event-Closed Alarm: {0}\r\n{1}", ex.Message, ex.StackTrace);
 				} 
 
-				if (tmpAlarm.DeleteOnClose)
+				if (tmpAlarm.Actions.DeleteWhenDone)
 					alarms.Remove(tmpAlarm);
 				//settings.SaveAlarms();
 			}
@@ -279,7 +284,7 @@ namespace KerbalAlarmClock
 			{
 				//Edit the Alarm if its not yet passed
 				Double MarginStarting = alarmEdit.AlarmMarginSecs;
-				int intHeight_EditWindowCommon = 88 +
+				int intHeight_EditWindowCommon = 103 +
 					alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16;
 				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
 					intHeight_EditWindowCommon += 28;
@@ -336,7 +341,7 @@ namespace KerbalAlarmClock
 				}
 
 				//TODO: Edit the height of this for when we have big text in restore button
-				 intAlarmEditHeight = 197 + 20 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine*14;
+				 intAlarmEditHeight = 197 + 16 + 20 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine*14;
 				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
 					intAlarmEditHeight += 28;
                 if (alarmEdit.TypeOfAlarm==KACAlarm.AlarmTypeEnum.EarthTime)

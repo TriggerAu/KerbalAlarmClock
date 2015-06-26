@@ -76,10 +76,13 @@ namespace KerbalAlarmClock
         {
             return (Playing && (clip == audiosourceAlarm.clip));
         }
-        
-        internal Boolean isPlaying()
+
+        internal Boolean isPlaying
         {
-            return Playing;
+            get
+            {
+                return Playing;
+            }
         }
 
         private Boolean Playing;

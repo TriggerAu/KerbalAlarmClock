@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlarmActions.cs" />
     <Compile Include="AlarmObjects.cs" />
     <Compile Include="API.cs" />
     <Compile Include="API\KACWrapper.cs" />

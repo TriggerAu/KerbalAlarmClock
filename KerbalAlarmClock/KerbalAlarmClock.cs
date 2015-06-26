@@ -1675,6 +1675,28 @@ namespace KerbalAlarmClock
 					if (tmpAlarm.Triggered && !tmpAlarm.Actioned)
 					{
 						tmpAlarm.Actioned = true;
+
+
+                        //Play the sounds if necessary
+                        if (tmpAlarm.Actions.PlaySound) {
+                            //first get the right sound
+                            AlarmSound s = settings.AlarmSounds.FirstOrDefault(st => st.Types.Contains(tmpAlarm.TypeOfAlarm));
+
+                            if (s == null || s.Enabled == false) {
+                                s = settings.AlarmSounds[0];
+                            }
+
+                            if (!tmpAlarm.ShowMessage && s.RepeatCount > 5)
+                            {
+                                audioController.Play(KACResources.clipAlarms[s.SoundName], 5);
+                            }
+                            else
+                            {
+                                audioController.Play(KACResources.clipAlarms[s.SoundName], s.RepeatCount);
+                            }
+                        }
+
+
                         //if (tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.KillWarpOnly 
                         //    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed
                         //    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothing)

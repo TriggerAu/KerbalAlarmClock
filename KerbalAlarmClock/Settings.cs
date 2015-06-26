@@ -129,7 +129,7 @@ namespace KerbalAlarmClock
         [Persistent] internal AlarmActions AlarmDefaultAction = new AlarmActions();
         [Persistent] internal Double AlarmDefaultMargin = 60;
         [Persistent] internal Int32 AlarmPosition = 1;
-        [Persistent] internal Boolean AlarmDeleteOnClose = false;
+        //[Persistent] internal Boolean AlarmDeleteOnClose = false;
         [Persistent] internal Boolean HideOnPause = true;
         //public Boolean TimeAsUT = false;
         [Persistent] internal OldPrintTimeFormat TimeFormat = OldPrintTimeFormat.KSPString;

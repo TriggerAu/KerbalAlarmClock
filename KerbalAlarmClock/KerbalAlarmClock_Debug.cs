@@ -264,7 +264,7 @@ namespace KerbalAlarmClock
 		int intTestheight = 500;
 		int intTestheight2 = 0;
 		int intTestheight3 = 0;
-		static int intTestheight4 = 0;
+		static int intTestheight4 = 100;
 
 		double dblTest = 12;
 
@@ -306,7 +306,11 @@ namespace KerbalAlarmClock
 
             try
             {
-                GUILayout.Label(FlightGlobals.ActiveVessel.vesselName);
+                GUILayout.Label(audioIndicatorStartTime.ToString());
+                GUILayout.Label(Time.time.ToString());
+                GUILayout.Label(audioIndicatorValue.ToString());
+                GUILayout.Label(audioIndicatorStart.ToString());
+                GUILayout.Label(audioIndicatorEnd.ToString());
             }
             catch (Exception)
             {

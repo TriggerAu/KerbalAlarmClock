@@ -342,8 +342,8 @@ namespace KerbalAlarmClock
                 settings.AlarmDefaultMargin = timeDefaultMargin.UT;
                 settings.Save();
             }
-            if (DrawCheckbox(ref settings.AlarmDeleteOnClose, "Delete Alarm On Close"))
-                settings.Save();
+            //if (DrawCheckbox(ref settings.AlarmDeleteOnClose, "Delete Alarm On Close"))
+            //    settings.Save();
 
             GUILayout.EndVertical();
         }

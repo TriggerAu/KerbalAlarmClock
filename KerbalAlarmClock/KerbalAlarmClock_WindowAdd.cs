@@ -64,7 +64,7 @@ namespace KerbalAlarmClock
             strAlarmNotes = "";
             AddNotesHeight = 100;
 
-            AddActions = settings.AlarmDefaultAction;
+            AddActions = settings.AlarmDefaultAction.Duplicate();
             //blnHaltWarp = true;
 
             //set initial alarm type based on whats on the flight path

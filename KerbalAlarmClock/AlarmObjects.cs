@@ -225,7 +225,16 @@ namespace KerbalAlarmClock
 
         public Boolean PauseGame { get { return Actions.Warp == AlarmActions.WarpEnum.PauseGame; } }
         public Boolean HaltWarp { get { return Actions.Warp == AlarmActions.WarpEnum.KillWarp; } }
-        
+
+        public Boolean ShowMessage { get { 
+            return ((Actions.Message==AlarmActions.MessageEnum.Yes) ||
+                    ( Actions.Message == AlarmActions.MessageEnum.YesIfOtherVessel &&
+                        KACWorkerGameState.CurrentVessel!=null &&
+                        VesselID == KACWorkerGameState.CurrentVessel.id.ToString()
+                    )
+                );
+        } }
+
         #region Old ActionEnum
         [Persistent] public AlarmActionEnum AlarmAction = AlarmActionEnum.Converted;
         [Persistent] public Boolean AlarmActionConverted = false;
@@ -371,7 +380,7 @@ namespace KerbalAlarmClock
         public String TargetLoader = "";
 
 
-        [Persistent] internal Boolean DeleteOnClose;                                //Whether the checkbox is on or off for this
+        //[Persistent] internal Boolean DeleteOnClose;                                //Whether the checkbox is on or off for this
         [Persistent] internal Boolean Triggered = false;                            //Has this alarm been triggered
         [Persistent] internal Boolean Actioned = false;                             //Has the code actioned th alarm - ie. displayed its message
 
@@ -548,7 +557,6 @@ namespace KerbalAlarmClock
             KACAlarm newAlarm = new KACAlarm(this.VesselID, this.Name, this.Notes, this.AlarmTime.UT, this.AlarmMarginSecs, this.TypeOfAlarm, this.Actions); ;
             newAlarm.ContractAlarmType = this.ContractAlarmType;
             newAlarm.ContractGUID = this.ContractGUID;
-            newAlarm.DeleteOnClose = this.DeleteOnClose;
             newAlarm.ManNodes = this.ManNodes;
             newAlarm.RepeatAlarm = this.RepeatAlarm;
             newAlarm.RepeatAlarmPeriod = this.RepeatAlarmPeriod;
@@ -561,63 +569,6 @@ namespace KerbalAlarmClock
     }
 
 
-    public class AlarmActions
-    {
-        public AlarmActions() { }
-        public AlarmActions(WarpEnum Warp, MessageEnum Message, Boolean PlaySound, Boolean DeleteWhenDone) {
-            this.Warp = Warp;
-            this.Message = Message;
-            this.PlaySound = PlaySound;
-            this.DeleteWhenDone = DeleteWhenDone;
-        }
-
-        [Persistent] public WarpEnum Warp = WarpEnum.KillWarp;
-        [Persistent] public MessageEnum Message = MessageEnum.Yes;
-        [Persistent] public Boolean DeleteWhenDone = false;
-        [Persistent] public Boolean PlaySound = false;
-
-        public override string ToString()
-        {
-            return String.Format("{0}-{1}-{2}-{3}",Warp,Message,PlaySound,DeleteWhenDone);
-        }
-
-        public enum WarpEnum
-        {
-            [Description("Do Nothing")]             DoNothing,
-            [Description("Kill Warp")]              KillWarp,
-            [Description("Pause Game")]             PauseGame
-        }
-
-        public enum MessageEnum
-        {
-            [Description("Display Message")]                        Yes,
-            [Description("No Message")]                         No,
-            [Description("Show Message if vessel not active")]   YesIfOtherVessel
-
-        }
-
-        public AlarmActions Duplicate()
-        {
-            return new AlarmActions(this.Warp, this.Message, this.PlaySound, this.DeleteWhenDone);
-        }
-
-        public static AlarmActions DefaultsKillWarpOnly()
-        {
-            return new AlarmActions(WarpEnum.KillWarp, MessageEnum.No, false, false);
-        }
-        public static AlarmActions DefaultsKillWarp()
-        {
-            return new AlarmActions(WarpEnum.KillWarp, MessageEnum.Yes, false, false);
-        }
-        public static AlarmActions DefaultsPauseGame()
-        {
-            return new AlarmActions(WarpEnum.PauseGame, MessageEnum.Yes, false, false);
-        }
-        public static AlarmActions DefaultsDoNothing()
-        {
-            return new AlarmActions(WarpEnum.DoNothing, MessageEnum.No, false, false);
-        }
-    }
 
     //public class ManeuverNodeStorageList:List<ManeuverNodeStorage>
     //{

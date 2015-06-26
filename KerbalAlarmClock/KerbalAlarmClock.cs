@@ -529,12 +529,13 @@ namespace KerbalAlarmClock
         private DateTime drawingTrackStationButtonsAt = DateTime.Now;
         private void DrawNodeButtons()
         {
-            //Dont draw these if there are any gizmos visible
-            if (settings.WarpToHideWhenManGizmoShown && KACWorkerGameState.ManeuverNodesAll_GizmoShown)
-                return;
 
             if (MapView.MapIsEnabled && KACWorkerGameState.CurrentVessel != null && !KACWorkerGameState.CurrentVessel.LandedOrSplashed)
             {
+                //Dont draw these if there are any gizmos visible
+                if (settings.WarpToHideWhenManGizmoShown && KACWorkerGameState.ManeuverNodesAll_GizmoShown)
+                    return;
+
                 //Check if the focus just went off so the buttons still work
                 if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused) {
                     drawingTrackStationButtons = true;

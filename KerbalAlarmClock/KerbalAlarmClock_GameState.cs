@@ -115,7 +115,7 @@ namespace KerbalAlarmClock
         {
             get
             {
-                return KACWorkerGameState.ManeuverNodesAll.Any(n => n.attachedGizmo != null);
+                return KACWorkerGameState.ManeuverNodeExists && KACWorkerGameState.ManeuverNodesAll.Any(n => n.attachedGizmo != null);
             }
         }
 

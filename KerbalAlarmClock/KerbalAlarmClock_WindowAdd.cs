@@ -1497,8 +1497,8 @@ namespace KerbalAlarmClock
                                 {
                                     String strPhase = String.Format("{0:0.00}({1:0.00})", XferTargetBodies[intTarget].PhaseAngleCurrent, tmpModelPoint.PhaseAngle);
                                     GUILayout.Label(strPhase, KACResources.styleAddHeading, GUILayout.Width(105), GUILayout.Height(20));
-                                    KSPDateTime tmpTime = new KSPDateTime(tmpModelPoint.UT - KACWorkerGameState.CurrentTime.UT);
-                                    GUILayout.Label(tmpTime.ToStringStandard(settings.DateTimeFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));                                
+                                    KSPTimeSpan tmpTime = new KSPTimeSpan(tmpModelPoint.UT - KACWorkerGameState.CurrentTime.UT);
+                                    GUILayout.Label(tmpTime.ToStringStandard(settings.TimeSpanFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));                                
 
                                     if (intTarget==intXferCurrentTarget)
                                         XferCurrentTargetEventTime = new KSPDateTime(tmpModelPoint.UT);

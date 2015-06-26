@@ -678,16 +678,22 @@ namespace KerbalAlarmClock
                 audioIndicatorEnd = 1f; audioIndicatorStart = 0f;
                 if (!audioIndicatorFadeIn) { audioIndicatorEnd = 0f; audioIndicatorStart = 1f; }
 
+                //Work out the new value - Lerping over time between 0 and 1
                 audioIndicatorValue = Mathf.Lerp(audioIndicatorStart, audioIndicatorEnd, Mathf.Clamp01((Time.time - audioIndicatorStartTime) / audioIndicatorPulseTime));
+                //Change the GUI draw color
                 GUI.color = new Color(1, 1, 1, audioIndicatorValue);
                 if (GUI.Button(new Rect(-1, 3, 28, 16), new GUIContent(KACResources.btnActionSound, "Click to stop sound."), new GUIStyle()))
                 {
                     audioController.Stop();
                 }
+                //Change it back to normal
                 GUI.color = new Color(1, 1, 1, 1);
             }
             else if (audioIndicatorStartTime != 0)
+            {
+                //if the sound is not playing and the start time is set - then reset it for next time
                 audioIndicatorStartTime = 0;
+            }
 
             //Heading Part
             GUILayout.BeginHorizontal();

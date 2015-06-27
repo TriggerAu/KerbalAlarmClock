@@ -734,8 +734,6 @@ namespace KerbalAlarmClock
             if (HideCheck) {
                 GUILayout.Label("     " + sound.Name, KACResources.styleCheckboxLabel,GUILayout.Width(100));
             } else {
-                GUIStyle styleC = new GUIStyle(KACResources.styleCheckbox);
-                styleC.padding.left = intTestheight2;
                 if (DrawToggle(ref sound.Enabled, sound.Name, KACResources.styleCheckbox,GUILayout.Width(100)))
                 {
                     settings.Save();

@@ -569,6 +569,7 @@ namespace KerbalAlarmClock
                 {
                     AlarmSounds.First(s => s.Name == "Earth").SoundName = "Rooster";
                     AlarmSounds.First(s => s.Name == "Earth").Enabled=true;
+                    AlarmSounds.First(s => s.Name == "Earth").RepeatCount=2;
                 }
 
 

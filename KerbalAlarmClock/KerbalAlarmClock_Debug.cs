@@ -261,10 +261,10 @@ namespace KerbalAlarmClock
 			return UT;
 		}
 
-		int intTestheight = 0;
+		int intTestheight = 500;
 		int intTestheight2 = 0;
 		int intTestheight3 = 0;
-		static int intTestheight4 = 0;
+		static int intTestheight4 = 100;
 
 		double dblTest = 12;
 
@@ -306,7 +306,10 @@ namespace KerbalAlarmClock
 
             try
             {
-                GUILayout.Label(FlightGlobals.ActiveVessel.vesselName);
+                GUILayout.Label(String.Format("ManNodeExists:{0}",KACWorkerGameState.ManeuverNodeExists));
+                GUILayout.Label(String.Format("ManNodeGizmoAttached:{0}",KACWorkerGameState.ManeuverNodeFuture.attachedGizmo!=null));
+
+                GUILayout.Label(String.Format("AnyManNodeGizmo:{0}", KACWorkerGameState.ManeuverNodesAll.Any(n=>n.attachedGizmo!=null)));
             }
             catch (Exception)
             {
@@ -316,7 +319,12 @@ namespace KerbalAlarmClock
 
             if (GUILayout.Button("KER ME"))
             {
-                LogFormatted("B:{0} - H:{1} - HASIT:{2}", KAC_KERWrapper.KERWrapper.KER.BurnTime, KAC_KERWrapper.KERWrapper.KER.HalfBurnTime,KAC_KERWrapper.KERWrapper.KER.HasDeltaV);
+                LogFormatted("B:{0} - H:{1} - HASIT:{2}", KAC_KERWrapper.KERWrapper.KER.BurnTime, KAC_KERWrapper.KERWrapper.KER.HalfBurnTime, KAC_KERWrapper.KERWrapper.KER.HasDeltaV);
+            }
+            if (GUILayout.Button("VOID ME"))
+            {
+                LogFormatted("B:{0} - H:{1} - HASIT:{2}", KAC_VOIDWrapper.VOIDWrapper.VOID.BurnTime, KAC_VOIDWrapper.VOIDWrapper.VOID.HalfBurnTime, KAC_VOIDWrapper.VOIDWrapper.VOID.HasDeltaV);
+
             }
             //GUILayout.Label(WindowPosByActiveScene.ToString());
             //GUILayout.Label(Input.mousePosition.ToString());

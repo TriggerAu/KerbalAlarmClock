@@ -51,9 +51,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlarmActions.cs" />
     <Compile Include="AlarmObjects.cs" />
     <Compile Include="API.cs" />
     <Compile Include="API\KACWrapper.cs" />
+    <Compile Include="FrameworkExt\AudioController.cs" />
     <Compile Include="FrameworkExt\Extensions.cs" />
     <Compile Include="SharedStuff\ExtensionsKSP.cs" />
     <Compile Include="FrameworkExt\KSPDateStructure.cs" />
@@ -64,6 +66,7 @@
     <Compile Include="Framework\MonoBehaviourExtended.cs" />
     <Compile Include="KerbalAlarmClock_WindowQuick.cs" />
     <Compile Include="SharedStuff\AppLauncher.cs" />
+    <Compile Include="SharedStuff\VOIDWrapper.cs" />
     <Compile Include="SharedStuff\KERWrapper.cs" />
     <Compile Include="SharedStuff\ToolbarWrapper.cs" />
     <Compile Include="KerbalAlarmClock_WindowDropDowns.cs" />

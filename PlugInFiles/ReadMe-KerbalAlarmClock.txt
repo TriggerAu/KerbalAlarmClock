@@ -28,7 +28,25 @@ If there are errors in loading the config you can delete the "<KSP_OS>\GameData\
 LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
+ATTRIBUTION-SOUNDS
+Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
+
 VERSION HISTORY
+Version 3.4.0.0		-	KSP Version: 1.0.4
+- Added Audio to Alarms - ie play a sound when an alarm fires (Issue #4)
+- Added repeat option to Ap/PE alarms (Issue #128)
+- Added an action for only showing a message if the associated vessel is not the active one (Issue #125)
+- Added "Create All Transfers" option for transfer alarms so you can create all windows from a planet (Issue #123)
+- Added "Select Vessel" option for TS so you can highlight the vessel when an alarm fires (Issue #100)
+- Added VOID wrapper to do burntime from it as well (Issue #138)
+- Redesigned the Alarm Actions to allow many more combinations of actions (Issue #146)
+- Change WarpTo Display so buttons hidden if any Manuever Gizmo is active (Issue #148)
+- Fixed Issue with incorrect time formatting on Model Transfers (Issue #149)
+- Fixed issue where autoManNode Alarms weren't calculating/updating burntime (Issue #139)
+- Extra checking to SetCurrentFlightStates to prevent NRE (Issue #147)
+- Extra checking to isEditorVAB to prevent NRE (Issue #142)
+- Reworked selection code in TS
+
 Version 3.3.2.1		-	KSP Version: 1.0.2
 - Added KER Wrapper/Integration to provide BurnTime based margins (Issue #14)
 - Fixed issue with editing Automatic ManNode Margins (Issue #135)

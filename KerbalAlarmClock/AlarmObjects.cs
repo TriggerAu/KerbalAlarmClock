@@ -111,7 +111,10 @@ namespace KerbalAlarmClock
         internal static List<AlarmTypeEnum> AlarmTypeSupportsRepeat = new List<AlarmTypeEnum>() {
             AlarmTypeEnum.Raw,
             AlarmTypeEnum.Crew,
-            AlarmTypeEnum.TransferModelled
+            AlarmTypeEnum.TransferModelled,
+            AlarmTypeEnum.Apoapsis,
+            AlarmTypeEnum.Periapsis
+
         };
         internal static List<AlarmTypeEnum> AlarmTypeSupportsRepeatPeriod = new List<AlarmTypeEnum>() {
             AlarmTypeEnum.Raw,
@@ -128,6 +131,8 @@ namespace KerbalAlarmClock
             [Description("Kill Warp Only-No Message")]          KillWarpOnly,
             [Description("Kill Warp and Message")]              KillWarp,
             [Description("Pause Game and Message")]             PauseGame,
+            [Description("Custom Config")]                      Custom,
+            [Description("Converted to Components")]            Converted,
         }
 
         public enum ContractAlarmTypeEnum
@@ -148,35 +153,35 @@ namespace KerbalAlarmClock
             Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
         }
 
-        public KACAlarm(String NewName, double UT, AlarmTypeEnum atype, AlarmActionEnum aAction)
+        public KACAlarm(String NewName, double UT, AlarmTypeEnum atype, AlarmActions aAction)
             : this(UT)
         {
             Name = NewName;
             TypeOfAlarm = atype;
-            AlarmAction = aAction;
+            this.Actions = aAction.Duplicate();
         }
 
-        public KACAlarm(String vID, String NewName, double UT, AlarmTypeEnum atype, AlarmActionEnum aAction)
+        public KACAlarm(String vID, String NewName, double UT, AlarmTypeEnum atype, AlarmActions aAction)
             : this(NewName,UT,atype,aAction)
         {
             VesselID = vID;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActions aAction)
             : this (vID,NewName,UT,atype,aAction)
         {
             Notes = NewNotes;
             AlarmMarginSecs = Margin;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes,  double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction, List<ManeuverNode> NewManeuvers)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActions aAction, List<ManeuverNode> NewManeuvers)
             : this(vID, NewName, NewNotes, UT, Margin, atype, aAction)
         {
             //set maneuver node
             ManNodes = NewManeuvers;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction, KACXFerTarget NewTarget)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActions aAction, KACXFerTarget NewTarget)
             : this(vID, NewName, NewNotes, UT, Margin, atype, aAction)
         {
             //Set target details
@@ -184,7 +189,7 @@ namespace KerbalAlarmClock
             XferTargetBodyName = NewTarget.Target.bodyName;
         }
 
-        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActionEnum aAction, ITargetable NewTarget)
+        public KACAlarm(String vID, String NewName, String NewNotes, double UT, Double Margin, AlarmTypeEnum atype, AlarmActions aAction, ITargetable NewTarget)
             : this(vID,NewName,NewNotes,UT,Margin,atype,aAction)
         {
             //Set the ITargetable proerty
@@ -212,9 +217,101 @@ namespace KerbalAlarmClock
 
         [Persistent] public Double AlarmMarginSecs = 0;                             //What the margin from the event was
         [Persistent] public Boolean Enabled = true;                                 //Whether it is enabled - not in use currently
-        [Persistent] public AlarmActionEnum AlarmAction= AlarmActionEnum.KillWarp;
-        [Persistent] public Boolean DeleteWhenPassed = false;                       //Whether it will be cleaned up after its time
-        
+        //[Persistent] public Boolean DeleteWhenPassed = false;                       //Whether it will be cleaned up after its time
+
+        #region Alarm Action Stuff
+
+        [Persistent] public AlarmActions Actions = new AlarmActions();
+
+        public Boolean PauseGame { get { return Actions.Warp == AlarmActions.WarpEnum.PauseGame; } }
+        public Boolean HaltWarp { get { return Actions.Warp == AlarmActions.WarpEnum.KillWarp; } }
+
+        public Boolean ShowMessage { get { 
+            return ((Actions.Message==AlarmActions.MessageEnum.Yes) ||
+                    ( Actions.Message == AlarmActions.MessageEnum.YesIfOtherVessel &&
+                        KACWorkerGameState.CurrentVessel!=null &&
+                        VesselID == KACWorkerGameState.CurrentVessel.id.ToString()
+                    )
+                );
+        } }
+
+        #region Old ActionEnum
+        [Persistent] public AlarmActionEnum AlarmAction = AlarmActionEnum.Converted;
+        [Persistent] public Boolean AlarmActionConverted = false;
+
+        public AlarmActionEnum AlarmActionConvert
+        {
+            get
+            {
+                if ((Actions.Warp == AlarmActions.WarpEnum.DoNothing) && (Actions.Message==AlarmActions.MessageEnum.No) & !Actions.DeleteWhenDone & !Actions.PlaySound)
+                    return AlarmActionEnum.DoNothing;
+                else if ((Actions.Warp == AlarmActions.WarpEnum.DoNothing) && (Actions.Message == AlarmActions.MessageEnum.No) & Actions.DeleteWhenDone & !Actions.PlaySound)
+                    return AlarmActionEnum.DoNothingDeleteWhenPassed;
+                else if ((Actions.Warp == AlarmActions.WarpEnum.KillWarp) && (Actions.Message == AlarmActions.MessageEnum.Yes) & !Actions.DeleteWhenDone & !Actions.PlaySound)
+                    return AlarmActionEnum.KillWarp;
+                else if ((Actions.Warp == AlarmActions.WarpEnum.KillWarp) && (Actions.Message == AlarmActions.MessageEnum.No) & !Actions.DeleteWhenDone & !Actions.PlaySound)
+                    return AlarmActionEnum.KillWarpOnly;
+                else if ((Actions.Warp == AlarmActions.WarpEnum.DoNothing) && (Actions.Message == AlarmActions.MessageEnum.Yes) & !Actions.DeleteWhenDone & !Actions.PlaySound)
+                    return AlarmActionEnum.MessageOnly;
+                else if ((Actions.Warp == AlarmActions.WarpEnum.PauseGame) && (Actions.Message == AlarmActions.MessageEnum.Yes) & !Actions.DeleteWhenDone & !Actions.PlaySound)
+                    return AlarmActionEnum.PauseGame;
+                else
+                    return AlarmActionEnum.Custom;
+            }
+            set
+            {
+                switch (value)
+                {
+                    case AlarmActionEnum.DoNothingDeleteWhenPassed:
+                        Actions.Warp = AlarmActions.WarpEnum.DoNothing;
+                        Actions.Message = AlarmActions.MessageEnum.No;
+                        Actions.DeleteWhenDone = true;
+                        Actions.PlaySound = false;
+                        break;
+                    case AlarmActionEnum.DoNothing:
+                        Actions.Warp = AlarmActions.WarpEnum.DoNothing;
+                        Actions.Message = AlarmActions.MessageEnum.No;
+                        Actions.DeleteWhenDone = false;
+                        Actions.PlaySound = false;
+                        break;
+                    case AlarmActionEnum.MessageOnly:
+                        Actions.Warp = AlarmActions.WarpEnum.DoNothing;
+                        Actions.Message = AlarmActions.MessageEnum.Yes;
+                        Actions.DeleteWhenDone = false;
+                        Actions.PlaySound = false;
+                        break;
+                    case AlarmActionEnum.KillWarpOnly:
+                        Actions.Warp = AlarmActions.WarpEnum.KillWarp;
+                        Actions.Message = AlarmActions.MessageEnum.No;
+                        Actions.DeleteWhenDone = false;
+                        Actions.PlaySound = false;
+                        break;
+                    case AlarmActionEnum.KillWarp:
+                        Actions.Warp = AlarmActions.WarpEnum.KillWarp;
+                        Actions.Message = AlarmActions.MessageEnum.Yes;
+                        Actions.DeleteWhenDone = false;
+                        Actions.PlaySound = false;
+                        break;
+                    case AlarmActionEnum.PauseGame:
+                        Actions.Warp = AlarmActions.WarpEnum.PauseGame;
+                        Actions.Message = AlarmActions.MessageEnum.Yes;
+                        Actions.DeleteWhenDone = false;
+                        Actions.PlaySound = false;
+                        break;
+                    case AlarmActionEnum.Custom:
+                    case AlarmActionEnum.Converted:
+                    default:
+                        break;
+                }
+
+            }
+        }
+
+        #endregion       
+        #endregion
+
+
+
         //public ManeuverNode ManNode;                                              //Stored ManeuverNode attached to alarm
         public List<ManeuverNode> ManNodes = new List<ManeuverNode>();                                  //Stored ManeuverNode's attached to alarm
         [Persistent] String ManNodesStorage = "";
@@ -233,6 +330,9 @@ namespace KerbalAlarmClock
 
         public Boolean SupportsRepeat { get { return AlarmTypeSupportsRepeat.Contains(this.TypeOfAlarm); } }
         public Boolean SupportsRepeatPeriod { get { return AlarmTypeSupportsRepeatPeriod.Contains(this.TypeOfAlarm); } }
+
+        /// <summary>Should the alarm play a sound</summary>
+        [Persistent] public Boolean PlaySound = false;
 
         //Have to generate these details when the target object is set
         private ITargetable _TargetObject = null;                                   //Stored Target Details
@@ -280,7 +380,7 @@ namespace KerbalAlarmClock
         public String TargetLoader = "";
 
 
-        [Persistent] internal Boolean DeleteOnClose;                                //Whether the checkbox is on or off for this
+        //[Persistent] internal Boolean DeleteOnClose;                                //Whether the checkbox is on or off for this
         [Persistent] internal Boolean Triggered = false;                            //Has this alarm been triggered
         [Persistent] internal Boolean Actioned = false;                             //Has the code actioned th alarm - ie. displayed its message
 
@@ -301,9 +401,6 @@ namespace KerbalAlarmClock
         public Int32 AlarmLineHeight = 0;
         public Int32 AlarmLineHeightExtra { get { return (AlarmLineHeight > 22) ? AlarmLineHeight - 22 : 0; } }
 
-
-        public Boolean PauseGame { get { return AlarmAction == AlarmActionEnum.PauseGame; } }
-        public Boolean HaltWarp { get { return (AlarmAction == AlarmActionEnum.KillWarp || AlarmAction == AlarmActionEnum.KillWarpOnly); } }
 
         public override void OnEncodeToConfigNode()
         {
@@ -457,10 +554,9 @@ namespace KerbalAlarmClock
         }
         public KACAlarm Duplicate()
         {
-            KACAlarm newAlarm = new KACAlarm(this.VesselID, this.Name, this.Notes, this.AlarmTime.UT, this.AlarmMarginSecs, this.TypeOfAlarm, this.AlarmAction); ;
+            KACAlarm newAlarm = new KACAlarm(this.VesselID, this.Name, this.Notes, this.AlarmTime.UT, this.AlarmMarginSecs, this.TypeOfAlarm, this.Actions); ;
             newAlarm.ContractAlarmType = this.ContractAlarmType;
             newAlarm.ContractGUID = this.ContractGUID;
-            newAlarm.DeleteOnClose = this.DeleteOnClose;
             newAlarm.ManNodes = this.ManNodes;
             newAlarm.RepeatAlarm = this.RepeatAlarm;
             newAlarm.RepeatAlarmPeriod = this.RepeatAlarmPeriod;
@@ -471,6 +567,8 @@ namespace KerbalAlarmClock
             return newAlarm;
         }
     }
+
+
 
     //public class ManeuverNodeStorageList:List<ManeuverNodeStorage>
     //{
@@ -632,7 +730,6 @@ namespace KerbalAlarmClock
 
     internal class KACAlarmListStorage : ConfigNodeStorage
     {
-        [Persistent]
-        public List<KACAlarm> list;
+        [Persistent] public List<KACAlarm> list;
     }
 }

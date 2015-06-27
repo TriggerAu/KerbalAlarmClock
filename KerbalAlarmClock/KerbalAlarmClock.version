@@ -4,14 +4,14 @@
   "DOWNLOAD" : "https://github.com/TriggerAu/KerbalAlarmClock/releases",
   "VERSION": {
     "MAJOR": 3,
-    "MINOR": 3,
-    "PATCH": 2,
-    "BUILD": 1
+    "MINOR": 4,
+    "PATCH": 0,
+    "BUILD": 0
   },
   "KSP_VERSION": {
     "MAJOR": 1,
     "MINOR": 0,
-    "PATCH": 2
+    "PATCH": 4
   },
   "KSP_VERSION_MIN": {
     "MAJOR": 1,

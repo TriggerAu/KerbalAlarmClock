@@ -155,7 +155,20 @@ namespace KerbalAlarmClock
             }
         }
 
-        internal static Boolean isEditorVAB { get { return ((EditorLogic.VesselRotation * Vector3d.up) == Vector3.up); } }
+        internal static Boolean isEditorVAB
+        {
+            get
+            {
+                try
+                {
+                    return ((EditorLogic.VesselRotation * Vector3d.up) == Vector3.up);
+                }
+                catch (Exception)
+                {
+                    return true;
+                }
+            }
+        }
 
 
         public Boolean WindowVisibleByActiveScene
@@ -448,6 +461,7 @@ namespace KerbalAlarmClock
         private Int32 intMainWindowEarthTimeHeight = 25;
 
         private Int32 intPaneWindowWidth = 380;
+        private Int32 intSettingsPaneWindowWidth = 420;
         private Int32 intAddPaneWindowWidth = 340;
         private Int32 AddWindowHeight;
 
@@ -518,7 +532,7 @@ namespace KerbalAlarmClock
             //Do we have anything to show in the right pane
             if (_ShowSettings)
             {
-                _WindowSettingsRect = GUILayout.Window(_WindowSettingsID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intPaneWindowWidth, intSettingsHeight, ref _ShowShowSettingsOnLeft,settings.WindowChildPosBelow), FillSettingsWindow, "Settings and Globals", KACResources.styleWindow);
+                _WindowSettingsRect = GUILayout.Window(_WindowSettingsID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intSettingsPaneWindowWidth, intSettingsHeight, ref _ShowShowSettingsOnLeft, settings.WindowChildPosBelow), FillSettingsWindow, "Settings and Globals", KACResources.styleWindow);
             }
             else if (_ShowAddPane)
             {
@@ -633,11 +647,53 @@ namespace KerbalAlarmClock
         Boolean blnFilterToVessel = false;
         Boolean blnShowFilterToVessel = false;
 
+
+        private Single audioIndicatorPulseTime = 0.5f;
+        private Single audioIndicatorStartTime = 0;
+
+        private Single audioIndicatorValue = 0f;
+        private Boolean audioIndicatorFadeIn = true;
+        private Single audioIndicatorStart, audioIndicatorEnd;
         //Now the layout
         internal void FillWindow(Int32 intWindowID)
         {
             try { GUILayout.BeginVertical(); }
             catch (Exception) { LogFormatted("FillWindow: GUILayout not ready yet"); return; }
+
+            //Audio Indicator
+            if (audioController.isPlaying)
+            {
+                //Are we starting the pulsing?
+                if (audioIndicatorStartTime == 0)
+                    audioIndicatorStartTime = Time.time;
+
+                //Have we gotten close to the limit and need to reverse direction and reset the start time
+                if (Math.Abs(audioIndicatorEnd-audioIndicatorValue) < 0.001)
+                {
+                    audioIndicatorFadeIn = !audioIndicatorFadeIn;
+                    audioIndicatorStartTime = Time.time;
+                }
+
+                //Set the Start and end valued
+                audioIndicatorEnd = 1f; audioIndicatorStart = 0f;
+                if (!audioIndicatorFadeIn) { audioIndicatorEnd = 0f; audioIndicatorStart = 1f; }
+
+                //Work out the new value - Lerping over time between 0 and 1
+                audioIndicatorValue = Mathf.Lerp(audioIndicatorStart, audioIndicatorEnd, Mathf.Clamp01((Time.time - audioIndicatorStartTime) / audioIndicatorPulseTime));
+                //Change the GUI draw color
+                GUI.color = new Color(1, 1, 1, audioIndicatorValue);
+                if (GUI.Button(new Rect(-1, 3, 28, 16), new GUIContent(KACResources.btnActionSound, "Click to stop sound."), new GUIStyle()))
+                {
+                    audioController.Stop();
+                }
+                //Change it back to normal
+                GUI.color = new Color(1, 1, 1, 1);
+            }
+            else if (audioIndicatorStartTime != 0)
+            {
+                //if the sound is not playing and the start time is set - then reset it for next time
+                audioIndicatorStartTime = 0;
+            }
 
             //Heading Part
             GUILayout.BeginHorizontal();
@@ -711,8 +767,8 @@ namespace KerbalAlarmClock
                             else
                                 SOITooltip += "/Debris";
                         }
-                        if (settings.AlarmOnSOIChange_Action == KACAlarm.AlarmActionEnum.PauseGame) SOITooltip += " (Pause Action)";
-                        else if (settings.AlarmOnSOIChange_Action != KACAlarm.AlarmActionEnum.MessageOnly) SOITooltip += " (Warp Kill Action)";
+                        if (settings.AlarmOnSOIChange_Action.Warp == AlarmActions.WarpEnum.PauseGame) SOITooltip += " (Pause Action)";
+                        else if (settings.AlarmOnSOIChange_Action.Warp == AlarmActions.WarpEnum.KillWarp) SOITooltip += " (Warp Kill Action)";
                     }
                     GUIContent SOIIcon = new GUIContent(KACResources.iconSOI, SOITooltip);
                     GUILayout.Label(SOIIcon, KACResources.styleFlagIcon);
@@ -1252,7 +1308,8 @@ namespace KerbalAlarmClock
             }
             else if (tmpAlarm.HaltWarp)
             {
-                if (tmpAlarm.AlarmAction== KACAlarm.AlarmActionEnum.KillWarp)
+                //if (tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.KillWarp)
+                if (tmpAlarm.Actions.Message != AlarmActions.MessageEnum.No)
                     GUILayout.Label(new GUIContent(KACResources.GetWarpListIcon(tmpAlarm.WarpInfluence), "Kill Warp and Message"), KACResources.styleLabelWarp);
                 else
                     GUILayout.Label(new GUIContent(KACResources.GetWarpListIcon(tmpAlarm.WarpInfluence), "Kill Warp Only"), KACResources.styleLabelWarp);
@@ -1283,17 +1340,17 @@ namespace KerbalAlarmClock
         
         #endregion
 
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref Double Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref AlarmActions Actions, ref Double Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
         {
             KACTimeStringArray tmpTime = new KACTimeStringArray(Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
-            WindowLayout_CommonFields(ref strName, ref strMessage, ref Action, ref tmpTime, TypeOfAlarm, WindowHeight);
+            WindowLayout_CommonFields(ref strName, ref strMessage, ref Actions, ref tmpTime, TypeOfAlarm, WindowHeight);
             Margin = tmpTime.UT;
         }
 
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
+        private void WindowLayout_CommonFields(ref String strName, ref String strMessage, ref AlarmActions Actions, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
         {
             //Two Columns
             GUILayout.Label("Common Alarm Properties", KACResources.styleAddSectionHeading);
@@ -1316,7 +1373,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice3(ref Action, "On Alarm:", 100,40); //62
+            DrawAlarmActionChoice4(ref Actions, "On Alarm:", 90); //62
 
             if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {
@@ -1330,7 +1387,79 @@ namespace KerbalAlarmClock
         /// <summary>
         /// Layout of Common Parts of every alarm
         /// </summary>
-        private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
+        //private void WindowLayout_CommonFields2(ref String strName, ref Boolean blnAttachVessel, ref KACAlarm.AlarmActionEnum Action, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
+        //{
+        //    //Two Columns
+        //    String strTitle = "";
+        //    switch (TypeOfAlarm)
+        //    {
+        //        case KACAlarm.AlarmTypeEnum.Raw: strTitle = "Raw Time"; break;
+        //        case KACAlarm.AlarmTypeEnum.Maneuver: strTitle = "Maneuver Node"; break;
+        //        case KACAlarm.AlarmTypeEnum.SOIChange: strTitle = "SOI Change"; break;
+        //        case KACAlarm.AlarmTypeEnum.Transfer: strTitle = "Transfer Window"; break;
+        //        case KACAlarm.AlarmTypeEnum.TransferModelled: strTitle = "Transfer Window"; break;
+        //        case KACAlarm.AlarmTypeEnum.Apoapsis: strTitle = "Apoapsis"; break;
+        //        case KACAlarm.AlarmTypeEnum.Periapsis: strTitle = "Periapsis"; break;
+        //        case KACAlarm.AlarmTypeEnum.AscendingNode: strTitle = "Ascending Node"; break;
+        //        case KACAlarm.AlarmTypeEnum.DescendingNode: strTitle = "Descending Node"; break;
+        //        case KACAlarm.AlarmTypeEnum.LaunchRendevous: strTitle = "Launch Ascent"; break;
+        //        case KACAlarm.AlarmTypeEnum.Closest: strTitle = "Closest Approach"; break;
+        //        case KACAlarm.AlarmTypeEnum.Distance: strTitle = "Target Distance"; break;
+        //        case KACAlarm.AlarmTypeEnum.Crew: strTitle = "Crew"; break;
+        //        case KACAlarm.AlarmTypeEnum.EarthTime: strTitle = "Earth Time"; break;
+        //        case KACAlarm.AlarmTypeEnum.Contract: strTitle = "Contract"; break;
+        //        default: strTitle = "Raw Time"; break;
+        //    }
+        //    strTitle += " Alarm - Common Properties";
+        //    GUILayout.Label(strTitle, KACResources.styleAddSectionHeading);
+        //    GUILayout.BeginVertical(KACResources.styleAddFieldAreas, GUILayout.Height(WindowHeight));
+
+        //    if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+        //    {
+        //        GUILayout.BeginHorizontal();
+        //        GUILayout.Label("Selected Vessel:", KACResources.styleAddHeading);
+        //        String strVesselName = "No Selected Vessel";
+        //        if (KACWorkerGameState.CurrentVessel != null) strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
+        //        GUILayout.Label(strVesselName, KACResources.styleLabelWarning);
+        //        GUILayout.EndHorizontal();
+        //    }
+
+        //    GUILayout.BeginHorizontal();
+        //    GUILayout.Label("Alarm:", KACResources.styleAddHeading, GUILayout.Width(60));
+        //    strName = GUILayout.TextField(strName, KACResources.styleAddField, GUILayout.MaxWidth(200)).Replace("|", "");
+
+        //    GUIContent guiBtnMessages = new GUIContent(KACResources.btnChevRight, "Show Extra Details");
+        //    if (_ShowAddMessages) guiBtnMessages = new GUIContent(KACResources.btnChevLeft, "Hide Details");
+        //    if (GUILayout.Button(guiBtnMessages, KACResources.styleSmallButton))
+        //        _ShowAddMessages = !_ShowAddMessages;
+        //    GUILayout.EndHorizontal();
+
+
+        //    if (ScenesForAttachOption.Contains(KACWorkerGameState.CurrentGUIScene) && TypesForAttachOption.Contains(TypeOfAlarm)
+        //        && KACWorkerGameState.CurrentVessel != null)
+        //    {
+        //        GUILayout.BeginHorizontal();
+        //        GUILayout.Space(15);
+        //        DrawCheckbox(ref blnAttachVessel, "Attach to Active Vessel");
+        //        GUILayout.EndHorizontal();
+        //    }
+
+        //    //Full width one under the two columns for the kill time warp
+        //    DrawAlarmActionChoice3(ref Action, "Action:", 70 ,38); //37
+
+        //    if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
+        //    {
+        //        DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Margin:", 60);
+        //    }
+
+        //    GUILayout.EndVertical();
+        //}
+        //internal Int32 AddAlarmRepeat = 3;
+
+        /// <summary>
+        /// Layout of Common Parts of every alarm
+        /// </summary>
+        private void WindowLayout_CommonFields3(ref String strName, ref Boolean blnAttachVessel, ref AlarmActions Actions, ref KACTimeStringArray Margin, KACAlarm.AlarmTypeEnum TypeOfAlarm, Int32 WindowHeight)
         {
             //Two Columns
             String strTitle = "";
@@ -1368,7 +1497,7 @@ namespace KerbalAlarmClock
             }
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Alarm:", KACResources.styleAddHeading, GUILayout.Width(60));
+            GUILayout.Label("Alarm:", KACResources.styleAddHeading, GUILayout.Width(41));
             strName = GUILayout.TextField(strName, KACResources.styleAddField, GUILayout.MaxWidth(200)).Replace("|", "");
 
             GUIContent guiBtnMessages = new GUIContent(KACResources.btnChevRight, "Show Extra Details");
@@ -1388,14 +1517,47 @@ namespace KerbalAlarmClock
             }
 
             //Full width one under the two columns for the kill time warp
-            DrawAlarmActionChoice3(ref Action, "Action:", 70 ,38); //37
+            DrawAlarmActionChoice4(ref Actions, "Action:", 50); //37
 
             if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
             {
                 DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Margin:", 60);
             }
+
             GUILayout.EndVertical();
         }
+
+
+
+        internal DropDownList LoadSoundsListForDDL(String[] Names, String Selected)
+        {
+            DropDownList retDDl = new DropDownList(Names, _WindowAddRect);
+
+            if (Names.Contains(Selected))
+            {
+                retDDl.SelectedIndex = Array.FindIndex(Names, x => x == Selected);
+            }
+            return retDDl;
+        }
+        internal void DrawTestSoundButton(AudioClip clip, Int32 Repeats)
+        {
+            Boolean blnStop = false;
+            GUIContent btn = new GUIContent(KACResources.btnPlay, "Test Sound");
+            if (KerbalAlarmClock.audioController.isClipPlaying(clip))
+            {
+                btn = new GUIContent(KACResources.btnStop, "StopPlaying");
+                blnStop = true;
+            }
+            if (GUILayout.Button(btn, GUILayout.Width(20)))
+            {
+                if (blnStop)
+                    KerbalAlarmClock.audioController.Stop();
+                else
+                    KerbalAlarmClock.audioController.Play(clip, Repeats);
+            }
+        }
+
+
 
 
         #region "Control Drawing"
@@ -1632,6 +1794,34 @@ namespace KerbalAlarmClock
             return !(InitialChoice == Selected);
         }
 
+
+        internal static Boolean DrawHorizontalSlider(ref Int32 intVar, Int32 leftValue, Int32 rightValue, params GUILayoutOption[] options)
+        {
+            Int32 intOld = intVar;
+
+            intVar = (Int32)GUILayout.HorizontalSlider((Single)intVar, (Single)leftValue, (Single)rightValue, options);
+            return DrawResultChanged(intOld, intVar, "Integer HorizSlider");
+        }
+        internal static Boolean DrawHorizontalSlider(ref Single dblVar, Single leftValue, Single rightValue, params GUILayoutOption[] options)
+        {
+            Single intOld = dblVar;
+
+            dblVar = GUILayout.HorizontalSlider(dblVar, leftValue, rightValue, options);
+            return DrawResultChanged(intOld, dblVar, "Integer HorizSlider");
+        }
+        private static Boolean DrawResultChanged<T>(T Original, T New, String Message)
+        {
+            if (Original.Equals(New))
+            {
+                return false;
+            }
+            else
+            {
+                LogFormatted_DebugOnly("{0} Changed. {1}->{2}", Message, Original.ToString(), New.ToString());
+                return true;
+            }
+
+        }
         //public Boolean DrawAlarmActionChoice(ref Int32 intChoice, String LabelText, Int32 LabelWidth)
         //{
         //    Boolean blnReturn = false;
@@ -1667,6 +1857,76 @@ namespace KerbalAlarmClock
             return blnReturn;
         }
 
+        //internal Boolean DrawAlarmActionChoice4(ref AlarmActions Actions, String LabelText, Int32 LabelWidth, Int32 ButtonWidth)
+        internal Boolean DrawAlarmActionChoice4(ref AlarmActions Actions, String LabelText, Int32 LabelWidth)
+        {
+            Boolean blnReturn = false;
+            if (Actions.Warp == AlarmActions.WarpEnum.PauseGame)
+                GUILayout.Space(-4);
+            GUILayout.BeginHorizontal();
+            //GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth - 10));
+            GUILayout.Label(LabelText, KACResources.styleAddHeading, GUILayout.Width(LabelWidth - 10));
+
+
+
+            //Int32 intWarpChoice = (Int32)ActionWarp;
+
+            //GUIStyle styleButton = new GUIStyle(KACResources.styleButtonListAlarmActions) { fixedWidth = ButtonWidth };
+            //blnReturn = DrawButtonList(ref intChoice, styleButton, KACResources.lstAlarmChoices.ToArray());
+            ////blnReturn = DrawRadioList(ref intChoice, "Message", "Kill Warp", "Pause");
+            //Choice = (KACAlarm.AlarmActionEnum)intChoice;
+
+            GUIStyle styleButton = new GUIStyle(KACResources.styleButtonListAlarmActions) { fixedWidth = 34};
+
+
+            GUILayout.BeginVertical();
+            Int32 intWarpChoice = (Int32)Actions.Warp;
+            blnReturn = blnReturn | DrawButtonList(ref intWarpChoice,styleButton,-5, KACResources.lstAlarmWarpChoices.ToArray());
+            Actions.Warp = (AlarmActions.WarpEnum)intWarpChoice;
+            GUILayout.Space(-7);
+            GUILayout.Label("    Warp Choice", KACResources.styleAddHeading);
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+            Int32 intMessageChoice = (Int32)Actions.Message;
+
+            //If the warp setting is pause then force a message
+            if (Actions.Warp != AlarmActions.WarpEnum.PauseGame)
+            {
+                blnReturn = blnReturn | DrawButtonList(ref intMessageChoice, styleButton, -5, KACResources.lstAlarmMessageChoices.ToArray());
+                Actions.Message = (AlarmActions.MessageEnum)intMessageChoice;
+                GUILayout.Space(-7);
+                GUILayout.Label("  Message Choice", KACResources.styleAddHeading);
+            }
+            else
+            {
+                GUILayout.Space(3);
+                GUILayout.Label("Pause Action must show Msg", KACResources.styleAddXferName, GUILayout.Width(90),GUILayout.Height(3));
+                if (Actions.Message != AlarmActions.MessageEnum.Yes)
+                {
+                    Actions.Message = AlarmActions.MessageEnum.Yes;
+                    blnReturn = true;
+                }
+
+            }
+
+            GUILayout.EndVertical();
+
+            //GUILayout.BeginVertical();
+            blnReturn = blnReturn | DrawToggle(ref Actions.PlaySound, new GUIContent(KACResources.btnActionSound, "Play Alarm Sound"), styleButton);
+            //GUILayout.Space(-7);
+            //GUILayout.Label("Sound", KACResources.styleAddHeading);
+            //GUILayout.EndVertical();
+
+            //GUILayout.BeginVertical();
+            blnReturn = blnReturn | DrawToggle(ref Actions.DeleteWhenDone, new GUIContent(KACResources.btnActionDelete, "Delete Alarm when Done"), styleButton);
+            //GUILayout.Space(-7);
+            //GUILayout.Label("Delete", KACResources.styleAddHeading);
+            //GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
+            return blnReturn;
+        }
 
 
         internal Boolean DrawTimeEntry(ref KACTimeStringArray time, KACTimeStringArray.TimeEntryPrecisionEnum Prec, params GUILayoutOption[] options)
@@ -1798,12 +2058,20 @@ namespace KerbalAlarmClock
         }
         internal Boolean DrawButtonList(ref Int32 Selected, GUIStyle ButtonStyle, params GUIContent[] Choices)
         {
+            return DrawButtonList(ref Selected, KACResources.styleButtonList,0, Choices);
+        }
+
+        internal Boolean DrawButtonList(ref Int32 Selected, GUIStyle ButtonStyle,Int32 Spacing, params GUIContent[] Choices)
+        {
             Int32 InitialChoice = Selected;
 
             GUILayout.BeginHorizontal();
 
             for (Int32 intChoice = 0; intChoice < Choices.Length; intChoice++)
             {
+                if (intChoice > 0 && Spacing != 0)
+                    GUILayout.Space(Spacing);
+
                 //button
                 Boolean blnResult=(Selected==intChoice);
                 if (DrawToggle(ref blnResult,Choices[intChoice],ButtonStyle))

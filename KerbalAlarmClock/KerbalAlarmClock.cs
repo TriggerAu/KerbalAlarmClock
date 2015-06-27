@@ -11,6 +11,7 @@ using Contracts;
 
 using KACToolbarWrapper;
 using KAC_KERWrapper;
+using KAC_VOIDWrapper;
 
 namespace KerbalAlarmClock
 {
@@ -75,6 +76,9 @@ namespace KerbalAlarmClock
         //Worker and Settings objects
         public static float UpdateInterval = 0.1F;
 
+
+        internal static AudioController audioController;
+
         //Constructor to set KACWorker parent object to this and access to the settings
         public KerbalAlarmClock()
         {
@@ -123,7 +127,11 @@ namespace KerbalAlarmClock
                     }
                     settings.Save();
                 }
+
             }
+
+            //Set up Default Sounds
+            settings.VerifySoundsList();
 
             if (settings.SelectedCalendar == CalendarTypeEnum.Earth) {
                 KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
@@ -136,6 +144,11 @@ namespace KerbalAlarmClock
             //if ((KACWorkerGameState.LastGUIScene == GameScenes.FLIGHT) && settings.XferModelLoadData)
             if (settings.XferModelLoadData)
                     settings.XferModelDataLoaded = KACResources.LoadModelPoints();
+
+            //get the sounds and set things up
+            KACResources.LoadSounds();
+            this.ConfigSoundsDDLs();
+            InitAudio();
 
             //Get whether the toolbar is there
             settings.BlizzyToolbarIsAvailable = ToolbarManager.ToolbarAvailable;
@@ -173,6 +186,13 @@ namespace KerbalAlarmClock
             APIAwake();
         }
 
+        private void InitAudio()
+        {
+            audioController = AddComponent<AudioController>();
+            audioController.mbKAC = this;
+            audioController.Init();
+        }
+
         internal override void Start()
         {
             LogFormatted_DebugOnly("Start function-Setting up ScenarioModule");
@@ -203,12 +223,20 @@ namespace KerbalAlarmClock
             }
 
 
-            //Init the KAC Integration
+            //Init the KER Integration
             LogFormatted("Searching for KER");
             KERWrapper.InitKERWrapper();
             if (KERWrapper.APIReady)
             {
                 LogFormatted("Successfully Hooked KER");
+
+            }
+            //Init the VOID Integration
+            LogFormatted("Searching for VOID");
+            VOIDWrapper.InitVOIDWrapper();
+            if (VOIDWrapper.APIReady)
+            {
+                LogFormatted("Successfully Hooked VOID");
 
             }
 
@@ -502,8 +530,13 @@ namespace KerbalAlarmClock
         private DateTime drawingTrackStationButtonsAt = DateTime.Now;
         private void DrawNodeButtons()
         {
+
             if (MapView.MapIsEnabled && KACWorkerGameState.CurrentVessel != null && !KACWorkerGameState.CurrentVessel.LandedOrSplashed)
             {
+                //Dont draw these if there are any gizmos visible
+                if (settings.WarpToHideWhenManGizmoShown && KACWorkerGameState.ManeuverNodesAll_GizmoShown)
+                    return;
+
                 //Check if the focus just went off so the buttons still work
                 if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused) {
                     drawingTrackStationButtons = true;
@@ -550,7 +583,7 @@ namespace KerbalAlarmClock
                         KACAlarm.AlarmTypeEnum.Maneuver,
                         "ManNode",
                         settings.WarpToAddMarginManNode,
-                        settings.AlarmAddManQuickMargin + GetKERMarginSecs(settings.DefaultKERMargin)
+                        settings.AlarmAddManQuickMargin + GetBurnMarginSecs(settings.DefaultKERMargin)
                         );
                 }
                 if (KACWorkerGameState.CurrentVesselTarget != null && !KACWorkerGameState.ManeuverNodeExists && KACWorkerGameState.CurrentVesselTarget.GetOrbit()!=null)
@@ -719,12 +752,12 @@ namespace KerbalAlarmClock
                             if (aExisting == null)
                             {
                                 KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), "Warp to " + NodeName, "", UT - (WithMargin ? MarginSecs : 0), (WithMargin ? MarginSecs : 0), aType,
-                                        KACAlarm.AlarmActionEnum.KillWarpOnly);
+                                        AlarmActions.DefaultsKillWarpOnly());
                                 if (lstAlarmsWithTarget.Contains(aType))
                                     newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                                 if (KACWorkerGameState.ManeuverNodeExists)
                                     newAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
-                                newAlarm.DeleteWhenPassed = true;
+                                newAlarm.Actions.DeleteWhenDone = true;
 
                                 alarms.Add(newAlarm);
                             }
@@ -827,7 +860,7 @@ namespace KerbalAlarmClock
 					}
 					if (AddLock)
 					{
-						LogFormatted_DebugOnly("AddingLock-{0}", "KACControlLock");
+						//LogFormatted_DebugOnly("AddingLock-{0}", "KACControlLock");
 
 						switch (HighLogic.LoadedScene)
 						{
@@ -863,7 +896,7 @@ namespace KerbalAlarmClock
 			//    InputLockManager.GetControlLock("KACControlLock") == ControlTypes.All)
 			if (InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None)
 			{
-				LogFormatted_DebugOnly("Removing-{0}", "KACControlLock");
+				//LogFormatted_DebugOnly("Removing-{0}", "KACControlLock");
 				InputLockManager.RemoveControlLock("KACControlLock");
 			}
 			InputLockExists = false;
@@ -947,7 +980,7 @@ namespace KerbalAlarmClock
 					LogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
 				}
 
-				// Do we need to restore a maneuverNode after a ship jump - give it 4 secs of attempts for changes to ship
+				// Do we need to restore a maneuverNode after a ship jump - give it 5 secs of attempts for changes to ship
 				if (settings.LoadManNode != null && settings.LoadManNode != "" && KACWorkerGameState.IsVesselActive)
 				{
 					List<ManeuverNode> manNodesToRestore = KACAlarm.ManNodeDeserializeList(settings.LoadManNode);
@@ -1362,7 +1395,7 @@ namespace KerbalAlarmClock
 			if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
 			{
                 KSPDateTime nodeAutoAlarm;
-                nodeAutoAlarm = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin - GetKERMarginSecs(settings.DefaultKERMargin));
+                nodeAutoAlarm = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin - GetBurnMarginSecs(settings.DefaultKERMargin));
 				
 				List<ManeuverNode> manNodesToStore = KACWorkerGameState.ManeuverNodesFuture;
 
@@ -1372,6 +1405,9 @@ namespace KerbalAlarmClock
 				//Are we updating an alarm
 				if (tmpAlarm != null)
 				{
+                    //update the margin
+                    tmpAlarm.AlarmMarginSecs = settings.AlarmAddManAutoMargin + GetBurnMarginSecs(settings.DefaultKERMargin);
+                    //and the UT
 					tmpAlarm.AlarmTime.UT = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - tmpAlarm.AlarmMarginSecs).UT;
 					tmpAlarm.ManNodes = manNodesToStore;
 				}
@@ -1381,7 +1417,7 @@ namespace KerbalAlarmClock
 					if (nodeAutoAlarm.UT + settings.AlarmAddManAutoMargin - settings.AlarmAddManAutoThreshold > KACWorkerGameState.CurrentTime.UT)
 					{
 						//or are we setting a new one
-                        alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin + GetKERMarginSecs(settings.DefaultKERMargin), KACAlarm.AlarmTypeEnum.ManeuverAuto,
+                        alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin + GetBurnMarginSecs(settings.DefaultKERMargin), KACAlarm.AlarmTypeEnum.ManeuverAuto,
 							settings.AlarmAddManAuto_Action , manNodesToStore));
 						//settings.Save();
 					}
@@ -1449,7 +1485,7 @@ namespace KerbalAlarmClock
 			}
 		}
 
-		private void CreateAutoContracts(Settings.AutoContractBehaviorEnum TypeOfAuto, Contract.State state, Boolean DontCreateAlarmsInsideMargin, Double margin, KACAlarm.AlarmActionEnum action)
+		private void CreateAutoContracts(Settings.AutoContractBehaviorEnum TypeOfAuto, Contract.State state, Boolean DontCreateAlarmsInsideMargin, Double margin, AlarmActions action)
 		{
 			if (TypeOfAuto == Settings.AutoContractBehaviorEnum.Next && DontCreateAlarmsInsideMargin)
 			{
@@ -1480,7 +1516,7 @@ namespace KerbalAlarmClock
 			}
 		}
 
-		private void AddContractAutoAlarm(Contract contract, Double margin, KACAlarm.AlarmActionEnum action)
+		private void AddContractAutoAlarm(Contract contract, Double margin, AlarmActions action)
 		{
 			//If theres already an alarm then leave it alone
 			if (alarms.Any(a => a.ContractGUID == contract.ContractGuid))
@@ -1571,7 +1607,9 @@ namespace KerbalAlarmClock
 							if (tmpAlarm.PauseGame)
 							{
 								LogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
-								TimeWarp.SetRate(0, true);
+                                if (tmpAlarm.Actions.Message != AlarmActions.MessageEnum.Yes)
+                                    tmpAlarm.Actions.Message = AlarmActions.MessageEnum.Yes;
+                                TimeWarp.SetRate(0, true);
 								FlightDriver.SetPause(true);
 							}
 							else if (tmpAlarm.HaltWarp)
@@ -1643,9 +1681,37 @@ namespace KerbalAlarmClock
 					if (tmpAlarm.Triggered && !tmpAlarm.Actioned)
 					{
 						tmpAlarm.Actioned = true;
-                        if (tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.KillWarpOnly 
-                            || tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed
-                            || tmpAlarm.AlarmAction == KACAlarm.AlarmActionEnum.DoNothing)
+
+
+                        //Play the sounds if necessary
+                        if (tmpAlarm.Actions.PlaySound) {
+                            //first get the right sound
+                            AlarmSound s = settings.AlarmSounds.FirstOrDefault(st => st.Types.Contains(tmpAlarm.TypeOfAlarm));
+
+                            if (s == null || s.Enabled == false) {
+                                s = settings.AlarmSounds[0];
+                            }
+
+                            if (!tmpAlarm.ShowMessage && s.RepeatCount > 5)
+                            {
+                                audioController.Play(KACResources.clipAlarms[s.SoundName], 5);
+                            }
+                            else
+                            {
+                                audioController.Play(KACResources.clipAlarms[s.SoundName], s.RepeatCount);
+                            }
+                        }
+
+
+                        //if (tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.KillWarpOnly 
+                        //    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed
+                        //    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothing)
+                        if((tmpAlarm.Actions.Message==AlarmActions.MessageEnum.No) ||
+                            (
+                                tmpAlarm.Actions.Message == AlarmActions.MessageEnum.YesIfOtherVessel &&
+                                KACWorkerGameState.CurrentVessel!=null &&
+                                tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()
+                            ))
 						{
 							tmpAlarm.AlarmWindowClosed = true;
 							try
@@ -1660,7 +1726,8 @@ namespace KerbalAlarmClock
 						}
 
                         LogFormatted("Actioning Alarm");
-					}
+                        LogFormatted("{0}",tmpAlarm.Actions);
+                    }
 
 			}
 
@@ -1672,8 +1739,9 @@ namespace KerbalAlarmClock
 
             // Delete the do nothing/delete alarms - One loop to find the ones to delete - cant delete inside the foreach or it breaks the iterator
             List<KACAlarm> ToDelete = new List<KACAlarm>();
-            foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmAction == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.DeleteWhenPassed)))
-			{
+            //foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.ActionDeleteWhenDone)))
+            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.Actions.Warp == AlarmActions.WarpEnum.DoNothing && a.Actions.DeleteWhenDone ))
+            {
                 if (tmpAlarm.Triggered && tmpAlarm.Actioned)
                     ToDelete.Add(tmpAlarm);
             }
@@ -1726,12 +1794,53 @@ namespace KerbalAlarmClock
 						LogFormatted("Unable to find a future model data point for this transfer({0}->{1})\r\n{2}", alarmToCheck.XferOriginBodyName, alarmToCheck.XferTargetBodyName, ex.Message);
 					}
 				}
-				else if (alarmToCheck.RepeatAlarmPeriod.UT > 0)
-				{
-					LogFormatted("Adding repeat alarm for {0}:{1}-{2}+{3}", alarmToCheck.TypeOfAlarm, alarmToCheck.Name, alarmToCheck.AlarmTime.UT, alarmToCheck.RepeatAlarmPeriod.UT);
-					alarmToAdd = alarmToCheck.Duplicate(alarmToCheck.AlarmTime.UT + alarmToCheck.RepeatAlarmPeriod.UT);
-					return true;
-				}
+                else if (alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Apoapsis || alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Periapsis)
+                {
+                    try
+                    {
+                        Vessel v = FindVesselForAlarm(alarmToCheck);
+
+                        if(v == null)
+                        {
+                            LogFormatted("Unable to find the vessel to work out the repeat ({0})", alarmToCheck.VesselID);
+                        }
+                        else
+                        {
+
+                            LogFormatted("Adding repeat alarm for Ap/Pe ({0})", alarmToCheck.VesselID);
+
+                            //get the time of the next node if the margin is greater than 0
+                            Double nextApPe = Planetarium.GetUniversalTime() + v.orbit.timeToAp + (alarmToCheck.AlarmMarginSecs>0?v.orbit.period:0);
+                            if (alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Periapsis)
+                                nextApPe = Planetarium.GetUniversalTime() + v.orbit.timeToPe + +(alarmToCheck.AlarmMarginSecs > 0 ? v.orbit.period : 0);
+
+                            if (!alarms.Any(a => a.TypeOfAlarm == alarmToCheck.TypeOfAlarm &&
+                                    a.AlarmTime.UT == nextApPe))
+                            {
+                                alarmToAdd = alarmToCheck.Duplicate(nextApPe);
+                                return true;
+                            }
+                            else
+                            {
+                                LogFormatted("Alarm already exists, not adding repeat ({0}): UT={1}", alarmToCheck.VesselID, nextApPe);
+                            }
+                            
+                            alarmToAdd = alarmToCheck.Duplicate(nextApPe);
+                            return true;
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        LogFormatted("Unable to add a repeat alarm ({0})\r\n{1}", alarmToCheck.VesselID, ex.Message);
+                    }
+                }
+                else if (alarmToCheck.RepeatAlarmPeriod.UT > 0)
+                {
+                    LogFormatted("Adding repeat alarm for {0}:{1}-{2}+{3}", alarmToCheck.TypeOfAlarm, alarmToCheck.Name, alarmToCheck.AlarmTime.UT, alarmToCheck.RepeatAlarmPeriod.UT);
+                    alarmToAdd = alarmToCheck.Duplicate(alarmToCheck.AlarmTime.UT + alarmToCheck.RepeatAlarmPeriod.UT);
+                    return true;
+                }
 			}
 			alarmToAdd = null;
 			return false;

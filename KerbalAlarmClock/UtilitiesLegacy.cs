@@ -188,9 +188,9 @@ namespace KerbalAlarmClock
             resultAlarm.AlarmMarginSecs = AlarmMarginSecs;
             resultAlarm.TypeOfAlarm = TypeOfAlarm;
             if (HaltWarp)
-                resultAlarm.AlarmAction = KACAlarm.AlarmActionEnum.KillWarp;
+                resultAlarm.AlarmActionConvert = KACAlarm.AlarmActionEnum.KillWarp;
             else if (PauseGame)
-                resultAlarm.AlarmAction = KACAlarm.AlarmActionEnum.PauseGame;
+                resultAlarm.AlarmActionConvert = KACAlarm.AlarmActionEnum.PauseGame;
 
             if (ManNodes != null)
                 resultAlarm.ManNodes = ManNodes;
@@ -287,9 +287,9 @@ namespace KerbalAlarmClock
             resultAlarm.AlarmMarginSecs = AlarmMarginSecs;
             resultAlarm.TypeOfAlarm = TypeOfAlarm;
             if (HaltWarp)
-                resultAlarm.AlarmAction = KACAlarm.AlarmActionEnum.KillWarp;
+                resultAlarm.AlarmActionConvert = KACAlarm.AlarmActionEnum.KillWarp;
             else if (PauseGame)
-                resultAlarm.AlarmAction = KACAlarm.AlarmActionEnum.PauseGame;
+                resultAlarm.AlarmActionConvert = KACAlarm.AlarmActionEnum.PauseGame;
 
             if (ManNodes != null)
                 resultAlarm.ManNodes = ManNodes;

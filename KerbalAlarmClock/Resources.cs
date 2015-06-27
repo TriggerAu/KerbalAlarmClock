@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 
+using System.IO;
+
 using UnityEngine;
 using KSP;
 using KSPPluginFramework;
@@ -127,13 +129,19 @@ namespace KerbalAlarmClock
 
         internal static Texture2D btnCalendar = new Texture2D(17, 16, TextureFormat.ARGB32, false);
 
-        internal static Texture2D btnActionNothingAndDelete = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnActionNothing = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnActionMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnActionWarp = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnActionWarpMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-        internal static Texture2D btnActionPause = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionNothing = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionWarp = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionPause = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionNoMsg = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionMsg = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionMsgVessel = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionDelete = new Texture2D(28, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionSound = new Texture2D(28, 16, TextureFormat.ARGB32, false);
 
+        //Older ones
+        internal static Texture2D btnActionWarpMsg = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        internal static Texture2D btnActionNothingAndDelete = new Texture2D(32, 16, TextureFormat.ARGB32, false);
+        
         internal static Texture2D btnDropDown = new Texture2D(10,10, TextureFormat.ARGB32, false);
         internal static Texture2D btnPlay = new Texture2D(10, 10, TextureFormat.ARGB32, false);
         internal static Texture2D btnStop = new Texture2D(10, 10, TextureFormat.ARGB32, false);
@@ -267,12 +275,17 @@ namespace KerbalAlarmClock
 
                 KACUtils.LoadImageFromFile(ref btnCalendar, "img_buttonCalendar.png");
 
-                KACUtils.LoadImageFromFile(ref btnActionNothingAndDelete, "img_buttonActionNothingAndDelete.png");
                 KACUtils.LoadImageFromFile(ref btnActionNothing, "img_buttonActionNothing.png");
-                KACUtils.LoadImageFromFile(ref btnActionMsg, "img_buttonActionMsg.png");
                 KACUtils.LoadImageFromFile(ref btnActionWarp, "img_buttonActionWarp.png");
-                KACUtils.LoadImageFromFile(ref btnActionWarpMsg, "img_buttonActionWarpMsg.png");
                 KACUtils.LoadImageFromFile(ref btnActionPause, "img_buttonActionPause.png");
+                KACUtils.LoadImageFromFile(ref btnActionNoMsg, "img_buttonActionNoMsg.png");
+                KACUtils.LoadImageFromFile(ref btnActionMsg, "img_buttonActionMsg.png");
+                KACUtils.LoadImageFromFile(ref btnActionMsgVessel, "img_buttonActionMsgVessel.png");
+                KACUtils.LoadImageFromFile(ref btnActionSound, "img_buttonActionSound.png");
+                KACUtils.LoadImageFromFile(ref btnActionDelete, "img_buttonActionDelete.png");
+
+                KACUtils.LoadImageFromFile(ref btnActionWarpMsg, "img_buttonActionWarpMsg.png");
+                KACUtils.LoadImageFromFile(ref btnActionNothingAndDelete, "img_buttonActionNothingAndDelete.png");
 
                 KACUtils.LoadImageFromFile(ref btnDropDown, "img_DropDown.png");
                 KACUtils.LoadImageFromFile(ref btnPlay, "img_Play.png");
@@ -518,6 +531,72 @@ namespace KerbalAlarmClock
         }
         #endregion
 
+        #region Audio Stuff
+
+        //Alarm Library
+        internal static Dictionary<String, AudioClip> clipAlarms;
+
+        internal static void LoadSounds()
+        {
+            MonoBehaviourExtended.LogFormatted("Loading Sounds");
+
+            clipAlarms = new Dictionary<string, AudioClip>();
+            clipAlarms.Add("None", null);
+            if (Directory.Exists(KACUtils.PathPluginSounds))
+            {
+                //get all the png and tga's
+                FileInfo[] fileClips = new System.IO.DirectoryInfo(KACUtils.PathPluginSounds).GetFiles("*.wav");
+
+                foreach (FileInfo fileClip in fileClips)
+                {
+                    try
+                    {
+                        //load the file from the GameDB
+                        AudioClip clipLoading = null;
+                        if (LoadAudioClipFromGameDB(ref clipLoading, fileClip.Name))
+                        {
+                            String ClipKey = fileClip.Name;
+                            if (ClipKey.ToLower().EndsWith(".wav"))
+                                ClipKey = ClipKey.Substring(0, ClipKey.Length - 4);
+                            clipAlarms.Add(ClipKey, clipLoading);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //MonoBehaviourExtended.LogFormatted("Unable to load AudioClip from GameDB:{0}/{1}", PathPluginSounds,fileClip.Name);
+                    }
+                }
+            }
+
+        }
+
+        internal static Boolean LoadAudioClipFromGameDB(ref AudioClip clip, String FileName, String FolderPath = "")
+        {
+            Boolean blnReturn = false;
+            try
+            {
+                //trim off the tga and png extensions
+                if (FileName.ToLower().EndsWith(".wav")) FileName = FileName.Substring(0, FileName.Length - 4);
+                //default folder
+                if (FolderPath == "") FolderPath = KACUtils.DBPathPluginSounds;
+
+                //Look for case mismatches
+                if (!GameDatabase.Instance.ExistsAudioClip(String.Format("{0}/{1}", FolderPath, FileName)))
+                    throw new Exception();
+
+                //now load it
+                clip = GameDatabase.Instance.GetAudioClip(String.Format("{0}/{1}", FolderPath, FileName));
+                blnReturn = true;
+            }
+            catch (Exception)
+            {
+                MonoBehaviourExtended.LogFormatted("Failed to load (are you missing a file - and check case):{0}/{1}", FolderPath, FileName);
+            }
+            return blnReturn;
+        }
+
+
+        #endregion
 
         #region Skins
 
@@ -751,6 +830,8 @@ namespace KerbalAlarmClock
         #endregion
 
         internal static List<GUIContent> lstAlarmChoices;
+        internal static List<GUIContent> lstAlarmWarpChoices;
+        internal static List<GUIContent> lstAlarmMessageChoices;
 
         /// <summary>
         /// Sets up the styles for the different parts of the drawing
@@ -1049,6 +1130,18 @@ namespace KerbalAlarmClock
             lstAlarmChoices.Add(new GUIContent(btnActionWarp, KACAlarm.AlarmActionEnum.KillWarpOnly.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionWarpMsg, KACAlarm.AlarmActionEnum.KillWarp.Description()));
             lstAlarmChoices.Add(new GUIContent(btnActionPause, KACAlarm.AlarmActionEnum.PauseGame.Description()));
+
+
+            lstAlarmWarpChoices = new List<GUIContent>();
+            lstAlarmWarpChoices.Add(new GUIContent(btnActionNothing, AlarmActions.WarpEnum.DoNothing.Description()));
+            lstAlarmWarpChoices.Add(new GUIContent(btnActionWarp, AlarmActions.WarpEnum.KillWarp.Description()));
+            lstAlarmWarpChoices.Add(new GUIContent(btnActionPause, AlarmActions.WarpEnum.PauseGame.Description()));
+
+            lstAlarmMessageChoices = new List<GUIContent>();
+            lstAlarmMessageChoices.Add(new GUIContent(btnActionNoMsg, AlarmActions.MessageEnum.No.Description()));
+            lstAlarmMessageChoices.Add(new GUIContent(btnActionMsg, AlarmActions.MessageEnum.Yes.Description()));
+            lstAlarmMessageChoices.Add(new GUIContent(btnActionMsgVessel, AlarmActions.MessageEnum.YesIfOtherVessel.Description()));
+
         }
 
         /// <summary>

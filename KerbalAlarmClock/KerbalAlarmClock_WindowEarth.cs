@@ -24,7 +24,9 @@ namespace KerbalAlarmClock
 			strAlarmEarthHour = DateTime.Now.AddHours(2).Hour.ToString();
 			strAlarmEarthMin = DateTime.Now.Minute.ToString();
 
-			AddAction= KACAlarm.AlarmActionEnum.PauseGame;
+			AddAction = KACAlarm.AlarmActionEnum.PauseGame;
+            AddActions = new AlarmActions(AlarmActions.WarpEnum.PauseGame, AlarmActions.MessageEnum.Yes, false, false);
+            ///AddActionPlaySound = ??
 		}
 
 		internal void FillEarthAlarmWindow(int WindowID)
@@ -32,7 +34,7 @@ namespace KerbalAlarmClock
 			GUILayout.BeginVertical();
 
 			intHeight_AddWindowCommon = 64;
-			WindowLayout_CommonFields2(ref strAlarmName, ref blnAlarmAttachToVessel, ref AddAction, ref timeMargin, AddType, intHeight_AddWindowCommon);
+			WindowLayout_CommonFields3(ref strAlarmName, ref blnAlarmAttachToVessel, ref AddActions, ref timeMargin, AddType, intHeight_AddWindowCommon);
 
 			GUILayout.Label("Enter Time for reminder...", KACResources.styleAddSectionHeading);
 
@@ -90,7 +92,7 @@ namespace KerbalAlarmClock
 						new KACAlarm(null,strAlarmName,strAlarmNotes,
 							EarthTimeEncode(DateTime.Now + tmAlarm),
 							0, KACAlarm.AlarmTypeEnum.EarthTime,
-							AddAction)
+							AddActions)
 						);
 					//settings.SaveAlarms();
 					_ShowEarthAlarm = false;

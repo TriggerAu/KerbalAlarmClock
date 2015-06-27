@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Text;
 using System.Linq;
 
+using System.Reflection;
+
 using UnityEngine;
 using KSP;
 using KSPPluginFramework;
@@ -34,7 +36,7 @@ namespace KerbalAlarmClock
 								else if (settings.AlarmPosition == 2)
 									tmpAlarm.AlarmWindow.x = Screen.width - tmpAlarm.AlarmWindow.width - 5;
 
-								tmpAlarm.DeleteOnClose = settings.AlarmDeleteOnClose;
+								//tmpAlarm.DeleteOnClose = settings.AlarmDeleteOnClose;
 							}
 							else
 							{
@@ -106,7 +108,7 @@ namespace KerbalAlarmClock
 			GUILayout.Label(tmpAlarm.Notes, KACResources.styleAlarmMessage);
 
 			GUILayout.BeginHorizontal();
-			DrawCheckbox(ref tmpAlarm.DeleteOnClose, "Delete On Close",0 );
+			DrawCheckbox(ref tmpAlarm.Actions.DeleteWhenDone, "Delete On Close",0 );
 			if (tmpAlarm.PauseGame)
 			{
 				if (FlightDriver.Pause)
@@ -143,6 +145,11 @@ namespace KerbalAlarmClock
 			if (GUILayout.Button(strText, KACResources.styleButton))
 			{
 				tmpAlarm.AlarmWindowClosed = true;
+
+                //Stop playing the sound if it is playing
+                if (audioController.isPlaying)
+                    audioController.Stop();
+
 				//tmpAlarm.ActionedAt = KACWorkerGameState.CurrentTime.UT;
 				if (tmpAlarm.PauseGame)
 					FlightDriver.SetPause(false);
@@ -153,7 +160,7 @@ namespace KerbalAlarmClock
 					MonoBehaviourExtended.LogFormatted("Error Raising API Event-Closed Alarm: {0}\r\n{1}", ex.Message, ex.StackTrace);
 				} 
 
-				if (tmpAlarm.DeleteOnClose)
+				if (tmpAlarm.Actions.DeleteWhenDone)
 					alarms.Remove(tmpAlarm);
 				//settings.SaveAlarms();
 			}
@@ -277,11 +284,14 @@ namespace KerbalAlarmClock
 			{
 				//Edit the Alarm if its not yet passed
 				Double MarginStarting = alarmEdit.AlarmMarginSecs;
-				int intHeight_EditWindowCommon = 88 +
+				int intHeight_EditWindowCommon = 103 +
 					alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16;
 				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
 					intHeight_EditWindowCommon += 28;
-				WindowLayout_CommonFields(ref alarmEdit.Name, ref alarmEdit.Notes, ref alarmEdit.AlarmAction, ref alarmEdit.AlarmMarginSecs, alarmEdit.TypeOfAlarm, intHeight_EditWindowCommon);
+
+                AlarmActions atemp = alarmEdit.Actions;
+				WindowLayout_CommonFields(ref alarmEdit.Name, ref alarmEdit.Notes, ref atemp, ref alarmEdit.AlarmMarginSecs, alarmEdit.TypeOfAlarm, intHeight_EditWindowCommon);
+                alarmEdit.Actions = atemp;
 				//Adjust the UT of the alarm if the margin changed
 				if (alarmEdit.AlarmMarginSecs != MarginStarting)
 				{
@@ -331,7 +341,7 @@ namespace KerbalAlarmClock
 				}
 
 				//TODO: Edit the height of this for when we have big text in restore button
-				 intAlarmEditHeight = 197 + 20 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine*14;
+				 intAlarmEditHeight = 197 + 16 + 20 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine*14;
 				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
 					intAlarmEditHeight += 28;
                 if (alarmEdit.TypeOfAlarm==KACAlarm.AlarmTypeEnum.EarthTime)
@@ -523,48 +533,61 @@ namespace KerbalAlarmClock
 					JumpToVessel(tmpVessel);
 				}
 
-                ////////////////////////////////////////////////////////////////////////////////////
-                //// Focus Vessel Code - unable to get SetVesselFocus in TS
-                ////////////////////////////////////////////////////////////////////////////////////
-                //if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
-                //{
-                //    SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
-                //    //if (st.mainCamera.target != null && st.mainCamera.target.type == MapObject.MapObjectType.VESSEL && tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
-                //    //{
-                //    //    //this is the targetted vessel
-                //    //}
-                //    //else
-                //    //{
-                //        Vessel vTarget = FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString().ToLower() == tmpAlarm.VesselID);
-                //        //FlightGlobals.Vessels.Find(delegate(Vessel v)
-                //        //    {
-                //        //        return (tmpAlarm.VesselID == v.id.ToString());
-                //        //    }
-                //        //);
-                //        if (vTarget != null)
-                //        {
-                //            intReturnNoOfButtons++;
-                //            if (GUILayout.Button("Set Vessel Active", KACResources.styleButton))
-                //            {
-                //                FlightGlobals.Vessels.ForEach(v=>
-                //                    {
-                //                        v.DetachPatchedConicsSolver();
-                //                        v.orbitRenderer.isFocused = false;
-                //                    });
+                //////////////////////////////////////////////////////////////////////////////////
+                // Focus Vessel Code - reflecting to get SetVessel Focus in TS
+                //////////////////////////////////////////////////////////////////////////////////
+                if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+                {
+                    Vessel vTarget = FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString().ToLower() == tmpAlarm.VesselID);
+                    if (vTarget != null)
+                    {
+                        intReturnNoOfButtons++;
+                        if (GUILayout.Button("Set Vessel Active", KACResources.styleButton))
+                        {
 
-                //                vTarget.orbitRenderer.isFocused = true;
-                //                vTarget.AttachPatchedConicsSolver();
-                //                //FlightGlobals.SetActiveVessel(vTarget);
+                            SetVesselActiveInTS(vTarget);
 
-                //                //SpaceTracking.GoToAndFocusVessel(vTarget);
-                //                //st.mainCamera.SetTarget(getVesselIdx(vTarget));
-                //            }
-                //        }
-                //    //}
-                //}
+                            //FlightGlobals.Vessels.ForEach(v =>
+                            //    {
+                            //        v.DetachPatchedConicsSolver();
+                            //        v.orbitRenderer.isFocused = false;
+                            //    });
+
+                            //vTarget.orbitRenderer.isFocused = true;
+                            //vTarget.AttachPatchedConicsSolver();
+                            //FlightGlobals.SetActiveVessel(vTarget);
+
+                            //SpaceTracking.GoToAndFocusVessel(vTarget);
+                            //st.mainCamera.SetTarget(getVesselIdx(vTarget));
+                        }
+                    }
+                    //}
+                }
 			}
 			return intReturnNoOfButtons;
 		}
+
+        private static void SetVesselActiveInTS(Vessel vTarget)
+        {
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+            {
+                try
+                {
+                    SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
+
+                    //st.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).ToList().ForEach(
+                    //    mi=>LogFormatted("Method-{0}-{1}",mi.Name,mi.IsPrivate));
+
+                    MethodInfo setvesselMethod = st.GetType().GetMethod("SetVessel", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                    setvesselMethod.Invoke(st, new object[] { vTarget, true });
+                }
+                catch (Exception ex)
+                {
+                    LogFormatted("Unable to set vessel as active in Tracking station:\r\n{0}", ex.Message);
+                }
+            }
+        }
 
 		private Boolean JumpToVessel(Vessel vTarget)
 		{
@@ -621,7 +644,7 @@ namespace KerbalAlarmClock
 
 		private static Vessel FindVesselForAlarm(KACAlarm tmpAlarm)
 		{
-			Vessel tmpVessel;
+            Vessel tmpVessel;
 			String strVesselID = "";
 			if (tmpAlarm.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Crew)
 			{

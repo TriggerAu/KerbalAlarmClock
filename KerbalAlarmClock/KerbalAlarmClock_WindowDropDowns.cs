@@ -27,6 +27,8 @@ namespace KerbalAlarmClock
         private DropDownList ddlKERNodeMargin;
         private DropDownList ddlSettingsKERNodeMargin;
 
+        //private DropDownList ddlAddAlarm;
+
         private SettingsAlarmSpecsEnum SettingsAlarmSpecSelected = SettingsAlarmSpecsEnum.Default;
         internal enum SettingsAlarmSpecsEnum
         {
@@ -64,10 +66,13 @@ namespace KerbalAlarmClock
             ddlSettingsCalendar.Items.Remove(CalendarTypeEnum.Custom.Description());
             ddlSettingsCalendar.OnSelectionChanged += ddlSettingsCalendar_OnSelectionChanged;
 
-            ddlKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.KERMarginEnum>(), _WindowAddRect);
-            ddlSettingsKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.KERMarginEnum>(), (int)settings.DefaultKERMargin, _WindowSettingsRect);
+            ddlKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.BurnMarginEnum>(), _WindowAddRect);
+            ddlSettingsKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.BurnMarginEnum>(), (int)settings.DefaultKERMargin, _WindowSettingsRect);
             ddlSettingsKERNodeMargin.OnSelectionChanged += ddlSettingsKERNodeMargin_OnSelectionChanged;
 
+
+            //ddlAddAlarm = LoadSoundsListForAdd(KACResources.clipAlarms.Keys.ToArray(), settings.AlarmsSoundName);
+            //ddlAddAlarm.OnSelectionChanged += ddlAddAlarm_OnSelectionChanged;
 
             ddlManager.AddDDL(ddlChecksPerSec);
             ddlManager.AddDDL(ddlSettingsSkin);
@@ -78,7 +83,19 @@ namespace KerbalAlarmClock
             ddlManager.AddDDL(ddlSettingsCalendar);
             ddlManager.AddDDL(ddlKERNodeMargin);
             ddlManager.AddDDL(ddlSettingsKERNodeMargin);
+            //ddlManager.AddDDL(ddlAddAlarm);
         }
+
+        internal void ConfigSoundsDDLs()
+        {
+            foreach (AlarmSound s in settings.AlarmSounds)
+            {
+                s.ddl = LoadSoundsListForDDL(KACResources.clipAlarms.Keys.ToArray(), s.SoundName);
+                s.ddl.OnSelectionChanged+=ddlSettingsSound_OnSelectionChanged;
+                ddlManager.AddDDL(s.ddl);
+            }
+        }
+
 
         internal void DestroyDropDowns()
         {
@@ -90,6 +107,12 @@ namespace KerbalAlarmClock
             ddlSettingsContractAutoActive.OnSelectionChanged -= ddlSettingsContractAutoActive_OnSelectionChanged;
             ddlSettingsCalendar.OnSelectionChanged -= ddlSettingsCalendar_OnSelectionChanged;
             ddlSettingsKERNodeMargin.OnSelectionChanged -= ddlSettingsKERNodeMargin_OnSelectionChanged;
+
+            foreach (AlarmSound s in settings.AlarmSounds)
+            {
+                if (s.ddl != null)
+                    s.ddl.OnSelectionChanged -= ddlSettingsSound_OnSelectionChanged;
+            }
         }
 
         internal void SetDDLWindowPositions()
@@ -103,6 +126,13 @@ namespace KerbalAlarmClock
             ddlSettingsCalendar.WindowRect = _WindowSettingsRect;
             ddlKERNodeMargin.WindowRect = _WindowAddRect;
             ddlSettingsKERNodeMargin.WindowRect = _WindowSettingsRect;
+            
+
+            foreach (AlarmSound s in settings.AlarmSounds)
+            {
+                if (s.ddl != null)
+                    s.ddl.WindowRect = _WindowSettingsRect;
+            }
         }
 
         #region DDLEvents code
@@ -195,9 +225,21 @@ namespace KerbalAlarmClock
 
         void ddlSettingsKERNodeMargin_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
         {
-            settings.DefaultKERMargin = (Settings.KERMarginEnum)ddlSettingsKERNodeMargin.SelectedIndex;
+            settings.DefaultKERMargin = (Settings.BurnMarginEnum)ddlSettingsKERNodeMargin.SelectedIndex;
             settings.Save();
         }
+
+
+        void ddlSettingsSound_OnSelectionChanged(KerbalAlarmClock.DropDownList sender, int OldIndex, int NewIndex)
+        {
+            foreach (AlarmSound s in settings.AlarmSounds) {
+                if (s.ddl.SelectedValue != s.SoundName) {
+                    s.SoundName = s.ddl.SelectedValue;
+                    settings.Save();
+                }
+            }
+        }
+
 
         #endregion
 

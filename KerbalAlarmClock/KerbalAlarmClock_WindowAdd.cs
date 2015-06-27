@@ -9,6 +9,7 @@ using KSP;
 using KSPPluginFramework;
 
 using KAC_KERWrapper;
+using KAC_VOIDWrapper;
 
 using Contracts;
 
@@ -18,6 +19,7 @@ namespace KerbalAlarmClock
     {
         private KACAlarm.AlarmTypeEnum AddType = KACAlarm.AlarmTypeEnum.Raw;
         private KACAlarm.AlarmActionEnum AddAction = KACAlarm.AlarmActionEnum.MessageOnly;
+        private AlarmActions AddActions = new AlarmActions() { Warp = AlarmActions.WarpEnum.KillWarp, Message = AlarmActions.MessageEnum.Yes, PlaySound = false, DeleteWhenDone = false };
 
         private KACTimeStringArray timeRaw = new KACTimeStringArray(600, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
         private KACTimeStringArray timeMargin = new KACTimeStringArray(KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
@@ -62,7 +64,7 @@ namespace KerbalAlarmClock
             strAlarmNotes = "";
             AddNotesHeight = 100;
 
-            AddAction = (KACAlarm.AlarmActionEnum)settings.AlarmDefaultAction;
+            AddActions = settings.AlarmDefaultAction.Duplicate();
             //blnHaltWarp = true;
 
             //set initial alarm type based on whats on the flight path
@@ -101,6 +103,10 @@ namespace KerbalAlarmClock
             strCrewUT = "";
 
             ddlKERNodeMargin.SelectedIndex = (Int32)settings.DefaultKERMargin;
+
+            //ddlAddAlarm.SelectedIndex = ddlAddAlarm.Items.IndexOf(settings.AlarmsSoundName);
+            //PlaySound = settings.AlarmPlaySound;
+
         }
 
         List<KACAlarm.AlarmTypeEnum> AlarmsThatBuildStrings = new List<KACAlarm.AlarmTypeEnum>() {
@@ -205,27 +211,43 @@ namespace KerbalAlarmClock
                 BuildContractStringsAndMargin(true);
             else
                 timeMargin.BuildFromUT(settings.AlarmDefaultMargin);
+
+
+            //Change Audio Sound?
         }
 
-        private void BuildTransferStrings()
+        private TransferStrings BuildTransferStrings()
         {
+            return BuildTransferStrings(intXferCurrentTarget,true);
+        }
+        private TransferStrings BuildTransferStrings(Int32 TargetIndex,Boolean SetAddVariables)
+        {
+            TransferStrings ret = new TransferStrings();
+            
             String strWorking = "";
             if (blnAlarmAttachToVessel)
                 strWorking = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Celestial Transfer:";
             else
                 strWorking = "Nearing Celestial Transfer:";
 
-            if (XferTargetBodies !=null && intXferCurrentTarget<XferTargetBodies.Count)
-                strWorking += "\r\n\tOrigin: " + XferTargetBodies[intXferCurrentTarget].Origin.bodyName + "\r\n\tTarget: " + XferTargetBodies[intXferCurrentTarget].Target.bodyName;
-            strAlarmNotes= strWorking;
+            if (XferTargetBodies != null && TargetIndex < XferTargetBodies.Count)
+                strWorking += "\r\n\tOrigin: " + XferTargetBodies[TargetIndex].Origin.bodyName + "\r\n\tTarget: " + XferTargetBodies[TargetIndex].Target.bodyName;
+            ret.AlarmNotes = strWorking;
 
             strWorking = "";
-            if (XferTargetBodies != null && intXferCurrentTarget < XferTargetBodies.Count)
-                strWorking = XferTargetBodies[intXferCurrentTarget].Origin.bodyName + "->" + XferTargetBodies[intXferCurrentTarget].Target.bodyName;
+            if (XferTargetBodies != null && TargetIndex < XferTargetBodies.Count)
+                strWorking = XferTargetBodies[TargetIndex].Origin.bodyName + "->" + XferTargetBodies[TargetIndex].Target.bodyName;
             else
                 strWorking = strWorking = "Nearing Celestial Transfer";
-            strAlarmName = strWorking;
+            ret.AlarmName = strWorking;
+            
+            strAlarmNotes = ret.AlarmNotes;
+            strAlarmName = ret.AlarmName;
+
+            return ret;
         }
+
+        private class TransferStrings { internal string AlarmName; internal string AlarmNotes; }
 
         private void BuildRawStrings()
         {
@@ -411,7 +433,7 @@ namespace KerbalAlarmClock
             //    WindowLayout_AddTypeANDN();
 
             //calc height for common stuff
-            intHeight_AddWindowCommon = 64;
+            intHeight_AddWindowCommon = 71;
             if (AddType != KACAlarm.AlarmTypeEnum.Raw && AddType!= KACAlarm.AlarmTypeEnum.Crew) //add stuff for margins
                 intHeight_AddWindowCommon += 28;
             if (ScenesForAttachOption.Contains(KACWorkerGameState.CurrentGUIScene) && TypesForAttachOption.Contains(AddType) && KACWorkerGameState.CurrentVessel != null) //add stuff for attach to ship
@@ -421,8 +443,9 @@ namespace KerbalAlarmClock
 
             //layout the right fields for the common components
             Boolean blnAttachPre = blnAlarmAttachToVessel;
-            WindowLayout_CommonFields2(ref strAlarmName, ref blnAlarmAttachToVessel, ref AddAction, ref timeMargin, AddType, intHeight_AddWindowCommon);
-
+            //WindowLayout_CommonFields2(ref strAlarmName, ref blnAlarmAttachToVessel, ref AddAction, ref timeMargin, AddType, intHeight_AddWindowCommon);
+            WindowLayout_CommonFields3(ref strAlarmName, ref blnAlarmAttachToVessel, ref AddActions, ref timeMargin, AddType, intHeight_AddWindowCommon);
+ 
             Double dblTimeToPoint = 0;
 
             //layout the specific pieces for each type of alarm
@@ -640,9 +663,9 @@ namespace KerbalAlarmClock
                     //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Maneuver"
                     String strVesselID = "";
                     if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                    KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingXferAlarm ? "Alarm Repeats\r\n" : "") + strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmTypeEnum.Raw,
-                        AddAction);
-                    alarmNew.RepeatAlarm = blnRepeatingXferAlarm;
+                    KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingAlarmFlag ? "Alarm Repeats\r\n" : "") + strAlarmNotes, rawTime.UT, 0, KACAlarm.AlarmTypeEnum.Raw,
+                        AddActions);
+                    alarmNew.RepeatAlarm = blnRepeatingAlarmFlag;
                     alarmNew.RepeatAlarmPeriod = new KSPTimeSpan(timeRepeatPeriod.UT);
                     alarms.Add(alarmNew);
 
@@ -776,14 +799,14 @@ namespace KerbalAlarmClock
                         if (DrawAddAlarm(CrewTime, null, CrewTimeToAlarm))
                         {
                             //"VesselID, Name, Message, AlarmTime.UT, Type, Enabled,  HaltWarp, PauseGame, Maneuver"
-                            KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, (blnRepeatingXferAlarm ? "Alarm Repeats\r\n" : "") + strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmTypeEnum.Crew,
-                                AddAction);
+                            KACAlarm addAlarm = new KACAlarm(pCM[intSelectedCrew].name, strAlarmName, (blnRepeatingAlarmFlag ? "Alarm Repeats\r\n" : "") + strAlarmNotes, CrewTime.UT, 0, KACAlarm.AlarmTypeEnum.Crew,
+                                AddActions);
                             if (CrewAlarmStoreNode)
                             {
                                 if (KACWorkerGameState.ManeuverNodeExists) addAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
                                 if (KACWorkerGameState.CurrentVesselTarget != null) addAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
                             }
-                            addAlarm.RepeatAlarm = blnRepeatingXferAlarm;
+                            addAlarm.RepeatAlarm = blnRepeatingAlarmFlag;
                             addAlarm.RepeatAlarmPeriod = new KSPTimeSpan(timeRepeatPeriod.UT);
 
                             alarms.Add(addAlarm);
@@ -909,7 +932,7 @@ namespace KerbalAlarmClock
                             String strVesselID = "";
                             if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
                             KACAlarm tmpAlarm = new KACAlarm(strVesselID, strAlarmName, strAlarmNotes, KACWorkerGameState.CurrentTime.UT + ContractTimeToAlarm.UT,
-                                timeMargin.UT, KACAlarm.AlarmTypeEnum.Contract, AddAction);
+                                timeMargin.UT, KACAlarm.AlarmTypeEnum.Contract, AddActions);
 
                             tmpAlarm.ContractGUID = lstContracts[intSelectedContract].ContractGuid;
                             tmpAlarm.ContractAlarmType = lstContracts[intSelectedContract].AlarmType();
@@ -938,7 +961,7 @@ namespace KerbalAlarmClock
                 intHeight_AddWindowRepeat += 53;
                 GUILayout.Label("Alarm Repeat Options...", KACResources.styleAddSectionHeading);
                 GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-                DrawCheckbox(ref blnRepeatingXferAlarm, new GUIContent("Make this alarm repeat when triggered", "If enabled then when one alarm fires another will be created based on the existing alarm"));
+                DrawCheckbox(ref blnRepeatingAlarmFlag, new GUIContent("Make this alarm repeat when triggered", "If enabled then when one alarm fires another will be created based on the existing alarm"));
                 if (KACAlarm.AlarmTypeSupportsRepeatPeriod.Contains(AddType))
                 {
                     intHeight_AddWindowRepeat += 24;
@@ -991,7 +1014,8 @@ namespace KerbalAlarmClock
         ///// </summary>
         private void WindowLayout_AddPane_Maneuver()
         {
-            if (KERWrapper.APIReady && HighLogic.LoadedScene == GameScenes.FLIGHT)
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT &&
+                (KERWrapper.APIReady || VOIDWrapper.APIReady))
             {
                 intHeight_AddWindowKER = 73;
 
@@ -1007,26 +1031,50 @@ namespace KerbalAlarmClock
                     }
                     else
                     {
+                        if (KERWrapper.APIReady)
+                        {
+                            GUILayout.Label("Kerbal Engineer Node Margin", KACResources.styleAddSectionHeading);
+                            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-                        GUILayout.Label("Kerbal Engineer Node Margin", KACResources.styleAddSectionHeading);
-                        GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+                            GUILayout.BeginHorizontal();
 
-                        GUILayout.BeginHorizontal();
+                            GUILayout.Label("Add KER Burn Time: ", KACResources.styleAddHeading);
+                            ddlKERNodeMargin.DrawButton();
+                            GUILayout.EndHorizontal();
 
-                        GUILayout.Label("Add KER Burn Time: ", KACResources.styleAddHeading);
-                        ddlKERNodeMargin.DrawButton();
-                        GUILayout.EndHorizontal();
+                            GUILayout.BeginHorizontal();
+                            GUILayout.Label("Enough Δv:", KACResources.styleAddHeading);
+                            GUILayout.Label(KERWrapper.KER.HasDeltaV.ToString(), KACResources.styleAddXferName);
+                            GUILayout.Label("   Burn:", KACResources.styleAddHeading);
+                            GUILayout.Label(String.Format("{0:0.0}s", KERWrapper.KER.BurnTime), KACResources.styleAddXferName);
+                            GUILayout.Label("   ½ Burn:", KACResources.styleAddHeading);
+                            GUILayout.Label(String.Format("{0:0.0}s", KERWrapper.KER.HalfBurnTime), KACResources.styleAddXferName);
+                            GUILayout.EndHorizontal();
 
-                        GUILayout.BeginHorizontal();
-                        GUILayout.Label("Enough Δv:", KACResources.styleAddHeading);
-                        GUILayout.Label(KERWrapper.KER.HasDeltaV.ToString(), KACResources.styleAddXferName);
-                        GUILayout.Label("   Burn:", KACResources.styleAddHeading);
-                        GUILayout.Label(String.Format("{0:0.0}s", KERWrapper.KER.BurnTime), KACResources.styleAddXferName);
-                        GUILayout.Label("   ½ Burn:", KACResources.styleAddHeading);
-                        GUILayout.Label(String.Format("{0:0.0}s", KERWrapper.KER.HalfBurnTime), KACResources.styleAddXferName);
-                        GUILayout.EndHorizontal();
+                            GUILayout.EndVertical();
+                        }
+                        else if (VOIDWrapper.APIReady)
+                        {
+                            GUILayout.Label("VOID Node Margin", KACResources.styleAddSectionHeading);
+                            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-                        GUILayout.EndVertical();
+                            GUILayout.BeginHorizontal();
+
+                            GUILayout.Label("Add VOID Burn Time: ", KACResources.styleAddHeading);
+                            ddlKERNodeMargin.DrawButton();
+                            GUILayout.EndHorizontal();
+
+                            GUILayout.BeginHorizontal();
+                            GUILayout.Label("Enough Δv:", KACResources.styleAddHeading);
+                            GUILayout.Label(VOIDWrapper.VOID.HasDeltaV.ToString(), KACResources.styleAddXferName);
+                            GUILayout.Label("   Burn:", KACResources.styleAddHeading);
+                            GUILayout.Label(String.Format("{0:0.0}s", VOIDWrapper.VOID.BurnTime), KACResources.styleAddXferName);
+                            GUILayout.Label("   ½ Burn:", KACResources.styleAddHeading);
+                            GUILayout.Label(String.Format("{0:0.0}s", VOIDWrapper.VOID.HalfBurnTime), KACResources.styleAddXferName);
+                            GUILayout.EndHorizontal();
+
+                            GUILayout.EndVertical();
+                        }
                     }
                 }
             }
@@ -1061,7 +1109,7 @@ namespace KerbalAlarmClock
                         KSPDateTime nodeAlarm;
                         KSPTimeSpan nodeAlarmInterval;
 
-                        Double KERMarginAdd = GetKERMarginSecs((Settings.KERMarginEnum)ddlKERNodeMargin.SelectedIndex);
+                        Double KERMarginAdd = GetBurnMarginSecs((Settings.BurnMarginEnum)ddlKERNodeMargin.SelectedIndex);
 
                         try
                         {
@@ -1083,7 +1131,7 @@ namespace KerbalAlarmClock
                                 List<ManeuverNode> manNodesToStore = KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Skip(intNode).ToList<ManeuverNode>();
 
                                 alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes, nodeAlarm.UT, timeMargin.UT + KERMarginAdd, KACAlarm.AlarmTypeEnum.Maneuver,
-                                    AddAction, manNodesToStore));
+                                    AddActions, manNodesToStore));
                                 //settings.Save();
                                 _ShowAddPane = false;
                             }
@@ -1101,20 +1149,31 @@ namespace KerbalAlarmClock
             GUILayout.EndVertical();
         }
 
-        internal double GetKERMarginSecs(Settings.KERMarginEnum KerMarginType)
+        internal double GetBurnMarginSecs(Settings.BurnMarginEnum KerMarginType)
         {
-            Double retKERMargin = 0;
+            Double retBurnMargin = 0;
             if (KERWrapper.APIReady)
             {
                 switch (KerMarginType)
                 {
-                    case Settings.KERMarginEnum.None: retKERMargin = 0; break;
-                    case Settings.KERMarginEnum.Half: retKERMargin = KERWrapper.KER.HalfBurnTime; break;
-                    case Settings.KERMarginEnum.Full: retKERMargin = KERWrapper.KER.BurnTime; break;
-                    default: retKERMargin = 0; break;
+                    case Settings.BurnMarginEnum.None: retBurnMargin = 0; break;
+                    case Settings.BurnMarginEnum.Half: retBurnMargin = KERWrapper.KER.HalfBurnTime; break;
+                    case Settings.BurnMarginEnum.Full: retBurnMargin = KERWrapper.KER.BurnTime; break;
+                    default: retBurnMargin = 0; break;
                 }
             }
-            return retKERMargin;
+            else if (VOIDWrapper.APIReady)
+            {
+                switch (KerMarginType)
+                {
+                    case Settings.BurnMarginEnum.None: retBurnMargin = 0; break;
+                    case Settings.BurnMarginEnum.Half: retBurnMargin = VOIDWrapper.VOID.HalfBurnTime; break;
+                    case Settings.BurnMarginEnum.Full: retBurnMargin = VOIDWrapper.VOID.BurnTime; break;
+                    default: retBurnMargin = 0; break;
+                }
+
+            }
+            return retBurnMargin;
         }
 
 
@@ -1172,9 +1231,12 @@ namespace KerbalAlarmClock
                         if (DrawAddAlarm(eventTime, eventInterval, eventAlarmInterval))
                         {
                             KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strAlarmName, strAlarmNotes, eventAlarm.UT, timeMargin.UT, AddType,
-                                AddAction);
+                                AddActions);
                             if (lstAlarmsWithTarget.Contains(AddType))
                                 newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
+
+                            if (newAlarm.SupportsRepeat)
+                                newAlarm.RepeatAlarm = blnRepeatingAlarmFlag;
 
                             alarms.Add(newAlarm);
                             //settings.Save();
@@ -1211,7 +1273,7 @@ namespace KerbalAlarmClock
         private int intXferCurrentOrigin = 0;
         private int intXferCurrentTarget = 0;
         //private KerbalTime XferCurrentTargetEventTime;
-        private Boolean blnRepeatingXferAlarm = false;
+        private Boolean blnRepeatingAlarmFlag = false;
 
         private void SetUpXferParents()
         {
@@ -1275,6 +1337,7 @@ namespace KerbalAlarmClock
             }
 
             KSPDateTime XferCurrentTargetEventTime = null;
+            List<KSPDateTime> lstXferCurrentTargetEventTime = new List<KSPDateTime>();
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
             GUILayout.Label("Transfers", KACResources.styleAddSectionHeading, GUILayout.Width(60));
@@ -1434,11 +1497,13 @@ namespace KerbalAlarmClock
                                 {
                                     String strPhase = String.Format("{0:0.00}({1:0.00})", XferTargetBodies[intTarget].PhaseAngleCurrent, tmpModelPoint.PhaseAngle);
                                     GUILayout.Label(strPhase, KACResources.styleAddHeading, GUILayout.Width(105), GUILayout.Height(20));
-                                    KSPDateTime tmpTime = new KSPDateTime(tmpModelPoint.UT - KACWorkerGameState.CurrentTime.UT);
-                                    GUILayout.Label(tmpTime.ToStringStandard(settings.DateTimeFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));                                
+                                    KSPTimeSpan tmpTime = new KSPTimeSpan(tmpModelPoint.UT - KACWorkerGameState.CurrentTime.UT);
+                                    GUILayout.Label(tmpTime.ToStringStandard(settings.TimeSpanFormat), KACResources.styleAddHeading, GUILayout.ExpandWidth(true), GUILayout.Height(20));                                
 
                                     if (intTarget==intXferCurrentTarget)
                                         XferCurrentTargetEventTime = new KSPDateTime(tmpModelPoint.UT);
+
+                                    lstXferCurrentTargetEventTime.Add(new KSPDateTime(tmpModelPoint.UT));
                                 }
                                 else
                                 {
@@ -1469,6 +1534,30 @@ namespace KerbalAlarmClock
 
                 if (intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))
                 {
+                    //Formula based - Add All Alarms
+                    if (settings.AlarmXferDisplayList)
+                    {
+                        intAddXferHeight += 28;
+
+                        GUILayout.BeginHorizontal();
+                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button(new GUIContent("Create Alarms for All", "Create Alarms for all listed transfers"), new GUIStyle(KACResources.styleAddXferOriginButton) {fixedWidth=140 }))
+                        {
+                            for (int i = 0; i < XferTargetBodies.Count; i++)
+                            {
+                                String strVesselID = "";
+                                if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+
+                                TransferStrings ts = BuildTransferStrings(i, false);
+                                alarms.Add(new KACAlarm(strVesselID, ts.AlarmName, ts.AlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
+                                (KACWorkerGameState.CurrentTime.UT + XferTargetBodies[i].AlignmentTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.Transfer,
+                                AddActions, XferTargetBodies[i]));
+                            }
+                            _ShowAddPane = false;
+                        }
+                        GUILayout.EndHorizontal();
+                    }
+
                     //Formula based - add new alarm
                     if (DrawAddAlarm(new KSPDateTime(KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT),
                                     XferTargetBodies[intXferCurrentTarget].AlignmentTime,
@@ -1478,16 +1567,44 @@ namespace KerbalAlarmClock
                         if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
                         alarms.Add(new KACAlarm(strVesselID, strAlarmName, strAlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
                             (KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.Transfer,
-                            AddAction, XferTargetBodies[intXferCurrentTarget]));
+                            AddActions, XferTargetBodies[intXferCurrentTarget]));
                         //settings.Save();
                         _ShowAddPane = false;
                     }
                 }
                 else
                 {
+
                     //Model based
                     if (XferCurrentTargetEventTime!=null)
                     {
+                        //Formula based - Add All Alarms
+                        if (settings.AlarmXferDisplayList)
+                        {
+                            intAddXferHeight += 28;
+
+                            GUILayout.BeginHorizontal();
+                            GUILayout.FlexibleSpace();
+                            if (GUILayout.Button(new GUIContent("Create Alarms for All", "Create Alarms for all listed transfers"), new GUIStyle(KACResources.styleAddXferOriginButton) { fixedWidth = 140 }))
+                            {
+                                for (int i = 0; i < XferTargetBodies.Count; i++)
+                                {
+                                    String strVesselID = "";
+                                    if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+
+                                    TransferStrings ts = BuildTransferStrings(i, false);
+
+                                    KACAlarm alarmNew = new KACAlarm(strVesselID, ts.AlarmName, (blnRepeatingAlarmFlag ? "Alarm Repeats\r\n" : "") + ts.AlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
+                                        (lstXferCurrentTargetEventTime[i].UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.TransferModelled,
+                                        AddActions, XferTargetBodies[i]); 
+                                    alarmNew.RepeatAlarm = blnRepeatingAlarmFlag;
+                                    alarms.Add(alarmNew);
+                                }
+                                _ShowAddPane = false;
+                            }
+                            GUILayout.EndHorizontal();
+                        }
+
                         if (DrawAddAlarm(XferCurrentTargetEventTime,
                                     new KSPTimeSpan(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT),
                                     new KSPTimeSpan(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT - timeMargin.UT),
@@ -1495,10 +1612,10 @@ namespace KerbalAlarmClock
                         {
                             String strVesselID = "";
                             if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
-                            KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingXferAlarm ? "Alarm Repeats\r\n" : "") + strAlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
+                            KACAlarm alarmNew = new KACAlarm(strVesselID, strAlarmName, (blnRepeatingAlarmFlag ? "Alarm Repeats\r\n" : "") + strAlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
                                 (XferCurrentTargetEventTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.TransferModelled,
-                                AddAction, XferTargetBodies[intXferCurrentTarget]); 
-                            alarmNew.RepeatAlarm = blnRepeatingXferAlarm;
+                                AddActions, XferTargetBodies[intXferCurrentTarget]); 
+                            alarmNew.RepeatAlarm = blnRepeatingAlarmFlag;
                             alarms.Add(alarmNew);
                             //settings.Save();
                             _ShowAddPane = false;

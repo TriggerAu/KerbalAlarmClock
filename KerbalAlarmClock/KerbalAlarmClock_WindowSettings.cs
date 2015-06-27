@@ -80,7 +80,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
 
             //String[] strSettingsTabs = new String[] { "All Alarms", "Specific Types", "Sounds", "About" };
-            String[] strSettingsTabs = new String[] { "All Alarms", "Specific Types", "About" };
+            //String[] strSettingsTabs = new String[] { "All Alarms", "Specific Types", "About" };
             GUIContent[] contSettingsTabs = new GUIContent[] 
             { 
                 new GUIContent("General","Global Settings"), 
@@ -88,6 +88,7 @@ namespace KerbalAlarmClock
                 //new GUIContent("Specifics-2","Man Node Specific Settings"), 
                 //new GUIContent("Alarm Settings","Specific Settings for Alarm Types"), 
                 new GUIContent("Specifics","Specific Settings for Alarm Types"), 
+                new GUIContent("Audio","Audio Settings"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
                 new GUIContent("Calendar", "Chosen Calendar and Details"), 
                 new GUIContent("About") 
@@ -99,6 +100,7 @@ namespace KerbalAlarmClock
                 //new GUIContent("Specifics-2","Man Node Specific Settings"), 
                 //new GUIContent("Alarm Specifics","Specific Settings for Alarm Types"), 
                 new GUIContent("Specifics","Specific Settings for Alarm Types"), 
+                new GUIContent("Audio","Audio Settings"), 
                 new GUIContent("Visibility", "Scene and Icon Settings"), 
                 new GUIContent("Calendar", "Chosen Calendar and Details"), 
                 new GUIContent(" About", KACResources.btnSettingsAttention) 
@@ -135,7 +137,7 @@ namespace KerbalAlarmClock
                             break;
                         case SettingsAlarmSpecsEnum.WarpTo:
                             WindowLayout_SettingsSpecifics_WarpTo();
-                            intSettingsHeight = 453; // 419;//  395;//221; //318;
+                            intSettingsHeight = 477; // 453; // 419;//  395;//221; //318;
                             break;
                         case SettingsAlarmSpecsEnum.ManNode:
                             WindowLayout_SettingsSpecifics_ManNode();
@@ -160,14 +162,18 @@ namespace KerbalAlarmClock
                     }
                     break;
                 case 2:
+                    WindowLayout_SettingsAudio();
+                    intSettingsHeight = 514;
+                    break;
+                case 3:
                     WindowLayout_SettingsIcons();
                     intSettingsHeight = 509; //518;//466 //406;
                     break;
-                case 3:
+                case 4:
                     WindowLayout_SettingsCalendar();
                     intSettingsHeight = 226;
                     break;
-                case 4:
+                case 5:
                     WindowLayout_SettingsAbout();
                     intSettingsHeight = 350; // 294; //306;
                     break;
@@ -327,7 +333,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             //Default Alarm Action
-            if (DrawAlarmActionChoice3(ref settings.AlarmDefaultAction, "Default Action:", 108, 38))
+            if (DrawAlarmActionChoice4(ref settings.AlarmDefaultAction, "Default Action:", 108))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeDefaultMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Default Margin:", 100))
@@ -336,8 +342,8 @@ namespace KerbalAlarmClock
                 settings.AlarmDefaultMargin = timeDefaultMargin.UT;
                 settings.Save();
             }
-            if (DrawCheckbox(ref settings.AlarmDeleteOnClose, "Delete Alarm On Close"))
-                settings.Save();
+            //if (DrawCheckbox(ref settings.AlarmDeleteOnClose, "Delete Alarm On Close"))
+            //    settings.Save();
 
             GUILayout.EndVertical();
         }
@@ -358,6 +364,11 @@ namespace KerbalAlarmClock
             {
                 settings.Save();
             }
+            if (DrawCheckbox(ref settings.WarpToHideWhenManGizmoShown, new GUIContent("Hide all WarpTo's when Node Gizmo shown", "Hides all warpto stuff when the man node gizmo is visible")))
+            {
+                settings.Save();
+            }
+
             GUILayout.BeginHorizontal();
             String strTemp = settings.WarpToDupeProximitySecs.ToString("0");
             if (DrawTextBox(ref strTemp, KACResources.styleAddField, GUILayout.Width(45)))
@@ -444,7 +455,7 @@ namespace KerbalAlarmClock
                 }
 
                 GUILayout.Label("Man Node Alarm Settings", KACResources.styleAddSectionHeading);
-                if (DrawAlarmActionChoice3(ref settings.AlarmAddManAuto_Action, "On Alarm:", 108, 38))
+                if (DrawAlarmActionChoice4(ref settings.AlarmAddManAuto_Action, "On Alarm:", 108))
                 {
                     settings.Save();
                 }
@@ -461,7 +472,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("Maneuver Quick Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-            if (DrawAlarmActionChoice3(ref settings.AlarmAddManQuickAction, "Quick Action:", 108, 38))
+            if (DrawAlarmActionChoice4(ref settings.AlarmAddManQuickAction, "Quick Action:", 108))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeQuickManNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
@@ -471,12 +482,12 @@ namespace KerbalAlarmClock
                 settings.Save();
             }
             GUILayout.EndVertical();
-            GUILayout.Label("Default Kerbal Engineer Node Margin", KACResources.styleAddSectionHeading);
+            GUILayout.Label("Default Burn Node Margin (KER/VOID)", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
             GUILayout.BeginHorizontal();
 
-            GUILayout.Label("Add KER Burn Time: ", KACResources.styleAddHeading);
+            GUILayout.Label("Add Burn Time: ", KACResources.styleAddHeading);
             ddlSettingsKERNodeMargin.DrawButton();
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
@@ -520,7 +531,7 @@ namespace KerbalAlarmClock
                 //    settings.Save();
                 //GUILayout.EndHorizontal();
                 GUILayout.Label("SOI Alarm Settings", KACResources.styleAddSectionHeading);
-                if (DrawAlarmActionChoice3(ref settings.AlarmOnSOIChange_Action, "On Alarm:", 108, 38))
+                if (DrawAlarmActionChoice4(ref settings.AlarmOnSOIChange_Action, "On Alarm:", 108))
                 {
                     settings.Save();
                 }
@@ -537,7 +548,7 @@ namespace KerbalAlarmClock
             GUILayout.Label("SOI Quick Alarms", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 
-            if (DrawAlarmActionChoice3(ref settings.AlarmAddSOIQuickAction, "Quick Action:", 108, 38))
+            if (DrawAlarmActionChoice4(ref settings.AlarmAddSOIQuickAction, "Quick Action:", 108))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeQuickSOIMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
@@ -554,7 +565,7 @@ namespace KerbalAlarmClock
         {
             GUILayout.Label("Active Contract Alarm Settings", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractDeadline_Action, "On Alarm:", 108, 38))
+            if (DrawAlarmActionChoice4(ref settings.AlarmOnContractDeadline_Action, "On Alarm:", 108))
             {
                 settings.Save();
             }
@@ -580,7 +591,7 @@ namespace KerbalAlarmClock
 
             GUILayout.Label("Offered Contract Alarm Settings", KACResources.styleAddSectionHeading);
             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-            if (DrawAlarmActionChoice3(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108, 38))
+            if (DrawAlarmActionChoice4(ref settings.AlarmOnContractExpire_Action, "On Alarm:", 108))
             {
                 settings.Save();
             }
@@ -632,7 +643,7 @@ namespace KerbalAlarmClock
 
             GUILayout.Label("Quick Alarm Settings", KACResources.styleAddSectionHeading);
 
-            if (DrawAlarmActionChoice3(ref settings.AlarmAddNodeQuickAction, "Quick Action:", 108, 38))
+            if (DrawAlarmActionChoice4(ref settings.AlarmAddNodeQuickAction, "Quick Action:", 108))
                 settings.Save();
 
             if (DrawTimeEntry(ref timeQuickNodeMargin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Quick Margin:", 100))
@@ -657,6 +668,97 @@ namespace KerbalAlarmClock
                 }
             }
             GUILayout.EndVertical();
+        }
+
+        private void WindowLayout_SettingsAudio()
+        {
+            GUILayout.Label("Global Settings", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+
+            //Columns
+            GUILayout.BeginHorizontal();
+            
+            //Column1
+            GUILayout.BeginVertical(GUILayout.Width(70));
+            GUILayout.Space(0);
+            GUILayout.Label("Volume:", KACResources.styleAddSectionHeading);
+            GUILayout.Space(4);
+            GUILayout.Label("     Level:", KACResources.styleAddHeading);
+            GUILayout.EndVertical();
+
+            //Column2
+            GUILayout.BeginVertical();
+            GUILayout.Space(-5);
+            if (DrawToggle(ref settings.AlarmsVolumeFromUI, "Use KSP UI Volume", KACResources.styleCheckbox))
+            {
+                settings.Save();
+            }
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(10);
+            if (settings.AlarmsVolumeFromUI)
+                GUILayout.HorizontalSlider((Int32)(GameSettings.UI_VOLUME * 100), 0, 100, GUILayout.Width(160));
+            else
+                settings.AlarmsVolume = GUILayout.HorizontalSlider(settings.AlarmsVolume * 100, 0, 100, GUILayout.Width(160)) / 100;
+            GUIStyle stylePct = new GUIStyle(KACResources.styleAddHeading);
+            stylePct.padding.top = -2;
+            GUILayout.Label(KerbalAlarmClock.audioController.VolumePct.ToString() + "%", stylePct);
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+            
+            //End Columns
+            GUILayout.EndHorizontal();
+
+            //Draw Raw Sound
+            AlarmSound raw = settings.AlarmSounds.First(s => s.Name == "Raw");
+            DrawSoundLine(ref raw,true);
+            GUILayout.EndVertical();
+
+            GUILayout.Label("Alarm Specifics", KACResources.styleAddSectionHeading);
+            GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+            GUILayout.Label("Enable to select unique sounds or the Raw sound will be used", KACResources.styleAddHeading);
+
+            for (int i = 0; i < settings.AlarmSounds.Count-1; i++)
+			{
+                AlarmSound sound = settings.AlarmSounds.Where(s => s.Name != "Raw").ElementAt(i);
+                DrawSoundLine(ref sound);
+            }
+
+            GUILayout.EndVertical();
+
+        }
+
+        private void DrawSoundLine(ref AlarmSound sound,Boolean HideCheck=false)
+        {
+            GUILayout.BeginHorizontal();
+
+            if (HideCheck) {
+                GUILayout.Label("     " + sound.Name, KACResources.styleCheckboxLabel,GUILayout.Width(100));
+            } else {
+                if (DrawToggle(ref sound.Enabled, sound.Name, KACResources.styleCheckbox,GUILayout.Width(100)))
+                {
+                    settings.Save();
+                }
+            }
+            sound.ddl.DrawButton();
+
+            if (KACResources.clipAlarms.ContainsKey(sound.SoundName))
+                DrawTestSoundButton(KACResources.clipAlarms[sound.SoundName], sound.RepeatCount);
+            else
+                DrawTestSoundButton(null, sound.RepeatCount);
+
+            GUILayout.Label(new GUIContent("R:","Repeat"),KACResources.styleAddHeading,GUILayout.Width(14));
+            //sound.RepeatCount = (Int32)GUILayout.HorizontalSlider(sound.RepeatCount, 1, 6, GUILayout.Width(intTestheight3));
+            GUILayout.BeginVertical(GUILayout.Width(60));
+            GUILayout.Space(8);
+            if (DrawHorizontalSlider(ref sound.RepeatCount, 1, 6, GUILayout.Width(60)))
+            {
+                settings.Save();
+            }
+            GUILayout.EndVertical();
+            GUILayout.Space(3);
+            GUILayout.Label(sound.RepeatCount < 6 ? sound.RepeatCount.ToString() : "6+", KACResources.styleAddHeading, GUILayout.Width(14));
+
+            GUILayout.EndHorizontal();
         }
 
         private void WindowLayout_SettingsIcons()

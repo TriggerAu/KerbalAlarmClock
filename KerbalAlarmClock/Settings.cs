@@ -13,7 +13,9 @@ namespace KerbalAlarmClock
 {
     internal class Settings : ConfigNodeStorage
     {
-        internal Settings(String FilePath) : base(FilePath) {
+        internal Settings(String FilePath)
+            : base(FilePath)
+        {
             Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             //on each start set the attention flag to the property - should be on each program start
             VersionAttentionFlag = VersionAvailable;
@@ -49,7 +51,7 @@ namespace KerbalAlarmClock
 
         [Persistent] internal Boolean WindowChildPosBelow = false;
 
-        [Persistent] internal Rect IconPos =  new Rect(152, 0, 32, 32);
+        [Persistent] internal Rect IconPos = new Rect(152, 0, 32, 32);
         [Persistent] internal Rect IconPos_SpaceCenter = new Rect(3, 3, 32, 32);
         [Persistent] internal Boolean IconShow_SpaceCenter = true;
         [Persistent] internal Rect IconPos_TrackingStation = new Rect(196, 0, 32, 32);
@@ -65,8 +67,10 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean KillWarpOnThrottleCutOffKeystroke = true;
 
         //Audio Volume
-        [Persistent] internal Boolean AlarmsVolumeFromUI=true;
-        [Persistent] internal Single AlarmsVolume=0.25f;
+        [Persistent] internal Boolean AlarmsVolumeFromUI = true;
+        [Persistent] internal Single AlarmsVolume = 0.25f;
+
+        [Persistent] internal List<AlarmSound> AlarmSounds = new List<AlarmSound>();
 
         //Visuals
         [Persistent] internal DisplaySkin SelectedSkin = DisplaySkin.Default;
@@ -81,6 +85,8 @@ namespace KerbalAlarmClock
         [Persistent] internal Int32 WarpTransitions_ShowIndicatorSecs = 4;
 
         [Persistent] internal Boolean WarpToEnabled = true;
+        [Persistent] internal Boolean WarpToHideWhenManGizmoShown = true;
+
         [Persistent] internal Boolean WarpToTipsHidden = false;
         [Persistent] internal Int32 WarpToTSIconDelayMSecs = 200;
         [Persistent] internal Int32 WarpToDupeProximitySecs = 60;
@@ -122,31 +128,34 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean ConfirmAlarmDeletes = false;
 
 
-        [Persistent]
-        internal KACAlarm.AlarmActionEnum AlarmDefaultAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmDefaultAction = new AlarmActions();
         [Persistent] internal Double AlarmDefaultMargin = 60;
         [Persistent] internal Int32 AlarmPosition = 1;
-        [Persistent] internal Boolean AlarmDeleteOnClose = false;
+        //[Persistent] internal Boolean AlarmDeleteOnClose = false;
         [Persistent] internal Boolean HideOnPause = true;
         //public Boolean TimeAsUT = false;
         [Persistent] internal OldPrintTimeFormat TimeFormat = OldPrintTimeFormat.KSPString;
         [Persistent] internal DateStringFormatsEnum DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs;
         [Persistent] internal Boolean TimeFormatConverted = false;
-        internal TimeSpanStringFormatsEnum TimeSpanFormat { get {
-            switch (DateTimeFormat)
+        internal TimeSpanStringFormatsEnum TimeSpanFormat
+        {
+            get
             {
-                case DateStringFormatsEnum.TimeAsUT:
-                    return TimeSpanStringFormatsEnum.TimeAsUT;
-                case DateStringFormatsEnum.KSPFormat:
-                    return TimeSpanStringFormatsEnum.KSPFormat;
-                case DateStringFormatsEnum.KSPFormatWithSecs:
-                    return TimeSpanStringFormatsEnum.KSPFormat;
-                case DateStringFormatsEnum.DateTimeFormat:
-                    return TimeSpanStringFormatsEnum.DateTimeFormat;
-                default:
-                    return TimeSpanStringFormatsEnum.KSPFormat;
+                switch (DateTimeFormat)
+                {
+                    case DateStringFormatsEnum.TimeAsUT:
+                        return TimeSpanStringFormatsEnum.TimeAsUT;
+                    case DateStringFormatsEnum.KSPFormat:
+                        return TimeSpanStringFormatsEnum.KSPFormat;
+                    case DateStringFormatsEnum.KSPFormatWithSecs:
+                        return TimeSpanStringFormatsEnum.KSPFormat;
+                    case DateStringFormatsEnum.DateTimeFormat:
+                        return TimeSpanStringFormatsEnum.DateTimeFormat;
+                    default:
+                        return TimeSpanStringFormatsEnum.KSPFormat;
+                }
             }
-        } }
+        }
 
 
         [Persistent] internal Boolean ShowTooltips = true;
@@ -176,35 +185,41 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean AlarmAddManAuto_andRemove = false;
         [Persistent] internal Double AlarmAddManAutoMargin = 180;
         [Persistent] internal Double AlarmAddManAutoThreshold = 180;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManAuto_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmAddManAuto_Action = new AlarmActions();
 
-        internal enum KERMarginEnum
+        internal enum BurnMarginEnum
         {
-            [Description("No Burn Margin")] None,
-            [Description("Half Burn")] Half,
-            [Description("Full Burn")] Full,
+            [Description("No Burn Margin")]
+            None,
+            [Description("Half Burn")]
+            Half,
+            [Description("Full Burn")]
+            Full,
         }
-        [Persistent] internal KERMarginEnum DefaultKERMargin = KERMarginEnum.Half;
+        [Persistent] internal BurnMarginEnum DefaultKERMargin = BurnMarginEnum.Half;
 
         [Persistent] internal Double AlarmAddManQuickMargin = 180;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddManQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmAddManQuickAction =  new AlarmActions();
         [Persistent] internal Double AlarmAddSOIQuickMargin = 180;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddSOIQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmAddSOIQuickAction =  new AlarmActions();
 
         [Persistent] internal Double AlarmAddNodeQuickMargin = 30;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmAddNodeQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmAddNodeQuickAction =  new AlarmActions();
 
 
         [Persistent] internal Double AlarmOnContractExpireMargin = 3600;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnContractExpire_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmOnContractExpire_Action =  new AlarmActions();
         [Persistent] internal Double AlarmOnContractDeadlineMargin = 86400;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnContractDeadline_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmOnContractDeadline_Action = new AlarmActions();
 
         internal enum AutoContractBehaviorEnum
         {
-            [Description("No Alarms")] None,
-            [Description("Next Contract Only")] Next,
-            [Description("All Contracts")] All,
+            [Description("No Alarms")]
+            None,
+            [Description("Next Contract Only")]
+            Next,
+            [Description("All Contracts")]
+            All,
         }
         [Persistent] internal AutoContractBehaviorEnum AlarmAddContractAutoOffered = AutoContractBehaviorEnum.None;
         [Persistent] internal AutoContractBehaviorEnum AlarmAddContractAutoActive = AutoContractBehaviorEnum.None;
@@ -212,40 +227,32 @@ namespace KerbalAlarmClock
         [Persistent] internal Boolean ContractExpireDelete = true;
         [Persistent] internal Boolean ContractDeadlineDontCreateInsideMargin = true;
         [Persistent] internal Boolean ContractExpireDontCreateInsideMargin = true;
-        
-
-        //[Persistent] internal Double AlarmAddApQuickMargin = 60;
-        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddApQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
-        //[Persistent] internal Double AlarmAddPeQuickMargin = 60;
-        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddPeQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
-        //[Persistent] internal Double AlarmAddANQuickMargin = 60;
-        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddANQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
-        //[Persistent] internal Double AlarmAddDNQuickMargin = 60;
-        //[Persistent] internal KACAlarm.AlarmActionEnum AlarmAddDNQuickAction = KACAlarm.AlarmActionEnum.KillWarp;
 
         //public double AlarmAddSOIMargin = 120;
         //[Persistent] internal Boolean AlarmCatchSOIChange = false;
-        [Persistent] internal KACAlarm.AlarmActionEnum AlarmOnSOIChange_Action = KACAlarm.AlarmActionEnum.KillWarp;
+        [Persistent] internal AlarmActions AlarmOnSOIChange_Action = new AlarmActions();
 
         [Persistent] internal Boolean AlarmCrewDefaultStoreNode = false;
 
         //Strings to store objects to reset after ship switch;
-        [Persistent] internal String LoadManNode="";
+        [Persistent] internal String LoadManNode = "";
         [Persistent] internal String LoadVesselTarget = "";
 
         //public KACAlarmList Alarms = new KACAlarmList();
-        
+
         public List<GameScenes> DrawScenes = new List<GameScenes> { GameScenes.FLIGHT, GameScenes.SPACECENTER, GameScenes.TRACKSTATION, GameScenes.EDITOR };
         public List<GameScenes> BehaviourScenes = new List<GameScenes> { GameScenes.FLIGHT };
         public List<VesselType> VesselTypesForSOI = new List<VesselType>() { VesselType.Base, VesselType.Lander, VesselType.Probe, VesselType.Ship, VesselType.Station };
         public List<Orbit.PatchTransitionType> SOITransitions = new List<Orbit.PatchTransitionType> { Orbit.PatchTransitionType.ENCOUNTER, Orbit.PatchTransitionType.ESCAPE };
-        
+
 
         //Toolbar Integration
         internal Boolean BlizzyToolbarIsAvailable = false;
 
-        internal ButtonStyleEnum ButtonStyleToDisplay {
-            get {
+        internal ButtonStyleEnum ButtonStyleToDisplay
+        {
+            get
+            {
                 if (BlizzyToolbarIsAvailable || ButtonStyleChosen != ButtonStyleEnum.Toolbar)
                     return ButtonStyleChosen;
                 else
@@ -256,17 +263,20 @@ namespace KerbalAlarmClock
 
         internal enum ButtonStyleEnum
         {
-            [Description("Basic button")]                       Basic,
-            [Description("Common Toolbar (by Blizzy78)")]       Toolbar,
-            [Description("KSP App Launcher Button")]            Launcher,
+            [Description("Basic button")]
+            Basic,
+            [Description("Common Toolbar (by Blizzy78)")]
+            Toolbar,
+            [Description("KSP App Launcher Button")]
+            Launcher,
         }
 
 
         //Click through protection
-        [Persistent] internal Boolean ClickThroughProtect_KSC=true;
-        [Persistent] internal Boolean ClickThroughProtect_Tracking=true;
-        [Persistent] internal Boolean ClickThroughProtect_Editor=true;
-        [Persistent] internal Boolean ClickThroughProtect_Flight=true;
+        [Persistent] internal Boolean ClickThroughProtect_KSC = true;
+        [Persistent] internal Boolean ClickThroughProtect_Tracking = true;
+        [Persistent] internal Boolean ClickThroughProtect_Editor = true;
+        [Persistent] internal Boolean ClickThroughProtect_Flight = true;
 
 
         [Persistent] internal CalendarTypeEnum SelectedCalendar = CalendarTypeEnum.KSPStock;
@@ -274,9 +284,9 @@ namespace KerbalAlarmClock
 
         [Persistent] internal Boolean ShowCalendarToggle = false;
         internal Boolean RSSActive = false;
-        [Persistent] internal Boolean RSSShowCalendarToggled=false;
+        [Persistent] internal Boolean RSSShowCalendarToggled = false;
 
-        [Persistent] internal Int32 AppLauncherSetTrueTimeOut= 6;
+        [Persistent] internal Int32 AppLauncherSetTrueTimeOut = 6;
 
         //Version Stuff
         [Persistent] internal Boolean DailyVersionCheck = true;
@@ -307,14 +317,17 @@ namespace KerbalAlarmClock
             WindowPos_EditorVAB = WindowPos_EditorVABStored.ToRect();
             WindowPos_EditorSPH = WindowPos_EditorSPHStored.ToRect();
             DateTime.TryParseExact(VersionCheckDate_AttemptStored, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out VersionCheckDate_Attempt);
-            DateTime.TryParseExact(VersionCheckDate_SuccessStored, "yyyy-MM-dd", null ,System.Globalization.DateTimeStyles.None, out VersionCheckDate_Success);
+            DateTime.TryParseExact(VersionCheckDate_SuccessStored, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out VersionCheckDate_Success);
         }
 
         internal enum DisplaySkin
         {
-            [Description("KSP Style")]          Default,
-            [Description("Unity Style")]        Unity,
-            [Description("Unity/KSP Buttons")]  UnityWKSPButtons
+            [Description("KSP Style")]
+            Default,
+            [Description("Unity Style")]
+            Unity,
+            [Description("Unity/KSP Buttons")]
+            UnityWKSPButtons
         }
 
         #region Version Checks
@@ -443,7 +456,7 @@ namespace KerbalAlarmClock
                 //Parse it for the version String
                 String strFile = wwwVersionCheck.text;
                 MonoBehaviourExtended.LogFormatted("Response Length:" + strFile.Length);
-                MonoBehaviourExtended.LogFormatted("File:{0}" , strFile);
+                MonoBehaviourExtended.LogFormatted("File:{0}", strFile);
 
                 Match matchVersion;
                 matchVersion = Regex.Match(strFile, "(?<=\\|LATESTVERSION\\|).+(?=\\|LATESTVERSION\\|)", System.Text.RegularExpressions.RegexOptions.Singleline);
@@ -520,7 +533,78 @@ namespace KerbalAlarmClock
         //    return blnReturn;
         //}
         #endregion
+
+
+
+        #region Sound Stuff
+        internal Boolean VerifySoundsList()
+        {
+            Boolean blnRet = false;
+            try
+            {
+                Boolean NewTypeAdded = false;
+
+                Boolean RawTypeAdded = AddMissingSoundConfig("Raw", KACAlarm.AlarmTypeEnum.Raw);
+                NewTypeAdded = NewTypeAdded | RawTypeAdded;
+
+                //If we added the raw one then set the default sound
+                if (NewTypeAdded)
+                    AlarmSounds.First(s => s.Name == "Raw").SoundName = "Alarm1";
+
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Manuever", KACAlarm.AlarmTypeEnum.Maneuver, KACAlarm.AlarmTypeEnum.ManeuverAuto);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("AP/Pe", KACAlarm.AlarmTypeEnum.Apoapsis, KACAlarm.AlarmTypeEnum.Periapsis);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("AN/DN", KACAlarm.AlarmTypeEnum.AscendingNode, KACAlarm.AlarmTypeEnum.DescendingNode);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Distance", KACAlarm.AlarmTypeEnum.Closest, KACAlarm.AlarmTypeEnum.Distance);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Rendezvous", KACAlarm.AlarmTypeEnum.LaunchRendevous);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("SOI", KACAlarm.AlarmTypeEnum.SOIChange, KACAlarm.AlarmTypeEnum.SOIChangeAuto);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Transfer", KACAlarm.AlarmTypeEnum.Transfer, KACAlarm.AlarmTypeEnum.TransferModelled);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Contract", KACAlarm.AlarmTypeEnum.Contract, KACAlarm.AlarmTypeEnum.ContractAuto);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Crew", KACAlarm.AlarmTypeEnum.Crew);
+
+                Boolean EarthTypeAdded = AddMissingSoundConfig("Earth", KACAlarm.AlarmTypeEnum.EarthTime);
+                NewTypeAdded = NewTypeAdded | EarthTypeAdded;
+
+                //If we added earth type then set its default
+                if (EarthTypeAdded)
+                {
+                    AlarmSounds.First(s => s.Name == "Earth").SoundName = "Rooster";
+                    AlarmSounds.First(s => s.Name == "Earth").Enabled=true;
+                    AlarmSounds.First(s => s.Name == "Earth").RepeatCount=2;
+                }
+
+
+                if (NewTypeAdded)
+                    this.Save();
+
+                blnRet = true;
+            }
+            catch (Exception)
+            {
+
+            }
+
+
+            //foreach (AlarmSound AlarmDef in AlarmSounds)
+            //{
+            //    LogFormatted("{0}:{1}-{2}", AlarmDef.Name, AlarmDef.SoundName, AlarmDef.RepeatCount);
+            //}
+
+            return blnRet;
+        }
+
+        private Boolean AddMissingSoundConfig(String Name, params KACAlarm.AlarmTypeEnum[] Types)
+        {
+            if (!AlarmSounds.Any(s=>s.Name==Name)){
+                LogFormatted("Initing Sound Config for:{0}", Name);
+                AlarmSounds.Add(new AlarmSound(Name,Types));
+                return true;
+            }
+
+            return false;
+        }
     }
+
+	#endregion    
 
     internal class RectStorage:ConfigNodeStorage
     {
@@ -543,4 +627,23 @@ namespace KerbalAlarmClock
         OldestAlarm = 1
     }
 
+    internal class AlarmSound:ConfigNodeStorage
+    {
+        [Persistent] internal String Name;
+        [Persistent] internal List<KACAlarm.AlarmTypeEnum> Types;
+        [Persistent] internal Boolean Enabled;
+        [Persistent] internal Int32 RepeatCount;
+        [Persistent] internal String SoundName;
+        internal KerbalAlarmClock.DropDownList ddl;
+
+        internal AlarmSound() { }
+        internal AlarmSound(String Name, params KACAlarm.AlarmTypeEnum[] Types )
+        {
+            this.Name = Name;
+            this.Types = Types.ToList();
+            this.Enabled = false;
+            this.RepeatCount = 3;
+            this.SoundName = "";
+        }
+    }
 }

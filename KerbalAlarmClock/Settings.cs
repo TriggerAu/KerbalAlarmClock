@@ -544,7 +544,13 @@ namespace KerbalAlarmClock
             {
                 Boolean NewTypeAdded = false;
 
-                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Raw", KACAlarm.AlarmTypeEnum.Raw);
+                Boolean RawTypeAdded = AddMissingSoundConfig("Raw", KACAlarm.AlarmTypeEnum.Raw);
+                NewTypeAdded = NewTypeAdded | RawTypeAdded;
+
+                //If we added the raw one then set the default sound
+                if (NewTypeAdded)
+                    AlarmSounds.First(s => s.Name == "Raw").SoundName = "Alarm1";
+
                 NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Manuever", KACAlarm.AlarmTypeEnum.Maneuver, KACAlarm.AlarmTypeEnum.ManeuverAuto);
                 NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("AP/Pe", KACAlarm.AlarmTypeEnum.Apoapsis, KACAlarm.AlarmTypeEnum.Periapsis);
                 NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("AN/DN", KACAlarm.AlarmTypeEnum.AscendingNode, KACAlarm.AlarmTypeEnum.DescendingNode);
@@ -554,7 +560,17 @@ namespace KerbalAlarmClock
                 NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Transfer", KACAlarm.AlarmTypeEnum.Transfer, KACAlarm.AlarmTypeEnum.TransferModelled);
                 NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Contract", KACAlarm.AlarmTypeEnum.Contract, KACAlarm.AlarmTypeEnum.ContractAuto);
                 NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Crew", KACAlarm.AlarmTypeEnum.Crew);
-                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Earth", KACAlarm.AlarmTypeEnum.EarthTime);
+
+                Boolean EarthTypeAdded = AddMissingSoundConfig("Earth", KACAlarm.AlarmTypeEnum.EarthTime);
+                NewTypeAdded = NewTypeAdded | EarthTypeAdded;
+
+                //If we added earth type then set its default
+                if (EarthTypeAdded)
+                {
+                    AlarmSounds.First(s => s.Name == "Earth").SoundName = "Rooster";
+                    AlarmSounds.First(s => s.Name == "Earth").Enabled=true;
+                }
+
 
                 if (NewTypeAdded)
                     this.Save();

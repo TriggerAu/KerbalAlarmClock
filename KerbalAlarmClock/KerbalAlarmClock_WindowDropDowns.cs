@@ -504,8 +504,9 @@ namespace KerbalAlarmClock
                             SelectedIndex = (Int32)Math.Floor((Event.current.mousePosition.y - rectListBox.y) / (rectListBox.height / Items.Count));
                         else
                         {
-                            //do some maths to work out the actual index
-                            Int32 SelectedRow = (Int32)Math.Floor((Event.current.mousePosition.y - rectListBox.y) / (rectListBox.height / ListPageLength));
+                            //do some maths to work out the actual index - Page Length + 1 for the pager row
+                            Int32 SelectedRow = (Int32)Math.Floor((Event.current.mousePosition.y - rectListBox.y) / (rectListBox.height / (ListPageLength + 1)));
+                            //Old one - Int32 SelectedRow = (Int32)Math.Floor((Event.current.mousePosition.y - rectListBox.y) / (rectListBox.height / ListPageLength));
 
                             if (SelectedRow == 0)
                             {

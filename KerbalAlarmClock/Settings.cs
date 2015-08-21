@@ -305,7 +305,7 @@ namespace KerbalAlarmClock
             WindowPos_SpaceCenterStored = WindowPos_SpaceCenterStored.FromRect(WindowPos_SpaceCenter);
             WindowPos_TrackingStationStored = WindowPos_TrackingStationStored.FromRect(WindowPos_TrackingStation);
             WindowPos_EditorVABStored = WindowPos_EditorVABStored.FromRect(WindowPos_EditorVAB);
-            WindowPos_EditorSPHStored = WindowPos_EditorVABStored.FromRect(WindowPos_EditorSPH);
+            WindowPos_EditorSPHStored = WindowPos_EditorSPHStored.FromRect(WindowPos_EditorSPH);
             VersionCheckDate_AttemptStored = VersionCheckDate_AttemptString;
             VersionCheckDate_SuccessStored = VersionCheckDate_SuccessString;
         }

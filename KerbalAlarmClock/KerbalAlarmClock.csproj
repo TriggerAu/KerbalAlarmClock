@@ -57,6 +57,8 @@
     <Compile Include="API\KACWrapper.cs" />
     <Compile Include="FrameworkExt\AudioController.cs" />
     <Compile Include="FrameworkExt\Extensions.cs" />
+    <Compile Include="SharedStuff\AngleRenderEject.cs" />
+    <Compile Include="SharedStuff\AngleRenderPhase.cs" />
     <Compile Include="SharedStuff\ExtensionsKSP.cs" />
     <Compile Include="FrameworkExt\KSPDateStructure.cs" />
     <Compile Include="FrameworkExt\KSPDateTime.cs" />

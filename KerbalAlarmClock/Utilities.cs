@@ -325,6 +325,26 @@ namespace KerbalAlarmClock
         #endregion
 
         #region "Orbital Math"
+        /// <summary>
+        /// Calculates the current phase angle between <paramref name="origin"/> and <paramref name="destination"/>.
+        /// </summary>
+        /// <returns>The phase angle.</returns>
+        /// <param name="origin">Origin.</param>
+        /// <param name="destination">Destination.</param>
+        public static double CurrentPhaseAngle(Orbit origin, Orbit destination)
+        {
+            Vector3d normal = origin.GetOrbitNormal().normalized;
+            Vector3d projected = Vector3d.Exclude(normal, destination.pos);
+            double result = Vector3d.Angle(origin.pos, projected);
+            if (Vector3d.Dot(Vector3d.Cross(origin.pos, projected), normal) < 0)
+            {
+                return 360.0 - result;
+            }
+            else
+            {
+                return result;
+            }
+        }
 
         //returns false if there is no AN/DN on the flight plan
         //public static Boolean CalcTimeToANorDN(Vessel vessel, ANDNNodeType typeOfNode, out Double timeToNode)

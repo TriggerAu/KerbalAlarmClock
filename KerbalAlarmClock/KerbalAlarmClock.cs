@@ -79,6 +79,11 @@ namespace KerbalAlarmClock
 
         internal static AudioController audioController;
 
+        internal AngleRenderPhase PhaseAngle;
+        internal AngleRenderEject EjectAngle;
+        internal Boolean blnShowPhaseAngle;
+        internal Boolean blnShowEjectAngle;
+
         //Constructor to set KACWorker parent object to this and access to the settings
         public KerbalAlarmClock()
         {
@@ -182,6 +187,10 @@ namespace KerbalAlarmClock
             winConfirmAlarmDelete.InitWindow();
 
             WarpTransitionCalculator.CalcWarpRateTransitions();
+
+            //Hook the Angle renderers
+            PhaseAngle = MapView.MapCamera.gameObject.AddComponent<AngleRenderPhase>();
+            EjectAngle = MapView.MapCamera.gameObject.AddComponent<AngleRenderEject>();
 
             APIAwake();
         }
@@ -1891,8 +1900,8 @@ namespace KerbalAlarmClock
 				{
 					//straight to spacecenter
 					HighLogic.CurrentGame = game;
-					HighLogic.LoadScene(GameScenes.SPACECENTER);
-                    //HighLogic.LoadScene(GameScenes.TRACKSTATION);
+					//HighLogic.LoadScene(GameScenes.SPACECENTER);
+                    HighLogic.LoadScene(GameScenes.TRACKSTATION);
 					return;
 
 					Int32 FirstVessel;

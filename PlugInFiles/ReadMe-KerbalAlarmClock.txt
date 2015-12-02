@@ -32,6 +32,13 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.5.0.0		-	KSP Version: 1.0.5
+- Fixed issue with dropdown pages and alignment
+- Fixed issue with settings bleed (Issue #152)
+- Solved limit on Target Distance Alamrs - for solar orbits (Issue #151)
+- Updated KERWrapper to better handle the KER window not being open (Issue #150)
+- Added AngleRenderer for ejection angle displays of TWP Alarms
+
 Version 3.4.0.0		-	KSP Version: 1.0.4
 - Added Audio to Alarms - ie play a sound when an alarm fires (Issue #4)
 - Added repeat option to Ap/PE alarms (Issue #128)

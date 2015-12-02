@@ -113,8 +113,7 @@ namespace KAC_KERWrapper
                     LogFormatted("p not NULL");
                     actualKER = p.GetValue(null, null);
                 }
-
-
+                
                 // actualKER = KER;
 
                 BurnTimeProp = KERManoeuvreProcessorType.GetProperty("BurnTime", BindingFlags.Public | BindingFlags.Static);

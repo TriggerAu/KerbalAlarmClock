@@ -102,7 +102,12 @@ namespace KerbalAlarmClock
         {
             base.Start();
 
-            LogFormatted("Initializing Angle Render");
+            if (!KerbalAlarmClock.lstScenesForAngles.Contains(HighLogic.LoadedScene)) { 
+                this.enabled = false;
+                return;
+            }
+
+            LogFormatted("Initializing Phase Angle Render");
 
             //Get the orbit lines material so things look similar
             Material orbitLines = ((MapView)GameObject.FindObjectOfType(typeof(MapView))).orbitLinesMaterial;
@@ -229,6 +234,11 @@ namespace KerbalAlarmClock
         {
             base.OnPreCull();
 
+            //not sure if this is right - but its working
+            if (!KerbalAlarmClock.lstScenesForAngles.Contains(HighLogic.LoadedScene)) {
+                return;
+            }
+            
             if (MapView.MapIsEnabled && isDrawing)
             {
                 //Get the Vector of the Origin body from the ref point and its distance

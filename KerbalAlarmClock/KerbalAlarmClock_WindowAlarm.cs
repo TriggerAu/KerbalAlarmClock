@@ -426,7 +426,7 @@ namespace KerbalAlarmClock
 
                     try
                     {
-                        LogFormatted_DebugOnly("{0}", matchPhase.Value);
+                        //LogFormatted_DebugOnly("{0}", matchPhase.Value);
                         Double dblPhase = Convert.ToDouble(matchPhase.Value);
                         Double dblEject;
                         if (matchEjectPro.Success)

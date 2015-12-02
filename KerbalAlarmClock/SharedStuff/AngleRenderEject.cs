@@ -103,7 +103,13 @@ namespace KerbalAlarmClock
         {
             base.Start();
 
-            LogFormatted("Initializing Angle Render");
+            if (!KerbalAlarmClock.lstScenesForAngles.Contains(HighLogic.LoadedScene))
+            {
+                this.enabled = false;
+                return;
+            }
+
+            LogFormatted("Initializing EjectAngle Render");
 
             //Get the orbit lines material so things look similar
             Material orbitLines = ((MapView)GameObject.FindObjectOfType(typeof(MapView))).orbitLinesMaterial;
@@ -230,6 +236,12 @@ namespace KerbalAlarmClock
         internal override void OnPreCull()
         {
             base.OnPreCull();
+
+            //not sure if this is right - but its working
+            if (!KerbalAlarmClock.lstScenesForAngles.Contains(HighLogic.LoadedScene))
+            {
+                return;
+            }
 
             if (MapView.MapIsEnabled && isDrawing)
             {

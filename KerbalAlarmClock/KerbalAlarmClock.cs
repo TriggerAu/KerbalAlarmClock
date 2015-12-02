@@ -84,6 +84,8 @@ namespace KerbalAlarmClock
         internal Boolean blnShowPhaseAngle;
         internal Boolean blnShowEjectAngle;
 
+        internal static List<GameScenes> lstScenesForAngles = new List<GameScenes>() { GameScenes.TRACKSTATION, GameScenes.FLIGHT };
+
         //Constructor to set KACWorker parent object to this and access to the settings
         public KerbalAlarmClock()
         {
@@ -189,8 +191,11 @@ namespace KerbalAlarmClock
             WarpTransitionCalculator.CalcWarpRateTransitions();
 
             //Hook the Angle renderers
-            PhaseAngle = MapView.MapCamera.gameObject.AddComponent<AngleRenderPhase>();
-            EjectAngle = MapView.MapCamera.gameObject.AddComponent<AngleRenderEject>();
+            if (lstScenesForAngles.Contains(HighLogic.LoadedScene))
+            {
+                PhaseAngle = MapView.MapCamera.gameObject.AddComponent<AngleRenderPhase>();
+                EjectAngle = MapView.MapCamera.gameObject.AddComponent<AngleRenderEject>();
+            }
 
             APIAwake();
         }
@@ -267,6 +272,9 @@ namespace KerbalAlarmClock
             //GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
+            
+            Destroy(PhaseAngle);
+            Destroy(EjectAngle);
 
             DestroyDropDowns();
 

@@ -269,6 +269,7 @@ namespace KerbalAlarmClock
 		double dblTest = 12;
 
 		int intTestDistance = 710000;
+
 		public void FillDebugWindow(int WindowID)
 		{
             try { GUILayout.BeginVertical(); }
@@ -277,7 +278,6 @@ namespace KerbalAlarmClock
 			////GUILayout.Label("Alarm Add Interface:", KACResources.styleAddHeading, GUILayout.Width(90));
 			////AddInterfaceType = Convert.ToInt32(GUILayout.TextField(AddInterfaceType.ToString()));
 			//GUILayout.EndHorizontal();
-
 
 			GUILayout.BeginHorizontal();
 			GUILayout.BeginVertical();
@@ -316,16 +316,33 @@ namespace KerbalAlarmClock
                 
             }
 
+            //try
+            //{
+            //    GUILayout.Label("Req: " + KAC_KERWrapper.KERWrapper.KER.bRequested);
+            //    GUILayout.Label("Run: " + KAC_KERWrapper.KERWrapper.KER.bRunning);
+            //}
+            //catch (Exception) {
+                                
+            //}
 
-            if (GUILayout.Button("KER ME"))
-            {
-                LogFormatted("B:{0} - H:{1} - HASIT:{2}", KAC_KERWrapper.KERWrapper.KER.BurnTime, KAC_KERWrapper.KERWrapper.KER.HalfBurnTime, KAC_KERWrapper.KERWrapper.KER.HasDeltaV);
-            }
-            if (GUILayout.Button("VOID ME"))
-            {
-                LogFormatted("B:{0} - H:{1} - HASIT:{2}", KAC_VOIDWrapper.VOIDWrapper.VOID.BurnTime, KAC_VOIDWrapper.VOIDWrapper.VOID.HalfBurnTime, KAC_VOIDWrapper.VOIDWrapper.VOID.HasDeltaV);
+            //if (GUILayout.Button("KER ReqSim"))
+            //{
+            //    KAC_KERWrapper.KERWrapper.KER.RequestSimlulation();
+            //}
+            //if (GUILayout.Button("KER Update"))
+            //{
+            //    KAC_KERWrapper.KERWrapper.KER.UpdateManNodeValues();
+            //}
 
-            }
+            //if (GUILayout.Button("KER ME"))
+            //{
+            //    LogFormatted("B:{0} - H:{1} - HASIT:{2}", KAC_KERWrapper.KERWrapper.KER.BurnTime, KAC_KERWrapper.KERWrapper.KER.HalfBurnTime, KAC_KERWrapper.KERWrapper.KER.HasDeltaV);
+            //}
+            //if (GUILayout.Button("VOID ME"))
+            //{
+            //    LogFormatted("B:{0} - H:{1} - HASIT:{2}", KAC_VOIDWrapper.VOIDWrapper.VOID.BurnTime, KAC_VOIDWrapper.VOIDWrapper.VOID.HalfBurnTime, KAC_VOIDWrapper.VOIDWrapper.VOID.HasDeltaV);
+
+            //}
             //GUILayout.Label(WindowPosByActiveScene.ToString());
             //GUILayout.Label(Input.mousePosition.ToString());
             //GUILayout.Label(Event.current.mousePosition.ToString());

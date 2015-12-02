@@ -1033,6 +1033,7 @@ namespace KerbalAlarmClock
                     {
                         if (KERWrapper.APIReady)
                         {
+                            KERWrapper.KER.UpdateManNodeValues();
                             GUILayout.Label("Kerbal Engineer Node Margin", KACResources.styleAddSectionHeading);
                             GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
 

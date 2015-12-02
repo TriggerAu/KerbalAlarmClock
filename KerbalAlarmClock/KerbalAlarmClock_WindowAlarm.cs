@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Linq;
 
 using System.Reflection;
@@ -135,8 +136,10 @@ namespace KerbalAlarmClock
 				if (settings.AllowJumpFromViewOnly)
 					intNoOfActionButtons = DrawAlarmActionButtons(tmpAlarm, out intNoOfActionButtonsDoubleLine);
 
-			//Work out the text
-			String strText = "Close Alarm";
+            intNoOfActionButtons += DrawTransferAngleButtons(tmpAlarm);
+
+            //Work out the text
+            String strText = "Close Alarm";
 			if (tmpAlarm.PauseGame)
 			{
 				if (FlightDriver.Pause) strText = "Close Alarm and Unpause";
@@ -334,6 +337,8 @@ namespace KerbalAlarmClock
 					if (settings.AllowJumpFromViewOnly)
 						intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit, out intNoOfActionButtonsDoubleLine);
 
+                intNoOfActionButtons += DrawTransferAngleButtons(alarmEdit);
+
 				if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
 				{
 					settings.Save();
@@ -395,7 +400,9 @@ namespace KerbalAlarmClock
 					if (settings.AllowJumpFromViewOnly)
 						intNoOfActionButtons = DrawAlarmActionButtons(alarmEdit, out intNoOfActionButtonsDoubleLine);
 
-				if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
+                intNoOfActionButtons += DrawTransferAngleButtons(alarmEdit);
+
+                if (GUILayout.Button("Close Alarm Details", KACResources.styleButton))
 					_ShowEditPane = false;
 
 				intAlarmEditHeight = 152 + 20 +
@@ -405,7 +412,79 @@ namespace KerbalAlarmClock
 			SetTooltipText();
 		}
 		
-		private int DrawAlarmActionButtons(KACAlarm tmpAlarm, out int NoOfDoubleLineButtons)
+        private int DrawTransferAngleButtons(KACAlarm tmpAlarm)
+        {
+            if((tmpAlarm.TypeOfAlarm== KACAlarm.AlarmTypeEnum.Transfer|| tmpAlarm.TypeOfAlarm == KACAlarm.AlarmTypeEnum.TransferModelled) &&
+                (HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT))
+            {
+                //right type of alarm, now is the text there
+                Match matchPhase = Regex.Match(tmpAlarm.Notes, "(?<=Phase\\sAngle\\:\\s+)\\S+(?=°)");
+                Match matchEjectPro = Regex.Match(tmpAlarm.Notes, "(?<=Ejection\\sAngle\\:\\s+)\\S+(?=°\\sto\\sprograde)");
+                Match matchEjectRetro = Regex.Match(tmpAlarm.Notes, "(?<=Ejection\\sAngle\\:\\s+)\\S+(?=°\\sto\\sretrograde)");
+                if (matchPhase.Success && (matchEjectPro.Success || matchEjectRetro.Success))
+                {
+
+                    try
+                    {
+                        //LogFormatted_DebugOnly("{0}", matchPhase.Value);
+                        Double dblPhase = Convert.ToDouble(matchPhase.Value);
+                        Double dblEject;
+                        if (matchEjectPro.Success)
+                            dblEject = Convert.ToDouble(matchEjectPro.Value);
+                        else
+                            dblEject = Convert.ToDouble(matchEjectRetro.Value);
+
+                        GUILayout.BeginHorizontal();
+
+                        CelestialBody cbOrigin = FlightGlobals.Bodies.Single(b => b.bodyName == tmpAlarm.XferOriginBodyName);
+                        CelestialBody cbTarget = FlightGlobals.Bodies.Single(b => b.bodyName == tmpAlarm.XferTargetBodyName);
+
+                        GUIStyle styleAngleButton = new GUIStyle(KACResources.styleSmallButton) { fixedWidth = 180 };
+
+                        if (DrawToggle(ref blnShowPhaseAngle,"Show Phase Angle", styleAngleButton)){
+                            if (blnShowPhaseAngle)
+                            {
+                                EjectAngle.HideAngle();
+                                blnShowEjectAngle = false;
+                                PhaseAngle.DrawAngle(cbOrigin, cbTarget, dblPhase);
+                            }
+                            else
+                                PhaseAngle.HideAngle();
+                        }
+                        if (DrawToggle(ref blnShowEjectAngle, "Show Eject Angle", styleAngleButton))
+                        {
+                            if (blnShowEjectAngle)
+                            {
+                                PhaseAngle.HideAngle();
+                                blnShowPhaseAngle = false;
+                                EjectAngle.DrawAngle(cbOrigin, dblEject, matchEjectRetro.Success);
+                            }
+                            else
+                                EjectAngle.HideAngle();
+                        }
+                        GUILayout.EndHorizontal();
+
+                        //if (GUILayout.Toggle()) {
+
+                        //}
+                        //GUILayout.Label(String.Format("P:{0} - E:{1}",dblPhase,dblEject));
+
+                        return 1;
+
+                    }
+                    catch (Exception)
+                    {
+                        GUILayout.Label("Unable to decipher TWP Phase and Eject Angle found in notes");
+                        return 1;
+                    }
+                } else {
+                    GUILayout.Label("No TWP Phase and Eject Angle found in notes");
+                    return 1;
+                }
+            } else { return 0; }
+        }
+
+        private int DrawAlarmActionButtons(KACAlarm tmpAlarm, out int NoOfDoubleLineButtons)
 		{
 			int intReturnNoOfButtons = 0;
 			NoOfDoubleLineButtons = 0;

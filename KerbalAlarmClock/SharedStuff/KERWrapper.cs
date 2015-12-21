@@ -12,6 +12,7 @@ namespace KAC_KERWrapper
     {
         //protected static System.Type KERType;
         protected static System.Type KERManoeuvreProcessorType;
+        //protected static System.Type KERSimManagerType;
 
         protected static Object actualKER = null;
 
@@ -75,6 +76,17 @@ namespace KAC_KERWrapper
             LogFormatted("KER Version:{0}", KERManoeuvreProcessorType.Assembly.GetName().Version.ToString());
 
 
+            //KERSimManagerType = AssemblyLoader.loadedAssemblies
+            //    .Select(a => a.assembly.GetExportedTypes())
+            //    .SelectMany(t => t)
+            //    .FirstOrDefault(t => t.FullName == "KerbalEngineer.VesselSimulator.SimManager");
+
+            //if (KERSimManagerType == null)
+            //{
+            //    LogFormatted("Cant grab SimManager");
+            //    return false;
+            //}
+
             LogFormatted("Creating Wrapper Objects");
             KER = new KERAPI(actualKER);
             //}
@@ -84,30 +96,49 @@ namespace KAC_KERWrapper
 
 
         /// <summary>
-        /// The Type that is an analogue of the real KAC. This lets you access all the API-able properties and Methods of the KAC
+        /// The Type that is an analogue of the real KER. This lets you access all the API-able properties and Methods of the KER
         /// </summary>
         public class KERAPI
         {
             private PropertyInfo BurnTimeProp, HalfBurnTimeProp, HasDeltaVProp;
-            
+            private MethodInfo UpdateMethod;
+
+            //private FieldInfo bRunningField, bRequestedField;
+
             internal KERAPI(Object KER)
             {
-                actualKER = KER;
+                PropertyInfo p = KERManoeuvreProcessorType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
+                if (p != null)
+                {
+                    LogFormatted("p not NULL");
+                    actualKER = p.GetValue(null, null);
+                }
+                
+                // actualKER = KER;
 
                 BurnTimeProp = KERManoeuvreProcessorType.GetProperty("BurnTime", BindingFlags.Public | BindingFlags.Static);
-                LogFormatted("Success: " + (BurnTimeProp != null).ToString());
+                LogFormatted("BurnTimeProp Success: " + (BurnTimeProp != null).ToString());
                 //actualBurnTime = BurnTimeProp.GetValue(actualKER,null);
 
                 HalfBurnTimeProp = KERManoeuvreProcessorType.GetProperty("HalfBurnTime", BindingFlags.Public | BindingFlags.Static);
-                LogFormatted("Success: " + (HalfBurnTimeProp != null).ToString());
+                LogFormatted("HalfBurnTimeProp Success: " + (HalfBurnTimeProp != null).ToString());
                 //actualBurnTime = HalfBurnTimeProp.GetValue(actualKER,null));
 
                 HasDeltaVProp = KERManoeuvreProcessorType.GetProperty("HasDeltaV", BindingFlags.Public | BindingFlags.Static);
-                LogFormatted("Success: " + (HasDeltaVProp != null).ToString());
+                LogFormatted("HasDeltaVProp Success: " + (HasDeltaVProp != null).ToString());
+
+                UpdateMethod = KERManoeuvreProcessorType.GetMethod("Update", BindingFlags.Public | BindingFlags.Instance);
+                LogFormatted("UpdateMethod Success: " + (UpdateMethod != null).ToString());
+
+                //bRunningField = KERSimManagerType.GetField("bRunning", BindingFlags.NonPublic | BindingFlags.Static);
+                //LogFormatted("bRunningField Success: " + (bRunningField != null).ToString());
+
+                //bRequestedField = KERSimManagerType.GetField("bRequested", BindingFlags.NonPublic | BindingFlags.Static);
+                //LogFormatted("bRequestedField Success: " + (bRequestedField != null).ToString());
+
             }
 
             private Object actualKER;
-
 
             public Double BurnTime
             {
@@ -126,6 +157,26 @@ namespace KAC_KERWrapper
 
             }
           
+            public void UpdateManNodeValues()
+            {
+                UpdateMethod.Invoke(actualKER, null);
+            }
+
+            //public void RequestSimlulation()
+            //{
+            //    //RequestSimMethod.Invoke(null, null);
+            //    RequestManMethod.Invoke(null, null);
+            //}
+
+            //public Boolean bRunning
+            //{
+            //    get { return (Boolean)bRunningField.GetValue(null); }
+            //}
+            //public Boolean bRequested
+            //{
+            //    get { return (Boolean)bRequestedField.GetValue(null); }
+            //}
+
         }
 
         #region Logging Stuff

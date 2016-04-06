@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using KSP;
+using KSP.UI;
+using KSP.UI.Screens;
+using KSP.UI.Dialogs;
 using KSPPluginFramework;
 
 namespace KerbalAlarmClock
@@ -208,9 +212,10 @@ namespace KerbalAlarmClock
                 else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
                 {
                     SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
-                    if (st.mainCamera.target != null && st.mainCamera.target.type == MapObject.MapObjectType.VESSEL)
+                    PlanetariumCamera c = PlanetariumCamera.fetch;
+                    if (c.target != null && c.target.type == MapObject.ObjectType.Vessel)
                     {
-                        KACWorkerGameState.CurrentVessel = st.mainCamera.target.vessel;
+                        KACWorkerGameState.CurrentVessel = c.target.vessel;
                         KACWorkerGameState.CurrentSOIBody = CurrentVessel.mainBody;
                         KACWorkerGameState.CurrentVesselTarget = CurrentVessel.targetObject;
                     }

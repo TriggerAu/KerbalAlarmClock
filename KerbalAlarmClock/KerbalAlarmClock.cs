@@ -165,9 +165,8 @@ namespace KerbalAlarmClock
             {
                 btnToolbarKAC = InitToolbarButton();
             }
-            //Hook the App Launcher
-            OnGUIAppLauncherReady();
-            //GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+            GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+            GameEvents.onGUIApplicationLauncherDestroyed.Add(DestroyAppLauncherButton);
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
 
@@ -269,7 +268,8 @@ namespace KerbalAlarmClock
             LogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
 
             //Hook the App Launcher
-            //GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+            GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+            GameEvents.onGUIApplicationLauncherDestroyed.Remove(DestroyAppLauncherButton);
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
             
@@ -418,8 +418,6 @@ namespace KerbalAlarmClock
 					//reset any existing pane display
 					ResetPanes();
 					
-					//Add to the queue
-					RenderingManager.AddToPostDrawQueue(5, DrawGUI);
 					IsInPostDrawQueue = true;
 
 					//if we are adding the renderer and we are in flight then do the daily version check if required
@@ -430,12 +428,12 @@ namespace KerbalAlarmClock
 				else
 				{
 					LogFormatted("Removing DrawGUI from PostRender Queue");
-					RenderingManager.RemoveFromPostDrawQueue(5, DrawGUI);
 					IsInPostDrawQueue = false;
 				}
 			}
 
-             OnGUIMouseEvents();
+            DrawGUI();
+            OnGUIMouseEvents();
 		}
 
 		private Int32 WarpRateWorkerCounter = 0;
@@ -483,10 +481,11 @@ namespace KerbalAlarmClock
 			KACResources.loadGUIAssets();
 
 			KACResources.InitSkins();
+            //Hook the App Launcher
 
 			InitDDLStyles();
-
-			//Called by SetSkin
+			
+            //Called by SetSkin
 			//KACResources.SetStyles();
 
 		}
@@ -728,7 +727,7 @@ namespace KerbalAlarmClock
                 }
 
                 //get the screen coordinates of the Point
-                Vector3d screenPosNode = MapView.MapCamera.camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(UT)));
+                Vector3d screenPosNode = PlanetariumCamera.Camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(UT)));
                 Rect rectNodeButton = new Rect((Int32)screenPosNode.x + xOffset, (Int32)(Screen.height - screenPosNode.y) + yOffset, 20, 12);
                 if (GUI.Button(rectNodeButton, "", styleWarpToButton))
                 {

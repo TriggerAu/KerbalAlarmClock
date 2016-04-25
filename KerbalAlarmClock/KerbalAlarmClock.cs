@@ -170,6 +170,9 @@ namespace KerbalAlarmClock
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
 
+            GameEvents.onShowUI.Add(OnShowUI);
+            GameEvents.onHideUI.Add(OnHideUI);
+
             blnFilterToVessel = false;
             if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
                 HighLogic.LoadedScene == GameScenes.FLIGHT)
@@ -272,7 +275,11 @@ namespace KerbalAlarmClock
             GameEvents.onGUIApplicationLauncherDestroyed.Remove(DestroyAppLauncherButton);
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
-            
+
+            GameEvents.onShowUI.Remove(OnShowUI);
+            GameEvents.onHideUI.Remove(OnHideUI);
+
+
             Destroy(PhaseAngle);
             Destroy(EjectAngle);
 
@@ -402,10 +409,24 @@ namespace KerbalAlarmClock
 				//                IsInPostDrawQueue = false;
 			}
 		}
-		#endregion
+        #endregion
 
-		//public void OnGUI()
-		internal override void OnGUIEvery()
+        private void OnShowUI()
+        {
+            LogFormatted_DebugOnly("OnShowGUI Fired");
+            GUIVisible = true;
+        }
+        private void OnHideUI()
+        {
+            LogFormatted_DebugOnly("OnHideGUI Fired");
+            GUIVisible = false;
+        }
+
+        private Boolean GUIVisible = true;
+
+
+        //public void OnGUI()
+        internal override void OnGUIEvery()
 		{
 			//Do the GUI Stuff - basically get the workers draw stuff into the postrendering queue
 			//If the two flags are different are we going in or out of the queue
@@ -432,7 +453,9 @@ namespace KerbalAlarmClock
 				}
 			}
 
-            DrawGUI();
+            if (GUIVisible) {
+                DrawGUI();
+            }
             OnGUIMouseEvents();
 		}
 

@@ -165,11 +165,13 @@ namespace KerbalAlarmClock
             {
                 btnToolbarKAC = InitToolbarButton();
             }
-            //Hook the App Launcher
-            OnGUIAppLauncherReady();
-            //GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+            GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+            GameEvents.onGUIApplicationLauncherDestroyed.Add(DestroyAppLauncherButton);
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
+
+            GameEvents.onShowUI.Add(OnShowUI);
+            GameEvents.onHideUI.Add(OnHideUI);
 
             blnFilterToVessel = false;
             if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
@@ -269,10 +271,15 @@ namespace KerbalAlarmClock
             LogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
 
             //Hook the App Launcher
-            //GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+            GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+            GameEvents.onGUIApplicationLauncherDestroyed.Remove(DestroyAppLauncherButton);
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
-            
+
+            GameEvents.onShowUI.Remove(OnShowUI);
+            GameEvents.onHideUI.Remove(OnHideUI);
+
+
             Destroy(PhaseAngle);
             Destroy(EjectAngle);
 
@@ -402,10 +409,24 @@ namespace KerbalAlarmClock
 				//                IsInPostDrawQueue = false;
 			}
 		}
-		#endregion
+        #endregion
 
-		//public void OnGUI()
-		internal override void OnGUIEvery()
+        private void OnShowUI()
+        {
+            LogFormatted_DebugOnly("OnShowGUI Fired");
+            GUIVisible = true;
+        }
+        private void OnHideUI()
+        {
+            LogFormatted_DebugOnly("OnHideGUI Fired");
+            GUIVisible = false;
+        }
+
+        private Boolean GUIVisible = true;
+
+
+        //public void OnGUI()
+        internal override void OnGUIEvery()
 		{
 			//Do the GUI Stuff - basically get the workers draw stuff into the postrendering queue
 			//If the two flags are different are we going in or out of the queue
@@ -418,8 +439,6 @@ namespace KerbalAlarmClock
 					//reset any existing pane display
 					ResetPanes();
 					
-					//Add to the queue
-					RenderingManager.AddToPostDrawQueue(5, DrawGUI);
 					IsInPostDrawQueue = true;
 
 					//if we are adding the renderer and we are in flight then do the daily version check if required
@@ -430,12 +449,14 @@ namespace KerbalAlarmClock
 				else
 				{
 					LogFormatted("Removing DrawGUI from PostRender Queue");
-					RenderingManager.RemoveFromPostDrawQueue(5, DrawGUI);
 					IsInPostDrawQueue = false;
 				}
 			}
 
-             OnGUIMouseEvents();
+            if (GUIVisible) {
+                DrawGUI();
+            }
+            OnGUIMouseEvents();
 		}
 
 		private Int32 WarpRateWorkerCounter = 0;
@@ -483,10 +504,11 @@ namespace KerbalAlarmClock
 			KACResources.loadGUIAssets();
 
 			KACResources.InitSkins();
+            //Hook the App Launcher
 
 			InitDDLStyles();
-
-			//Called by SetSkin
+			
+            //Called by SetSkin
 			//KACResources.SetStyles();
 
 		}
@@ -728,7 +750,7 @@ namespace KerbalAlarmClock
                 }
 
                 //get the screen coordinates of the Point
-                Vector3d screenPosNode = MapView.MapCamera.camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(UT)));
+                Vector3d screenPosNode = PlanetariumCamera.Camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(UT)));
                 Rect rectNodeButton = new Rect((Int32)screenPosNode.x + xOffset, (Int32)(Screen.height - screenPosNode.y) + yOffset, 20, 12);
                 if (GUI.Button(rectNodeButton, "", styleWarpToButton))
                 {

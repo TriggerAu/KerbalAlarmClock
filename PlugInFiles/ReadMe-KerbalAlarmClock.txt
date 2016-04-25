@@ -32,6 +32,10 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.6.1.0		-	KSP Version: 1.1.0
+- Merged fork by jslater89 for conversion
+- Added code to handle HideUI
+
 Version 3.5.0.0		-	KSP Version: 1.0.5
 - Fixed issue with dropdown pages and alignment
 - Fixed issue with settings bleed (Issue #152)

@@ -117,7 +117,7 @@ namespace KerbalAlarmClock
             //Load the Settings values from the file
             //Settings.Load();
             LogFormatted("Loading Settings");
-            settings = new Settings("settings.cfg");
+            settings = new Settings("PluginData/settings.cfg");
             if (!settings.Load())
                 LogFormatted("Settings Load Failed");
             else

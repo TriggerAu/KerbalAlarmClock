@@ -9,6 +9,7 @@ using System.Reflection;
 
 using UnityEngine;
 using KSP;
+using KSP.UI.Screens;
 using KSPPluginFramework;
 
 namespace KerbalAlarmClock

@@ -5,6 +5,8 @@ using System.Text;
 
 using KSP;
 using UnityEngine;
+using KSP.UI;
+using KSP.UI.Screens;
 using KSPPluginFramework;
 
 namespace KerbalAlarmClock
@@ -21,12 +23,15 @@ namespace KerbalAlarmClock
             {
                 if (settings.ButtonStyleChosen == Settings.ButtonStyleEnum.Launcher )
                 {
-                    btnAppLauncher = InitAppLauncherButton();
-                    //if (WindowVisibleByActiveScene)
-                    //{
-                    //    LogFormatted("Setting Button True");
-                    //    btnAppLauncher.SetTrue();
-                    //}
+                    if (btnAppLauncher == null)
+                    {
+                        btnAppLauncher = InitAppLauncherButton();
+                        //if (WindowVisibleByActiveScene)
+                        //{
+                        //    LogFormatted("Setting Button True");
+                        //    btnAppLauncher.SetTrue();
+                        //}
+                    }
                 }
             }
             else { LogFormatted("App Launcher-Not Actually Ready"); }
@@ -110,7 +115,7 @@ namespace KerbalAlarmClock
             }
 
 
-            if (ButtonToToggle.State != RUIToggleButton.ButtonState.TRUE)
+            if (ButtonToToggle.toggleButton.CurrentState != UIRadioButton.State.True)
             {
                 if (AppLauncherToBeSetTrueAttemptDate.AddSeconds(settings.AppLauncherSetTrueTimeOut) < DateTime.Now)
                 {

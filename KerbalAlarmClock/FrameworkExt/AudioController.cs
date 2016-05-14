@@ -27,7 +27,7 @@ namespace KerbalAlarmClock
             //    mbARP.clipAlarmsWarning = Resources.clipAlarms[settings.AlarmsWarningSound];
 
             audiosourceAlarm = mbKAC.gameObject.AddComponent<AudioSource>();
-            audiosourceAlarm.panLevel = 0;
+            audiosourceAlarm.spatialBlend = 0;
             audiosourceAlarm.playOnAwake = false;
             audiosourceAlarm.loop = false;
             audiosourceAlarm.Stop();

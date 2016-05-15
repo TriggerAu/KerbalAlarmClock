@@ -32,6 +32,9 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.6.2.1		-	KSP Version: 1.1.2
+- Fixed issue in TimeObjects for PhaseAngle display
+
 Version 3.6.1.0		-	KSP Version: 1.1.0
 - Merged fork by jslater89 for conversion
 - Added code to handle HideUI

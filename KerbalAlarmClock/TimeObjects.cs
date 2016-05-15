@@ -1121,7 +1121,7 @@ namespace KerbalAlarmClock
             {
                 get
                 {
-                    CalcPhaseAngleCurrent();
+                    CalcPhaseAngleCurrent2();
                     return KACUtils.clampDegrees(_PhaseAngleCurrent);
                 }
             }
@@ -1131,8 +1131,13 @@ namespace KerbalAlarmClock
                 _PhaseAngleCurrent = KACUtils.clampDegrees360(Target.orbit.trueAnomaly + Target.orbit.argumentOfPeriapsis + Target.orbit.LAN
                     - (Origin.orbit.trueAnomaly + Origin.orbit.argumentOfPeriapsis + Origin.orbit.LAN));
             }
+            private void CalcPhaseAngleCurrent2()
+            {
+                _PhaseAngleCurrent = KACUtils.clampDegrees360((Target.orbit.trueAnomaly * Mathf.Rad2Deg) + Target.orbit.argumentOfPeriapsis + Target.orbit.LAN
+                    - ((Origin.orbit.trueAnomaly * Mathf.Rad2Deg ) + Origin.orbit.argumentOfPeriapsis + Origin.orbit.LAN));
+            }
 
-            public double PhaseAngleTarget360 {get{return KACUtils.clampDegrees360(_PhaseAngleTarget); }}
+        public double PhaseAngleTarget360 {get{return KACUtils.clampDegrees360(_PhaseAngleTarget); }}
             public double PhaseAngleCurrent360 {get{return KACUtils.clampDegrees360(_PhaseAngleCurrent); }}
 
             //private KSPDateTime _AlignmentTime = new KSPDateTime(0);

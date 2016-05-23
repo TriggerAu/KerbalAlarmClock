@@ -32,6 +32,9 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.6.3.0		-	KSP Version: 1.1.2
+- Adjusted code to handle UIToggle and flight Pause menu
+
 Version 3.6.2.1		-	KSP Version: 1.1.2
 - Fixed issue in TimeObjects for PhaseAngle display
 

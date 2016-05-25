@@ -170,8 +170,8 @@ namespace KerbalAlarmClock
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
 
-            GameEvents.onShowUI.Add(OnShowUI);
-            GameEvents.onHideUI.Add(OnHideUI);
+            // Need this one to handle the hideUI cancelling via pause menu
+            GameEvents.onGameUnpause.Add(OnUnpause);
 
             blnFilterToVessel = false;
             if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
@@ -276,8 +276,8 @@ namespace KerbalAlarmClock
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
             GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
 
-            GameEvents.onShowUI.Remove(OnShowUI);
-            GameEvents.onHideUI.Remove(OnHideUI);
+            // Need this one to handle the hideUI cancelling via pause menu
+            GameEvents.onGameUnpause.Remove(OnUnpause);
 
 
             Destroy(PhaseAngle);
@@ -329,9 +329,16 @@ namespace KerbalAlarmClock
             }
             KACWorkerGameState.SetLastGUIStatesToCurrent();
         }
-        
+
+        internal Boolean blnFlightUIVisible = true;
+
         private void HandleKeyStrokes()
         {
+            if (GameSettings.TOGGLE_UI.GetKeyDown() && HighLogic.LoadedScene == GameScenes.FLIGHT)
+            {
+                blnFlightUIVisible = !blnFlightUIVisible;
+            }
+
             //Look for key inputs to change settings
             if (!settings.F11KeystrokeDisabled)
             {
@@ -411,15 +418,10 @@ namespace KerbalAlarmClock
 		}
         #endregion
 
-        private void OnShowUI()
+        private void OnUnpause()
         {
-            LogFormatted_DebugOnly("OnShowGUI Fired");
+            LogFormatted_DebugOnly("OnUnpause");
             GUIVisible = true;
-        }
-        private void OnHideUI()
-        {
-            LogFormatted_DebugOnly("OnHideGUI Fired");
-            GUIVisible = false;
         }
 
         private Boolean GUIVisible = true;
@@ -453,8 +455,9 @@ namespace KerbalAlarmClock
 				}
 			}
 
-            if (GUIVisible) {
-                DrawGUI();
+            if (GUIVisible && blnFlightUIVisible && !(HighLogic.LoadedScene == GameScenes.FLIGHT && PauseMenu.isOpen))
+                {
+                    DrawGUI();
             }
             OnGUIMouseEvents();
 		}

@@ -19,15 +19,15 @@ namespace KerbalAlarmClock
         internal static String PathTriggerTech = string.Format("{0}GameData/TriggerTech", PathApp);
 
         internal static String PathPlugin = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-        internal static String PathPluginData = string.Format("{0}/Data", PathPlugin);
-        internal static String PathTextures = string.Format("{0}/Textures", PathPlugin);
-        internal static String PathToolbarIcons = string.Format("{0}/ToolbarIcons", PathPlugin);
+        internal static String PathPluginData = string.Format("{0}/PluginData/Data", PathPlugin);
+        internal static String PathTextures = string.Format("{0}/PluginData/Textures", PathPlugin);
+        internal static String PathToolbarIcons = string.Format("{0}/PluginData/ToolbarIcons", PathPlugin);
         internal static String PathPluginSounds = string.Format("{0}/Sounds", PathPlugin);
 
         internal static String DBPathTriggerTech = string.Format("TriggerTech");
         internal static String DBPathPlugin = string.Format("TriggerTech/{0}", KerbalAlarmClock._AssemblyName);
-        internal static String DBPathToolbarIcons = string.Format("{0}/ToolbarIcons", DBPathPlugin);
-        internal static String DBPathTextures = string.Format("{0}/Textures", DBPathPlugin);
+        //internal static String DBPathToolbarIcons = string.Format("{0}/ToolbarIcons", DBPathPlugin);
+        //internal static String DBPathTextures = string.Format("{0}/Textures", DBPathPlugin);
         internal static String DBPathPluginSounds = string.Format("{0}/Sounds", DBPathPlugin);
 
         internal static String PathToolbarTexturePath = PathToolbarIcons.Replace("\\", "/").Substring(PathToolbarIcons.Replace("\\", "/").ToLower().IndexOf("/gamedata/") + 10);

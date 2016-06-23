@@ -117,11 +117,21 @@ namespace KerbalAlarmClock
             //Load the Settings values from the file
             //Settings.Load();
             LogFormatted("Loading Settings");
-            settings = new Settings("settings.cfg");
-            if (!settings.Load())
+            settings = new Settings("PluginData/settings.cfg");
+            Boolean blnSettingsLoaded = settings.Load();
+            if (!blnSettingsLoaded) {
+                settings = new Settings("settings.cfg");
+                blnSettingsLoaded = settings.Load();
+                if (blnSettingsLoaded) {
+                    settings.FilePath = "PluginData/settings.cfg";
+                    System.IO.File.Move(KACUtils.PathPlugin + "/settings.cfg", KACUtils.PathPlugin + "/PluginData/settings.cfg");
+                }
+            }
+
+            if (!blnSettingsLoaded) {
+                settings.FilePath = "PluginData/settings.cfg";
                 LogFormatted("Settings Load Failed");
-            else
-            {
+            } else {
                 if (!settings.TimeFormatConverted)
                 {
                     settings.TimeFormatConverted = true;

@@ -197,7 +197,7 @@ else
 "`tFrom:`t$UploadDir\v$($Version)"
 "`tGitHub Oauth:`t$OAuthToken"
 "`tCurse  Oauth:`t$CurseForgeToken"
-"`tKerbalStuff:`t$KerbalStuffLogin : $KerbalStuffPW"
+#"`tKerbalStuff:`t$KerbalStuffLogin : $KerbalStuffPW"
 
 $Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
 $ChoiceRtn = $host.ui.PromptForChoice("Do you wish to Continue?","Be sure develop is ready before hitting yes",$Choices,1)
@@ -269,7 +269,7 @@ if($ChoiceRtn -eq 0)
 
     #CreateCurseRelease 
 
-    CreateKerbalStuffRelease
+    #CreateKerbalStuffRelease
 
     $Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
     $ChoiceRtn = $host.ui.PromptForChoice("Update versioncheck.txt file","Do you wish to update the versioncheck file in ghpages?",$Choices,0)

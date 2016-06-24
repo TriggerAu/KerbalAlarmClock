@@ -465,7 +465,12 @@ namespace KerbalAlarmClock
 				}
 			}
 
-            if (GUIVisible && blnFlightUIVisible && !(HighLogic.LoadedScene == GameScenes.FLIGHT && PauseMenu.isOpen))
+            Boolean isPauseMenuOpen = false;
+            try {
+                isPauseMenuOpen = PauseMenu.isOpen;
+            } catch{}
+
+            if (GUIVisible && blnFlightUIVisible && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen))
                 {
                     DrawGUI();
             }
@@ -535,9 +540,16 @@ namespace KerbalAlarmClock
 			DrawIcons();
 
 			Boolean blnShowInterface = true;
-			if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+            Boolean isPauseMenuOpen = false;
+            try
+            {
+                isPauseMenuOpen = PauseMenu.isOpen;
+            }
+            catch { }
+
+            if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
 			{
-				if (settings.HideOnPause && PauseMenu.isOpen)
+				if (settings.HideOnPause && isPauseMenuOpen)
 					blnShowInterface = false;
 			}
 

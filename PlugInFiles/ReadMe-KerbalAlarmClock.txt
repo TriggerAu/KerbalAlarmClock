@@ -32,6 +32,10 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.7.1.0		-	KSP Version: 1.1.3
+- Fixed issue with location of ToolbarIcon folder - my bad
+- Fixed NRE when PauseMenu is not yet available to query (Issue #164)
+
 Version 3.7.0.0		-	KSP Version: 1.1.3
 - Recompiled to resolve isses with TimeWarp methods (Issue #169)
 - Moved Add All Transfers button to top of list (Issue #163)

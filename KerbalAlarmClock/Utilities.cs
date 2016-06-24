@@ -21,7 +21,7 @@ namespace KerbalAlarmClock
         internal static String PathPlugin = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         internal static String PathPluginData = string.Format("{0}/PluginData/Data", PathPlugin);
         internal static String PathTextures = string.Format("{0}/PluginData/Textures", PathPlugin);
-        internal static String PathToolbarIcons = string.Format("{0}/PluginData/ToolbarIcons", PathPlugin);
+        internal static String PathToolbarIcons = string.Format("{0}/ToolbarIcons", PathPlugin);
         internal static String PathPluginSounds = string.Format("{0}/Sounds", PathPlugin);
 
         internal static String DBPathTriggerTech = string.Format("TriggerTech");

@@ -1466,6 +1466,77 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
+
+
+
+                    //Build the list of model points for the add all button
+                    for (int intTarget = 0; intTarget < XferTargetBodies.Count; intTarget++) {
+                        if (!(intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))) {
+                            try
+                            {
+                                KACXFerModelPoint tmpModelPoint = KACResources.lstXferModelPoints.FirstOrDefault(
+                                m => FlightGlobals.Bodies[m.Origin] == XferTargetBodies[intTarget].Origin &&
+                                    FlightGlobals.Bodies[m.Target] == XferTargetBodies[intTarget].Target &&
+                                    m.UT >= KACWorkerGameState.CurrentTime.UT);
+
+                                if (tmpModelPoint != null) {
+                                    lstXferCurrentTargetEventTime.Add(new KSPDateTime(tmpModelPoint.UT));
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                LogFormatted("Error determining model data: {0}", ex.Message);
+                            }
+                        }
+                    }
+
+                    // Now do the add all buttons
+                    intAddXferHeight += 28;
+                    if (intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))
+                    {
+                        GUILayout.BeginHorizontal();
+                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button(new GUIContent("Create Alarms for All", "Create Alarms for all listed transfers"), new GUIStyle(KACResources.styleAddXferOriginButton) { fixedWidth = 140 }))
+                        {
+                            for (int i = 0; i < XferTargetBodies.Count; i++)
+                            {
+                                String strVesselID = "";
+                                if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+
+                                TransferStrings ts = BuildTransferStrings(i, false);
+                                alarms.Add(new KACAlarm(strVesselID, ts.AlarmName, ts.AlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
+                                (KACWorkerGameState.CurrentTime.UT + XferTargetBodies[i].AlignmentTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.Transfer,
+                                AddActions, XferTargetBodies[i]));
+                            }
+                            _ShowAddPane = false;
+                        }
+                        GUILayout.EndHorizontal();
+                    } else {
+                        //Model based
+
+                        GUILayout.BeginHorizontal();
+                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button(new GUIContent("Create Alarms for All", "Create Alarms for all listed transfers"), new GUIStyle(KACResources.styleAddXferOriginButton) { fixedWidth = 140 }))
+                        {
+                            for (int i = 0; i < XferTargetBodies.Count; i++)
+                            {
+                                String strVesselID = "";
+                                if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+
+                                TransferStrings ts = BuildTransferStrings(i, false);
+                                KACAlarm alarmNew = new KACAlarm(strVesselID, ts.AlarmName, (blnRepeatingAlarmFlag ? "Alarm Repeats\r\n" : "") + ts.AlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
+                                    (lstXferCurrentTargetEventTime[i].UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.TransferModelled,
+                                    AddActions, XferTargetBodies[i]);
+                                alarmNew.RepeatAlarm = blnRepeatingAlarmFlag;
+                                alarms.Add(alarmNew);
+                            }
+                            _ShowAddPane = false;
+                        }
+                        GUILayout.EndHorizontal();
+                    }
+
+
+                    // And now the table of results
                     GUILayout.BeginHorizontal();
                     GUILayout.Label("Target", KACResources.styleAddSectionHeading, GUILayout.Width(55));
                     GUILayout.Label(new GUIContent("Phase Angle", "Displayed as \"Current Angle (Target Angle)\""), KACResources.styleAddSectionHeading, GUILayout.Width(105));
@@ -1504,7 +1575,8 @@ namespace KerbalAlarmClock
                                     if (intTarget==intXferCurrentTarget)
                                         XferCurrentTargetEventTime = new KSPDateTime(tmpModelPoint.UT);
 
-                                    lstXferCurrentTargetEventTime.Add(new KSPDateTime(tmpModelPoint.UT));
+                                    // Doing this at the top of the loop now
+                                    //lstXferCurrentTargetEventTime.Add(new KSPDateTime(tmpModelPoint.UT));
                                 }
                                 else
                                 {
@@ -1535,29 +1607,29 @@ namespace KerbalAlarmClock
 
                 if (intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))
                 {
-                    //Formula based - Add All Alarms
-                    if (settings.AlarmXferDisplayList)
-                    {
-                        intAddXferHeight += 28;
+                    ////Formula based - Add All Alarms
+                    //if (settings.AlarmXferDisplayList)
+                    //{
+                    //    intAddXferHeight += 28;
 
-                        GUILayout.BeginHorizontal();
-                        GUILayout.FlexibleSpace();
-                        if (GUILayout.Button(new GUIContent("Create Alarms for All", "Create Alarms for all listed transfers"), new GUIStyle(KACResources.styleAddXferOriginButton) {fixedWidth=140 }))
-                        {
-                            for (int i = 0; i < XferTargetBodies.Count; i++)
-                            {
-                                String strVesselID = "";
-                                if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+                    //    GUILayout.BeginHorizontal();
+                    //    GUILayout.FlexibleSpace();
+                    //    if (GUILayout.Button(new GUIContent("Create Alarms for All", "Create Alarms for all listed transfers"), new GUIStyle(KACResources.styleAddXferOriginButton) {fixedWidth=140 }))
+                    //    {
+                    //        for (int i = 0; i < XferTargetBodies.Count; i++)
+                    //        {
+                    //            String strVesselID = "";
+                    //            if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
 
-                                TransferStrings ts = BuildTransferStrings(i, false);
-                                alarms.Add(new KACAlarm(strVesselID, ts.AlarmName, ts.AlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
-                                (KACWorkerGameState.CurrentTime.UT + XferTargetBodies[i].AlignmentTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.Transfer,
-                                AddActions, XferTargetBodies[i]));
-                            }
-                            _ShowAddPane = false;
-                        }
-                        GUILayout.EndHorizontal();
-                    }
+                    //            TransferStrings ts = BuildTransferStrings(i, false);
+                    //            alarms.Add(new KACAlarm(strVesselID, ts.AlarmName, ts.AlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
+                    //            (KACWorkerGameState.CurrentTime.UT + XferTargetBodies[i].AlignmentTime.UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.Transfer,
+                    //            AddActions, XferTargetBodies[i]));
+                    //        }
+                    //        _ShowAddPane = false;
+                    //    }
+                    //    GUILayout.EndHorizontal();
+                    //}
 
                     //Formula based - add new alarm
                     if (DrawAddAlarm(new KSPDateTime(KACWorkerGameState.CurrentTime.UT + XferTargetBodies[intXferCurrentTarget].AlignmentTime.UT),
@@ -1579,32 +1651,32 @@ namespace KerbalAlarmClock
                     //Model based
                     if (XferCurrentTargetEventTime!=null)
                     {
-                        //Formula based - Add All Alarms
-                        if (settings.AlarmXferDisplayList)
-                        {
-                            intAddXferHeight += 28;
+                        ////Formula based - Add All Alarms
+                        //if (settings.AlarmXferDisplayList)
+                        //{
+                        //    intAddXferHeight += 28;
 
-                            GUILayout.BeginHorizontal();
-                            GUILayout.FlexibleSpace();
-                            if (GUILayout.Button(new GUIContent("Create Alarms for All", "Create Alarms for all listed transfers"), new GUIStyle(KACResources.styleAddXferOriginButton) { fixedWidth = 140 }))
-                            {
-                                for (int i = 0; i < XferTargetBodies.Count; i++)
-                                {
-                                    String strVesselID = "";
-                                    if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
+                        //    GUILayout.BeginHorizontal();
+                        //    GUILayout.FlexibleSpace();
+                        //    if (GUILayout.Button(new GUIContent("Create Alarms for All", "Create Alarms for all listed transfers"), new GUIStyle(KACResources.styleAddXferOriginButton) { fixedWidth = 140 }))
+                        //    {
+                        //        for (int i = 0; i < XferTargetBodies.Count; i++)
+                        //        {
+                        //            String strVesselID = "";
+                        //            if (blnAlarmAttachToVessel) strVesselID = KACWorkerGameState.CurrentVessel.id.ToString();
 
-                                    TransferStrings ts = BuildTransferStrings(i, false);
+                        //            TransferStrings ts = BuildTransferStrings(i, false);
 
-                                    KACAlarm alarmNew = new KACAlarm(strVesselID, ts.AlarmName, (blnRepeatingAlarmFlag ? "Alarm Repeats\r\n" : "") + ts.AlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
-                                        (lstXferCurrentTargetEventTime[i].UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.TransferModelled,
-                                        AddActions, XferTargetBodies[i]); 
-                                    alarmNew.RepeatAlarm = blnRepeatingAlarmFlag;
-                                    alarms.Add(alarmNew);
-                                }
-                                _ShowAddPane = false;
-                            }
-                            GUILayout.EndHorizontal();
-                        }
+                        //            KACAlarm alarmNew = new KACAlarm(strVesselID, ts.AlarmName, (blnRepeatingAlarmFlag ? "Alarm Repeats\r\n" : "") + ts.AlarmNotes + "\r\n\tMargin: " + new KSPTimeSpan(timeMargin.UT).ToStringStandard(TimeSpanStringFormatsEnum.IntervalLongTrimYears),
+                        //                (lstXferCurrentTargetEventTime[i].UT - timeMargin.UT), timeMargin.UT, KACAlarm.AlarmTypeEnum.TransferModelled,
+                        //                AddActions, XferTargetBodies[i]); 
+                        //            alarmNew.RepeatAlarm = blnRepeatingAlarmFlag;
+                        //            alarms.Add(alarmNew);
+                        //        }
+                        //        _ShowAddPane = false;
+                        //    }
+                        //    GUILayout.EndHorizontal();
+                        //}
 
                         if (DrawAddAlarm(XferCurrentTargetEventTime,
                                     new KSPTimeSpan(XferCurrentTargetEventTime.UT - KACWorkerGameState.CurrentTime.UT),

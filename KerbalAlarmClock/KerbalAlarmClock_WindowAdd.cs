@@ -333,7 +333,7 @@ namespace KerbalAlarmClock
             {
                 strAlarmName = strVesselName + " - Science Lab alarm";
             }
-            strAlarmNotes = "Time to pay attention to\r\n    " + strVesselName + "\r\nNearing Full Science Lab";
+            strAlarmNotes = string.Format("Time to pay attention to\r\n    {0}\r\nNearing {1} science in Science Lab", strVesselName, intTargetScienceClamped);
         }
 
         //String[] strAddTypes = new String[] { "Raw", "Maneuver","SOI","Transfer" };
@@ -974,6 +974,7 @@ namespace KerbalAlarmClock
         private int intAddScienceLabHeight = 150;
         private Part highlightedScienceLab;
         private bool blnClearScienceLabHighlight;
+        private int intTargetScienceClamped = 500;
         private void WindowLayout_AddPane_ScienceLab()
         {
             intAddScienceLabHeight = 150;
@@ -999,7 +1000,7 @@ namespace KerbalAlarmClock
                     GUILayout.Label("Select", KACResources.styleAddSectionHeading);
                     GUILayout.EndHorizontal();
 
-                    for (int i = 0; i < lstScienceLabs.Count; ++i)
+                    for (var i = 0; i < lstScienceLabs.Count; ++i)
                     {
                         GUILayout.BeginHorizontal();
                         GUILayout.Space(20);
@@ -1067,8 +1068,8 @@ namespace KerbalAlarmClock
                     {
                         intAddScienceLabHeight += 232;
                         var fltMaxScience = Math.Min(converter.scienceCap, lab.storedScience + (lab.dataStored * converter.scienceMultiplier));
-                        int intMinScience = (int)Math.Floor(lab.storedScience) + 1;
-                        int intMaxScience = (int)Math.Floor(fltMaxScience);
+                        var intMinScience = (int)Math.Floor(lab.storedScience) + 1;
+                        var intMaxScience = (int)Math.Floor(fltMaxScience);
 
                         GUILayout.Label("Choose Target Science Amount...", KACResources.styleAddSectionHeading);
                         GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
@@ -1090,8 +1091,9 @@ namespace KerbalAlarmClock
                             strTargetScience = intMaxScience.ToString();
                         }
                         GUILayout.EndHorizontal();
-                        var intTargetScienceClamped =
+                        intTargetScienceClamped =
                             Math.Max((int)Math.Floor(lab.storedScience) + 1, Math.Min((int)Math.Floor(fltMaxScience), intTargetScience));
+                        BuildScienceLabStrings();
                         if (intTargetScience != intTargetScienceClamped)
                         {
                             intAddScienceLabHeight += 25;

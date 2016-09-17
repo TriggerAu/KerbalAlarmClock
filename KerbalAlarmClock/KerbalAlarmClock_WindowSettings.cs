@@ -163,7 +163,7 @@ namespace KerbalAlarmClock
                     break;
                 case 2:
                     WindowLayout_SettingsAudio();
-                    intSettingsHeight = 514;
+                    intSettingsHeight = 543;
                     break;
                 case 3:
                     WindowLayout_SettingsIcons();

@@ -561,7 +561,8 @@ namespace KACWrapper
                 Crew,
                 EarthTime,
                 Contract,
-                ContractAuto
+                ContractAuto,
+                ScienceLab
             }
 
             public enum AlarmActionEnum

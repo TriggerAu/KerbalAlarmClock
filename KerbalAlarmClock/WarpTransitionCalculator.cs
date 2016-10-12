@@ -20,6 +20,10 @@ namespace KerbalAlarmClock
         internal static String WarpRateHash = "";
         internal static Boolean CheckForTransitionChanges()
         {
+            if (TimeWarp.fetch == null)
+            {
+                return false;
+            }
             //check to see if the warp rates are still the same
             String NewHash = "";
 
@@ -39,6 +43,10 @@ namespace KerbalAlarmClock
 
         internal static void CalcWarpRateTransitions()
         {
+            if (TimeWarp.fetch == null)
+            {
+                return;
+            }
             MonoBehaviourExtended.LogFormatted("WarpRates:{0}", TimeWarp.fetch.warpRates.Length);
             WarpRateTransitionPeriods = new List<WarpTransition>();
             for (int i = 0; i < TimeWarp.fetch.warpRates.Length; i++)

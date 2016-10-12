@@ -10,6 +10,7 @@ using KSPPluginFramework;
 namespace KerbalAlarmClock
 {
 
+    [KSPScenario(ScenarioCreationOptions.AddToAllGames, GameScenes.SPACECENTER, GameScenes.EDITOR, GameScenes.FLIGHT, GameScenes.TRACKSTATION)]
     internal class KerbalAlarmClockScenario : ScenarioModule
     {
         public override void OnLoad(ConfigNode gameNode)

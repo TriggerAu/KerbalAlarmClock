@@ -63,10 +63,11 @@ namespace KAC_KERWrapper
 
 
             //find the base type
-            KERManoeuvreProcessorType = AssemblyLoader.loadedAssemblies
-                .Select(a => a.assembly.GetExportedTypes())
-                .SelectMany(t => t)
-                .FirstOrDefault(t => t.FullName == "KerbalEngineer.Flight.Readouts.Orbital.ManoeuvreNode.ManoeuvreProcessor");
+            AssemblyLoader.loadedAssemblies.TypeOperation(t =>
+                {
+                    if (t.FullName == "KerbalEngineer.Flight.Readouts.Orbital.ManoeuvreNode.ManoeuvreProcessor")
+                        KERManoeuvreProcessorType = t;
+                });
 
             if (KERManoeuvreProcessorType == null)
             {

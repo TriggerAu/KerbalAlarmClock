@@ -725,13 +725,24 @@ namespace KACToolbarWrapper {
 			button = new ButtonTypes(iButtonType);
 		}
 
-		internal static Type getType(string name) {
-			return AssemblyLoader.loadedAssemblies
-				.SelectMany(a => a.assembly.GetExportedTypes())
-				.SingleOrDefault(t => t.FullName == name);
-		}
+        internal static Type getType(string name)
+        {
+            Type type = null;
+            AssemblyLoader.loadedAssemblies.TypeOperation(t =>
+            {
+                if (t.FullName == name)
+                    type = t;
+            }
+            );
 
-		internal static PropertyInfo getProperty(Type type, string name) {
+            if (type != null)
+            {
+                return type;
+            }
+            return null;
+        }
+
+        internal static PropertyInfo getProperty(Type type, string name) {
 			return type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
 		}
 

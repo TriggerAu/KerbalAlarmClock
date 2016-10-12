@@ -62,11 +62,12 @@ namespace KAC_VOIDWrapper
 
 
             //find the base type
-            VOID_DataType = AssemblyLoader.loadedAssemblies
-                .Select(a => a.assembly.GetExportedTypes())
-                .SelectMany(t => t)
-                .FirstOrDefault(t => t.FullName == "VOID.VOID_Data");
-
+            AssemblyLoader.loadedAssemblies.TypeOperation(t =>
+            {
+                if (t.FullName == "VOID.VOID_Data")
+                    VOID_DataType = t;
+            });
+            
             if (VOID_DataType == null)
             {
                 return false;

@@ -32,6 +32,11 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.8.0.0		-	KSP Version: 1.2.0
+- Code changes and recompile for 1.2 - Thanks Nightingale and JPLRepo
+- Added ScienceLab Alarms - Thanks natsnudasoft 
+- Adjusted Time code for in Editor - Thanks aw1621107
+
 Version 3.7.1.0		-	KSP Version: 1.1.3
 - Fixed issue with location of ToolbarIcon folder - my bad
 - Fixed NRE when PauseMenu is not yet available to query (Issue #164)

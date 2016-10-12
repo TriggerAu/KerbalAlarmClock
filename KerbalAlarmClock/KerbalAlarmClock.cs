@@ -15,391 +15,380 @@ using KAC_VOIDWrapper;
 
 namespace KerbalAlarmClock
 {
-    /// <summary>
-    /// Have to do this behaviour or some of the textures are unloaded on first entry into flight mode
-    /// </summary>
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
-    public class KerbalAlarmClockTextureLoader : MonoBehaviour
-    {
-        //Awake Event - when the DLL is loaded
-        public void Awake()
-        {
-            KACResources.loadGUIAssets();
-        }
-    }
-
-    [KSPAddon(KSPAddon.Startup.Flight, false)]
-    public class KACFlight : KerbalAlarmClock
-    {
-        public override string MonoName { get { return this.name; } }
-        //public override bool ViewAlarmsOnly { get { return false; } }
-    }
-    [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
-    public class KACSpaceCenter : KerbalAlarmClock
-    {
-        public override string MonoName { get { return this.name; } }
-        //public override bool ViewAlarmsOnly { get { return false; } }
-    }
-    [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
-    public class KACTrackingStation : KerbalAlarmClock
-    {
-        public override string MonoName { get { return this.name; } }
-        //public override bool ViewAlarmsOnly { get { return false; } }
-    }
-    
-    [KSPAddon(KSPAddon.Startup.EditorAny, false)]
-    public class KACEditor : KerbalAlarmClock
-    {
-        public override string MonoName { get { return this.name; } }
-        //public override bool ViewAlarmsOnly { get { return false; } }
-    }
-
-    /// <summary>
-    /// This is the behaviour object that we hook events on to for flight
-    /// </summary>
-    public partial class KerbalAlarmClock : MonoBehaviourExtended
-    {
-        //Global Settings
-        //public static KACSettings Settings = new KACSettings();
-        internal static Settings settings;
-        public static KACAlarmList alarms = new KACAlarmList();
-        public static List<KACAlarm> alarmsDisplayed = new KACAlarmList();
-        public virtual String MonoName { get; set; }
-        //public virtual Boolean ViewAlarmsOnly { get; set; }
-        
-        //GameState Objects for the monobehaviour
-        private Boolean IsInPostDrawQueue=false ;
-        private Boolean ShouldBeInPostDrawQueue = false;
-        private Double LastGameUT;
-        private Vessel LastGameVessel;
-
-        //Worker and Settings objects
-        public static float UpdateInterval = 0.1F;
-
-
-        internal static AudioController audioController;
-
-        internal AngleRenderPhase PhaseAngle;
-        internal AngleRenderEject EjectAngle;
-        internal Boolean blnShowPhaseAngle;
-        internal Boolean blnShowEjectAngle;
-
-        internal static List<GameScenes> lstScenesForAngles = new List<GameScenes>() { GameScenes.TRACKSTATION, GameScenes.FLIGHT };
-
-        //Constructor to set KACWorker parent object to this and access to the settings
-        public KerbalAlarmClock()
-        {
-            //switch (KACWorkerGameState.CurrentGUIScene)
-            //{
-            //    case GameScenes.SPACECENTER:
-            //    case GameScenes.TRACKSTATION:
-            //        = new KACWorker_ViewOnly(this);
-            //        break;
-            //    default:
-            //        = new KACWorker(this);
-            //        break;
-            //}
-            ////Set the saves path
-            KACUtils.SavePath=string.Format("{0}saves/{1}",KACUtils.PathApp,HighLogic.SaveFolder);
-
-        }
-
-        //Awake Event - when the DLL is loaded
-        internal override void Awake()
-        {
-            LogFormatted("Awakening the KerbalAlarmClock-{0}", MonoName);
-
-            InitVariables();
-
-            //Event for when the vessel changes (within a scene).
-            KACWorkerGameState.VesselChanged += KACWorkerGameState_VesselChanged;
-
-            //Load the Settings values from the file
-            //Settings.Load();
-            LogFormatted("Loading Settings");
-            settings = new Settings("PluginData/settings.cfg");
-            Boolean blnSettingsLoaded = settings.Load();
-            if (!blnSettingsLoaded) {
-                settings = new Settings("settings.cfg");
-                blnSettingsLoaded = settings.Load();
-                if (blnSettingsLoaded) {
-                    settings.FilePath = "PluginData/settings.cfg";
-                    System.IO.File.Move(KACUtils.PathPlugin + "/settings.cfg", KACUtils.PathPlugin + "/PluginData/settings.cfg");
-                }
-            }
-
-            if (!blnSettingsLoaded) {
-                settings.FilePath = "PluginData/settings.cfg";
-                LogFormatted("Settings Load Failed");
-            } else {
-                if (!settings.TimeFormatConverted)
-                {
-                    settings.TimeFormatConverted = true;
-                    switch (settings.TimeFormat)
-                    {
-                        case OldPrintTimeFormat.TimeAsUT: settings.DateTimeFormat = DateStringFormatsEnum.TimeAsUT; break;
-                        case OldPrintTimeFormat.KSPString: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
-                        case OldPrintTimeFormat.DateTimeString: settings.DateTimeFormat = DateStringFormatsEnum.DateTimeFormat; break;
-                        default: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
-                    }
-                    settings.Save();
-                }
-
-            }
-
-            //Set up Default Sounds
-            settings.VerifySoundsList();
-
-            if (settings.SelectedCalendar == CalendarTypeEnum.Earth) {
-                KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
-            }
-
-            //Set initial GameState
-            KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
-
-            //Load Hohmann modelling data - if in flight mode
-            //if ((KACWorkerGameState.LastGUIScene == GameScenes.FLIGHT) && settings.XferModelLoadData)
-            if (settings.XferModelLoadData)
-                    settings.XferModelDataLoaded = KACResources.LoadModelPoints();
-
-            //get the sounds and set things up
-            KACResources.LoadSounds();
-            this.ConfigSoundsDDLs();
-            InitAudio();
-
-            //Get whether the toolbar is there
-            settings.BlizzyToolbarIsAvailable = ToolbarManager.ToolbarAvailable;
-
-            //setup the Toolbar button if necessary
-            if (settings.ButtonStyleToDisplay == Settings.ButtonStyleEnum.Toolbar)
-            {
-                btnToolbarKAC = InitToolbarButton();
-            }
-            GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
-            GameEvents.onGUIApplicationLauncherDestroyed.Add(DestroyAppLauncherButton);
-            GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
-            GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
-
-            // Need this one to handle the hideUI cancelling via pause menu
-            GameEvents.onGameUnpause.Add(OnUnpause);
-
-            blnFilterToVessel = false;
-            if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
-                HighLogic.LoadedScene == GameScenes.FLIGHT)
-                blnShowFilterToVessel = true;
-
-            //Set up the updating function - do this 5 times a sec not on every frame.
-            StartRepeatingWorker(settings.BehaviourChecksPerSec);
-
-            InitDropDowns();
-
-            winAlarmImport.KAC = this;
-            winAlarmImport.Visible = false;
-            winAlarmImport.InitWindow();
-
-            winConfirmAlarmDelete.Visible = false;
-            winConfirmAlarmDelete.InitWindow();
-
-            WarpTransitionCalculator.CalcWarpRateTransitions();
-
-            //Hook the Angle renderers
-            if (lstScenesForAngles.Contains(HighLogic.LoadedScene))
-            {
-                PhaseAngle = MapView.MapCamera.gameObject.AddComponent<AngleRenderPhase>();
-                EjectAngle = MapView.MapCamera.gameObject.AddComponent<AngleRenderEject>();
-            }
-
-            APIAwake();
-        }
-
-        private void InitAudio()
-        {
-            audioController = AddComponent<AudioController>();
-            audioController.mbKAC = this;
-            audioController.Init();
-        }
-
-        internal override void Start()
-        {
-            LogFormatted_DebugOnly("Start function-Setting up ScenarioModule");
-            LogFormatted_DebugOnly("Alarms Length:{0}", alarms.Count);
-            ProtoScenarioModule psm = HighLogic.CurrentGame.scenarios.FirstOrDefault(x => x.moduleName == typeof(KerbalAlarmClockScenario).Name);
-            if (psm==null) {
-                //if no module then create it
-                LogFormatted_DebugOnly("Creating ScenarioModule for {0}", HighLogic.LoadedScene);
-                HighLogic.CurrentGame.AddProtoScenarioModule(typeof(KerbalAlarmClockScenario), HighLogic.LoadedScene);
-            } else {
-                //if it exists, but not in this scene then add it to the scene
-                if (!psm.targetScenes.Any(x => x == HighLogic.LoadedScene)) {
-                    LogFormatted_DebugOnly("Adding Scene to ScenarioModule for {0}", HighLogic.LoadedScene);
-                    psm.targetScenes.Add(HighLogic.LoadedScene);
-                }
-            }
-
-            if (AssemblyLoader.loadedAssemblies
-                        .Select(a => a.assembly.GetExportedTypes())
-                        .SelectMany(t => t)
-                        .Any(t => t.FullName.ToLower().EndsWith(".realsolarsystem")))
-            {
-                settings.RSSActive = true;
-                if (!settings.RSSShowCalendarToggled) {
-                    settings.ShowCalendarToggle = true;
-                    settings.RSSShowCalendarToggled = true;
-                }
-            }
-
-
-            //Init the KER Integration
-            LogFormatted("Searching for KER");
-            KERWrapper.InitKERWrapper();
-            if (KERWrapper.APIReady)
-            {
-                LogFormatted("Successfully Hooked KER");
-
-            }
-            //Init the VOID Integration
-            LogFormatted("Searching for VOID");
-            VOIDWrapper.InitVOIDWrapper();
-            if (VOIDWrapper.APIReady)
-            {
-                LogFormatted("Successfully Hooked VOID");
-
-            }
-
-            RemoveInputLock();
-
-            if (WindowVisibleByActiveScene && settings.ButtonStyleToDisplay==Settings.ButtonStyleEnum.Launcher)
-            {
-                AppLauncherToBeSetTrue = true;
-                AppLauncherToBeSetTrueAttemptDate = DateTime.Now;
-            }
-        }
-
-        //Destroy Event - when the DLL is loaded
-        internal override void OnDestroy()
-        {
-            LogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
-
-            //Hook the App Launcher
-            GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
-            GameEvents.onGUIApplicationLauncherDestroyed.Remove(DestroyAppLauncherButton);
-            GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
-            GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
-
-            // Need this one to handle the hideUI cancelling via pause menu
-            GameEvents.onGameUnpause.Remove(OnUnpause);
-
-
-            Destroy(PhaseAngle);
-            Destroy(EjectAngle);
-
-            DestroyDropDowns();
-
-            DestroyToolbarButton(btnToolbarKAC);
-
-            DestroyAppLauncherButton();
-
-            APIDestroy();
-        }
-
-        Boolean blnContractsSystemReady = false;
-        void ContractsReady()
-        {
-            LogFormatted("Contracts System Ready");
-            //update the list
-            UpdateContractDetails();
-
-            //set the flag to say we can start processing contracts
-            blnContractsSystemReady = true;
-        }
-
-        #region "Update Code"
-        //Update Function - Happens on every frame - this is where behavioural stuff is typically done
-        internal override void Update()
-        {
-            KACWorkerGameState.SetCurrentGUIStates();
-            //if scene has changed
-            if (KACWorkerGameState.ChangedGUIScene)
-                LogFormatted("Scene Change from '{0}' to '{1}'", KACWorkerGameState.LastGUIScene.ToString(), KACWorkerGameState.CurrentGUIScene.ToString());
-
-            HandleKeyStrokes();
-
-            //Work out if we should be in the gui queue
-            ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
-
-            //Fix the issues with Flight SCene Stuff
-            if (HighLogic.LoadedScene == GameScenes.FLIGHT)
-            {
-                //If time goes backwards assume a reload/restart/ if vessel changes and readd to rendering queue
-                CheckForFlightChanges();
-
-                //tag these for next time round
-                LastGameUT = Planetarium.GetUniversalTime();
-                LastGameVessel = FlightGlobals.ActiveVessel;
-            }
-            KACWorkerGameState.SetLastGUIStatesToCurrent();
-        }
-
-        internal Boolean blnFlightUIVisible = true;
-
-        private void HandleKeyStrokes()
-        {
-            if (GameSettings.TOGGLE_UI.GetKeyDown() && HighLogic.LoadedScene == GameScenes.FLIGHT)
-            {
-                blnFlightUIVisible = !blnFlightUIVisible;
-            }
-
-            //Look for key inputs to change settings
-            if (!settings.F11KeystrokeDisabled)
-            {
-                if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F11))
-                {
-                    //switch (KACWorkerGameState.CurrentGUIScene)
-                    //{
-                    //    case GameScenes.SPACECENTER: Settings.WindowVisible_SpaceCenter = !Settings.WindowVisible_SpaceCenter; break;
-                    //    case GameScenes.TRACKSTATION: Settings.WindowVisible_TrackingStation = !Settings.WindowVisible_TrackingStation; break;
-                    //    default: Settings.WindowVisible = !Settings.WindowVisible; break;
-                    //}
-                    WindowVisibleByActiveScene = !WindowVisibleByActiveScene;
-                    settings.Save();
-                }
-            }
-
-            if (settings.KillWarpOnThrottleCutOffKeystroke)
-            {
-                if (Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.primary) || Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.secondary))
-                {
-                    TimeWarp.SetRate(0, false);
-                }
-            }
-
-            //TODO:Disable this one
-            //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
-            //{
-            //    DebugActionTriggered(HighLogic.LoadedScene);
-            //}
-
-            //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
-            //    Settings.Save();
-
-            //if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F9)) 
-            //    Settings.Load();
-
-            //If we have paused the game via an alarm and the menu is not visible, then unpause so the menu will display
-            try {
-                if (Input.GetKey(KeyCode.Escape) && !PauseMenu.isOpen && FlightDriver.Pause)
-                {
-                    FlightDriver.SetPause(false);
-                }
-            } catch (Exception) { }//LogFormatted("PauseMenu Object Not ready");
-        }
-
-        private void CheckForFlightChanges()
-        {
-            if ((LastGameUT != 0) && (LastGameUT > Planetarium.GetUniversalTime()))
-            {
-                LogFormatted("Time Went Backwards - Load or restart - resetting inqueue flag");
-                ShouldBeInPostDrawQueue = false;
+	/// <summary>
+	/// Have to do this behaviour or some of the textures are unloaded on first entry into flight mode
+	/// </summary>
+	[KSPAddon(KSPAddon.Startup.MainMenu, false)]
+	public class KerbalAlarmClockTextureLoader : MonoBehaviour
+	{
+		//Awake Event - when the DLL is loaded
+		public void Awake()
+		{
+			KACResources.loadGUIAssets();
+		}
+	}
+
+	[KSPAddon(KSPAddon.Startup.Flight, false)]
+	public class KACFlight : KerbalAlarmClock
+	{
+		public override string MonoName { get { return this.name; } }
+		//public override bool ViewAlarmsOnly { get { return false; } }
+	}
+	[KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
+	public class KACSpaceCenter : KerbalAlarmClock
+	{
+		public override string MonoName { get { return this.name; } }
+		//public override bool ViewAlarmsOnly { get { return false; } }
+	}
+	[KSPAddon(KSPAddon.Startup.TrackingStation, false)]
+	public class KACTrackingStation : KerbalAlarmClock
+	{
+		public override string MonoName { get { return this.name; } }
+		//public override bool ViewAlarmsOnly { get { return false; } }
+	}
+	
+	[KSPAddon(KSPAddon.Startup.EditorAny, false)]
+	public class KACEditor : KerbalAlarmClock
+	{
+		public override string MonoName { get { return this.name; } }
+		//public override bool ViewAlarmsOnly { get { return false; } }
+	}
+
+	/// <summary>
+	/// This is the behaviour object that we hook events on to for flight
+	/// </summary>
+	public partial class KerbalAlarmClock : MonoBehaviourExtended
+	{
+		//Global Settings
+		//public static KACSettings Settings = new KACSettings();
+		internal static Settings settings;
+		public static KACAlarmList alarms = new KACAlarmList();
+		public static List<KACAlarm> alarmsDisplayed = new KACAlarmList();
+		public virtual String MonoName { get; set; }
+		//public virtual Boolean ViewAlarmsOnly { get; set; }
+		
+		//GameState Objects for the monobehaviour
+		private Boolean IsInPostDrawQueue=false ;
+		private Boolean ShouldBeInPostDrawQueue = false;
+		private Double LastGameUT;
+		private Vessel LastGameVessel;
+
+		//Worker and Settings objects
+		public static float UpdateInterval = 0.1F;
+
+
+		internal static AudioController audioController;
+
+		internal AngleRenderPhase PhaseAngle;
+		internal AngleRenderEject EjectAngle;
+		internal Boolean blnShowPhaseAngle;
+		internal Boolean blnShowEjectAngle;
+
+		internal static List<GameScenes> lstScenesForAngles = new List<GameScenes>() { GameScenes.TRACKSTATION, GameScenes.FLIGHT };
+
+		//Constructor to set KACWorker parent object to this and access to the settings
+		public KerbalAlarmClock()
+		{
+			//switch (KACWorkerGameState.CurrentGUIScene)
+			//{
+			//    case GameScenes.SPACECENTER:
+			//    case GameScenes.TRACKSTATION:
+			//        = new KACWorker_ViewOnly(this);
+			//        break;
+			//    default:
+			//        = new KACWorker(this);
+			//        break;
+			//}
+			////Set the saves path
+			KACUtils.SavePath=string.Format("{0}saves/{1}",KACUtils.PathApp,HighLogic.SaveFolder);
+
+		}
+
+		//Awake Event - when the DLL is loaded
+		internal override void Awake()
+		{
+			LogFormatted("Awakening the KerbalAlarmClock-{0}", MonoName);
+
+			InitVariables();
+
+			//Event for when the vessel changes (within a scene).
+			KACWorkerGameState.VesselChanged += KACWorkerGameState_VesselChanged;
+
+			//Load the Settings values from the file
+			//Settings.Load();
+			LogFormatted("Loading Settings");
+			settings = new Settings("PluginData/settings.cfg");
+			Boolean blnSettingsLoaded = settings.Load();
+			if (!blnSettingsLoaded) {
+				settings = new Settings("settings.cfg");
+				blnSettingsLoaded = settings.Load();
+				if (blnSettingsLoaded) {
+					settings.FilePath = "PluginData/settings.cfg";
+					System.IO.File.Move(KACUtils.PathPlugin + "/settings.cfg", KACUtils.PathPlugin + "/PluginData/settings.cfg");
+				}
+			}
+
+			if (!blnSettingsLoaded) {
+				settings.FilePath = "PluginData/settings.cfg";
+				LogFormatted("Settings Load Failed");
+			} else {
+				if (!settings.TimeFormatConverted)
+				{
+					settings.TimeFormatConverted = true;
+					switch (settings.TimeFormat)
+					{
+						case OldPrintTimeFormat.TimeAsUT: settings.DateTimeFormat = DateStringFormatsEnum.TimeAsUT; break;
+						case OldPrintTimeFormat.KSPString: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
+						case OldPrintTimeFormat.DateTimeString: settings.DateTimeFormat = DateStringFormatsEnum.DateTimeFormat; break;
+						default: settings.DateTimeFormat = DateStringFormatsEnum.KSPFormatWithSecs; break;
+					}
+					settings.Save();
+				}
+
+			}
+
+			//Set up Default Sounds
+			settings.VerifySoundsList();
+
+			if (settings.SelectedCalendar == CalendarTypeEnum.Earth) {
+				KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
+			}
+
+			//Set initial GameState
+			KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
+
+			//Load Hohmann modelling data - if in flight mode
+			//if ((KACWorkerGameState.LastGUIScene == GameScenes.FLIGHT) && settings.XferModelLoadData)
+			if (settings.XferModelLoadData)
+					settings.XferModelDataLoaded = KACResources.LoadModelPoints();
+
+			//get the sounds and set things up
+			KACResources.LoadSounds();
+			this.ConfigSoundsDDLs();
+			InitAudio();
+
+			//Get whether the toolbar is there
+			settings.BlizzyToolbarIsAvailable = ToolbarManager.ToolbarAvailable;
+
+			//setup the Toolbar button if necessary
+			if (settings.ButtonStyleToDisplay == Settings.ButtonStyleEnum.Toolbar)
+			{
+				btnToolbarKAC = InitToolbarButton();
+			}
+			GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+			GameEvents.onGUIApplicationLauncherDestroyed.Add(DestroyAppLauncherButton);
+			GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
+			GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
+
+			// Need this one to handle the hideUI cancelling via pause menu
+			GameEvents.onGameUnpause.Add(OnUnpause);
+
+			blnFilterToVessel = false;
+			if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
+				HighLogic.LoadedScene == GameScenes.FLIGHT)
+				blnShowFilterToVessel = true;
+
+			//Set up the updating function - do this 5 times a sec not on every frame.
+			StartRepeatingWorker(settings.BehaviourChecksPerSec);
+
+			InitDropDowns();
+
+			winAlarmImport.KAC = this;
+			winAlarmImport.Visible = false;
+			winAlarmImport.InitWindow();
+
+			winConfirmAlarmDelete.Visible = false;
+			winConfirmAlarmDelete.InitWindow();
+
+			WarpTransitionCalculator.CalcWarpRateTransitions();
+
+			//Hook the Angle renderers
+			if (lstScenesForAngles.Contains(HighLogic.LoadedScene))
+			{
+				PhaseAngle = MapView.MapCamera.gameObject.AddComponent<AngleRenderPhase>();
+				EjectAngle = MapView.MapCamera.gameObject.AddComponent<AngleRenderEject>();
+			}
+
+			APIAwake();
+		}
+
+		private void InitAudio()
+		{
+			audioController = AddComponent<AudioController>();
+			audioController.mbKAC = this;
+			audioController.Init();
+		}
+
+		internal override void Start()
+		{
+			LogFormatted_DebugOnly("Start function");
+			LogFormatted_DebugOnly("Alarms Length:{0}", alarms.Count);
+			
+			LogFormatted("Searching for RSS");
+			AssemblyLoader.loadedAssemblies.TypeOperation(t =>
+				{
+					if (t.FullName == ("RealSolarSystem.RSSWatchDog"))
+					{
+						settings.RSSActive = true;
+						if (!settings.RSSShowCalendarToggled)
+						{
+							settings.ShowCalendarToggle = true;
+							settings.RSSShowCalendarToggled = true;
+						}
+					}
+				});
+
+			//Init the KER Integration
+			LogFormatted("Searching for KER");
+			KERWrapper.InitKERWrapper();
+			if (KERWrapper.APIReady)
+			{
+				LogFormatted("Successfully Hooked KER");
+
+			}
+			//Init the VOID Integration
+			LogFormatted("Searching for VOID");
+			VOIDWrapper.InitVOIDWrapper();
+			if (VOIDWrapper.APIReady)
+			{
+				LogFormatted("Successfully Hooked VOID");
+
+			}
+
+			RemoveInputLock();
+
+			if (WindowVisibleByActiveScene && settings.ButtonStyleToDisplay==Settings.ButtonStyleEnum.Launcher)
+			{
+				AppLauncherToBeSetTrue = true;
+				AppLauncherToBeSetTrueAttemptDate = DateTime.Now;
+			}
+		}
+
+		//Destroy Event - when the DLL is loaded
+		internal override void OnDestroy()
+		{
+			LogFormatted("Destroying the KerbalAlarmClock-{0}", MonoName);
+
+			//Hook the App Launcher
+			GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+			GameEvents.onGUIApplicationLauncherDestroyed.Remove(DestroyAppLauncherButton);
+			GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
+			GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
+
+			// Need this one to handle the hideUI cancelling via pause menu
+			GameEvents.onGameUnpause.Remove(OnUnpause);
+
+
+			Destroy(PhaseAngle);
+			Destroy(EjectAngle);
+
+			DestroyDropDowns();
+
+			DestroyToolbarButton(btnToolbarKAC);
+
+			DestroyAppLauncherButton();
+
+			APIDestroy();
+		}
+
+		Boolean blnContractsSystemReady = false;
+		void ContractsReady()
+		{
+			LogFormatted("Contracts System Ready");
+			//update the list
+			UpdateContractDetails();
+
+			//set the flag to say we can start processing contracts
+			blnContractsSystemReady = true;
+		}
+
+		#region "Update Code"
+		//Update Function - Happens on every frame - this is where behavioural stuff is typically done
+		internal override void Update()
+		{
+			KACWorkerGameState.SetCurrentGUIStates();
+			//if scene has changed
+			if (KACWorkerGameState.ChangedGUIScene)
+				LogFormatted("Scene Change from '{0}' to '{1}'", KACWorkerGameState.LastGUIScene.ToString(), KACWorkerGameState.CurrentGUIScene.ToString());
+
+			HandleKeyStrokes();
+
+			//Work out if we should be in the gui queue
+			ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
+
+			//Fix the issues with Flight SCene Stuff
+			if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+			{
+				//If time goes backwards assume a reload/restart/ if vessel changes and readd to rendering queue
+				CheckForFlightChanges();
+
+				//tag these for next time round
+				LastGameUT = Planetarium.GetUniversalTime();
+				LastGameVessel = FlightGlobals.ActiveVessel;
+			}
+			KACWorkerGameState.SetLastGUIStatesToCurrent();
+		}
+
+		internal Boolean blnFlightUIVisible = true;
+
+		private void HandleKeyStrokes()
+		{
+			if (GameSettings.TOGGLE_UI.GetKeyDown() && HighLogic.LoadedScene == GameScenes.FLIGHT)
+			{
+				blnFlightUIVisible = !blnFlightUIVisible;
+			}
+
+			//Look for key inputs to change settings
+			if (!settings.F11KeystrokeDisabled)
+			{
+				if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F11))
+				{
+					//switch (KACWorkerGameState.CurrentGUIScene)
+					//{
+					//    case GameScenes.SPACECENTER: Settings.WindowVisible_SpaceCenter = !Settings.WindowVisible_SpaceCenter; break;
+					//    case GameScenes.TRACKSTATION: Settings.WindowVisible_TrackingStation = !Settings.WindowVisible_TrackingStation; break;
+					//    default: Settings.WindowVisible = !Settings.WindowVisible; break;
+					//}
+					WindowVisibleByActiveScene = !WindowVisibleByActiveScene;
+					settings.Save();
+				}
+			}
+
+			if (settings.KillWarpOnThrottleCutOffKeystroke)
+			{
+				if (Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.primary) || Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.secondary))
+				{
+					TimeWarp.SetRate(0, false);
+				}
+			}
+
+			//TODO:Disable this one
+			//if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
+			//{
+			//    DebugActionTriggered(HighLogic.LoadedScene);
+			//}
+
+			//if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F8))
+			//    Settings.Save();
+
+			//if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(KeyCode.F9)) 
+			//    Settings.Load();
+
+			//If we have paused the game via an alarm and the menu is not visible, then unpause so the menu will display
+			try {
+				if (Input.GetKey(KeyCode.Escape) && !PauseMenu.isOpen && FlightDriver.Pause)
+				{
+					FlightDriver.SetPause(false);
+				}
+			} catch (Exception) { }//LogFormatted("PauseMenu Object Not ready");
+		}
+
+		private void CheckForFlightChanges()
+		{
+			if ((LastGameUT != 0) && (LastGameUT > Planetarium.GetUniversalTime()))
+			{
+				LogFormatted("Time Went Backwards - Load or restart - resetting inqueue flag");
+				ShouldBeInPostDrawQueue = false;
 //                IsInPostDrawQueue = false;
 
 				//Also, untrigger any alarms that we have now gone back past
@@ -426,19 +415,19 @@ namespace KerbalAlarmClock
 				//                IsInPostDrawQueue = false;
 			}
 		}
-        #endregion
+		#endregion
 
-        private void OnUnpause()
-        {
-            LogFormatted_DebugOnly("OnUnpause");
-            GUIVisible = true;
-        }
+		private void OnUnpause()
+		{
+			LogFormatted_DebugOnly("OnUnpause");
+			GUIVisible = true;
+		}
 
-        private Boolean GUIVisible = true;
+		private Boolean GUIVisible = true;
 
 
-        //public void OnGUI()
-        internal override void OnGUIEvery()
+		//public void OnGUI()
+		internal override void OnGUIEvery()
 		{
 			//Do the GUI Stuff - basically get the workers draw stuff into the postrendering queue
 			//If the two flags are different are we going in or out of the queue
@@ -465,24 +454,24 @@ namespace KerbalAlarmClock
 				}
 			}
 
-            Boolean isPauseMenuOpen = false;
-            try {
-                isPauseMenuOpen = PauseMenu.isOpen;
-            } catch{}
+			Boolean isPauseMenuOpen = false;
+			try {
+				isPauseMenuOpen = PauseMenu.isOpen;
+			} catch{}
 
-            if (GUIVisible && blnFlightUIVisible && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen))
-                {
-                    DrawGUI();
-            }
-            OnGUIMouseEvents();
+			if (GUIVisible && blnFlightUIVisible && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen))
+				{
+					DrawGUI();
+			}
+			OnGUIMouseEvents();
 		}
 
 		private Int32 WarpRateWorkerCounter = 0;
 		private Int32 WarpRateWorkerInitialPeriodCounter = 0;
 		internal override void RepeatingWorker()
 		{
-            if (AppLauncherToBeSetTrue)
-                SetAppButtonToTrue();
+			if (AppLauncherToBeSetTrue)
+				SetAppButtonToTrue();
 
 			UpdateDetails();
 
@@ -491,7 +480,6 @@ namespace KerbalAlarmClock
 			{
 				UpdateContractDetails();
 			}
-
 
 			//if we are using the transitions then periodically check the rates in case someone changed em
 			if (!settings.WarpTransitions_Instant) {
@@ -522,11 +510,11 @@ namespace KerbalAlarmClock
 			KACResources.loadGUIAssets();
 
 			KACResources.InitSkins();
-            //Hook the App Launcher
+			//Hook the App Launcher
 
 			InitDDLStyles();
 			
-            //Called by SetSkin
+			//Called by SetSkin
 			//KACResources.SetStyles();
 
 		}
@@ -540,14 +528,14 @@ namespace KerbalAlarmClock
 			DrawIcons();
 
 			Boolean blnShowInterface = true;
-            Boolean isPauseMenuOpen = false;
-            try
-            {
-                isPauseMenuOpen = PauseMenu.isOpen;
-            }
-            catch { }
+			Boolean isPauseMenuOpen = false;
+			try
+			{
+				isPauseMenuOpen = PauseMenu.isOpen;
+			}
+			catch { }
 
-            if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+			if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
 			{
 				if (settings.HideOnPause && isPauseMenuOpen)
 					blnShowInterface = false;
@@ -569,11 +557,11 @@ namespace KerbalAlarmClock
 
 				}
 
-                if (settings.WarpToEnabled)
-                {
-                    DrawNodeButtons();
-                }
-            }
+				if (settings.WarpToEnabled)
+				{
+					DrawNodeButtons();
+				}
+			}
 
 			//Do the stuff to lock inputs of people have that turned on
 			ControlInputLocks();
@@ -590,296 +578,296 @@ namespace KerbalAlarmClock
 		}
 
 
-        private Boolean drawingTrackStationButtons=false;
-        private DateTime drawingTrackStationButtonsAt = DateTime.Now;
-        private void DrawNodeButtons()
-        {
+		private Boolean drawingTrackStationButtons=false;
+		private DateTime drawingTrackStationButtonsAt = DateTime.Now;
+		private void DrawNodeButtons()
+		{
 
-            if (MapView.MapIsEnabled && KACWorkerGameState.CurrentVessel != null && !KACWorkerGameState.CurrentVessel.LandedOrSplashed)
-            {
-                //Dont draw these if there are any gizmos visible
-                if (settings.WarpToHideWhenManGizmoShown && KACWorkerGameState.ManeuverNodesAll_GizmoShown)
-                    return;
+			if (MapView.MapIsEnabled && KACWorkerGameState.CurrentVessel != null && !KACWorkerGameState.CurrentVessel.LandedOrSplashed)
+			{
+				//Dont draw these if there are any gizmos visible
+				if (settings.WarpToHideWhenManGizmoShown && KACWorkerGameState.ManeuverNodesAll_GizmoShown)
+					return;
 
-                //Check if the focus just went off so the buttons still work
-                if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused) {
-                    drawingTrackStationButtons = true;
-                    drawingTrackStationButtonsAt = DateTime.Now;
-                } else if(drawingTrackStationButtons) {
-                    if (drawingTrackStationButtonsAt.AddMilliseconds(settings.WarpToTSIconDelayMSecs) < DateTime.Now)
-                        drawingTrackStationButtons = false;
-                }
+				//Check if the focus just went off so the buttons still work
+				if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION && KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused) {
+					drawingTrackStationButtons = true;
+					drawingTrackStationButtonsAt = DateTime.Now;
+				} else if(drawingTrackStationButtons) {
+					if (drawingTrackStationButtonsAt.AddMilliseconds(settings.WarpToTSIconDelayMSecs) < DateTime.Now)
+						drawingTrackStationButtons = false;
+				}
 
-                if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION || drawingTrackStationButtons)
-                DrawNodeWarpButton(KACWorkerGameState.ApPointExists,
-                    Planetarium.GetUniversalTime() + KACWorkerGameState.CurrentVessel.orbit.timeToAp,
-                    KACAlarm.AlarmTypeEnum.Apoapsis,
-                    "Ap",
-                    settings.WarpToAddMarginAp,
-                    settings.AlarmAddNodeQuickMargin
-                    );
+				if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION || drawingTrackStationButtons)
+				DrawNodeWarpButton(KACWorkerGameState.ApPointExists,
+					Planetarium.GetUniversalTime() + KACWorkerGameState.CurrentVessel.orbit.timeToAp,
+					KACAlarm.AlarmTypeEnum.Apoapsis,
+					"Ap",
+					settings.WarpToAddMarginAp,
+					settings.AlarmAddNodeQuickMargin
+					);
 
-                if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION || drawingTrackStationButtons)
-                    DrawNodeWarpButton(KACWorkerGameState.PePointExists,
-                    Planetarium.GetUniversalTime() + KACWorkerGameState.CurrentVessel.orbit.timeToPe,
-                    KACAlarm.AlarmTypeEnum.Periapsis,
-                    "Pe", 
-                    settings.WarpToAddMarginPe,
-                    settings.AlarmAddNodeQuickMargin
-                    );
-
-
-                if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION || drawingTrackStationButtons)
-                    DrawNodeWarpButton(KACWorkerGameState.SOIPointExists,
-                    KACWorkerGameState.CurrentVessel.orbit.UTsoi,
-                    KACAlarm.AlarmTypeEnum.SOIChange,
-                    "SOI",
-                    settings.WarpToAddMarginSOI,
-                    settings.AlarmAddSOIQuickMargin
-                    );
-
-                if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION && KACWorkerGameState.ManeuverNodeExists &&
-                        KACWorkerGameState.ManeuverNodeFuture != null && KACWorkerGameState.ManeuverNodeFuture.attachedGizmo == null)
-                {
-
-                    DrawNodeWarpButton(true,
-                        KACWorkerGameState.ManeuverNodeFuture.UT,
-                        KACAlarm.AlarmTypeEnum.Maneuver,
-                        "ManNode",
-                        settings.WarpToAddMarginManNode,
-                        settings.AlarmAddManQuickMargin + GetBurnMarginSecs(settings.DefaultKERMargin)
-                        );
-                }
-                if (KACWorkerGameState.CurrentVesselTarget != null && !KACWorkerGameState.ManeuverNodeExists && KACWorkerGameState.CurrentVesselTarget.GetOrbit()!=null)
-                {
-                    if (KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()))
-                    {
-                        Double tAN = KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), Planetarium.GetUniversalTime());
-                        if (tAN < KACWorkerGameState.CurrentVessel.orbit.EndUT)
-                        {
-                            DrawNodeWarpButton(true, tAN, KACAlarm.AlarmTypeEnum.AscendingNode, "AN",
-                                settings.WarpToAddMarginAN,
-                                settings.AlarmAddNodeQuickMargin
-                                );
-                        }
-                    }
-                    if (KACWorkerGameState.CurrentVessel.orbit.DescendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()))
-                    {
-                        Double tDN = KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), Planetarium.GetUniversalTime());
-                        if (tDN < KACWorkerGameState.CurrentVessel.orbit.EndUT)
-                        {
-                            DrawNodeWarpButton(true, tDN, KACAlarm.AlarmTypeEnum.DescendingNode, "DN",
-                                settings.WarpToAddMarginDN,
-                                settings.AlarmAddNodeQuickMargin
-                                );
-                        }
-                    }
-                }
-
-                //if we had started a confirmation and the mouse leaves the button then turn off step 1
-                if(WarpToArmed){
-                    Vector3 VectMouseflipped  = Input.mousePosition;
-                    VectMouseflipped.y = Screen.height - VectMouseflipped.y;
-                    if (!WarpToArmedButtonRect.Contains(VectMouseflipped)){
-                        WarpToArmed = false;
-                        LogFormatted_DebugOnly("Mouse position has Left WarpTo Button Rect");
-                    }
-                }
-            }
-        }
+				if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION || drawingTrackStationButtons)
+					DrawNodeWarpButton(KACWorkerGameState.PePointExists,
+					Planetarium.GetUniversalTime() + KACWorkerGameState.CurrentVessel.orbit.timeToPe,
+					KACAlarm.AlarmTypeEnum.Periapsis,
+					"Pe", 
+					settings.WarpToAddMarginPe,
+					settings.AlarmAddNodeQuickMargin
+					);
 
 
-        Boolean WarpToArmed = false;
-        Rect WarpToArmedButtonRect;
+				if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION || drawingTrackStationButtons)
+					DrawNodeWarpButton(KACWorkerGameState.SOIPointExists,
+					KACWorkerGameState.CurrentVessel.orbit.UTsoi,
+					KACAlarm.AlarmTypeEnum.SOIChange,
+					"SOI",
+					settings.WarpToAddMarginSOI,
+					settings.AlarmAddSOIQuickMargin
+					);
 
-        //Draw a single button near the correct node
-        private Boolean DrawNodeWarpButton(Boolean Exists, Double UT,KACAlarm.AlarmTypeEnum aType, String NodeName, Boolean WithMargin, Double MarginSecs)
-        {
-            if (Exists)
-            {
-                //set the style basics
-                GUIStyle styleWarpToButton = new GUIStyle();
-                styleWarpToButton.fixedWidth = 20;
-                styleWarpToButton.fixedHeight = 12;
+				if (KACWorkerGameState.CurrentGUIScene != GameScenes.TRACKSTATION && KACWorkerGameState.ManeuverNodeExists &&
+						KACWorkerGameState.ManeuverNodeFuture != null && KACWorkerGameState.ManeuverNodeFuture.attachedGizmo == null)
+				{
 
-                //set the default offset of the buttons top left from the node point
-                // - these move around depending on the size of the node icon
-                Int32 xOffset = 10;
-                Int32 yOffset = -20;
+					DrawNodeWarpButton(true,
+						KACWorkerGameState.ManeuverNodeFuture.UT,
+						KACAlarm.AlarmTypeEnum.Maneuver,
+						"ManNode",
+						settings.WarpToAddMarginManNode,
+						settings.AlarmAddManQuickMargin + GetBurnMarginSecs(settings.DefaultKERMargin)
+						);
+				}
+				if (KACWorkerGameState.CurrentVesselTarget != null && !KACWorkerGameState.ManeuverNodeExists && KACWorkerGameState.CurrentVesselTarget.GetOrbit()!=null)
+				{
+					if (KACWorkerGameState.CurrentVessel.orbit.AscendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()))
+					{
+						Double tAN = KACWorkerGameState.CurrentVessel.orbit.TimeOfAscendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), Planetarium.GetUniversalTime());
+						if (tAN < KACWorkerGameState.CurrentVessel.orbit.EndUT)
+						{
+							DrawNodeWarpButton(true, tAN, KACAlarm.AlarmTypeEnum.AscendingNode, "AN",
+								settings.WarpToAddMarginAN,
+								settings.AlarmAddNodeQuickMargin
+								);
+						}
+					}
+					if (KACWorkerGameState.CurrentVessel.orbit.DescendingNodeExists(KACWorkerGameState.CurrentVesselTarget.GetOrbit()))
+					{
+						Double tDN = KACWorkerGameState.CurrentVessel.orbit.TimeOfDescendingNode(KACWorkerGameState.CurrentVesselTarget.GetOrbit(), Planetarium.GetUniversalTime());
+						if (tDN < KACWorkerGameState.CurrentVessel.orbit.EndUT)
+						{
+							DrawNodeWarpButton(true, tDN, KACAlarm.AlarmTypeEnum.DescendingNode, "DN",
+								settings.WarpToAddMarginDN,
+								settings.AlarmAddNodeQuickMargin
+								);
+						}
+					}
+				}
 
-                //set the specific normal and hover textures and any custom offsets
-                switch (aType)
-                {
-                    case KACAlarm.AlarmTypeEnum.Maneuver:
-                    case KACAlarm.AlarmTypeEnum.ManeuverAuto:
-                        if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
-                        {
-                            styleWarpToButton.normal.background = KACResources.iconWarpToTSManNode;
-                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
-                                styleWarpToButton.hover.background = KACResources.iconWarpToTSManNodeOver;
-                        }
-                        else
-                        {
-                            styleWarpToButton.normal.background = KACResources.iconWarpToManNode;
-                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
-                                styleWarpToButton.hover.background = KACResources.iconWarpToManNodeOver;
-                        }
-                        break;
-                    case KACAlarm.AlarmTypeEnum.Apoapsis:
-                    case KACAlarm.AlarmTypeEnum.Periapsis:
-                        if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) {
-                            styleWarpToButton.normal.background = KACResources.iconWarpToTSApPe;
-                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
-                                styleWarpToButton.hover.background = KACResources.iconWarpToTSApPeOver;
-                        }
-                        else { 
-                            styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
-                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
-                                styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
-                        }
-                        break;
-                    case KACAlarm.AlarmTypeEnum.AscendingNode:
-                        styleWarpToButton.normal.background = KACResources.iconWarpToANDN;
-                        if (!settings.WarpToRequiresConfirm || WarpToArmed)
-                            styleWarpToButton.hover.background = KACResources.iconWarpToANDNOver;
-                        xOffset = 18;
-                        yOffset = -14;
-                        break;
-                    case KACAlarm.AlarmTypeEnum.DescendingNode:
-                        styleWarpToButton.normal.background = KACResources.iconWarpToANDN;
-                        if (!settings.WarpToRequiresConfirm || WarpToArmed)
-                            styleWarpToButton.hover.background = KACResources.iconWarpToANDNOver;
-                        xOffset = -1;
-                        yOffset = -16;
-                        break;
-                    case KACAlarm.AlarmTypeEnum.SOIChange:
-                    case KACAlarm.AlarmTypeEnum.SOIChangeAuto:
-                        xOffset = 6;
-                        yOffset = -16;
-                        if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) {
-                            styleWarpToButton.normal.background = KACResources.iconWarpToTSApPe;
-                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
-                                styleWarpToButton.hover.background = KACResources.iconWarpToTSApPeOver;
-                        }
-                        else { 
-                            styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
-                            if (!settings.WarpToRequiresConfirm || WarpToArmed)
-                                styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
-                        }
-                        break;
-                    default:
-                        styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
-                        if (!settings.WarpToRequiresConfirm || WarpToArmed)
-                            styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
-                        break;
-                }
-
-                //get the screen coordinates of the Point
-                Vector3d screenPosNode = PlanetariumCamera.Camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(UT)));
-                Rect rectNodeButton = new Rect((Int32)screenPosNode.x + xOffset, (Int32)(Screen.height - screenPosNode.y) + yOffset, 20, 12);
-                if (GUI.Button(rectNodeButton, "", styleWarpToButton))
-                {
-                    if (Event.current.button == 0)
-                    {
-                        if (settings.WarpToRequiresConfirm && !WarpToArmed)
-                        {
-                            LogFormatted_DebugOnly("Set confirmed and store Rect");
-                            WarpToArmed = true;
-                            WarpToArmedButtonRect = new Rect(rectNodeButton);
-                            //If in the TS then reset the orbit selection
-                            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
-                            {
-                                lstOrbitRenderChanged.Add(KACWorkerGameState.CurrentVessel.id);
-                                KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = true;
-                                KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
-                            }
-                        }
-                        else
-                        {
-                            WarpToArmed = false;
-
-                            //Get any existing alarm for the same vessel/type and time - 
-                            //  Event Time NOT the alarm time
-                            KACAlarm aExisting = alarms.FirstOrDefault(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()
-                                && Math.Abs((a.AlarmTimeUT + a.AlarmMarginSecs) - UT) <= settings.WarpToDupeProximitySecs
-                                && (a.TypeOfAlarm == aType 
-                                    || a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.SOIChangeAuto && aType==KACAlarm.AlarmTypeEnum.SOIChange
-                                    || a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.ManeuverAuto && aType==KACAlarm.AlarmTypeEnum.Maneuver
-                                    )
-                                );
-
-                            //LogFormatted("UT:{0},Margin:{1},WUT:{2},Prox:{3}", alarms.First().AlarmTimeUT, alarms.First().AlarmMarginSecs, UT, settings.WarpToDupeProximitySecs);
-                            //LogFormatted("DIFF:{0}", Math.Abs((alarms.First().AlarmTimeUT + alarms.First().AlarmMarginSecs) - UT) <= settings.WarpToDupeProximitySecs);
+				//if we had started a confirmation and the mouse leaves the button then turn off step 1
+				if(WarpToArmed){
+					Vector3 VectMouseflipped  = Input.mousePosition;
+					VectMouseflipped.y = Screen.height - VectMouseflipped.y;
+					if (!WarpToArmedButtonRect.Contains(VectMouseflipped)){
+						WarpToArmed = false;
+						LogFormatted_DebugOnly("Mouse position has Left WarpTo Button Rect");
+					}
+				}
+			}
+		}
 
 
-                            //if there aint one then add one
-                            if (aExisting == null)
-                            {
-                                KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), "Warp to " + NodeName, "", UT - (WithMargin ? MarginSecs : 0), (WithMargin ? MarginSecs : 0), aType,
-                                        AlarmActions.DefaultsKillWarpOnly());
-                                if (lstAlarmsWithTarget.Contains(aType))
-                                    newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
-                                if (KACWorkerGameState.ManeuverNodeExists)
-                                    newAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
-                                newAlarm.Actions.DeleteWhenDone = true;
+		Boolean WarpToArmed = false;
+		Rect WarpToArmedButtonRect;
 
-                                alarms.Add(newAlarm);
-                            }
-                            else
-                            {
-                                //else update the UT
-                                aExisting.AlarmTimeUT = UT;
-                            }
+		//Draw a single button near the correct node
+		private Boolean DrawNodeWarpButton(Boolean Exists, Double UT,KACAlarm.AlarmTypeEnum aType, String NodeName, Boolean WithMargin, Double MarginSecs)
+		{
+			if (Exists)
+			{
+				//set the style basics
+				GUIStyle styleWarpToButton = new GUIStyle();
+				styleWarpToButton.fixedWidth = 20;
+				styleWarpToButton.fixedHeight = 12;
 
-                            //now accelerate time
-                            Double timeToEvent = UT - Planetarium.GetUniversalTime();
-                            Int32 rateToSet = WarpTransitionCalculator.WarpRateTransitionPeriods.Where(
-                                                    r => r.UTTo1Times < timeToEvent
-                                                        && (!settings.WarpToLimitMaxWarp || r.Rate<=settings.WarpToMaxWarp)
-                                                    )
-                                                .OrderBy(r => r.UTTo1Times)
-                                                .Last().Index;
-                            TimeWarp.SetRate(rateToSet, false);
+				//set the default offset of the buttons top left from the node point
+				// - these move around depending on the size of the node icon
+				Int32 xOffset = 10;
+				Int32 yOffset = -20;
+
+				//set the specific normal and hover textures and any custom offsets
+				switch (aType)
+				{
+					case KACAlarm.AlarmTypeEnum.Maneuver:
+					case KACAlarm.AlarmTypeEnum.ManeuverAuto:
+						if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+						{
+							styleWarpToButton.normal.background = KACResources.iconWarpToTSManNode;
+							if (!settings.WarpToRequiresConfirm || WarpToArmed)
+								styleWarpToButton.hover.background = KACResources.iconWarpToTSManNodeOver;
+						}
+						else
+						{
+							styleWarpToButton.normal.background = KACResources.iconWarpToManNode;
+							if (!settings.WarpToRequiresConfirm || WarpToArmed)
+								styleWarpToButton.hover.background = KACResources.iconWarpToManNodeOver;
+						}
+						break;
+					case KACAlarm.AlarmTypeEnum.Apoapsis:
+					case KACAlarm.AlarmTypeEnum.Periapsis:
+						if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) {
+							styleWarpToButton.normal.background = KACResources.iconWarpToTSApPe;
+							if (!settings.WarpToRequiresConfirm || WarpToArmed)
+								styleWarpToButton.hover.background = KACResources.iconWarpToTSApPeOver;
+						}
+						else { 
+							styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
+							if (!settings.WarpToRequiresConfirm || WarpToArmed)
+								styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
+						}
+						break;
+					case KACAlarm.AlarmTypeEnum.AscendingNode:
+						styleWarpToButton.normal.background = KACResources.iconWarpToANDN;
+						if (!settings.WarpToRequiresConfirm || WarpToArmed)
+							styleWarpToButton.hover.background = KACResources.iconWarpToANDNOver;
+						xOffset = 18;
+						yOffset = -14;
+						break;
+					case KACAlarm.AlarmTypeEnum.DescendingNode:
+						styleWarpToButton.normal.background = KACResources.iconWarpToANDN;
+						if (!settings.WarpToRequiresConfirm || WarpToArmed)
+							styleWarpToButton.hover.background = KACResources.iconWarpToANDNOver;
+						xOffset = -1;
+						yOffset = -16;
+						break;
+					case KACAlarm.AlarmTypeEnum.SOIChange:
+					case KACAlarm.AlarmTypeEnum.SOIChangeAuto:
+						xOffset = 6;
+						yOffset = -16;
+						if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION) {
+							styleWarpToButton.normal.background = KACResources.iconWarpToTSApPe;
+							if (!settings.WarpToRequiresConfirm || WarpToArmed)
+								styleWarpToButton.hover.background = KACResources.iconWarpToTSApPeOver;
+						}
+						else { 
+							styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
+							if (!settings.WarpToRequiresConfirm || WarpToArmed)
+								styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
+						}
+						break;
+					default:
+						styleWarpToButton.normal.background = KACResources.iconWarpToApPe;
+						if (!settings.WarpToRequiresConfirm || WarpToArmed)
+							styleWarpToButton.hover.background = KACResources.iconWarpToApPeOver;
+						break;
+				}
+
+				//get the screen coordinates of the Point
+				Vector3d screenPosNode = PlanetariumCamera.Camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(KACWorkerGameState.CurrentVessel.orbit.getPositionAtUT(UT)));
+				Rect rectNodeButton = new Rect((Int32)screenPosNode.x + xOffset, (Int32)(Screen.height - screenPosNode.y) + yOffset, 20, 12);
+				if (GUI.Button(rectNodeButton, "", styleWarpToButton))
+				{
+					if (Event.current.button == 0)
+					{
+						if (settings.WarpToRequiresConfirm && !WarpToArmed)
+						{
+							LogFormatted_DebugOnly("Set confirmed and store Rect");
+							WarpToArmed = true;
+							WarpToArmedButtonRect = new Rect(rectNodeButton);
+							//If in the TS then reset the orbit selection
+							if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+							{
+								lstOrbitRenderChanged.Add(KACWorkerGameState.CurrentVessel.id);
+								KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = true;
+								KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
+							}
+						}
+						else
+						{
+							WarpToArmed = false;
+
+							//Get any existing alarm for the same vessel/type and time - 
+							//  Event Time NOT the alarm time
+							KACAlarm aExisting = alarms.FirstOrDefault(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()
+								&& Math.Abs((a.AlarmTimeUT + a.AlarmMarginSecs) - UT) <= settings.WarpToDupeProximitySecs
+								&& (a.TypeOfAlarm == aType 
+									|| a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.SOIChangeAuto && aType==KACAlarm.AlarmTypeEnum.SOIChange
+									|| a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.ManeuverAuto && aType==KACAlarm.AlarmTypeEnum.Maneuver
+									)
+								);
+
+							//LogFormatted("UT:{0},Margin:{1},WUT:{2},Prox:{3}", alarms.First().AlarmTimeUT, alarms.First().AlarmMarginSecs, UT, settings.WarpToDupeProximitySecs);
+							//LogFormatted("DIFF:{0}", Math.Abs((alarms.First().AlarmTimeUT + alarms.First().AlarmMarginSecs) - UT) <= settings.WarpToDupeProximitySecs);
+
+
+							//if there aint one then add one
+							if (aExisting == null)
+							{
+								KACAlarm newAlarm = new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), "Warp to " + NodeName, "", UT - (WithMargin ? MarginSecs : 0), (WithMargin ? MarginSecs : 0), aType,
+										AlarmActions.DefaultsKillWarpOnly());
+								if (lstAlarmsWithTarget.Contains(aType))
+									newAlarm.TargetObject = KACWorkerGameState.CurrentVesselTarget;
+								if (KACWorkerGameState.ManeuverNodeExists)
+									newAlarm.ManNodes = KACWorkerGameState.ManeuverNodesFuture;
+								newAlarm.Actions.DeleteWhenDone = true;
+
+								alarms.Add(newAlarm);
+							}
+							else
+							{
+								//else update the UT
+								aExisting.AlarmTimeUT = UT;
+							}
+
+							//now accelerate time
+							Double timeToEvent = UT - Planetarium.GetUniversalTime();
+							Int32 rateToSet = WarpTransitionCalculator.WarpRateTransitionPeriods.Where(
+													r => r.UTTo1Times < timeToEvent
+														&& (!settings.WarpToLimitMaxWarp || r.Rate<=settings.WarpToMaxWarp)
+													)
+												.OrderBy(r => r.UTTo1Times)
+												.Last().Index;
+							TimeWarp.SetRate(rateToSet, false);
 
 
 
-                            //If in the TS then reset the orbit selection
-                            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
-                            {
-                                lstOrbitRenderChanged.Add(KACWorkerGameState.CurrentVessel.id);
-                                KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = true;
-                                KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
-                            }
-                        }
-                    }
-                }
+							//If in the TS then reset the orbit selection
+							if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+							{
+								lstOrbitRenderChanged.Add(KACWorkerGameState.CurrentVessel.id);
+								KACWorkerGameState.CurrentVessel.orbitRenderer.isFocused = true;
+								KACWorkerGameState.CurrentVessel.AttachPatchedConicsSolver();
+							}
+						}
+					}
+				}
 
-                if (settings.ShowTooltips && !settings.WarpToTipsHidden)
-                {
-                    //work out where when the mouse is over the button
-                    Vector3 VectMouseflipped  = Input.mousePosition;
-                    VectMouseflipped.y = Screen.height - VectMouseflipped.y;
-                    if (rectNodeButton.Contains(VectMouseflipped))
-                    {
-                        //and draw some info bout it
-                        GUIStyle styleTip = new GUIStyle();
-                        styleTip.normal.textColor = Color.white;
-                        styleTip.fontSize = 12;
+				if (settings.ShowTooltips && !settings.WarpToTipsHidden)
+				{
+					//work out where when the mouse is over the button
+					Vector3 VectMouseflipped  = Input.mousePosition;
+					VectMouseflipped.y = Screen.height - VectMouseflipped.y;
+					if (rectNodeButton.Contains(VectMouseflipped))
+					{
+						//and draw some info bout it
+						GUIStyle styleTip = new GUIStyle();
+						styleTip.normal.textColor = Color.white;
+						styleTip.fontSize = 12;
 
-                        String strArm = "";
-                        if (settings.WarpToRequiresConfirm) {
-                            if (!WarpToArmed)
-                                strArm = " (Unarmed)";
-                        }
-                        String strlabel = "Warp to " + NodeName + strArm + (WithMargin ? " (Margin=" + new KSPTimeSpan(MarginSecs).ToString(2) + ")" : "");
-                        GUI.Label(new Rect((Int32)screenPosNode.x + xOffset + 21, (Int32)(Screen.height - screenPosNode.y) + yOffset -2, 100, 12), strlabel, styleTip);
-                    }
-                }
-            }
-            return false;
-        }
+						String strArm = "";
+						if (settings.WarpToRequiresConfirm) {
+							if (!WarpToArmed)
+								strArm = " (Unarmed)";
+						}
+						String strlabel = "Warp to " + NodeName + strArm + (WithMargin ? " (Margin=" + new KSPTimeSpan(MarginSecs).ToString(2) + ")" : "");
+						GUI.Label(new Rect((Int32)screenPosNode.x + xOffset + 21, (Int32)(Screen.height - screenPosNode.y) + yOffset -2, 100, 12), strlabel, styleTip);
+					}
+				}
+			}
+			return false;
+		}
 
-        internal List<Guid> lstOrbitRenderChanged = new List<Guid>();
+		internal List<Guid> lstOrbitRenderChanged = new List<Guid>();
 
 
 		internal Boolean MouseOverAnyWindow = false;
@@ -916,7 +904,7 @@ namespace KerbalAlarmClock
 					switch (HighLogic.LoadedScene)
 					{
 						case GameScenes.SPACECENTER: AddLock = settings.ClickThroughProtect_KSC && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
-                        case GameScenes.EDITOR: AddLock = settings.ClickThroughProtect_Editor && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
+						case GameScenes.EDITOR: AddLock = settings.ClickThroughProtect_Editor && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						case GameScenes.FLIGHT: AddLock = settings.ClickThroughProtect_Flight && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						case GameScenes.TRACKSTATION: AddLock = settings.ClickThroughProtect_Tracking && !(InputLockManager.GetControlLock("KACControlLock") != ControlTypes.None); break;
 						default:
@@ -930,8 +918,8 @@ namespace KerbalAlarmClock
 						{
 							case GameScenes.SPACECENTER: InputLockManager.SetControlLock(ControlTypes.KSC_FACILITIES, "KACControlLock"); break;
 							case GameScenes.EDITOR:
-                                InputLockManager.SetControlLock((ControlTypes.EDITOR_LOCK | ControlTypes.EDITOR_GIZMO_TOOLS), "KACControlLock");
-                                break;
+								InputLockManager.SetControlLock((ControlTypes.EDITOR_LOCK | ControlTypes.EDITOR_GIZMO_TOOLS), "KACControlLock");
+								break;
 							case GameScenes.FLIGHT:
 								InputLockManager.SetControlLock(ControlTypes.ALL_SHIP_CONTROLS, "KACControlLock");
 								break;
@@ -1010,7 +998,7 @@ namespace KerbalAlarmClock
 			_WindowBackupFailedID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
 			_WindowQuickAddID = UnityEngine.Random.Range(1000, 2000000) + _AssemblyName.GetHashCode();
 
-            blnContractsSystemReady = false;
+			blnContractsSystemReady = false;
 		}
 		//#endregion
 
@@ -1020,19 +1008,19 @@ namespace KerbalAlarmClock
 		{
 			KACWorkerGameState.SetCurrentFlightStates();
 
-            //Turn off the rendering of orbits for vessels we may have adjusted by the warpto code
-            if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
-            {
-                if (KACWorkerGameState.ChangedVessel && KACWorkerGameState.LastVessel!=null)
-                {
-                    if (lstOrbitRenderChanged.Contains(KACWorkerGameState.LastVessel.id))
-                    {
-                        KACWorkerGameState.LastVessel.orbitRenderer.isFocused = false;
-                        KACWorkerGameState.LastVessel.DetachPatchedConicsSolver();
-                        lstOrbitRenderChanged.Clear();
-                    }
-                }
-            }
+			//Turn off the rendering of orbits for vessels we may have adjusted by the warpto code
+			if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
+			{
+				if (KACWorkerGameState.ChangedVessel && KACWorkerGameState.LastVessel!=null)
+				{
+					if (lstOrbitRenderChanged.Contains(KACWorkerGameState.LastVessel.id))
+					{
+						KACWorkerGameState.LastVessel.orbitRenderer.isFocused = false;
+						KACWorkerGameState.LastVessel.DetachPatchedConicsSolver();
+						lstOrbitRenderChanged.Clear();
+					}
+				}
+			}
 
 			if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
 			{
@@ -1043,6 +1031,21 @@ namespace KerbalAlarmClock
 					if (KACWorkerGameState.LastVessel!=null) strVesselName=KACWorkerGameState.LastVessel.vesselName;
 					LogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
 				}
+
+                // Do we need to clear any highlighted science labs?
+                if (blnClearScienceLabHighlight)
+                {
+                    if (highlightedScienceLab != null && highlightedScienceLab.HighlightActive)
+                    {
+                        highlightedScienceLab.SetHighlightDefault();
+                    }
+                    blnClearScienceLabHighlight = false;
+                    highlightedScienceLab = null;
+                }
+                else if (highlightedScienceLab != null)
+                {
+                    blnClearScienceLabHighlight = true;
+                }
 
 				// Do we need to restore a maneuverNode after a ship jump - give it 5 secs of attempts for changes to ship
 				if (settings.LoadManNode != null && settings.LoadManNode != "" && KACWorkerGameState.IsVesselActive)
@@ -1458,8 +1461,8 @@ namespace KerbalAlarmClock
 			//is there an alarm and no man node?
 			if (KACWorkerGameState.ManeuverNodeExists && (KACWorkerGameState.ManeuverNodeFuture != null))
 			{
-                KSPDateTime nodeAutoAlarm;
-                nodeAutoAlarm = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin - GetBurnMarginSecs(settings.DefaultKERMargin));
+				KSPDateTime nodeAutoAlarm;
+				nodeAutoAlarm = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - settings.AlarmAddManAutoMargin - GetBurnMarginSecs(settings.DefaultKERMargin));
 				
 				List<ManeuverNode> manNodesToStore = KACWorkerGameState.ManeuverNodesFuture;
 
@@ -1469,9 +1472,9 @@ namespace KerbalAlarmClock
 				//Are we updating an alarm
 				if (tmpAlarm != null)
 				{
-                    //update the margin
-                    tmpAlarm.AlarmMarginSecs = settings.AlarmAddManAutoMargin + GetBurnMarginSecs(settings.DefaultKERMargin);
-                    //and the UT
+					//update the margin
+					tmpAlarm.AlarmMarginSecs = settings.AlarmAddManAutoMargin + GetBurnMarginSecs(settings.DefaultKERMargin);
+					//and the UT
 					tmpAlarm.AlarmTime.UT = new KSPDateTime(KACWorkerGameState.ManeuverNodeFuture.UT - tmpAlarm.AlarmMarginSecs).UT;
 					tmpAlarm.ManNodes = manNodesToStore;
 				}
@@ -1481,7 +1484,7 @@ namespace KerbalAlarmClock
 					if (nodeAutoAlarm.UT + settings.AlarmAddManAutoMargin - settings.AlarmAddManAutoThreshold > KACWorkerGameState.CurrentTime.UT)
 					{
 						//or are we setting a new one
-                        alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin + GetBurnMarginSecs(settings.DefaultKERMargin), KACAlarm.AlarmTypeEnum.ManeuverAuto,
+						alarms.Add(new KACAlarm(KACWorkerGameState.CurrentVessel.id.ToString(), strManNodeAlarmName, strManNodeAlarmNotes, nodeAutoAlarm.UT, settings.AlarmAddManAutoMargin + GetBurnMarginSecs(settings.DefaultKERMargin), KACAlarm.AlarmTypeEnum.ManeuverAuto,
 							settings.AlarmAddManAuto_Action , manNodesToStore));
 						//settings.Save();
 					}
@@ -1497,8 +1500,8 @@ namespace KerbalAlarmClock
 		{
 			if(lstContracts==null) return;
 
-            //check the ready flag
-            if (!blnContractsSystemReady) return;
+			//check the ready flag
+			if (!blnContractsSystemReady) return;
 
 			//check for expired/dead contracts
 			if (settings.ContractExpireDelete)
@@ -1671,9 +1674,9 @@ namespace KerbalAlarmClock
 							if (tmpAlarm.PauseGame)
 							{
 								LogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
-                                if (tmpAlarm.Actions.Message != AlarmActions.MessageEnum.Yes)
-                                    tmpAlarm.Actions.Message = AlarmActions.MessageEnum.Yes;
-                                TimeWarp.SetRate(0, true);
+								if (tmpAlarm.Actions.Message != AlarmActions.MessageEnum.Yes)
+									tmpAlarm.Actions.Message = AlarmActions.MessageEnum.Yes;
+								TimeWarp.SetRate(0, true);
 								FlightDriver.SetPause(true);
 							}
 							else if (tmpAlarm.HaltWarp)
@@ -1747,35 +1750,35 @@ namespace KerbalAlarmClock
 						tmpAlarm.Actioned = true;
 
 
-                        //Play the sounds if necessary
-                        if (tmpAlarm.Actions.PlaySound) {
-                            //first get the right sound
-                            AlarmSound s = settings.AlarmSounds.FirstOrDefault(st => st.Types.Contains(tmpAlarm.TypeOfAlarm));
+						//Play the sounds if necessary
+						if (tmpAlarm.Actions.PlaySound) {
+							//first get the right sound
+							AlarmSound s = settings.AlarmSounds.FirstOrDefault(st => st.Types.Contains(tmpAlarm.TypeOfAlarm));
 
-                            if (s == null || s.Enabled == false) {
-                                s = settings.AlarmSounds[0];
-                            }
+							if (s == null || s.Enabled == false) {
+								s = settings.AlarmSounds[0];
+							}
 
-                            if (!tmpAlarm.ShowMessage && s.RepeatCount > 5)
-                            {
-                                audioController.Play(KACResources.clipAlarms[s.SoundName], 5);
-                            }
-                            else
-                            {
-                                audioController.Play(KACResources.clipAlarms[s.SoundName], s.RepeatCount);
-                            }
-                        }
+							if (!tmpAlarm.ShowMessage && s.RepeatCount > 5)
+							{
+								audioController.Play(KACResources.clipAlarms[s.SoundName], 5);
+							}
+							else
+							{
+								audioController.Play(KACResources.clipAlarms[s.SoundName], s.RepeatCount);
+							}
+						}
 
 
-                        //if (tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.KillWarpOnly 
-                        //    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed
-                        //    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothing)
-                        if((tmpAlarm.Actions.Message==AlarmActions.MessageEnum.No) ||
-                            (
-                                tmpAlarm.Actions.Message == AlarmActions.MessageEnum.YesIfOtherVessel &&
-                                KACWorkerGameState.CurrentVessel!=null &&
-                                tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()
-                            ))
+						//if (tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.KillWarpOnly 
+						//    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed
+						//    || tmpAlarm.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothing)
+						if((tmpAlarm.Actions.Message==AlarmActions.MessageEnum.No) ||
+							(
+								tmpAlarm.Actions.Message == AlarmActions.MessageEnum.YesIfOtherVessel &&
+								KACWorkerGameState.CurrentVessel!=null &&
+								tmpAlarm.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()
+							))
 						{
 							tmpAlarm.AlarmWindowClosed = true;
 							try
@@ -1789,9 +1792,9 @@ namespace KerbalAlarmClock
 
 						}
 
-                        LogFormatted("Actioning Alarm");
-                        LogFormatted("{0}",tmpAlarm.Actions);
-                    }
+						LogFormatted("Actioning Alarm");
+						LogFormatted("{0}",tmpAlarm.Actions);
+					}
 
 			}
 
@@ -1801,18 +1804,18 @@ namespace KerbalAlarmClock
 				alarms.Add(a);
 			}
 
-            // Delete the do nothing/delete alarms - One loop to find the ones to delete - cant delete inside the foreach or it breaks the iterator
-            List<KACAlarm> ToDelete = new List<KACAlarm>();
-            //foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.ActionDeleteWhenDone)))
-            foreach (KACAlarm tmpAlarm in alarms.Where(a => a.Actions.Warp == AlarmActions.WarpEnum.DoNothing && a.Actions.DeleteWhenDone ))
-            {
-                if (tmpAlarm.Triggered && tmpAlarm.Actioned)
-                    ToDelete.Add(tmpAlarm);
-            }
-            foreach (KACAlarm a in ToDelete)
-            {
-                alarms.Remove(a);
-            }
+			// Delete the do nothing/delete alarms - One loop to find the ones to delete - cant delete inside the foreach or it breaks the iterator
+			List<KACAlarm> ToDelete = new List<KACAlarm>();
+			//foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.ActionDeleteWhenDone)))
+			foreach (KACAlarm tmpAlarm in alarms.Where(a => a.Actions.Warp == AlarmActions.WarpEnum.DoNothing && a.Actions.DeleteWhenDone ))
+			{
+				if (tmpAlarm.Triggered && tmpAlarm.Actioned)
+					ToDelete.Add(tmpAlarm);
+			}
+			foreach (KACAlarm a in ToDelete)
+			{
+				alarms.Remove(a);
+			}
 		}
 
 
@@ -1832,7 +1835,7 @@ namespace KerbalAlarmClock
 
 						if (tmpModelPoint != null)
 						{
-                            KSPDateTime XferNextTargetEventTime = new KSPDateTime(tmpModelPoint.UT);
+							KSPDateTime XferNextTargetEventTime = new KSPDateTime(tmpModelPoint.UT);
 
 							if (!alarms.Any(a => a.TypeOfAlarm == KACAlarm.AlarmTypeEnum.TransferModelled &&
 											a.XferOriginBodyName == alarmToCheck.XferOriginBodyName &&
@@ -1858,53 +1861,53 @@ namespace KerbalAlarmClock
 						LogFormatted("Unable to find a future model data point for this transfer({0}->{1})\r\n{2}", alarmToCheck.XferOriginBodyName, alarmToCheck.XferTargetBodyName, ex.Message);
 					}
 				}
-                else if (alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Apoapsis || alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Periapsis)
-                {
-                    try
-                    {
-                        Vessel v = FindVesselForAlarm(alarmToCheck);
+				else if (alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Apoapsis || alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Periapsis)
+				{
+					try
+					{
+						Vessel v = FindVesselForAlarm(alarmToCheck);
 
-                        if(v == null)
-                        {
-                            LogFormatted("Unable to find the vessel to work out the repeat ({0})", alarmToCheck.VesselID);
-                        }
-                        else
-                        {
+						if(v == null)
+						{
+							LogFormatted("Unable to find the vessel to work out the repeat ({0})", alarmToCheck.VesselID);
+						}
+						else
+						{
 
-                            LogFormatted("Adding repeat alarm for Ap/Pe ({0})", alarmToCheck.VesselID);
+							LogFormatted("Adding repeat alarm for Ap/Pe ({0})", alarmToCheck.VesselID);
 
-                            //get the time of the next node if the margin is greater than 0
-                            Double nextApPe = Planetarium.GetUniversalTime() + v.orbit.timeToAp + (alarmToCheck.AlarmMarginSecs>0?v.orbit.period:0);
-                            if (alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Periapsis)
-                                nextApPe = Planetarium.GetUniversalTime() + v.orbit.timeToPe + +(alarmToCheck.AlarmMarginSecs > 0 ? v.orbit.period : 0);
+							//get the time of the next node if the margin is greater than 0
+							Double nextApPe = Planetarium.GetUniversalTime() + v.orbit.timeToAp + (alarmToCheck.AlarmMarginSecs>0?v.orbit.period:0);
+							if (alarmToCheck.TypeOfAlarm == KACAlarm.AlarmTypeEnum.Periapsis)
+								nextApPe = Planetarium.GetUniversalTime() + v.orbit.timeToPe + +(alarmToCheck.AlarmMarginSecs > 0 ? v.orbit.period : 0);
 
-                            if (!alarms.Any(a => a.TypeOfAlarm == alarmToCheck.TypeOfAlarm &&
-                                    a.AlarmTime.UT == nextApPe))
-                            {
-                                alarmToAdd = alarmToCheck.Duplicate(nextApPe);
-                                return true;
-                            }
-                            else
-                            {
-                                LogFormatted("Alarm already exists, not adding repeat ({0}): UT={1}", alarmToCheck.VesselID, nextApPe);
-                            }
-                            
-                            alarmToAdd = alarmToCheck.Duplicate(nextApPe);
-                            return true;
-                        }
+							if (!alarms.Any(a => a.TypeOfAlarm == alarmToCheck.TypeOfAlarm &&
+									a.AlarmTime.UT == nextApPe))
+							{
+								alarmToAdd = alarmToCheck.Duplicate(nextApPe);
+								return true;
+							}
+							else
+							{
+								LogFormatted("Alarm already exists, not adding repeat ({0}): UT={1}", alarmToCheck.VesselID, nextApPe);
+							}
+							
+							alarmToAdd = alarmToCheck.Duplicate(nextApPe);
+							return true;
+						}
 
-                    }
-                    catch (Exception ex)
-                    {
-                        LogFormatted("Unable to add a repeat alarm ({0})\r\n{1}", alarmToCheck.VesselID, ex.Message);
-                    }
-                }
-                else if (alarmToCheck.RepeatAlarmPeriod.UT > 0)
-                {
-                    LogFormatted("Adding repeat alarm for {0}:{1}-{2}+{3}", alarmToCheck.TypeOfAlarm, alarmToCheck.Name, alarmToCheck.AlarmTime.UT, alarmToCheck.RepeatAlarmPeriod.UT);
-                    alarmToAdd = alarmToCheck.Duplicate(alarmToCheck.AlarmTime.UT + alarmToCheck.RepeatAlarmPeriod.UT);
-                    return true;
-                }
+					}
+					catch (Exception ex)
+					{
+						LogFormatted("Unable to add a repeat alarm ({0})\r\n{1}", alarmToCheck.VesselID, ex.Message);
+					}
+				}
+				else if (alarmToCheck.RepeatAlarmPeriod.UT > 0)
+				{
+					LogFormatted("Adding repeat alarm for {0}:{1}-{2}+{3}", alarmToCheck.TypeOfAlarm, alarmToCheck.Name, alarmToCheck.AlarmTime.UT, alarmToCheck.RepeatAlarmPeriod.UT);
+					alarmToAdd = alarmToCheck.Duplicate(alarmToCheck.AlarmTime.UT + alarmToCheck.RepeatAlarmPeriod.UT);
+					return true;
+				}
 			}
 			alarmToAdd = null;
 			return false;
@@ -1956,7 +1959,7 @@ namespace KerbalAlarmClock
 					//straight to spacecenter
 					HighLogic.CurrentGame = game;
 					//HighLogic.LoadScene(GameScenes.SPACECENTER);
-                    HighLogic.LoadScene(GameScenes.TRACKSTATION);
+					HighLogic.LoadScene(GameScenes.TRACKSTATION);
 					return;
 
 					Int32 FirstVessel;

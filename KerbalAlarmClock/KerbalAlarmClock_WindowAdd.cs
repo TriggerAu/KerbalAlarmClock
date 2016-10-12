@@ -116,6 +116,7 @@ namespace KerbalAlarmClock
             KACAlarm.AlarmTypeEnum.Crew,
             KACAlarm.AlarmTypeEnum.Contract,
             KACAlarm.AlarmTypeEnum.ContractAuto,
+            KACAlarm.AlarmTypeEnum.ScienceLab
         };
 
         private String strAlarmEventName = "Alarm";
@@ -144,6 +145,7 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmTypeEnum.Crew: strAlarmEventName = "Crew"; break;
                 case KACAlarm.AlarmTypeEnum.Contract: 
                 case KACAlarm.AlarmTypeEnum.ContractAuto: strAlarmEventName = "Contract"; break;
+                case KACAlarm.AlarmTypeEnum.ScienceLab: strAlarmEventName = "Science Lab"; break;
                 default:
                     strAlarmEventName = "Alarm"; 
                     break;
@@ -200,6 +202,9 @@ namespace KerbalAlarmClock
                     case KACAlarm.AlarmTypeEnum.Contract:
                     case KACAlarm.AlarmTypeEnum.ContractAuto:
                         //BuildContractStringsAndMargin();
+                        break;
+                    case KACAlarm.AlarmTypeEnum.ScienceLab:
+                        BuildScienceLabStrings();
                         break;
                     default:
                         break;
@@ -317,6 +322,19 @@ namespace KerbalAlarmClock
             }
         }
 
+        private void BuildScienceLabStrings()
+        {
+            string strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
+            if (intSelectedScienceLab >= 0)
+            {
+                strAlarmName = strVesselName + " - Science Lab " + (intSelectedScienceLab + 1);
+            }
+            else
+            {
+                strAlarmName = strVesselName + " - Science Lab alarm";
+            }
+            strAlarmNotes = string.Format("Time to pay attention to\r\n    {0}\r\nNearing {1} science in Science Lab", strVesselName, intTargetScienceClamped);
+        }
 
         //String[] strAddTypes = new String[] { "Raw", "Maneuver","SOI","Transfer" };
         private String[] strAddTypes = new String[] { "R", "M", "A", "P", "A", "D", "S", "X" };
@@ -335,7 +353,8 @@ namespace KerbalAlarmClock
                 new GUIContent(KACResources.btnSOI,"SOI Change"),
                 new GUIContent(KACResources.btnXfer,"Transfer Window"),
                 new GUIContent(KACResources.btnCrew,"Kerbal Crew"),
-                new GUIContent(KACResources.btnContract,"Contract")
+                new GUIContent(KACResources.btnContract,"Contract"),
+                new GUIContent(KACResources.btnScienceLab,"Science Lab")
             };
 
         private GUIContent[] guiTypesView = new GUIContent[]
@@ -434,7 +453,7 @@ namespace KerbalAlarmClock
 
             //calc height for common stuff
             intHeight_AddWindowCommon = 71;
-            if (AddType != KACAlarm.AlarmTypeEnum.Raw && AddType!= KACAlarm.AlarmTypeEnum.Crew) //add stuff for margins
+            if (AddType != KACAlarm.AlarmTypeEnum.Raw && AddType!= KACAlarm.AlarmTypeEnum.Crew && AddType != KACAlarm.AlarmTypeEnum.ScienceLab) //add stuff for margins
                 intHeight_AddWindowCommon += 28;
             if (ScenesForAttachOption.Contains(KACWorkerGameState.CurrentGUIScene) && TypesForAttachOption.Contains(AddType) && KACWorkerGameState.CurrentVessel != null) //add stuff for attach to ship
                     intHeight_AddWindowCommon += 30;
@@ -559,6 +578,9 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmTypeEnum.Contract:
                 case KACAlarm.AlarmTypeEnum.ContractAuto:
                     WindowLayout_AddPane_Contract();
+                    break;
+                case KACAlarm.AlarmTypeEnum.ScienceLab:
+                    WindowLayout_AddPane_ScienceLab();
                     break;
                 default:
                     break;
@@ -838,7 +860,7 @@ namespace KerbalAlarmClock
             if (Contracts.ContractSystem.Instance == null)
             {
                 GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-                GUILayout.Label("Jebediah digs around in the Sandbox, but can't find any contracts in this game mode", KACResources.styleContent);
+                GUILayout.Label("Jebediah digs around in the Sandbox, but can't\nfind any contracts in this game mode", KACResources.styleContent);
                 GUILayout.EndVertical();
             }
             else
@@ -945,6 +967,189 @@ namespace KerbalAlarmClock
                 }
             }
             
+        }
+
+        private int intSelectedScienceLab = 0;
+        private string strTargetScience = "500";
+        private int intAddScienceLabHeight = 150;
+        private Part highlightedScienceLab;
+        private bool blnClearScienceLabHighlight;
+        private int intTargetScienceClamped = 500;
+        private void WindowLayout_AddPane_ScienceLab()
+        {
+            intAddScienceLabHeight = 150;
+            if (KACWorkerGameState.CurrentVessel == null)
+            {
+                GUILayout.Label("No Active Vessel.", KACResources.styleLabelWarning);
+            }
+            else
+            {
+                GUILayout.Label("Select Science Lab...", KACResources.styleAddSectionHeading);
+                GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+                var lstScienceLabs = KACWorkerGameState.CurrentVessel.FindPartModulesImplementing<ModuleScienceLab>();
+                if (lstScienceLabs.Count == 0)
+                {
+                    GUILayout.Label("No Science Labs on Active Vessel.", KACResources.styleLabelWarning);
+                }
+                else
+                {
+                    intAddScienceLabHeight += (lstScienceLabs.Count * 30);
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(20);
+                    GUILayout.Label("Science Lab", KACResources.styleAddSectionHeading, GUILayout.Width(240));
+                    GUILayout.Label("Select", KACResources.styleAddSectionHeading);
+                    GUILayout.EndHorizontal();
+
+                    for (var i = 0; i < lstScienceLabs.Count; ++i)
+                    {
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Space(20);
+                        GUILayout.Label(
+                            string.Format(
+                                "Science Lab {0} (Science: {1:0}, Data: {2:0})",
+                                i + 1,
+                                lstScienceLabs[i].storedScience,
+                                lstScienceLabs[i].dataStored),
+                            KACResources.styleAddXferName,
+                            GUILayout.Width(240),
+                            GUILayout.Height(20));
+
+                        bool blnSelected = (intSelectedScienceLab == i);
+                        if (DrawToggle(ref blnSelected, string.Empty, KACResources.styleCheckbox, GUILayout.Width(40)))
+                        {
+                            if (blnSelected)
+                            {
+                                intSelectedScienceLab = i;
+                                BuildScienceLabStrings();
+                            }
+                        }
+                        GUILayout.EndHorizontal();
+                    }
+                }
+                GUILayout.EndVertical();
+
+                if (intSelectedScienceLab >= 0 && intSelectedScienceLab < lstScienceLabs.Count)
+                {
+                    blnClearScienceLabHighlight = false;
+                    var partToHighlight = lstScienceLabs[intSelectedScienceLab].part;
+                    if (partToHighlight != highlightedScienceLab && highlightedScienceLab != null && highlightedScienceLab.HighlightActive)
+                    {
+                        highlightedScienceLab.SetHighlightDefault();
+                    }
+
+                    if (!partToHighlight.HighlightActive)
+                    {
+                        partToHighlight.SetHighlight(true, false);
+                    }
+
+                    partToHighlight.highlightType = Part.HighlightType.AlwaysOn;
+                    partToHighlight.SetHighlightColor(Color.yellow);
+                    highlightedScienceLab = partToHighlight;
+
+                    var lab = lstScienceLabs[intSelectedScienceLab];
+                    var converter = lab.Converter;
+                    if (!converter.IsActivated)
+                    {
+                        GUILayout.Label("Science Lab is not Active.", KACResources.styleLabelWarning);
+                    }
+                    else if (Mathf.Approximately(lab.dataStored, 0f))
+                    {
+                        GUILayout.Label("Science Lab has no Data.", KACResources.styleLabelWarning);
+                    }
+                    else if (!lab.part.protoModuleCrew.Any(c => c.trait == "Scientist"))
+                    {
+                        GUILayout.Label("Science Lab has no Scientists.", KACResources.styleLabelWarning);
+                    }
+                    else if (Mathf.Approximately(lab.storedScience, converter.scienceCap))
+                    {
+                        GUILayout.Label("Science Lab is already full.", KACResources.styleLabelWarning);
+                    }
+                    else
+                    {
+                        intAddScienceLabHeight += 232;
+                        var fltMaxScience = Math.Min(converter.scienceCap, lab.storedScience + (lab.dataStored * converter.scienceMultiplier));
+                        var intMinScience = (int)Math.Floor(lab.storedScience) + 1;
+                        var intMaxScience = (int)Math.Floor(fltMaxScience);
+
+                        GUILayout.Label("Choose Target Science Amount...", KACResources.styleAddSectionHeading);
+                        GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Label("Target Science:", KACResources.styleAddXferName);
+                        DrawTextField(ref strTargetScience, "[^\\d\\.]+", true);
+                        int intTargetScience;
+                        if (!int.TryParse(strTargetScience, out intTargetScience))
+                        {
+                            intTargetScience = intMaxScience;
+                            GUILayout.Label(new GUIContent("*", "Invalid fields treated as Max"), KACResources.styleLabelError, GUILayout.Width(8));
+                        }
+                        GUILayout.EndHorizontal();
+                        GUILayout.Label(string.Format("Min Target Science: {0}", intMinScience), GUILayout.Width(160));
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Label(string.Format("Max Target Science: {0}", intMaxScience), GUILayout.Width(160));
+                        if (GUILayout.Button("Set to Max"))
+                        {
+                            strTargetScience = intMaxScience.ToString();
+                        }
+                        GUILayout.EndHorizontal();
+                        intTargetScienceClamped =
+                            Math.Max((int)Math.Floor(lab.storedScience) + 1, Math.Min((int)Math.Floor(fltMaxScience), intTargetScience));
+                        BuildScienceLabStrings();
+                        if (intTargetScience != intTargetScienceClamped)
+                        {
+                            intAddScienceLabHeight += 25;
+                            GUILayout.Label("Selected Target is out of reach. Target Amount changed.", KACResources.styleLabelWarning);
+                        }
+                        GUILayout.EndVertical();
+
+                        var fltScienceNeeded = intTargetScienceClamped - lab.storedScience;
+                        var fltDataNeeded = fltScienceNeeded / converter.scienceMultiplier;
+                        var fltFinalData = lab.dataStored - fltDataNeeded;
+                        var dblRateStart = converter.CalculateScienceRate(lab.dataStored);
+                        var dblRateEnd = converter.CalculateScienceRate(fltFinalData);
+                        var dblRateAvg = (dblRateStart + dblRateEnd) * 0.5d;
+                        var dblDaysToProcess = fltScienceNeeded / dblRateAvg;
+                        var totalResearchTime = KSPTimeSpan.FromDays(dblDaysToProcess);
+                        // var totalResearchTime = new KSPTimeSpan(converter.CalculateResearchTime(fltDataNeeded));
+
+                        GUILayout.Label("Target Details...", KACResources.styleAddSectionHeading);
+                        GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Label("Target Science Amount:", KACResources.styleAddHeading, GUILayout.Width(150));
+                        GUILayout.Label(intTargetScienceClamped.ToString() + "/" + converter.scienceCap, KACResources.styleAddXferName);
+                        GUILayout.EndHorizontal();
+
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Label("Final Data Amount:", KACResources.styleAddHeading, GUILayout.Width(150));
+                        GUILayout.Label(fltFinalData.ToString("0.00") + "/" + lab.dataStorage.ToString("0"), KACResources.styleAddXferName);
+                        GUILayout.EndHorizontal();
+
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Label("Final Data Rate:", KACResources.styleAddHeading, GUILayout.Width(150));
+                        GUILayout.Label(dblRateEnd.ToString("0.00") + " sci/day", KACResources.styleAddXferName);
+                        GUILayout.EndHorizontal();
+                        GUILayout.EndVertical();
+
+                        var scienceLabTime = new KSPDateTime(KACWorkerGameState.CurrentTime.UT + totalResearchTime.UT);
+                        var scienceLabToAlarm = new KSPTimeSpan(scienceLabTime.UT - KACWorkerGameState.CurrentTime.UT);
+                        if (DrawAddAlarm(scienceLabTime, null, scienceLabToAlarm))
+                        {
+                            KACAlarm alarmNew = new KACAlarm(
+                                KACWorkerGameState.CurrentVessel.id.ToString(),
+                                strAlarmName,
+                                strAlarmNotes,
+                                KACWorkerGameState.CurrentTime.UT + scienceLabToAlarm.UT,
+                                0,
+                                KACAlarm.AlarmTypeEnum.ScienceLab,
+                                AddActions);
+
+                            alarms.Add(alarmNew);
+
+                            //settings.Save();
+                            _ShowAddPane = false;
+                        }
+                    }
+                }
+            }
         }
 
         private Boolean DrawAddAlarm(KSPDateTime AlarmDate, KSPTimeSpan TimeToEvent, KSPTimeSpan TimeToAlarm, Boolean ForceShowRepeat = false)

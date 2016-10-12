@@ -1032,6 +1032,21 @@ namespace KerbalAlarmClock
 					LogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
 				}
 
+                // Do we need to clear any highlighted science labs?
+                if (blnClearScienceLabHighlight)
+                {
+                    if (highlightedScienceLab != null && highlightedScienceLab.HighlightActive)
+                    {
+                        highlightedScienceLab.SetHighlightDefault();
+                    }
+                    blnClearScienceLabHighlight = false;
+                    highlightedScienceLab = null;
+                }
+                else if (highlightedScienceLab != null)
+                {
+                    blnClearScienceLabHighlight = true;
+                }
+
 				// Do we need to restore a maneuverNode after a ship jump - give it 5 secs of attempts for changes to ship
 				if (settings.LoadManNode != null && settings.LoadManNode != "" && KACWorkerGameState.IsVesselActive)
 				{

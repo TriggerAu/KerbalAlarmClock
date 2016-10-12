@@ -860,7 +860,7 @@ namespace KerbalAlarmClock
             if (Contracts.ContractSystem.Instance == null)
             {
                 GUILayout.BeginVertical(KACResources.styleAddFieldAreas);
-                GUILayout.Label("Jebediah digs around in the Sandbox, but can't find any contracts in this game mode", KACResources.styleContent);
+                GUILayout.Label("Jebediah digs around in the Sandbox, but can't\nfind any contracts in this game mode", KACResources.styleContent);
                 GUILayout.EndVertical();
             }
             else

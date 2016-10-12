@@ -42,10 +42,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\_Versions\KSP_win_PluginTest_Minimal\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="KSPUtil, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\_Versions\KSP_win_PluginTest_Minimal\KSP_Data\Managed\KSPUtil.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -104,13 +100,16 @@
   <PropertyGroup>
     <PostBuildEvent>rem Set the Variables we need
 echo Finding KSP
-if exist "R:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
-	set GAMEPATH="R:\~Games\KSP_Win_PlugInTest_Minimal"
-) else if exist "D:\Programming\KSP\_Versions\KSP_win_PluginTest_Minimal\KSP.exe" (
-	set GAMEPATH="D:\Programming\KSP\_Versions\KSP_Win_PlugInTest_Minimal"
-) else if exist "C:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
-	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest_Minimal
-) else if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP.exe" (
+
+rem if exist "R:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
+rem 	set GAMEPATH="R:\~Games\KSP_Win_PlugInTest_Minimal"
+rem ) else if exist "D:\Programming\KSP\_Versions\KSP_win_PluginTest_Minimal\KSP.exe" (
+rem 	set GAMEPATH="D:\Programming\KSP\_Versions\KSP_Win_PlugInTest_Minimal"
+rem ) else if exist "C:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
+rem 	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest_Minimal
+rem ) else if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP.exe" (
+
+if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP.exe" (
 	set GAMEPATH="D:\Programming\KSP\_Versions\KSP_win_PluginTest"
 ) else if exist "C:\~Games\KSP_Win_PlugInTest\KSP.exe" (
 	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest"

@@ -560,6 +560,7 @@ namespace KerbalAlarmClock
                 NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Transfer", KACAlarm.AlarmTypeEnum.Transfer, KACAlarm.AlarmTypeEnum.TransferModelled);
                 NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Contract", KACAlarm.AlarmTypeEnum.Contract, KACAlarm.AlarmTypeEnum.ContractAuto);
                 NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("Crew", KACAlarm.AlarmTypeEnum.Crew);
+                NewTypeAdded = NewTypeAdded | AddMissingSoundConfig("ScienceLab", KACAlarm.AlarmTypeEnum.ScienceLab);
 
                 Boolean EarthTypeAdded = AddMissingSoundConfig("Earth", KACAlarm.AlarmTypeEnum.EarthTime);
                 NewTypeAdded = NewTypeAdded | EarthTypeAdded;

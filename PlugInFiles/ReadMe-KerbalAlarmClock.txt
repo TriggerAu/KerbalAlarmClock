@@ -32,6 +32,13 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.8.1.0		-	KSP Version: 1.2.0
+- Fixed Initialization issue with object line renderer
+- Fixed SetVessel working in TS
+- Fixed crash occuring when switching in flight to unloaded vessel
+- fixed warp reduction not cancelling autowarp
+
+
 Version 3.8.0.0		-	KSP Version: 1.2.0
 - Code changes and recompile for 1.2 - Thanks Nightingale and JPLRepo
 - Added ScienceLab Alarms - Thanks natsnudasoft 

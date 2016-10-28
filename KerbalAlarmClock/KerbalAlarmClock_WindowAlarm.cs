@@ -656,13 +656,7 @@ namespace KerbalAlarmClock
                 try
                 {
                     SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
-
-                    //st.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).ToList().ForEach(
-                    //    mi=>LogFormatted("Method-{0}-{1}",mi.Name,mi.IsPrivate));
-
-                    MethodInfo setvesselMethod = st.GetType().GetMethod("SetVessel", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                    setvesselMethod.Invoke(st, new object[] { vTarget, true });
+                    st.SetVessel(vTarget, true);
                 }
                 catch (Exception ex)
                 {
@@ -671,13 +665,20 @@ namespace KerbalAlarmClock
             }
         }
 
+        private static Vessel vesselToJumpTo = null;
 		private Boolean JumpToVessel(Vessel vTarget)
 		{
 			Boolean blnJumped = true;
 			if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
 			{
-				if (KACUtils.BackupSaves() || !KerbalAlarmClock.settings.CancelFlightModeJumpOnBackupFailure)
-					FlightGlobals.SetActiveVessel(vTarget);
+                LogFormatted_DebugOnly("Switching in Scene");
+                if(KACUtils.BackupSaves() || !KerbalAlarmClock.settings.CancelFlightModeJumpOnBackupFailure)
+                    vesselToJumpTo = vTarget;
+
+                    //if(FlightGlobals.SetActiveVessel(vTarget))
+                    //{
+                    //    FlightInputHandler.SetNeutralControls();
+                    //}
 				else 
 				{
 					LogFormatted("Not Switching - unable to backup saves");
@@ -687,7 +688,9 @@ namespace KerbalAlarmClock
 			}
 			else
 			{
-				int intVesselidx = getVesselIdx(vTarget);
+                LogFormatted_DebugOnly("Switching in by Save");
+
+                int intVesselidx = getVesselIdx(vTarget);
 				if (intVesselidx < 0)
 				{
 					LogFormatted("Couldn't find the index for the vessel {0}({1})", vTarget.vesselName, vTarget.id.ToString());
@@ -702,9 +705,10 @@ namespace KerbalAlarmClock
 						{
 							String strret = GamePersistence.SaveGame("KACJumpToShip", HighLogic.SaveFolder, SaveMode.OVERWRITE);
 							Game tmpGame = GamePersistence.LoadGame(strret, HighLogic.SaveFolder, false, false);
-							FlightDriver.StartAndFocusVessel(tmpGame, intVesselidx);
-							//if (tmpAlarm.PauseGame)
-								FlightDriver.SetPause(false);
+                            FlightDriver.StartAndFocusVessel(tmpGame, intVesselidx);
+                            //if (tmpAlarm.PauseGame)
+                            //FlightDriver.SetPause(false);
+                            //tmpGame.Start();
 						}
 						else
 						{

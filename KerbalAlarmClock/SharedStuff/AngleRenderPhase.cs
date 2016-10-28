@@ -76,17 +76,17 @@ namespace KerbalAlarmClock
         private Double _PhaseAngleCurrent;
 
 
-        private GameObject objLineStart = new GameObject("LineStart");
-        private GameObject objLineEnd = new GameObject("LineEnd");
-        private GameObject objLineArc = new GameObject("LineArc");
-        private GameObject objLineTarget = new GameObject("LineTarget");
-        private GameObject objLineTargetArc = new GameObject("LineTargetArc");
+        private GameObject objLineStart;
+        private GameObject objLineEnd;
+        private GameObject objLineArc;
+        private GameObject objLineTarget;
+        private GameObject objLineTargetArc;
 
-        private LineRenderer lineStart = null;
-        private LineRenderer lineEnd = null;
-        internal LineRenderer lineArc = null;
-        private LineRenderer lineTarget = null;
-        private LineRenderer lineTargetArc = null;
+        private LineRenderer lineStart;
+        private LineRenderer lineEnd;
+        internal LineRenderer lineArc;
+        private LineRenderer lineTarget;
+        private LineRenderer lineTargetArc;
 
 
         internal PlanetariumCamera cam;
@@ -97,6 +97,24 @@ namespace KerbalAlarmClock
 
         private GUIStyle styleLabelEnd;
         private GUIStyle styleLabelTarget;
+
+        internal override void Awake()
+        {
+            base.Awake();
+
+            objLineStart = new GameObject("LineStart");
+            objLineEnd = new GameObject("LineEnd");
+            objLineArc = new GameObject("LineArc");
+            objLineTarget = new GameObject("LineTarget");
+            objLineTargetArc = new GameObject("LineTargetArc");
+
+            lineStart = null;
+            lineEnd = null;
+            lineArc = null;
+            lineTarget = null;
+            lineTargetArc = null;
+        }
+
 
         internal override void Start()
         {

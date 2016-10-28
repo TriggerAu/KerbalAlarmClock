@@ -468,12 +468,19 @@ namespace KerbalAlarmClock
 
 		private Int32 WarpRateWorkerCounter = 0;
 		private Int32 WarpRateWorkerInitialPeriodCounter = 0;
-		internal override void RepeatingWorker()
+
+        internal override void RepeatingWorker()
 		{
 			if (AppLauncherToBeSetTrue)
 				SetAppButtonToTrue();
 
-			UpdateDetails();
+            if(vesselToJumpTo != null) {
+                FlightGlobals.SetActiveVessel(vesselToJumpTo);
+                vesselToJumpTo = null;
+                return;
+            }
+
+            UpdateDetails();
 
 			//Contract stuff
 			if (Contracts.ContractSystem.Instance)

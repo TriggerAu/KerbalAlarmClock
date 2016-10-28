@@ -106,6 +106,8 @@ namespace KerbalAlarmClock
                         LogFormatted("Setting Rate to {0}={1}x", intRate, TimeWarp.fetch.warpRates[intRate]);
 
                         TimeWarp.fetch.Mode = TimeWarp.Modes.HIGH;
+                        //Make sure we cancel autowarp if its engaged
+                        TimeWarp.fetch.CancelAutoWarp();
                         TimeWarp.SetRate(intRate, false);
                     }
                     _ShowQuickAdd = false;

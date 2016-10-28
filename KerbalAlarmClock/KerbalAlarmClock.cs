@@ -358,7 +358,9 @@ namespace KerbalAlarmClock
 			{
 				if (Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.primary) || Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.secondary))
 				{
-					TimeWarp.SetRate(0, false);
+                    //Make sure we cancel autowarp if its engaged
+                    TimeWarp.fetch.CancelAutoWarp();
+                    TimeWarp.SetRate(0, false);
 				}
 			}
 
@@ -834,7 +836,9 @@ namespace KerbalAlarmClock
 													)
 												.OrderBy(r => r.UTTo1Times)
 												.Last().Index;
-							TimeWarp.SetRate(rateToSet, false);
+                            //Make sure we cancel autowarp if its engaged
+                            TimeWarp.fetch.CancelAutoWarp();
+                            TimeWarp.SetRate(rateToSet, false);
 
 
 
@@ -1683,7 +1687,10 @@ namespace KerbalAlarmClock
 								LogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
 								if (tmpAlarm.Actions.Message != AlarmActions.MessageEnum.Yes)
 									tmpAlarm.Actions.Message = AlarmActions.MessageEnum.Yes;
-								TimeWarp.SetRate(0, true);
+
+                                //Make sure we cancle autowarp if its engaged
+                                TimeWarp.fetch.CancelAutoWarp();
+                                TimeWarp.SetRate(0, true);
 								FlightDriver.SetPause(true);
 							}
 							else if (tmpAlarm.HaltWarp)
@@ -1691,7 +1698,9 @@ namespace KerbalAlarmClock
 								if (!FlightDriver.Pause)
 								{
 									LogFormatted(String.Format("{0}-Halt Warp", tmpAlarm.Name));
-									TimeWarp.SetRate(0, true);
+                                    //Make sure we cancle autowarp if its engaged
+                                    TimeWarp.fetch.CancelAutoWarp();
+                                    TimeWarp.SetRate(0, true);
 								}
 								else
 								{
@@ -1723,7 +1732,9 @@ namespace KerbalAlarmClock
 								if (w.current_rate_index > 0)
 								{
 									LogFormatted("Reducing Warp");
-									TimeWarp.SetRate(w.current_rate_index - 1, true);
+                                    //Make sure we cancel autowarp if its engaged
+                                    TimeWarp.fetch.CancelAutoWarp();
+                                    TimeWarp.SetRate(w.current_rate_index - 1, true);
 								}
 							}
 						}
@@ -1739,11 +1750,15 @@ namespace KerbalAlarmClock
 								if (w.current_rate_index > 0 && WarpTransitionCalculator.UTToRateTimesOne > (tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT))
 								{
 									LogFormatted("Reducing Warp-Transition Instant");
-									TimeWarp.SetRate(w.current_rate_index - 1, true);
+                                    //Make sure we cancel autowarp if its engaged
+                                    TimeWarp.fetch.CancelAutoWarp();
+                                    TimeWarp.SetRate(w.current_rate_index - 1, true);
 								}
 								else if (w.current_rate_index > 0)
 								{
 									LogFormatted("Reducing Warp-Transition");
+                                    //Make sure we cancel autowarp if its engaged
+                                    TimeWarp.fetch.CancelAutoWarp();
 									TimeWarp.SetRate(w.current_rate_index - 1, false);
 								}
 							}

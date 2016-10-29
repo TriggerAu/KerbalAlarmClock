@@ -78,6 +78,8 @@ namespace KerbalAlarmClock
 								case KACAlarm.AlarmTypeEnum.Contract:
 								case KACAlarm.AlarmTypeEnum.ContractAuto:
 									strAlarmText += " - Contract"; break;
+                                case KACAlarm.AlarmTypeEnum.ScienceLab:
+                                    strAlarmText += " - Science Lab"; break;
 								default:
 									strAlarmText+= " - Manual";break;
 							}
@@ -103,7 +105,7 @@ namespace KerbalAlarmClock
 				GUILayout.Label(tmpAlarm.AlarmTime.ToStringStandard(settings.DateTimeFormat), KACResources.styleAlarmMessageTime);
 			else
 				GUILayout.Label(EarthTimeDecode(tmpAlarm.AlarmTime.UT).ToLongTimeString(), KACResources.styleAlarmMessageTime);
-			if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
+			if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew && tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.ScienceLab)
 				GUILayout.Label("(m: " + new KSPTimeSpan(tmpAlarm.AlarmMarginSecs).ToStringStandard(settings.TimeSpanFormat, 3) + ")", KACResources.styleAlarmMessageTime);
 			GUILayout.EndHorizontal();
 
@@ -290,7 +292,7 @@ namespace KerbalAlarmClock
 				Double MarginStarting = alarmEdit.AlarmMarginSecs;
 				int intHeight_EditWindowCommon = 103 +
 					alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16;
-				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
+				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.ScienceLab)
 					intHeight_EditWindowCommon += 28;
 
                 AlarmActions atemp = alarmEdit.Actions;
@@ -310,7 +312,7 @@ namespace KerbalAlarmClock
 
                 //Draw the old and new times
                 GUILayout.BeginHorizontal();
-                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
+                if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.ScienceLab)
                 {
                     GUILayout.Label("Time To Alarm:", KACResources.styleContent);
                     GUILayout.Label((alarmEdit.AlarmTime - KACWorkerGameState.CurrentTime).ToStringStandard(settings.TimeSpanFormat), KACResources.styleAddHeading);
@@ -348,7 +350,7 @@ namespace KerbalAlarmClock
 
 				//TODO: Edit the height of this for when we have big text in restore button
 				 intAlarmEditHeight = 197 + 16 + 20 + alarmEdit.Notes.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length * 16 + intNoOfActionButtons * 32 + intNoOfActionButtonsDoubleLine*14;
-				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
+				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.ScienceLab)
 					intAlarmEditHeight += 28;
                 if (alarmEdit.TypeOfAlarm==KACAlarm.AlarmTypeEnum.EarthTime)
                     intAlarmEditHeight -= 28;
@@ -374,7 +376,7 @@ namespace KerbalAlarmClock
 
 				//Draw the old and new times
 				GUILayout.BeginHorizontal();
-				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew) {
+				if (alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew && alarmEdit.TypeOfAlarm != KACAlarm.AlarmTypeEnum.ScienceLab) {
 					GUILayout.Label("Time To Alarm:", KACResources.styleContent);
 					GUILayout.Label((alarmEdit.AlarmTime - KACWorkerGameState.CurrentTime).ToStringStandard(settings.TimeSpanFormat), KACResources.styleAddHeading);
 				}
@@ -654,13 +656,7 @@ namespace KerbalAlarmClock
                 try
                 {
                     SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
-
-                    //st.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).ToList().ForEach(
-                    //    mi=>LogFormatted("Method-{0}-{1}",mi.Name,mi.IsPrivate));
-
-                    MethodInfo setvesselMethod = st.GetType().GetMethod("SetVessel", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                    setvesselMethod.Invoke(st, new object[] { vTarget, true });
+                    st.SetVessel(vTarget, true);
                 }
                 catch (Exception ex)
                 {
@@ -669,13 +665,20 @@ namespace KerbalAlarmClock
             }
         }
 
+        private static Vessel vesselToJumpTo = null;
 		private Boolean JumpToVessel(Vessel vTarget)
 		{
 			Boolean blnJumped = true;
 			if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
 			{
-				if (KACUtils.BackupSaves() || !KerbalAlarmClock.settings.CancelFlightModeJumpOnBackupFailure)
-					FlightGlobals.SetActiveVessel(vTarget);
+                LogFormatted_DebugOnly("Switching in Scene");
+                if(KACUtils.BackupSaves() || !KerbalAlarmClock.settings.CancelFlightModeJumpOnBackupFailure)
+                    vesselToJumpTo = vTarget;
+
+                    //if(FlightGlobals.SetActiveVessel(vTarget))
+                    //{
+                    //    FlightInputHandler.SetNeutralControls();
+                    //}
 				else 
 				{
 					LogFormatted("Not Switching - unable to backup saves");
@@ -685,7 +688,9 @@ namespace KerbalAlarmClock
 			}
 			else
 			{
-				int intVesselidx = getVesselIdx(vTarget);
+                LogFormatted_DebugOnly("Switching in by Save");
+
+                int intVesselidx = getVesselIdx(vTarget);
 				if (intVesselidx < 0)
 				{
 					LogFormatted("Couldn't find the index for the vessel {0}({1})", vTarget.vesselName, vTarget.id.ToString());
@@ -700,9 +705,10 @@ namespace KerbalAlarmClock
 						{
 							String strret = GamePersistence.SaveGame("KACJumpToShip", HighLogic.SaveFolder, SaveMode.OVERWRITE);
 							Game tmpGame = GamePersistence.LoadGame(strret, HighLogic.SaveFolder, false, false);
-							FlightDriver.StartAndFocusVessel(tmpGame, intVesselidx);
-							//if (tmpAlarm.PauseGame)
-								FlightDriver.SetPause(false);
+                            FlightDriver.StartAndFocusVessel(tmpGame, intVesselidx);
+                            //if (tmpAlarm.PauseGame)
+                            //FlightDriver.SetPause(false);
+                            //tmpGame.Start();
 						}
 						else
 						{

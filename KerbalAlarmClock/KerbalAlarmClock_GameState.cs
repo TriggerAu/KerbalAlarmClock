@@ -197,8 +197,13 @@ namespace KerbalAlarmClock
             else
                KACWorkerGameState.CurrentSaveGameName = "";
 
-            try {KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime(); }
-            catch (Exception) { }
+            try {
+				if (HighLogic.LoadedSceneIsEditor) {
+					KACWorkerGameState.CurrentTime.UT = HighLogic.CurrentGame.flightState.universalTime;
+				} else {
+					KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime();
+				}
+			} catch (Exception) { }
             //if (Planetarium.fetch!=null)KACWorkerGameState.CurrentTime.UT = Planetarium.GetUniversalTime();
 
             try

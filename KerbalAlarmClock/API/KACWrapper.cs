@@ -75,10 +75,11 @@ namespace KACWrapper
             LogFormatted("Attempting to Grab KAC Types...");
 
             //find the base type
-            KACType = AssemblyLoader.loadedAssemblies
-                .Select(a => a.assembly.GetExportedTypes())
-                .SelectMany(t => t)
-                .FirstOrDefault(t => t.FullName == "KerbalAlarmClock.KerbalAlarmClock");
+            AssemblyLoader.loadedAssemblies.TypeOperation(t =>
+            {
+                if (t.FullName == "KerbalAlarmClock.KerbalAlarmClock")
+                    KACType = t;
+            });
 
             if (KACType == null)
             {
@@ -561,7 +562,8 @@ namespace KACWrapper
                 Crew,
                 EarthTime,
                 Contract,
-                ContractAuto
+                ContractAuto,
+                ScienceLab
             }
 
             public enum AlarmActionEnum

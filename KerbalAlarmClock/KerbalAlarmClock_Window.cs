@@ -562,6 +562,8 @@ namespace KerbalAlarmClock
                     case KACAlarm.AlarmTypeEnum.Contract:
                     case KACAlarm.AlarmTypeEnum.ContractAuto:
                         AddWindowHeight = 400; break;
+                    case KACAlarm.AlarmTypeEnum.ScienceLab:
+                        AddWindowHeight = intAddScienceLabHeight; break;
                     default: AddWindowHeight = 250; break;
                 }
                 AddWindowHeight += intHeight_AddWindowCommon;
@@ -1209,6 +1211,9 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmTypeEnum.ContractAuto:
                     GUILayout.Label(KACResources.iconContract, KACResources.styleAlarmIcon);
                     break;
+                case KACAlarm.AlarmTypeEnum.ScienceLab:
+                    GUILayout.Label(KACResources.iconScienceLab, KACResources.styleAlarmIcon);
+                    break;
                 default:
                     GUILayout.Label(KACResources.iconNone, KACResources.styleAlarmIcon);
                     break;
@@ -1375,7 +1380,7 @@ namespace KerbalAlarmClock
             //Full width one under the two columns for the kill time warp
             DrawAlarmActionChoice4(ref Actions, "On Alarm:", 90); //62
 
-            if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
+            if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew && TypeOfAlarm != KACAlarm.AlarmTypeEnum.ScienceLab)
             {
                 DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Alarm Margin:", 90);
             }
@@ -1447,7 +1452,7 @@ namespace KerbalAlarmClock
         //    //Full width one under the two columns for the kill time warp
         //    DrawAlarmActionChoice3(ref Action, "Action:", 70 ,38); //37
 
-        //    if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
+        //    if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew && TypeOfAlarm != KACAlarm.AlarmTypeEnum.ScienceLab)
         //    {
         //        DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Margin:", 60);
         //    }
@@ -1480,6 +1485,7 @@ namespace KerbalAlarmClock
                 case KACAlarm.AlarmTypeEnum.Crew: strTitle = "Crew"; break;
                 case KACAlarm.AlarmTypeEnum.EarthTime: strTitle = "Earth Time"; break;
                 case KACAlarm.AlarmTypeEnum.Contract: strTitle = "Contract"; break;
+                case KACAlarm.AlarmTypeEnum.ScienceLab: strTitle = "Science Lab"; break;
                 default: strTitle = "Raw Time"; break;
             }
             strTitle += " Alarm - Common Properties";
@@ -1519,7 +1525,7 @@ namespace KerbalAlarmClock
             //Full width one under the two columns for the kill time warp
             DrawAlarmActionChoice4(ref Actions, "Action:", 50); //37
 
-            if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew)
+            if (TypeOfAlarm != KACAlarm.AlarmTypeEnum.Raw && TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime && TypeOfAlarm != KACAlarm.AlarmTypeEnum.Crew && TypeOfAlarm != KACAlarm.AlarmTypeEnum.ScienceLab)
             {
                 DrawTimeEntry(ref Margin, KACTimeStringArray.TimeEntryPrecisionEnum.Hours, "Margin:", 60);
             }

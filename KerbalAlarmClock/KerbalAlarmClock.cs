@@ -358,7 +358,9 @@ namespace KerbalAlarmClock
 			{
 				if (Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.primary) || Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.secondary))
 				{
-					TimeWarp.SetRate(0, false);
+                    //Make sure we cancel autowarp if its engaged
+                    TimeWarp.fetch.CancelAutoWarp();
+                    TimeWarp.SetRate(0, false);
 				}
 			}
 
@@ -468,12 +470,19 @@ namespace KerbalAlarmClock
 
 		private Int32 WarpRateWorkerCounter = 0;
 		private Int32 WarpRateWorkerInitialPeriodCounter = 0;
-		internal override void RepeatingWorker()
+
+        internal override void RepeatingWorker()
 		{
 			if (AppLauncherToBeSetTrue)
 				SetAppButtonToTrue();
 
-			UpdateDetails();
+            if(vesselToJumpTo != null) {
+                FlightGlobals.SetActiveVessel(vesselToJumpTo);
+                vesselToJumpTo = null;
+                return;
+            }
+
+            UpdateDetails();
 
 			//Contract stuff
 			if (Contracts.ContractSystem.Instance)
@@ -827,7 +836,9 @@ namespace KerbalAlarmClock
 													)
 												.OrderBy(r => r.UTTo1Times)
 												.Last().Index;
-							TimeWarp.SetRate(rateToSet, false);
+                            //Make sure we cancel autowarp if its engaged
+                            TimeWarp.fetch.CancelAutoWarp();
+                            TimeWarp.SetRate(rateToSet, false);
 
 
 
@@ -1031,6 +1042,21 @@ namespace KerbalAlarmClock
 					if (KACWorkerGameState.LastVessel!=null) strVesselName=KACWorkerGameState.LastVessel.vesselName;
 					LogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
 				}
+
+                // Do we need to clear any highlighted science labs?
+                if (blnClearScienceLabHighlight)
+                {
+                    if (highlightedScienceLab != null && highlightedScienceLab.HighlightActive)
+                    {
+                        highlightedScienceLab.SetHighlightDefault();
+                    }
+                    blnClearScienceLabHighlight = false;
+                    highlightedScienceLab = null;
+                }
+                else if (highlightedScienceLab != null)
+                {
+                    blnClearScienceLabHighlight = true;
+                }
 
 				// Do we need to restore a maneuverNode after a ship jump - give it 5 secs of attempts for changes to ship
 				if (settings.LoadManNode != null && settings.LoadManNode != "" && KACWorkerGameState.IsVesselActive)
@@ -1661,7 +1687,10 @@ namespace KerbalAlarmClock
 								LogFormatted(String.Format("{0}-Pausing Game", tmpAlarm.Name));
 								if (tmpAlarm.Actions.Message != AlarmActions.MessageEnum.Yes)
 									tmpAlarm.Actions.Message = AlarmActions.MessageEnum.Yes;
-								TimeWarp.SetRate(0, true);
+
+                                //Make sure we cancle autowarp if its engaged
+                                TimeWarp.fetch.CancelAutoWarp();
+                                TimeWarp.SetRate(0, true);
 								FlightDriver.SetPause(true);
 							}
 							else if (tmpAlarm.HaltWarp)
@@ -1669,7 +1698,9 @@ namespace KerbalAlarmClock
 								if (!FlightDriver.Pause)
 								{
 									LogFormatted(String.Format("{0}-Halt Warp", tmpAlarm.Name));
-									TimeWarp.SetRate(0, true);
+                                    //Make sure we cancle autowarp if its engaged
+                                    TimeWarp.fetch.CancelAutoWarp();
+                                    TimeWarp.SetRate(0, true);
 								}
 								else
 								{
@@ -1701,7 +1732,9 @@ namespace KerbalAlarmClock
 								if (w.current_rate_index > 0)
 								{
 									LogFormatted("Reducing Warp");
-									TimeWarp.SetRate(w.current_rate_index - 1, true);
+                                    //Make sure we cancel autowarp if its engaged
+                                    TimeWarp.fetch.CancelAutoWarp();
+                                    TimeWarp.SetRate(w.current_rate_index - 1, true);
 								}
 							}
 						}
@@ -1717,11 +1750,15 @@ namespace KerbalAlarmClock
 								if (w.current_rate_index > 0 && WarpTransitionCalculator.UTToRateTimesOne > (tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT))
 								{
 									LogFormatted("Reducing Warp-Transition Instant");
-									TimeWarp.SetRate(w.current_rate_index - 1, true);
+                                    //Make sure we cancel autowarp if its engaged
+                                    TimeWarp.fetch.CancelAutoWarp();
+                                    TimeWarp.SetRate(w.current_rate_index - 1, true);
 								}
 								else if (w.current_rate_index > 0)
 								{
 									LogFormatted("Reducing Warp-Transition");
+                                    //Make sure we cancel autowarp if its engaged
+                                    TimeWarp.fetch.CancelAutoWarp();
 									TimeWarp.SetRate(w.current_rate_index - 1, false);
 								}
 							}

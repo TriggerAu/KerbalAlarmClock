@@ -31,7 +31,8 @@ namespace KerbalAlarmClock
             Crew,
             EarthTime,
             Contract,
-            ContractAuto
+            ContractAuto,
+            ScienceLab
         }
         internal static Dictionary<AlarmTypeEnum, int> AlarmTypeToButton = new Dictionary<AlarmTypeEnum, int>() {
             {AlarmTypeEnum.Raw, 0},
@@ -50,7 +51,8 @@ namespace KerbalAlarmClock
             {AlarmTypeEnum.TransferModelled , 6},
             {AlarmTypeEnum.Crew , 7},
             {AlarmTypeEnum.Contract , 8},
-            {AlarmTypeEnum.ContractAuto , 8}
+            {AlarmTypeEnum.ContractAuto , 8},
+            {AlarmTypeEnum.ScienceLab , 9}
         };
         internal static Dictionary<int, AlarmTypeEnum> AlarmTypeFromButton = new Dictionary<int, AlarmTypeEnum>() {
             {0,AlarmTypeEnum.Raw},
@@ -61,7 +63,8 @@ namespace KerbalAlarmClock
             {5,AlarmTypeEnum.SOIChange },
             {6,AlarmTypeEnum.Transfer },
             {7,AlarmTypeEnum.Crew },
-            {8,AlarmTypeEnum.Contract }
+            {8,AlarmTypeEnum.Contract },
+            {9,AlarmTypeEnum.ScienceLab }
         };
         
         internal static Dictionary<AlarmTypeEnum, int> AlarmTypeToButtonTS = new Dictionary<AlarmTypeEnum, int>() {

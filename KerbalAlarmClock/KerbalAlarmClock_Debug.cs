@@ -299,9 +299,13 @@ namespace KerbalAlarmClock
 
 			dblTest = Convert.ToDouble(GUILayout.TextField(dblTest.ToString()));
 
-			
 
-			GUILayout.EndVertical();
+
+            GUILayout.Label("Screen.height:" + Screen.height);
+            GUILayout.Label("AddXFER:" + intAddXferHeight);
+
+
+            GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
 
             try

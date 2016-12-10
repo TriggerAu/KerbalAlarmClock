@@ -32,6 +32,12 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.8.2.0		-	KSP Version: 1.2.2
+- Another Initialization issue with object line renderer - Thanks JPL
+- Fixed NRE re timewarp in editor and other guard statement - Thanks JPL
+- Adjusted layout for long transfer window lists (Issue #171)
+- Fixed Delete confirmation dialog positioning (Issue #170)
+
 Version 3.8.1.0		-	KSP Version: 1.2.0
 - Fixed Initialization issue with object line renderer
 - Fixed SetVessel working in TS

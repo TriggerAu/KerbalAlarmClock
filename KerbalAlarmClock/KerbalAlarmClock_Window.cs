@@ -522,9 +522,12 @@ namespace KerbalAlarmClock
                 winAlarmImport.windowRect = GUILayout.Window(winAlarmImport.windowID, winAlarmImport.windowRect, winAlarmImport.FillWindow, "Import v2 Alarm File", KACResources.styleWindow);
 
             if (winConfirmAlarmDelete.Visible){
-                winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x + MainWindowPos.width,MainWindowPos.y,300,140);
-                if(settings.WindowChildPosBelow)
-                    winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x,MainWindowPos.y + MainWindowPos.height,MainWindowPos.width,140);
+                //winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x + MainWindowPos.width,MainWindowPos.y,300,140);
+                //if(settings.WindowChildPosBelow)
+                //    winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x,MainWindowPos.y + MainWindowPos.height,MainWindowPos.width,140);
+
+                bool showDelOnLeft = WindowPosByActiveScene.x + WindowPosByActiveScene.width > Screen.width - 300;
+                winConfirmAlarmDelete.windowRect = GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, 300, 140, ref showDelOnLeft, settings.WindowChildPosBelow);
                 GUILayout.Window(winConfirmAlarmDelete.windowID,
                     winConfirmAlarmDelete.windowRect,
                     winConfirmAlarmDelete.FillWindow, "Confirm Alarm Delete", KACResources.styleWindow);

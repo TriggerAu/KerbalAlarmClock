@@ -522,9 +522,12 @@ namespace KerbalAlarmClock
                 winAlarmImport.windowRect = GUILayout.Window(winAlarmImport.windowID, winAlarmImport.windowRect, winAlarmImport.FillWindow, "Import v2 Alarm File", KACResources.styleWindow);
 
             if (winConfirmAlarmDelete.Visible){
-                winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x + MainWindowPos.width,MainWindowPos.y,300,140);
-                if(settings.WindowChildPosBelow)
-                    winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x,MainWindowPos.y + MainWindowPos.height,MainWindowPos.width,140);
+                //winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x + MainWindowPos.width,MainWindowPos.y,300,140);
+                //if(settings.WindowChildPosBelow)
+                //    winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x,MainWindowPos.y + MainWindowPos.height,MainWindowPos.width,140);
+
+                bool showDelOnLeft = WindowPosByActiveScene.x + WindowPosByActiveScene.width > Screen.width - 300;
+                winConfirmAlarmDelete.windowRect = GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, 300, 140, ref showDelOnLeft, settings.WindowChildPosBelow);
                 GUILayout.Window(winConfirmAlarmDelete.windowID,
                     winConfirmAlarmDelete.windowRect,
                     winConfirmAlarmDelete.FillWindow, "Confirm Alarm Delete", KACResources.styleWindow);
@@ -569,6 +572,12 @@ namespace KerbalAlarmClock
                 AddWindowHeight += intHeight_AddWindowCommon;
                 AddWindowHeight += intHeight_AddWindowRepeat;
                 AddWindowHeight += intHeight_AddWindowKER;
+
+                if(AddType == KACAlarm.AlarmTypeEnum.Transfer || AddType == KACAlarm.AlarmTypeEnum.TransferModelled) {
+                    //Clamp the height here so that the scroll bar will show if needed
+                    AddWindowHeight = Mathf.Clamp(AddWindowHeight, 0, Screen.height);
+                }
+
                 _WindowAddRect = GUILayout.Window(_WindowAddID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intAddPaneWindowWidth, AddWindowHeight, ref _ShowAddPaneOnLeft, settings.WindowChildPosBelow), FillAddWindow, "Add New Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
 
                 if (_ShowAddMessages)

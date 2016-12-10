@@ -3,6 +3,7 @@ $PluginName="KerbalAlarmClock"
 $CurseID="220289"
 $CurseName="220289-kerbal-alarm-clock"
 $KerbalStuffModID = 231
+$SpaceDockID="699"
 $UploadDir = "$($PSScriptRoot)\..\..\_Uploads\$($PluginName)"
 $KerbalStuffWrapper = "D:\Programming\KSP\_Scripts\KerbalStuffWrapper\KerbalStuffWrapper.exe"
 
@@ -57,41 +58,6 @@ function CreateGitHubRelease() {
 	write-host -ForegroundColor Yellow "-----------------------------------"
 }
 
-function CreateCurseRelease() {
-    $CurseVersions = Invoke-RestMethod -method Get -uri "https://kerbal.curseforge.com/api/game/versions?token=$($CurseForgeToken)"
-    $Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
-    $ChoiceRtn = $host.ui.PromptForChoice("`r`nLatest Curse Version is $(($Curseversions | Sort-Object id -Descending)[0].Name)","Do you wish to upload v$($Version) to Curseforge for this KSP Version?",$Choices,0)
-    if ($ChoiceRtn -eq 0 )
-    {
-        $metadata =  "{`"changelog`":`"$($relDescr)`", `"displayName`":`"v$($Version) Release`", `"gameVersions`": [$(($Curseversions | Sort-Object id -Descending)[0].id)], `"releaseType`": `"release`"}"
-        
-        $File = get-item "$($UploadDir)\v$($Version)\$($pluginname)_$($Version).zip"
-
-        $filedata = [IO.File]::ReadAllBytes($File.fullname)
-
-        $boundary = "--" + [System.Guid]::NewGuid().ToString()
-
-        $body = @()
-        $body += $boundary 
-        $body += "content-disposition: form-data; name=`"metadata`"`n"
-        $body += $metadata 
-        $body += $boundary
-        $body += "content-disposition: form-data; name=`"file`"`n"
-        $body += $filedata
-        $body += $boundary + "--`n"
-
-        $RestResult = Invoke-RestMethod -Method Post `
-			-Uri "https://kerbal.curseforge.com/api/projects/$($CurseID)/upload-file??token=$($CurseForgeToken)" `
-            -Headers @{"X-Api-Token"=$($CurseForgeToken);} `
-			-Body $body `
-            -ContentType "multipart/form-data; boundary=$($boundary)"
-
-		
-		"Result = $($RestResult.state)"
-        
-    }
-}
-
 function CreateKerbalStuffRelease() {
     $Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
     $ChoiceRtn = $host.ui.PromptForChoice("`r`nKerbalStuff Confirmation","Do you wish to upload v$($Version) to KerbalStuff?",$Choices,0)
@@ -103,6 +69,94 @@ function CreateKerbalStuffRelease() {
 	}
 }
 
+$boundary = [System.Guid]::NewGuid().ToString()
+$boundaryLine = "--$($boundary)`n"
+function FormSection($name, $content){
+    $tmpbody += $boundaryLine
+    $tmpbody += "Content-Disposition: form-data; name=`"$($name)`"`n"
+    $tmpbody += "`n"
+    $tmpbody += $content + "`n"
+    $tmpbody
+}
+
+function CreateSpaceDockRelease() {
+    $Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
+    $ChoiceRtn = $host.ui.PromptForChoice("`r`nSpaceDock Confirmation","Do you wish to upload v$($Version) to SpaceDock?",$Choices,0)
+    if ($ChoiceRtn -eq 0 )
+    {
+		"Updating Mod at SpaceDock"
+
+        $File = get-item "$($UploadDir)\v$($Version)\$($pluginname)_$($Version).zip"
+        
+        #Login
+        $Loginparams = @{username="$($SpaceDockLogin)";password="$($SpaceDockPW)"}
+        $response = Invoke-WebRequest -UseBasicParsing -Method POST -Uri https://spacedock.info/api/login -Body $Loginparams -SessionVariable spacedocksession
+
+
+        $uploadbody = FormSection "version" $version
+        $uploadbody += FormSection "game-version" $KerbalStuffKSPVersion
+        $uploadbody += FormSection "notify-followers" "yes"
+        $uploadbody += FormSection "changelog" $relKStuff
+
+
+        $fileBinary = [IO.File]::ReadAllBytes($File.FullName)
+        $encoding = [System.Text.Encoding]::GetEncoding("iso-8859-1")
+        $fileEncoded = $encoding.GetString($fileBinary)
+        $uploadbody += FormSection "zipball" $fileEncoded
+        
+        $uploadbody += $boundaryLine + "--"
+
+        #"=============================================================="
+        #$uploadbody
+        #"=============================================================="
+
+        $updateResponse = Invoke-WebRequest -UseBasicParsing `
+                                            -Method Post `
+                                            -Uri "https://spacedock.info/api/mod/$($SpaceDockID)/update" `
+                                            -WebSession $spacedocksession `
+                                            -ContentType "multipart/form-data; boundary=$($boundary)" `
+                                            -Body $uploadbody 
+
+
+		#"Updating Mod at KerbalStuff"
+		#$File = get-item "$($UploadDir)\v$($Version)\$($pluginname)_$($Version).zip"
+		#& $KerbalStuffWrapper updatemod /m:$KerbalStuffModID /u:"$KerbalStuffLogin" /p:"$KerbalStuffPW" /k:"$KerbalStuffKSPVersion" /v:"$Version" /f:"$($File.FullName)" /l:"$relKStuff" /n:true
+	}
+}
+
+function CreateCurseRelease() {
+    $CurseVersions = Invoke-RestMethod -method Get -uri "https://kerbal.curseforge.com/api/game/versions?token=$($CurseForgeToken)"
+    $Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
+    $ChoiceRtn = $host.ui.PromptForChoice("`r`nLatest Curse Version is $(($Curseversions | Sort-Object id -Descending)[0].Name)","Do you wish to upload v$($Version) to Curseforge for this KSP Version?",$Choices,0)
+    if ($ChoiceRtn -eq 0 )
+    {
+
+
+        $metadata =  "{`"changelog`":`"$($relDescr)`", `"displayName`":`"v$($Version) Release`", `"gameVersions`": [$(($Curseversions | Sort-Object id -Descending)[0].id)], `"releaseType`": `"release`"}"
+        
+        $uploadbody = FormSection "metadata" $metadata
+
+        $File = get-item "$($UploadDir)\v$($Version)\$($pluginname)_$($Version).zip"
+        $fileBinary = [IO.File]::ReadAllBytes($File.FullName)
+        $encoding = [System.Text.Encoding]::GetEncoding("iso-8859-1")
+        $fileEncoded = $encoding.GetString($fileBinary)
+
+        $uploadbody += FormSection "file" $fileEncoded
+        
+        $uploadbody += $boundaryLine + "--"
+
+        $RestResult = Invoke-RestMethod -UseBasicParsing `
+                                        -Method Post `
+			                            -Uri "https://kerbal.curseforge.com/api/projects/$($CurseID)/upload-file??token=$($CurseForgeToken)" `
+                                        -Headers @{"X-Api-Token"=$($CurseForgeToken);} `
+                                        -ContentType "multipart/form-data; boundary=$($boundary)" `
+			                            -Body $uploadbody 
+
+		
+		"Result = $($RestResult.state)"
+        
+    }
+}
 
 function UpdateVersionCheckGHPagesAndPublish() {
     write-host -ForegroundColor Yellow "`r`nMERGING GHPages Dev to Master"
@@ -197,7 +251,7 @@ else
 "`tFrom:`t$UploadDir\v$($Version)"
 "`tGitHub Oauth:`t$OAuthToken"
 "`tCurse  Oauth:`t$CurseForgeToken"
-#"`tKerbalStuff:`t$KerbalStuffLogin : $KerbalStuffPW"
+"`tSpaceDock:`t$SpaceDockLogin : $SpaceDockPW"
 
 $Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
 $ChoiceRtn = $host.ui.PromptForChoice("Do you wish to Continue?","Be sure develop is ready before hitting yes",$Choices,1)
@@ -266,6 +320,8 @@ if($ChoiceRtn -eq 0)
 	"Pausing 3 Secs to let Github catchup"
 	Start-Sleep -s 3
     CreateGitHubRelease
+
+    #CreateSpaceDockRelease
 
     #CreateCurseRelease 
 

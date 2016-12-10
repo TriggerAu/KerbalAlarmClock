@@ -1530,6 +1530,7 @@ namespace KerbalAlarmClock
 
         private int intAddXferHeight = 317;
         private int intXferType = 1;
+        private Vector2 xferListScrollPosition = new Vector2();
         private void WindowLayout_AddPane_Transfer()
         {
             intAddXferHeight = 304;// 317;
@@ -1740,6 +1741,8 @@ namespace KerbalAlarmClock
                         GUILayout.EndHorizontal();
                     }
 
+                    GUIStyle styleTemp = new GUIStyle();
+                    xferListScrollPosition = GUILayout.BeginScrollView(xferListScrollPosition, styleTemp);
 
                     // And now the table of results
                     GUILayout.BeginHorizontal();
@@ -1810,7 +1813,10 @@ namespace KerbalAlarmClock
                     intAddXferHeight += -56 + ( XferTargetBodies.Count * 30);
                 }
 
-                if (intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))
+                GUILayout.EndScrollView();
+                intAddXferHeight += 2; //For the scroll bar
+
+                if(intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))
                 {
                     ////Formula based - Add All Alarms
                     //if (settings.AlarmXferDisplayList)
@@ -1913,7 +1919,9 @@ namespace KerbalAlarmClock
                 LogFormatted(ex.StackTrace);
             }
 
+
             //intAddXferHeight += intTestheight4;
+
             GUILayout.EndVertical();
         }
 

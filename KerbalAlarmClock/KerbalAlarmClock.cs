@@ -359,8 +359,11 @@ namespace KerbalAlarmClock
 				if (Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.primary) || Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.secondary))
 				{
                     //Make sure we cancel autowarp if its engaged
-                    TimeWarp.fetch.CancelAutoWarp();
-                    TimeWarp.SetRate(0, false);
+				    if (TimeWarp.fetch != null)
+				    {
+				        TimeWarp.fetch.CancelAutoWarp();
+				        TimeWarp.SetRate(0, false);
+				    }
 				}
 			}
 
@@ -837,12 +840,15 @@ namespace KerbalAlarmClock
 												.OrderBy(r => r.UTTo1Times)
 												.Last().Index;
                             //Make sure we cancel autowarp if its engaged
-                            TimeWarp.fetch.CancelAutoWarp();
-                            TimeWarp.SetRate(rateToSet, false);
+						    if (TimeWarp.fetch != null)
+						    {
+						        TimeWarp.fetch.CancelAutoWarp();
+						        TimeWarp.SetRate(rateToSet, false);
+						    }
 
 
 
-							//If in the TS then reset the orbit selection
+						    //If in the TS then reset the orbit selection
 							if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
 							{
 								lstOrbitRenderChanged.Add(KACWorkerGameState.CurrentVessel.id);
@@ -1125,28 +1131,31 @@ namespace KerbalAlarmClock
 
 
 				//Only do these recalcs at 1x or physwarp...
-				if (TimeWarp.CurrentRate==1 || (TimeWarp.WarpMode==TimeWarp.Modes.LOW))
-				{
-					if (settings.AlarmSOIRecalc)
-					{
-						//Adjust any transfer window alarms until they hit the threshold
-						RecalcSOIAlarmTimes(false);
-					}
+			    if (TimeWarp.fetch != null)
+			    {
+			        if (TimeWarp.CurrentRate == 1 || (TimeWarp.WarpMode == TimeWarp.Modes.LOW))
+			        {
+			            if (settings.AlarmSOIRecalc)
+			            {
+			                //Adjust any transfer window alarms until they hit the threshold
+			                RecalcSOIAlarmTimes(false);
+			            }
 
-					if (settings.AlarmXferRecalc)
-					{
-						//Adjust any transfer window alarms until they hit the threshold
-						RecalcTransferAlarmTimes(false);
-					}
+			            if (settings.AlarmXferRecalc)
+			            {
+			                //Adjust any transfer window alarms until they hit the threshold
+			                RecalcTransferAlarmTimes(false);
+			            }
 
-					if (settings.AlarmNodeRecalc)
-					{
-						//Adjust any Ap,Pe,AN,DNs as flight path changes
-						RecalcNodeAlarmTimes(false);
-					}
-				}
+			            if (settings.AlarmNodeRecalc)
+			            {
+			                //Adjust any Ap,Pe,AN,DNs as flight path changes
+			                RecalcNodeAlarmTimes(false);
+			            }
+			        }
+			    }
 
-				//Are we adding Man Node Alarms
+			    //Are we adding Man Node Alarms
 				if (settings.AlarmAddManAuto)
 				{
 					MonitorManNodeOnPath();
@@ -1190,8 +1199,12 @@ namespace KerbalAlarmClock
 
 			//Work out how many game seconds will pass till this runs again
 			double SecondsTillNextUpdate;
-			double dWarpRate = TimeWarp.CurrentRate;
-			SecondsTillNextUpdate = KerbalAlarmClock.UpdateInterval * dWarpRate;
+			double dWarpRate = 1;
+		    if (TimeWarp.fetch != null)
+		    {
+		        dWarpRate = TimeWarp.CurrentRate;
+		    }
+		    SecondsTillNextUpdate = KerbalAlarmClock.UpdateInterval * dWarpRate;
 
 			//Loop through the alarms
 			ParseAlarmsAndAffectWarpAndPause(SecondsTillNextUpdate);

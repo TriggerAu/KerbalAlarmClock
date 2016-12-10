@@ -70,14 +70,14 @@ namespace KerbalAlarmClock
         private Vector3d vectPosPivotWorking;
         private Vector3d vectPosEndWorking;
 
-        private GameObject objLineStart = new GameObject("LineStart");
-        private GameObject objLineStartArrow1 = new GameObject("LineStartArrow1");
-        private GameObject objLineStartArrow2 = new GameObject("LineStartArrow2");
-        private GameObject objLineEnd = new GameObject("LineEnd");
-        private GameObject objLineArc = new GameObject("LineArc");
-        private GameObject objLineVesselVect = new GameObject("LineVesselVect");
-        private GameObject objLineVesselVectArrow1 = new GameObject("LineVesselVectArrow1");
-        private GameObject objLineVesselVectArrow2 = new GameObject("LineVesselVectArrow2");
+        private GameObject objLineStart;
+        private GameObject objLineStartArrow1;
+        private GameObject objLineStartArrow2;
+        private GameObject objLineEnd;
+        private GameObject objLineArc;
+        private GameObject objLineVesselVect;
+        private GameObject objLineVesselVectArrow1;
+        private GameObject objLineVesselVectArrow2;
 
         private LineRenderer lineStart = null;
         private LineRenderer lineStartArrow1 = null;
@@ -110,6 +110,14 @@ namespace KerbalAlarmClock
             }
 
             LogFormatted("Initializing EjectAngle Render");
+            objLineStart = new GameObject("LineStart");
+            objLineStartArrow1 = new GameObject("LineStartArrow1");
+            objLineStartArrow2 = new GameObject("LineStartArrow2");
+            objLineEnd = new GameObject("LineEnd");
+            objLineArc = new GameObject("LineArc");
+            objLineVesselVect = new GameObject("LineVesselVect");
+            objLineVesselVectArrow1 = new GameObject("LineVesselVectArrow1");
+            objLineVesselVectArrow2 = new GameObject("LineVesselVectArrow2");
 
             //Get the orbit lines material so things look similar
             Material orbitLines = ((MapView)GameObject.FindObjectOfType(typeof(MapView))).orbitLinesMaterial;

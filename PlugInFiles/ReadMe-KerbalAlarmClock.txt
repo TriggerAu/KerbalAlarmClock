@@ -32,6 +32,9 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.8.3.0		-	KSP Version: 1.2.2
+- Fixed stupd typo with scrollview and add transfer (Issue #183)
+
 Version 3.8.2.0		-	KSP Version: 1.2.2
 - Another Initialization issue with object line renderer - Thanks JPL
 - Fixed NRE re timewarp in editor and other guard statement - Thanks JPL

@@ -1811,10 +1811,10 @@ namespace KerbalAlarmClock
                     }
 
                     intAddXferHeight += -56 + ( XferTargetBodies.Count * 30);
-                }
 
-                GUILayout.EndScrollView();
-                intAddXferHeight += 2; //For the scroll bar
+                    GUILayout.EndScrollView();
+                    intAddXferHeight += 2; //For the scroll bar
+                }
 
                 if(intXferCurrentParent != 0 || (!settings.XferUseModelData && settings.XferModelDataLoaded))
                 {

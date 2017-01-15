@@ -500,6 +500,8 @@ namespace KerbalAlarmClock
 				if ((tmpAlarm.ManNodes != null) && tmpAlarm.ManNodes.Count > 0)
 				//if ((tmpAlarm.ManNodes != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))
 				{
+                    bool blnDontShowManNode = false;
+
 					//Check if theres a Maneuver node and if so put a label saying that it already exists
 					//only display this node button if its the active ship
 					//Add this sae functionality to the alarm triggered window
@@ -509,25 +511,28 @@ namespace KerbalAlarmClock
 					if (KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Count > 0)
 					{
 						strRestoretext = "Replace Maneuver Node(s)";
-						//if the count and UT's are the same then go from there
-						if (!KACAlarm.CompareManNodeListSimple(KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes, tmpAlarm.ManNodes))
-							strRestoretext += "\r\nNOTE: There is already a Node on the flight path";
-						else
-							strRestoretext += "\r\nNOTE: These nodes appear to be already set on the flight path";
-						NoOfDoubleLineButtons++;
+                        //if the count and UT's are the same then go from there
+                        if(!KACAlarm.CompareManNodeListSimple(KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes, tmpAlarm.ManNodes)) {
+                            strRestoretext += "\r\nNOTE: There is already a Node on the flight path";
+                            NoOfDoubleLineButtons++;
+                        } else {
+                            //Dont show the button
+                            blnDontShowManNode = true;
+                        }
 					}
-					if ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) < 0)
-					{
-						strRestoretext += "\r\nWARNING: The stored Nodes are in the past";
-						NoOfDoubleLineButtons++;
-					}
-					intReturnNoOfButtons++;
-					if (GUILayout.Button(strRestoretext, KACResources.styleButton))
-					{
-						LogFormatted("Attempting to add Node");
-						KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Clear();
-						RestoreManeuverNodeList(tmpAlarm.ManNodes);
-					}
+
+                    if(!blnDontShowManNode) {
+                        if((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) < 0) {
+                            strRestoretext += "\r\nWARNING: The stored Nodes are in the past";
+                            NoOfDoubleLineButtons++;
+                        }
+                        intReturnNoOfButtons++;
+                        if(GUILayout.Button(strRestoretext, KACResources.styleButton)) {
+                            LogFormatted("Attempting to add Node");
+                            KACWorkerGameState.CurrentVessel.patchedConicSolver.maneuverNodes.Clear();
+                            RestoreManeuverNodeList(tmpAlarm.ManNodes);
+                        }
+                    }
 				}
 				//There is a stored Target, that hasnt passed
 				//if ((tmpAlarm.TargetObject != null) && ((tmpAlarm.Remaining.UT + tmpAlarm.AlarmMarginSecs) > 0))

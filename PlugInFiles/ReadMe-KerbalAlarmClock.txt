@@ -32,6 +32,12 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.8.4.0		-	KSP Version: 1.2.2
+- Fixed bug in HideWhenPaused logic - (Issue #184)
+- Hide the KAC when in the SpaceCenter overlay scenes Issue #186)
+
+- No longer create duplicate mannodes from alarm windows
+
 Version 3.8.3.0		-	KSP Version: 1.2.2
 - Fixed stupd typo with scrollview and add transfer (Issue #183)
 

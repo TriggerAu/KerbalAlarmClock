@@ -180,8 +180,17 @@ namespace KerbalAlarmClock
 			GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
 			GameEvents.Contract.onContractsLoaded.Add(ContractsReady);
 
-			// Need this one to handle the hideUI cancelling via pause menu
-			GameEvents.onGameUnpause.Add(OnUnpause);
+            GameEvents.onGUIAdministrationFacilitySpawn.Add(EnterKSCFacility);
+            GameEvents.onGUIAstronautComplexSpawn.Add(EnterKSCFacility);
+            GameEvents.onGUIMissionControlSpawn.Add(EnterKSCFacility);
+            GameEvents.onGUIRnDComplexSpawn.Add(EnterKSCFacility);
+            GameEvents.onGUIAdministrationFacilityDespawn.Add(LeaveKSCFacility);
+            GameEvents.onGUIAstronautComplexDespawn.Add(LeaveKSCFacility);
+            GameEvents.onGUIMissionControlDespawn.Add(LeaveKSCFacility);
+            GameEvents.onGUIRnDComplexDespawn.Add(LeaveKSCFacility);
+
+            // Need this one to handle the hideUI cancelling via pause menu
+            GameEvents.onGameUnpause.Add(OnUnpause);
 
 			blnFilterToVessel = false;
 			if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
@@ -212,7 +221,7 @@ namespace KerbalAlarmClock
 			APIAwake();
 		}
 
-		private void InitAudio()
+        private void InitAudio()
 		{
 			audioController = AddComponent<AudioController>();
 			audioController.mbKAC = this;
@@ -275,8 +284,17 @@ namespace KerbalAlarmClock
 			GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequestedForAppLauncher);
 			GameEvents.Contract.onContractsLoaded.Remove(ContractsReady);
 
-			// Need this one to handle the hideUI cancelling via pause menu
-			GameEvents.onGameUnpause.Remove(OnUnpause);
+            GameEvents.onGUIAdministrationFacilitySpawn.Remove(EnterKSCFacility);
+            GameEvents.onGUIAstronautComplexSpawn.Remove(EnterKSCFacility);
+            GameEvents.onGUIMissionControlSpawn.Remove(EnterKSCFacility);
+            GameEvents.onGUIRnDComplexSpawn.Remove(EnterKSCFacility);
+            GameEvents.onGUIAdministrationFacilityDespawn.Remove(LeaveKSCFacility);
+            GameEvents.onGUIAstronautComplexDespawn.Remove(LeaveKSCFacility);
+            GameEvents.onGUIMissionControlDespawn.Remove(LeaveKSCFacility);
+            GameEvents.onGUIRnDComplexDespawn.Remove(LeaveKSCFacility);
+
+            // Need this one to handle the hideUI cancelling via pause menu
+            GameEvents.onGameUnpause.Remove(OnUnpause);
 
 
 			Destroy(PhaseAngle);
@@ -302,9 +320,13 @@ namespace KerbalAlarmClock
 			blnContractsSystemReady = true;
 		}
 
-		#region "Update Code"
-		//Update Function - Happens on every frame - this is where behavioural stuff is typically done
-		internal override void Update()
+        //Hide the KAC when in SC overlay scenes
+        private void EnterKSCFacility() { inAdminFacility = true; }
+        private void LeaveKSCFacility() { inAdminFacility = false; }
+
+        #region "Update Code"
+        //Update Function - Happens on every frame - this is where behavioural stuff is typically done
+        internal override void Update()
 		{
 			KACWorkerGameState.SetCurrentGUIStates();
 			//if scene has changed
@@ -429,7 +451,7 @@ namespace KerbalAlarmClock
 		}
 
 		private Boolean GUIVisible = true;
-
+        private Boolean inAdminFacility = false;
 
 		//public void OnGUI()
 		internal override void OnGUIEvery()
@@ -464,7 +486,7 @@ namespace KerbalAlarmClock
 				isPauseMenuOpen = PauseMenu.isOpen;
 			} catch{}
 
-			if (GUIVisible && blnFlightUIVisible && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen))
+			if (GUIVisible && blnFlightUIVisible && !inAdminFacility && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen && settings.HideOnPause))
 				{
 					DrawGUI();
 			}
@@ -539,40 +561,22 @@ namespace KerbalAlarmClock
 			//Draw the icon that should be there all the time
 			DrawIcons();
 
-			Boolean blnShowInterface = true;
-			Boolean isPauseMenuOpen = false;
-			try
+			// look for passed alarms to display stuff
+			if (IconShowByActiveScene)
+				TriggeredAlarms();
+
+			//If the mainwindow is visible And no pause menu then draw it
+			if (WindowVisibleByActiveScene)
 			{
-				isPauseMenuOpen = PauseMenu.isOpen;
+				DrawWindowsPre();
+				DrawWindows();
+				DrawWindowsPost();
+
 			}
-			catch { }
 
-			if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+			if (settings.WarpToEnabled)
 			{
-				if (settings.HideOnPause && isPauseMenuOpen)
-					blnShowInterface = false;
-			}
-
-			//If game has pause menu up see whether to display the interface
-			if (blnShowInterface)
-			{
-				// look for passed alarms to display stuff
-				if (IconShowByActiveScene)
-					TriggeredAlarms();
-
-				//If the mainwindow is visible And no pause menu then draw it
-				if (WindowVisibleByActiveScene)
-				{
-					DrawWindowsPre();
-					DrawWindows();
-					DrawWindowsPost();
-
-				}
-
-				if (settings.WarpToEnabled)
-				{
-					DrawNodeButtons();
-				}
+				DrawNodeButtons();
 			}
 
 			//Do the stuff to lock inputs of people have that turned on

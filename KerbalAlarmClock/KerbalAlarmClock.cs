@@ -464,7 +464,7 @@ namespace KerbalAlarmClock
 				isPauseMenuOpen = PauseMenu.isOpen;
 			} catch{}
 
-			if (GUIVisible && blnFlightUIVisible && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen))
+			if (GUIVisible && blnFlightUIVisible && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen && settings.HideOnPause))
 				{
 					DrawGUI();
 			}
@@ -539,40 +539,22 @@ namespace KerbalAlarmClock
 			//Draw the icon that should be there all the time
 			DrawIcons();
 
-			Boolean blnShowInterface = true;
-			Boolean isPauseMenuOpen = false;
-			try
+			// look for passed alarms to display stuff
+			if (IconShowByActiveScene)
+				TriggeredAlarms();
+
+			//If the mainwindow is visible And no pause menu then draw it
+			if (WindowVisibleByActiveScene)
 			{
-				isPauseMenuOpen = PauseMenu.isOpen;
+				DrawWindowsPre();
+				DrawWindows();
+				DrawWindowsPost();
+
 			}
-			catch { }
 
-			if (KACWorkerGameState.CurrentGUIScene == GameScenes.FLIGHT)
+			if (settings.WarpToEnabled)
 			{
-				if (settings.HideOnPause && isPauseMenuOpen)
-					blnShowInterface = false;
-			}
-
-			//If game has pause menu up see whether to display the interface
-			if (blnShowInterface)
-			{
-				// look for passed alarms to display stuff
-				if (IconShowByActiveScene)
-					TriggeredAlarms();
-
-				//If the mainwindow is visible And no pause menu then draw it
-				if (WindowVisibleByActiveScene)
-				{
-					DrawWindowsPre();
-					DrawWindows();
-					DrawWindowsPost();
-
-				}
-
-				if (settings.WarpToEnabled)
-				{
-					DrawNodeButtons();
-				}
+				DrawNodeButtons();
 			}
 
 			//Do the stuff to lock inputs of people have that turned on

@@ -158,6 +158,18 @@ namespace KerbalAlarmClock
         }
 
 
+        [Persistent] internal String MaxToolTipTime = "15";
+        public float MaxToolTipTimeFloat
+        {
+            get
+            {
+                float v;
+                if(float.TryParse(MaxToolTipTime, out v))
+                    return v;
+                else
+                    return 15;
+            }
+        }
         [Persistent] internal Boolean ShowTooltips = true;
         [Persistent] internal Boolean ShowEarthTime = false;
 

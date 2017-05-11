@@ -38,12 +38,11 @@ namespace KerbalAlarmClock
         Int32 intTooltipMaxWidth = 250;
         //timer so it only displays for a preriod of time
         float fltTooltipTime = 0f;
-        float fltMaxToolTipTime = 15f;
 
 
         private void DrawToolTip()
         {
-            if (strToolTipText != "" && (fltTooltipTime < fltMaxToolTipTime))
+            if (strToolTipText != "" && (fltTooltipTime < settings.MaxToolTipTimeFloat))
             {
                 GUIContent contTooltip = new GUIContent(strToolTipText);
                 if (!blnToolTipDisplayed || (strToolTipText != strLastTooltipText))

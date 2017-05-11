@@ -42,13 +42,14 @@ namespace KerbalAlarmClock
 
         private void DrawToolTip()
         {
-            if (strToolTipText != "" && (fltTooltipTime < settings.MaxToolTipTimeFloat))
+            //reset display time if text changed
+            if (strToolTipText != strLastTooltipText)
+                fltTooltipTime = Time.unscaledTime + settings.MaxToolTipTimeFloat;
+            if (strToolTipText != "" && (Time.unscaledTime <= fltTooltipTime))
             {
                 GUIContent contTooltip = new GUIContent(strToolTipText);
                 if (!blnToolTipDisplayed || (strToolTipText != strLastTooltipText))
                 {
-                    //reset display time if text changed
-                    fltTooltipTime = 0f;
                     //Calc the size of the Tooltip
                     rectToolTipPosition = new Rect(Event.current.mousePosition.x, Event.current.mousePosition.y + intTooltipVertOffset, 0, 0);
                     float minwidth, maxwidth;
@@ -63,8 +64,7 @@ namespace KerbalAlarmClock
                 //On top of everything
                 GUI.depth = 0;
 
-                //update how long the tip has been on the screen and reset the flags
-                fltTooltipTime += Time.deltaTime;
+                //reset the flags
                 blnToolTipDisplayed = true;
             }
             else
@@ -72,7 +72,6 @@ namespace KerbalAlarmClock
                 //clear the flags
                 blnToolTipDisplayed = false;
             }
-            if (strToolTipText != strLastTooltipText) fltTooltipTime = 0f;
             strLastTooltipText = strToolTipText;
         }
 

@@ -105,6 +105,14 @@ namespace KerbalAlarmClock
             for (int i = SaveBackupsToDelete.Count - 1; i >= 0; i--)
             {
                 MonoBehaviourExtended.LogFormatted("\tDeleting {0}", SaveBackupsToDelete[i].Name);
+
+                //bin the loadmeta if it exists too
+                string loadmetaFile = SaveBackupsToDelete[i].DirectoryName + "/" + System.IO.Path.GetFileNameWithoutExtension(SaveBackupsToDelete[i].FullName) + ".loadmeta";
+                if (System.IO.File.Exists(loadmetaFile))
+                {
+                    System.IO.File.Delete(loadmetaFile);
+                }
+
                 SaveBackupsToDelete[i].Delete();
             }
         }

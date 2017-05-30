@@ -47,27 +47,27 @@ namespace KerbalAlarmClock
             ddlChecksPerSec = new DropDownList(strChecksPerSecChoices,_WindowSettingsRect);
             ddlChecksPerSec.OnSelectionChanged += ddlChecksPerSec_OnSelectionChanged;
 
-            ddlSettingsSkin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.DisplaySkin>(), (Int32)settings.SelectedSkin, _WindowSettingsRect);
+            ddlSettingsSkin = new DropDownList(KSPPluginFramework.EnumExtensions.ToEnumDescriptions<Settings.DisplaySkin>(), (Int32)settings.SelectedSkin, _WindowSettingsRect);
             ddlSettingsSkin.OnSelectionChanged += ddlSettingsSkin_OnSelectionChanged;
 
-            ddlSettingsButtonStyle = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.ButtonStyleEnum>(), (Int32)settings.ButtonStyleChosen, _WindowSettingsRect);
+            ddlSettingsButtonStyle = new DropDownList(KSPPluginFramework.EnumExtensions.ToEnumDescriptions<Settings.ButtonStyleEnum>(), (Int32)settings.ButtonStyleChosen, _WindowSettingsRect);
             ddlSettingsButtonStyle.OnSelectionChanged += ddlSettingsButtonStyle_OnSelectionChanged;
 
-            ddlSettingsAlarmSpecs = new DropDownList(EnumExtensions.ToEnumDescriptions<SettingsAlarmSpecsEnum>(), (int)SettingsAlarmSpecSelected, _WindowSettingsRect);
+            ddlSettingsAlarmSpecs = new DropDownList(KSPPluginFramework.EnumExtensions.ToEnumDescriptions<SettingsAlarmSpecsEnum>(), (int)SettingsAlarmSpecSelected, _WindowSettingsRect);
             ddlSettingsAlarmSpecs.OnSelectionChanged += ddlSettingsAlarmSpecs_OnSelectionChanged;
 
-            ddlSettingsContractAutoOffered = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.AutoContractBehaviorEnum>(), (Int32)settings.AlarmAddContractAutoOffered, _WindowSettingsRect);
+            ddlSettingsContractAutoOffered = new DropDownList(KSPPluginFramework.EnumExtensions.ToEnumDescriptions<Settings.AutoContractBehaviorEnum>(), (Int32)settings.AlarmAddContractAutoOffered, _WindowSettingsRect);
             ddlSettingsContractAutoOffered.OnSelectionChanged += ddlSettingsContractAutoOffered_OnSelectionChanged;
-            ddlSettingsContractAutoActive = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.AutoContractBehaviorEnum>(), (Int32)settings.AlarmAddContractAutoActive, _WindowSettingsRect);
+            ddlSettingsContractAutoActive = new DropDownList(KSPPluginFramework.EnumExtensions.ToEnumDescriptions<Settings.AutoContractBehaviorEnum>(), (Int32)settings.AlarmAddContractAutoActive, _WindowSettingsRect);
             ddlSettingsContractAutoActive.OnSelectionChanged += ddlSettingsContractAutoActive_OnSelectionChanged;
 
-            ddlSettingsCalendar = new DropDownList(EnumExtensions.ToEnumDescriptions<CalendarTypeEnum>(), (Int32)settings.SelectedCalendar,_WindowSettingsRect );
+            ddlSettingsCalendar = new DropDownList(KSPPluginFramework.EnumExtensions.ToEnumDescriptions<CalendarTypeEnum>(), (Int32)settings.SelectedCalendar,_WindowSettingsRect );
             //NOTE:Pull out the custom option for now
             ddlSettingsCalendar.Items.Remove(CalendarTypeEnum.Custom.Description());
             ddlSettingsCalendar.OnSelectionChanged += ddlSettingsCalendar_OnSelectionChanged;
 
-            ddlKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.BurnMarginEnum>(), _WindowAddRect);
-            ddlSettingsKERNodeMargin = new DropDownList(EnumExtensions.ToEnumDescriptions<Settings.BurnMarginEnum>(), (int)settings.DefaultKERMargin, _WindowSettingsRect);
+            ddlKERNodeMargin = new DropDownList(KSPPluginFramework.EnumExtensions.ToEnumDescriptions<Settings.BurnMarginEnum>(), _WindowAddRect);
+            ddlSettingsKERNodeMargin = new DropDownList(KSPPluginFramework.EnumExtensions.ToEnumDescriptions<Settings.BurnMarginEnum>(), (int)settings.DefaultKERMargin, _WindowSettingsRect);
             ddlSettingsKERNodeMargin.OnSelectionChanged += ddlSettingsKERNodeMargin_OnSelectionChanged;
 
 

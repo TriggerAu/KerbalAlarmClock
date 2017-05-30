@@ -228,6 +228,12 @@ namespace KerbalAlarmClock
             GUILayout.Label("Max alarms before scrolling the list", KACResources.styleAddHeading);
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            if(DrawTextBox(ref settings.MaxToolTipTime, KACResources.styleAddField, GUILayout.Width(45)))
+                settings.Save();
+            GUILayout.Label("Max time before tooltip is auto-hidden", KACResources.styleAddHeading);
+            GUILayout.EndHorizontal();
+
             if (DrawCheckbox(ref settings.HideOnPause, "Hide Alarm Clock when game is paused"))
                 settings.Save();
 

@@ -378,7 +378,7 @@ namespace KerbalAlarmClock
 
 			if (settings.KillWarpOnThrottleCutOffKeystroke)
 			{
-				if (Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.primary) || Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.secondary))
+				if (Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.primary.name) || Input.GetKeyDown(GameSettings.THROTTLE_CUTOFF.secondary.name))
 				{
                     //Make sure we cancel autowarp if its engaged
 				    if (TimeWarp.fetch != null)

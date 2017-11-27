@@ -149,6 +149,7 @@ namespace KerbalAlarmClock
         {
             String strReturn = Input;
             //encode \r\t\n
+            strReturn = strReturn.Replace("\r\n", "\\r\\n");
             strReturn = strReturn.Replace("\r", "\\r");
             strReturn = strReturn.Replace("\n", "\\n");
             strReturn = strReturn.Replace("\t", "\\t");
@@ -159,7 +160,8 @@ namespace KerbalAlarmClock
         {
             String strReturn = Input;
             //encode \r\t\n
-            strReturn = strReturn.Replace("\\r", "\r");
+            strReturn = strReturn.Replace("\\r\\n", "\r\n");
+            strReturn = strReturn.Replace("\\r", "\r\n");
             strReturn = strReturn.Replace("\\n", "\n");
             strReturn = strReturn.Replace("\\t", "\t");
             return strReturn;

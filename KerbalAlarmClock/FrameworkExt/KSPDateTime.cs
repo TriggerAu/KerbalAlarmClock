@@ -21,7 +21,7 @@ namespace KSPPluginFramework
 			get { if (CalType == CalendarTypeEnum.Earth) 
 				return _EarthDateTime.Year;
 			else
-				return KSPDateStructure.EpochYear + (Int32)UT / KSPDateStructure.SecondsPerYear; 
+				return KSPDateStructure.EpochYear + (Int32)(UT / KSPDateStructure.SecondsPerYear); 
 			}
 		}
 
@@ -31,7 +31,7 @@ namespace KSPPluginFramework
 			get { if (CalType == CalendarTypeEnum.Earth) 
 				return _EarthDateTime.DayOfYear;
 			else
-				return KSPDateStructure.EpochDayOfYear + (Int32)UT / KSPDateStructure.SecondsPerDay % KSPDateStructure.DaysPerYear; 
+				return KSPDateStructure.EpochDayOfYear + (Int32)(UT / KSPDateStructure.SecondsPerDay % KSPDateStructure.DaysPerYear); 
 			}
 		}
 
@@ -184,7 +184,7 @@ namespace KSPPluginFramework
 		{
 			//Test for entering values outside the norm - eg 25 hours, day 600
 
-			UT = new KSPTimeSpan((year - KSPDateStructure.EpochYear) * KSPDateStructure.DaysPerYear  +
+			UT = new KSPTimeSpan((Int32)((year - KSPDateStructure.EpochYear) * KSPDateStructure.DaysPerYear)  +
 								(day - KSPDateStructure.EpochDayOfYear),
 								hour,
 								minute,
@@ -261,12 +261,12 @@ namespace KSPPluginFramework
 				case DateStringFormatsEnum.KSPFormat:
 					return ToString();
 				case DateStringFormatsEnum.KSPFormatWithSecs:
-					return ToString("Year y, Da\\y d - H\\h, m\\m, s\\s");
+					return KSPUtil.dateTimeFormatter.PrintDate(UT, true, true); // ToString("Year y, Da\\y d - H\\h, m\\m, s\\s");
 				case DateStringFormatsEnum.DateTimeFormat:
                     if (KSPDateStructure.CalendarType==CalendarTypeEnum.Earth)
                         return ToString("d MMM yyyy, HH:mm:ss");
                     else
-					    return ToString("Year y, Da\\y d, HH:mm:ss");
+					    return KSPUtil.dateTimeFormatter.PrintDateCompact(UT, true, true); // ToString("Year y, Da\\y d, HH:mm:ss");
 				default:
 					return ToString();
 			}
@@ -279,7 +279,7 @@ namespace KSPPluginFramework
 			if (CalType ==CalendarTypeEnum.Earth) {
 				return ToString(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern + " " + System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern);
 			} else {
-				return ToString("Year y, Da\\y d - H\\h, m\\m", null);
+                return KSPUtil.dateTimeFormatter.PrintDate(UT, true, false); // ToString("Year y, Da\\y d - H\\h, m\\m", null);
 			}
 		}
 		/// <summary>Returns the string representation of the value of this instance.</summary> 

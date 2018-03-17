@@ -158,6 +158,19 @@ namespace KSPPluginFramework
             Boolean blnReturn = false;
             try
             {
+                if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(fileFullName)))
+                {
+                    System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(fileFullName));
+                }
+            }
+            catch (Exception ex)
+            {
+                LogFormatted("Unable to create directory for ConfigNode file({0})-Error:{1}", fileFullName, ex.Message);
+                blnReturn = false;
+            }
+
+            try
+            {
                 //Encode the current object
                 ConfigNode cnToSave = this.AsConfigNode;
                 //Wrap it in a node with a name of the class

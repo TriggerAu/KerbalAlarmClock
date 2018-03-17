@@ -32,6 +32,10 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.9.0.0		-	KSP Version: 1.4.1
+- Recompiled for 1.4.1 (Issue #199, #199)
+- Fix alarm delete when no message displayed (Issue #195)
+
 Version 3.8.5.0		-	KSP Version: 1.3.0
 - Recompiled for 1.3.0 (Issue #191)
 - Merged in configurable tooltip period (Issue #190)

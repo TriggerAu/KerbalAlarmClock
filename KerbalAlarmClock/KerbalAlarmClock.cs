@@ -1845,11 +1845,12 @@ namespace KerbalAlarmClock
 
 			// Delete the do nothing/delete alarms - One loop to find the ones to delete - cant delete inside the foreach or it breaks the iterator
 			List<KACAlarm> ToDelete = new List<KACAlarm>();
-			//foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.ActionDeleteWhenDone)))
-			foreach (KACAlarm tmpAlarm in alarms.Where(a => a.Actions.Warp == AlarmActions.WarpEnum.DoNothing && a.Actions.DeleteWhenDone ))
-			{
-				if (tmpAlarm.Triggered && tmpAlarm.Actioned)
-					ToDelete.Add(tmpAlarm);
+            //foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.ActionDeleteWhenDone)))
+            //foreach (KACAlarm tmpAlarm in alarms.Where(a => a.Actions.Warp == AlarmActions.WarpEnum.DoNothing && a.Actions.DeleteWhenDone))
+            foreach (KACAlarm tmpAlarm in alarms.Where(a => (!a.ShowMessage || a.Actions.Warp == AlarmActions.WarpEnum.DoNothing) && a.Actions.DeleteWhenDone))
+            {
+                if (tmpAlarm.Triggered && tmpAlarm.Actioned)
+    				ToDelete.Add(tmpAlarm);
 			}
 			foreach (KACAlarm a in ToDelete)
 			{

@@ -32,6 +32,9 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.9.1.0		-	KSP Version: 1.4.1
+- Removed custom cursors for users running Linux as this kills the game cursor for them (Issue #200)
+
 Version 3.9.0.0		-	KSP Version: 1.4.1
 - Recompiled for 1.4.1 (Issue #199, #199)
 - Fix alarm delete when no message displayed (Issue #195)

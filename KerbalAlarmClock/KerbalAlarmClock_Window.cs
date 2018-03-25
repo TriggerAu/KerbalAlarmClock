@@ -953,7 +953,11 @@ namespace KerbalAlarmClock
                 //if in width dragrect
                 if (dragHandleWidth.Contains(mousePosition))
                 {
-                    SetCustomCursor(ref cursorWidth, KACResources.curResizeWidth);
+                    //Bypass for 1.4.1 as this kills the game cursor on linux
+                    if (Application.platform != RuntimePlatform.LinuxPlayer)
+                    {
+                        SetCustomCursor(ref cursorWidth, KACResources.curResizeWidth);
+                    }
 
                     //watch for mousedown
                     if (Event.current.type == EventType.mouseDown && Event.current.button == 0)
@@ -964,7 +968,12 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
-                    ClearCustomCursor(ref cursorWidth);
+
+                    //Bypass for 1.4.1 as this kills the game cursor on linux
+                    if (Application.platform != RuntimePlatform.LinuxPlayer)
+                    {
+                        ClearCustomCursor(ref cursorWidth);
+                    }
                 }
             }
 

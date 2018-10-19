@@ -104,6 +104,13 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rem Set the Variables we need
+if exist "$(PDB2MDB_TOOL)" (
+	echo Converting debug symbols...
+	"$(PDB2MDB_TOOL)" "$(TargetPath)"
+) else (
+	echo Couldn't find PDB2MDB tool "$(PDB2MDB_TOOL)"..
+)
+
 echo Finding KSP
 
 rem if exist "R:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (

@@ -1,6 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!-- Configuration Defaults; can be overridden in the .user file -->
+  <PropertyGroup>
+    <KSP_DIR>..\..\_Versions\KSP_win_PluginTest</KSP_DIR>
+    <PDB2MDB_TOOL>..\..\pdb2mdb.exe</PDB2MDB_TOOL>
+  </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -40,14 +45,14 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\_Versions\KSP_win_PluginTest\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(KSP_DIR)\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\_Versions\KSP_win_PluginTest\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>$(KSP_DIR)\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -109,19 +114,22 @@ rem ) else if exist "C:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
 rem 	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest_Minimal
 rem ) else if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP.exe" (
 
-if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP.exe" (
+if exist "${KSP_DIR}\KSP_x64.exe" (
+	set GAMEPATH="${KSP_DIR}"
+) else if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP_x64.exe" (
 	set GAMEPATH="D:\Programming\KSP\_Versions\KSP_win_PluginTest"
-) else if exist "C:\~Games\KSP_Win_PlugInTest\KSP.exe" (
+) else if exist "C:\~Games\KSP_Win_PlugInTest\KSP_x64.exe" (
 	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest"
 )else (
 	echo "Cant find KSP"
-	exit 1
+	rem Let's not fail the build if we can't auto-start the game...
+	exit 0
 )
 
 echo Gamepath: %25GAMEPATH%25
 echo ConfigName: $(ConfigurationName)
 set DestPath="%25GAMEPATH%25\GameData\TriggerTech\KerbalAlarmClock"
-set Binary="%25GAMEPATH%25\KSP.exe"
+set Binary="%25GAMEPATH%25\KSP_x64.exe"
 
 if not $(ConfigurationName)==Debug goto DEBUGREBUILDCONFIG
 :DEBUGCONFIG

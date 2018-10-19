@@ -121,13 +121,13 @@ rem ) else if exist "C:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
 rem 	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest_Minimal
 rem ) else if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP.exe" (
 
-if exist "${KSP_DIR}\KSP_x64.exe" (
-	set GAMEPATH="${KSP_DIR}"
+if exist "$(KSP_DIR)\KSP_x64.exe" (
+	set GAMEPATH="$(KSP_DIR)"
 ) else if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP_x64.exe" (
 	set GAMEPATH="D:\Programming\KSP\_Versions\KSP_win_PluginTest"
 ) else if exist "C:\~Games\KSP_Win_PlugInTest\KSP_x64.exe" (
 	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest"
-)else (
+) else (
 	echo "Cant find KSP"
 	rem Let's not fail the build if we can't auto-start the game...
 	exit 0
@@ -137,13 +137,18 @@ echo Gamepath: %25GAMEPATH%25
 echo ConfigName: $(ConfigurationName)
 set DestPath="%25GAMEPATH%25\GameData\TriggerTech\KerbalAlarmClock"
 set Binary="%25GAMEPATH%25\KSP_x64.exe"
+set DbgBinary="%25GAMEPATH%25\KSP_x64_Dbg.exe"
 
 if not $(ConfigurationName)==Debug goto DEBUGREBUILDCONFIG
 :DEBUGCONFIG
 rem Copy DLL and run KSP
 copy "$(TargetPath)" "%25DestPath%25"
+if exist "$(TargetPath).mdb" (
+	copy "$(TargetPath).mdb" "%25DestPath%25"
+)
 rem and then run the game
 if exist "$(ProjectDir)..\..\StartX.exe" goto STARTX
+if exist "%25DbgBinary%25" goto START_KSP_DBG
 echo Running Directly
 "%25Binary%25"
 goto END
@@ -152,8 +157,10 @@ goto END
 echo STARTX running
 "$(ProjectDir)..\..\StartX.exe" "%25Binary%25"
 goto END
-"%25Binary%25"
 
+:START_KSP_DBG
+echo START_KSP_DBG running
+"%25DbgBinary%25"
 goto END
 
 :DEBUGREBUILDCONFIG

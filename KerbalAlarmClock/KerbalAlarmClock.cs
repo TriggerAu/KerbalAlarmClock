@@ -471,7 +471,7 @@ namespace KerbalAlarmClock
 
 					//if we are adding the renderer and we are in flight then do the daily version check if required
 					if (HighLogic.LoadedScene == GameScenes.FLIGHT && settings.DailyVersionCheck)
-						settings.VersionCheck(false);
+						settings.VersionCheck(this, false);
 
 				}
 				else

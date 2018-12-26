@@ -923,7 +923,8 @@ namespace KerbalAlarmClock
         }
 
         Boolean resizingWidth = false, resizingHeight = false, resizingBoth = false;
-        Boolean cursorWidth = false, cursorHeight = false, cursorBoth = false;
+        Boolean cursorWidth = false;
+        //Boolean cursorHeight = false, cursorBoth = false; //Commented because usage removed
         internal Rect dragHandleWidth, dragHandleHeight, dragHandleBoth;
         internal Vector2 mousePosition;
 
@@ -1026,7 +1027,8 @@ namespace KerbalAlarmClock
 
                 //reset the cursor
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-                cursorWidth = cursorHeight = cursorBoth = false;
+                cursorWidth = false;
+                //cursorHeight = cursorBoth = false;    //Commented because usage removed
             }
 
 

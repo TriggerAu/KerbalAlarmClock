@@ -190,7 +190,8 @@ namespace KerbalAlarmClock
             GameEvents.onGUIRnDComplexDespawn.Add(LeaveKSCFacility);
 
             // Need this one to handle the hideUI cancelling via pause menu
-            GameEvents.onGameUnpause.Add(OnUnpause);
+            GameEvents.onShowUI.Add(OnShowUI);
+            GameEvents.onHideUI.Add(OnHideUI);
 
 			blnFilterToVessel = false;
 			if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
@@ -294,8 +295,8 @@ namespace KerbalAlarmClock
             GameEvents.onGUIRnDComplexDespawn.Remove(LeaveKSCFacility);
 
             // Need this one to handle the hideUI cancelling via pause menu
-            GameEvents.onGameUnpause.Remove(OnUnpause);
-
+            GameEvents.onShowUI.Remove(OnShowUI);
+            GameEvents.onHideUI.Remove(OnHideUI);
 
 			Destroy(PhaseAngle);
 			Destroy(EjectAngle);
@@ -351,15 +352,8 @@ namespace KerbalAlarmClock
 			KACWorkerGameState.SetLastGUIStatesToCurrent();
 		}
 
-		internal Boolean blnFlightUIVisible = true;
-
 		private void HandleKeyStrokes()
 		{
-			if (GameSettings.TOGGLE_UI.GetKeyDown() && HighLogic.LoadedScene == GameScenes.FLIGHT)
-			{
-				blnFlightUIVisible = !blnFlightUIVisible;
-			}
-
 			//Look for key inputs to change settings
 			if (!settings.F11KeystrokeDisabled)
 			{
@@ -442,15 +436,20 @@ namespace KerbalAlarmClock
 				//                IsInPostDrawQueue = false;
 			}
 		}
-		#endregion
+        #endregion
 
-		private void OnUnpause()
-		{
-			LogFormatted_DebugOnly("OnUnpause");
-			GUIVisible = true;
-		}
+        private void OnShowUI()
+        {
+            LogFormatted_DebugOnly("OnShowUI");
+            GUIVisible = true;
+        }
+        private void OnHideUI()
+        {
+            LogFormatted_DebugOnly("OnHideUI");
+            GUIVisible = false;
+        }
 
-		private Boolean GUIVisible = true;
+        private Boolean GUIVisible = true;
         private Boolean inAdminFacility = false;
 
 		//public void OnGUI()
@@ -486,7 +485,7 @@ namespace KerbalAlarmClock
 				isPauseMenuOpen = PauseMenu.isOpen;
 			} catch{}
 
-			if (GUIVisible && blnFlightUIVisible && !inAdminFacility && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen && settings.HideOnPause))
+			if (GUIVisible && !inAdminFacility && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen && settings.HideOnPause))
 				{
 					DrawGUI();
 			}

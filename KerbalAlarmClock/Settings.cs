@@ -389,47 +389,46 @@ namespace KerbalAlarmClock
         /// </summary>
         /// <param name="ForceCheck">Ignore all logic and simply do a check</param>
         /// <returns></returns>
-        public Boolean VersionCheck(Boolean ForceCheck)
+        public Boolean VersionCheck(MonoBehaviour parent, Boolean ForceCheck)
         {
             Boolean blnReturn = false;
             Boolean blnDoCheck = false;
 
             try
             {
-                if (ForceCheck)
+                if (!VersionCheckRunning)
                 {
-                    blnDoCheck = true;
-                    MonoBehaviourExtended.LogFormatted("Starting Version Check-Forced");
-                }
-                //else if (this.VersionWeb == "")
-                //{
-                //    blnDoCheck = true;
-                //    MonoBehaviourExtended.LogFormatted("Starting Version Check-No current web version stored");
-                //}
-                else if (this.VersionCheckDate_Attempt < DateTime.Now.AddYears(-9))
-                {
-                    blnDoCheck = true;
-                    MonoBehaviourExtended.LogFormatted("Starting Version Check-No current date stored");
-                }
-                else if (this.VersionCheckDate_Attempt.Date != DateTime.Now.Date)
-                {
-                    blnDoCheck = true;
-                    MonoBehaviourExtended.LogFormatted("Starting Version Check-stored date is not today");
+                    if (ForceCheck)
+                    {
+                        blnDoCheck = true;
+                        MonoBehaviourExtended.LogFormatted("Starting Version Check-Forced");
+                    }
+                    //else if (this.VersionWeb == "")
+                    //{
+                    //    blnDoCheck = true;
+                    //    MonoBehaviourExtended.LogFormatted("Starting Version Check-No current web version stored");
+                    //}
+                    else if (this.VersionCheckDate_Attempt < DateTime.Now.AddYears(-9))
+                    {
+                        blnDoCheck = true;
+                        MonoBehaviourExtended.LogFormatted("Starting Version Check-No current date stored");
+                    }
+                    else if (this.VersionCheckDate_Attempt.Date != DateTime.Now.Date)
+                    {
+                        blnDoCheck = true;
+                        MonoBehaviourExtended.LogFormatted("Starting Version Check-stored date is not today");
+                    }
+                    else
+                        MonoBehaviourExtended.LogFormatted("Skipping version check");
+
+                    if (blnDoCheck)
+                    {
+                        parent.StartCoroutine(crVersionCheck());
+                    }
                 }
                 else
-                    MonoBehaviourExtended.LogFormatted("Skipping version check");
+                    MonoBehaviourExtended.LogFormatted("Starting Version Check-version check already running");
 
-
-                if (blnDoCheck)
-                {
-                    //prep the background thread
-                    bwVersionCheck = new BackgroundWorker();
-                    bwVersionCheck.DoWork += bwVersionCheck_DoWork;
-                    bwVersionCheck.RunWorkerCompleted += bwVersionCheck_RunWorkerCompleted;
-
-                    //fire the worker
-                    bwVersionCheck.RunWorkerAsync();
-                }
                 blnReturn = true;
             }
             catch (Exception ex)
@@ -441,11 +440,10 @@ namespace KerbalAlarmClock
         }
 
         internal Boolean VersionCheckRunning = false;
-        BackgroundWorker bwVersionCheck;
-        WWW wwwVersionCheck;
-
-        void bwVersionCheck_DoWork(object sender, DoWorkEventArgs e)
+        private System.Collections.IEnumerator crVersionCheck()
         {
+            WWW wwwVersionCheck;
+
             //set initial stuff and save it
             VersionCheckRunning = true;
             this.VersionCheckResult = "Unknown - check again later";
@@ -455,12 +453,19 @@ namespace KerbalAlarmClock
             //now do the download
             MonoBehaviourExtended.LogFormatted("Reading version from Web");
             wwwVersionCheck = new WWW(VersionCheckURL);
-            while (!wwwVersionCheck.isDone) { }
-            MonoBehaviourExtended.LogFormatted("Download complete:{0}", wwwVersionCheck.text.Length);
+            yield return wwwVersionCheck;
+            if (wwwVersionCheck.error == null)
+            {
+                crVersionCheck_Completed(wwwVersionCheck);
+            }
+            else
+            {
+                MonoBehaviourExtended.LogFormatted("Version Download failed:{0}", wwwVersionCheck.error);
+            }
             VersionCheckRunning = false;
         }
 
-        void bwVersionCheck_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        void crVersionCheck_Completed(WWW wwwVersionCheck)
         {
             try
             {
@@ -497,7 +502,6 @@ namespace KerbalAlarmClock
             this.Save();
             VersionAttentionFlag = VersionAvailable;
         }
-
 
         //public Boolean getLatestVersion()
         //{
@@ -544,11 +548,11 @@ namespace KerbalAlarmClock
         //    MonoBehaviourExtended.LogFormatted("Version Check result:" + VersionCheckResult);
         //    return blnReturn;
         //}
-        #endregion
+#endregion
 
 
 
-        #region Sound Stuff
+#region Sound Stuff
         internal Boolean VerifySoundsList()
         {
             Boolean blnRet = false;
@@ -617,7 +621,7 @@ namespace KerbalAlarmClock
         }
     }
 
-	#endregion    
+#endregion
 
     internal class RectStorage:ConfigNodeStorage
     {

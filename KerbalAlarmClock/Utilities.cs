@@ -481,8 +481,16 @@ namespace KerbalAlarmClock
 
         internal static double timeOfClosestApproach(Orbit oOrig, Orbit oTgt, double timeStart, int orbit, out double closestdistance)
         {
+            double period = oOrig.period;
+            double start = timeStart + (orbit - 1) * period;
+            double len = period;
+            if (oOrig.eccentricity >= 1) {
+                start = timeStart;
+                len = oOrig.timeToPe + oTgt.period;
+                //UnityEngine.Debug.Log($"timeOfClosestApproach {start} {len} {ta} {E} {M} {Planetarium.GetUniversalTime ()}");
+            }
             //return timeOfClosestApproach(a, b, time + ((orbit - 1) * a.period), (orbit * a.period), 20, out closestdistance);
-            return timeOfClosestApproach(oOrig, oTgt, timeStart + ((orbit - 1) * oOrig.period), oOrig.period, 20, out closestdistance);
+            return timeOfClosestApproach(oOrig, oTgt, start, len, 20, out closestdistance);
         }
 
         internal static double timeOfClosestApproach(Orbit oOrig, Orbit oTgt, double timeStart, double periodtoscan, double numDivisions, out double closestdistance)

@@ -216,7 +216,7 @@ namespace KerbalAlarmClock
                 }
                 else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
                 {
-                    SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
+                    //SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
                     PlanetariumCamera c = PlanetariumCamera.fetch;
                     if (c.target != null && c.target.type == MapObject.ObjectType.Vessel)
                     {

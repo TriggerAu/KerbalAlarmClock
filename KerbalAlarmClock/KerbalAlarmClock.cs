@@ -193,7 +193,17 @@ namespace KerbalAlarmClock
             GameEvents.onShowUI.Add(OnShowUI);
             GameEvents.onHideUI.Add(OnHideUI);
 
-			blnFilterToVessel = false;
+            GameEvents.onUIScaleChange.Add(OnUIScaleChange);
+            if (settings.UIScaleOverride)
+            {
+                guiScale = new Vector2(settings.UIScaleValue, settings.UIScaleValue);
+            }
+            else
+            {
+                guiScale = new Vector2(GameSettings.UI_SCALE, GameSettings.UI_SCALE);
+            }
+
+            blnFilterToVessel = false;
 			if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
 				HighLogic.LoadedScene == GameScenes.FLIGHT)
 				blnShowFilterToVessel = true;
@@ -298,7 +308,9 @@ namespace KerbalAlarmClock
             GameEvents.onShowUI.Remove(OnShowUI);
             GameEvents.onHideUI.Remove(OnHideUI);
 
-			Destroy(PhaseAngle);
+            GameEvents.onUIScaleChange.Remove(OnUIScaleChange);
+
+            Destroy(PhaseAngle);
 			Destroy(EjectAngle);
 
 			DestroyDropDowns();
@@ -547,6 +559,15 @@ namespace KerbalAlarmClock
 			//KACResources.SetStyles();
 
 		}
+
+        internal Vector2 guiScale = Vector2.one;
+
+        public void OnUIScaleChange()
+        {
+            guiScale.x = settings.UIScaleOverride ? settings.UIScaleValue : GameSettings.UI_SCALE;
+            guiScale.y = settings.UIScaleOverride ? settings.UIScaleValue : GameSettings.UI_SCALE;
+        }
+        
 		//This is what we do every frame when the object is being drawn 
 		//We dont get here unless we are in the postdraw queue
 		public void DrawGUI()
@@ -564,8 +585,13 @@ namespace KerbalAlarmClock
 			if (WindowVisibleByActiveScene)
 			{
 				DrawWindowsPre();
-				DrawWindows();
-				DrawWindowsPost();
+
+                // Set the scale for this run at stuff
+                GUIUtility.ScaleAroundPivot(guiScale, Vector2.zero);
+                DrawWindows();
+                GUIUtility.ScaleAroundPivot(Vector2.one, Vector2.zero);
+
+                DrawWindowsPost();
 
 			}
 

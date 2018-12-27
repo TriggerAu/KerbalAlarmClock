@@ -51,6 +51,9 @@ namespace KerbalAlarmClock
 
         [Persistent] internal Boolean WindowChildPosBelow = false;
 
+        [Persistent] internal Boolean UIScaleOverride = false;
+        [Persistent] internal float UIScaleValue = 1f;
+
         [Persistent] internal Rect IconPos = new Rect(152, 0, 32, 32);
         [Persistent] internal Rect IconPos_SpaceCenter = new Rect(3, 3, 32, 32);
         [Persistent] internal Boolean IconShow_SpaceCenter = true;

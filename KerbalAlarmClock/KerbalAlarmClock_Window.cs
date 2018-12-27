@@ -511,7 +511,7 @@ namespace KerbalAlarmClock
             {
                 MainWindowPos.height += intMainWindowEarthTimeHeight;
             }
-            MainWindowPos = MainWindowPos.ClampToScreen(new RectOffset(0,0,-25,0));
+            MainWindowPos = MainWindowPos.ClampToScreen(new RectOffset(0,0,-25,0), settings.UIScaleOverride ? settings.UIScaleValue : GameSettings.UI_SCALE);
 
             //Now show the window
             WindowPosByActiveScene = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + settings.Version,KACResources.styleWindow);

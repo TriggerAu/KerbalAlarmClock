@@ -480,16 +480,12 @@ namespace KerbalAlarmClock
 				}
 			}
 
-			Boolean isPauseMenuOpen = false;
-			try {
-				isPauseMenuOpen = PauseMenu.isOpen;
-			} catch{}
-
-			if (GUIVisible && !inAdminFacility && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen && settings.HideOnPause))
-				{
-					DrawGUI();
+			if (GUIVisible && !inAdminFacility && !(HighLogic.LoadedScene == GameScenes.FLIGHT && KACWorkerGameState.PauseMenuOpen && settings.HideOnPause))
+			{
+				DrawGUI();
 			}
-			OnGUIMouseEvents();
+
+            OnGUIMouseEvents();
 		}
 
 		private Int32 WarpRateWorkerCounter = 0;

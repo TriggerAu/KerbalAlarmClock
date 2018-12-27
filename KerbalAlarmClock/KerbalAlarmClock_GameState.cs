@@ -48,12 +48,7 @@ namespace KerbalAlarmClock
         {
             get
             {
-                try { return PauseMenu.isOpen; }
-                catch (Exception)
-                {
-                    //if we cant read it it cant be open.
-                    return false;
-                }
+                return (PauseMenu.exists && PauseMenu.isOpen);
             }
         }
 

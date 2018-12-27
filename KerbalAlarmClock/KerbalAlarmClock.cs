@@ -348,11 +348,11 @@ namespace KerbalAlarmClock
 
 			HandleKeyStrokes();
 
-			//Work out if we should be in the gui queue
-			ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
-
-			//Fix the issues with Flight SCene Stuff
-			if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+            //Work out if we should be in the gui queue
+            ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
+            
+            //Fix the issues with Flight SCene Stuff
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT)
 			{
 				//If time goes backwards assume a reload/restart/ if vessel changes and readd to rendering queue
 				CheckForFlightChanges();
@@ -966,7 +966,7 @@ namespace KerbalAlarmClock
 								InputLockManager.SetControlLock(ControlTypes.ALL_SHIP_CONTROLS, "KACControlLock");
 								break;
 							case GameScenes.TRACKSTATION:
-								InputLockManager.SetControlLock(ControlTypes.TRACKINGSTATION_ALL, "KACControlLock");
+								InputLockManager.SetControlLock(ControlTypes.TRACKINGSTATION_ALL | ControlTypes.MAP_UI, "KACControlLock");
 								break;
 							default:
 								break;

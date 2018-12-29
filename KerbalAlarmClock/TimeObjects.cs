@@ -437,7 +437,7 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
-                    var tf = KSPUtil.dateTimeFormatter;
+                    IDateTimeFormatter tf = KSPUtil.dateTimeFormatter;
                     Double result = tf.Year * Convert.ToInt32(ZeroString(Years))
                         + tf.Day * Convert.ToInt32(ZeroString(Days))
                         + tf.Hour * Convert.ToInt32(ZeroString(Hours))

@@ -154,8 +154,10 @@ namespace KerbalAlarmClock
 				KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
 			}
 
-			//Set initial GameState
-			KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
+            KSPDateStructure.UseStockDateFormatters = settings.UseStockDateFormatters;
+
+            //Set initial GameState
+            KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
 
 			//Load Hohmann modelling data - if in flight mode
 			//if ((KACWorkerGameState.LastGUIScene == GameScenes.FLIGHT) && settings.XferModelLoadData)

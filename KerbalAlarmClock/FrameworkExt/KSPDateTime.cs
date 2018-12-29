@@ -261,12 +261,25 @@ namespace KSPPluginFramework
 				case DateStringFormatsEnum.KSPFormat:
 					return ToString();
 				case DateStringFormatsEnum.KSPFormatWithSecs:
-					return KSPUtil.dateTimeFormatter.PrintDate(UT, true, true); // ToString("Year y, Da\\y d - H\\h, m\\m, s\\s");
+                    if (KSPDateStructure.UseStockDateFormatters)
+                    {
+                        return KSPUtil.dateTimeFormatter.PrintDate(UT, true, true);
+                    }
+                    return ToString("Year y, Da\\y d - H\\h, m\\m, s\\s");
 				case DateStringFormatsEnum.DateTimeFormat:
-                    if (KSPDateStructure.CalendarType==CalendarTypeEnum.Earth)
+                    if (KSPDateStructure.CalendarType == CalendarTypeEnum.Earth)
+                    {
                         return ToString("d MMM yyyy, HH:mm:ss");
+                    }
                     else
-					    return KSPUtil.dateTimeFormatter.PrintDateCompact(UT, true, true); // ToString("Year y, Da\\y d, HH:mm:ss");
+                    {
+                        if (KSPDateStructure.UseStockDateFormatters)
+                        {
+
+                            return KSPUtil.dateTimeFormatter.PrintDateCompact(UT, true, true);
+                        }
+                        return ToString("Year y, Da\\y d, HH:mm:ss");
+                    }
 				default:
 					return ToString();
 			}
@@ -279,7 +292,11 @@ namespace KSPPluginFramework
 			if (CalType ==CalendarTypeEnum.Earth) {
 				return ToString(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern + " " + System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern);
 			} else {
-                return KSPUtil.dateTimeFormatter.PrintDate(UT, true, false); // ToString("Year y, Da\\y d - H\\h, m\\m", null);
+                if (KSPDateStructure.UseStockDateFormatters)
+                {
+                    return KSPUtil.dateTimeFormatter.PrintDate(UT, true, false);
+                }
+                return ToString("Year y, Da\\y d - H\\h, m\\m", null);
 			}
 		}
 		/// <summary>Returns the string representation of the value of this instance.</summary> 

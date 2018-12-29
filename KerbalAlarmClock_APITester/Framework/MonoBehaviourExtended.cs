@@ -299,6 +299,20 @@ namespace KSPPluginFramework
         { }
 
         /// <summary>
+        /// <summary>
+        /// Unity: OnPreCull is called before a camera culls the scene. This function is called only if the script is attached to the camera and is enabled.
+        ///
+        /// Trigger: This function is one of the first in the Scene Rendering part of the update loop. When the plugin sees thi function all the background logic is completed
+        ///          At this point in the loop all the positions for onscreen elements are set and using this section can lead to nolag updates on graphic objects
+        /// 
+        ///          NOTE: The class must be attached to a camera object to have this get called -  obj = MapView.MapCamera.gameObject.AddComponent<MBExtended>();
+        /// 
+        ///          See this for info on order of execuction: http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html
+        /// </summary>
+        internal virtual void OnPreCull()
+        { }
+
+        /// <summary>
         /// Unity: Update is called every frame, if the MonoBehaviour is enabled.
         ///
         /// Trigger: This is usually where you stick all your control inputs, keyboard handling, etc

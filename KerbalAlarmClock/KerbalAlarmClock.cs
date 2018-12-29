@@ -190,9 +190,20 @@ namespace KerbalAlarmClock
             GameEvents.onGUIRnDComplexDespawn.Add(LeaveKSCFacility);
 
             // Need this one to handle the hideUI cancelling via pause menu
-            GameEvents.onGameUnpause.Add(OnUnpause);
+            GameEvents.onShowUI.Add(OnShowUI);
+            GameEvents.onHideUI.Add(OnHideUI);
 
-			blnFilterToVessel = false;
+            GameEvents.onUIScaleChange.Add(OnUIScaleChange);
+            if (settings.UIScaleOverride)
+            {
+                guiScale = new Vector2(settings.UIScaleValue, settings.UIScaleValue);
+            }
+            else
+            {
+                guiScale = new Vector2(GameSettings.UI_SCALE, GameSettings.UI_SCALE);
+            }
+
+            blnFilterToVessel = false;
 			if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
 				HighLogic.LoadedScene == GameScenes.FLIGHT)
 				blnShowFilterToVessel = true;
@@ -294,10 +305,12 @@ namespace KerbalAlarmClock
             GameEvents.onGUIRnDComplexDespawn.Remove(LeaveKSCFacility);
 
             // Need this one to handle the hideUI cancelling via pause menu
-            GameEvents.onGameUnpause.Remove(OnUnpause);
+            GameEvents.onShowUI.Remove(OnShowUI);
+            GameEvents.onHideUI.Remove(OnHideUI);
 
+            GameEvents.onUIScaleChange.Remove(OnUIScaleChange);
 
-			Destroy(PhaseAngle);
+            Destroy(PhaseAngle);
 			Destroy(EjectAngle);
 
 			DestroyDropDowns();
@@ -335,11 +348,11 @@ namespace KerbalAlarmClock
 
 			HandleKeyStrokes();
 
-			//Work out if we should be in the gui queue
-			ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
-
-			//Fix the issues with Flight SCene Stuff
-			if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+            //Work out if we should be in the gui queue
+            ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
+            
+            //Fix the issues with Flight SCene Stuff
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT)
 			{
 				//If time goes backwards assume a reload/restart/ if vessel changes and readd to rendering queue
 				CheckForFlightChanges();
@@ -351,15 +364,8 @@ namespace KerbalAlarmClock
 			KACWorkerGameState.SetLastGUIStatesToCurrent();
 		}
 
-		internal Boolean blnFlightUIVisible = true;
-
 		private void HandleKeyStrokes()
 		{
-			if (GameSettings.TOGGLE_UI.GetKeyDown() && HighLogic.LoadedScene == GameScenes.FLIGHT)
-			{
-				blnFlightUIVisible = !blnFlightUIVisible;
-			}
-
 			//Look for key inputs to change settings
 			if (!settings.F11KeystrokeDisabled)
 			{
@@ -442,15 +448,20 @@ namespace KerbalAlarmClock
 				//                IsInPostDrawQueue = false;
 			}
 		}
-		#endregion
+        #endregion
 
-		private void OnUnpause()
-		{
-			LogFormatted_DebugOnly("OnUnpause");
-			GUIVisible = true;
-		}
+        private void OnShowUI()
+        {
+            LogFormatted_DebugOnly("OnShowUI");
+            GUIVisible = true;
+        }
+        private void OnHideUI()
+        {
+            LogFormatted_DebugOnly("OnHideUI");
+            GUIVisible = false;
+        }
 
-		private Boolean GUIVisible = true;
+        private Boolean GUIVisible = true;
         private Boolean inAdminFacility = false;
 
 		//public void OnGUI()
@@ -471,7 +482,7 @@ namespace KerbalAlarmClock
 
 					//if we are adding the renderer and we are in flight then do the daily version check if required
 					if (HighLogic.LoadedScene == GameScenes.FLIGHT && settings.DailyVersionCheck)
-						settings.VersionCheck(false);
+						settings.VersionCheck(this, false);
 
 				}
 				else
@@ -481,16 +492,12 @@ namespace KerbalAlarmClock
 				}
 			}
 
-			Boolean isPauseMenuOpen = false;
-			try {
-				isPauseMenuOpen = PauseMenu.isOpen;
-			} catch{}
-
-			if (GUIVisible && blnFlightUIVisible && !inAdminFacility && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen && settings.HideOnPause))
-				{
-					DrawGUI();
+			if (GUIVisible && !inAdminFacility && !(HighLogic.LoadedScene == GameScenes.FLIGHT && KACWorkerGameState.PauseMenuOpen && settings.HideOnPause))
+			{
+				DrawGUI();
 			}
-			OnGUIMouseEvents();
+
+            OnGUIMouseEvents();
 		}
 
 		private Int32 WarpRateWorkerCounter = 0;
@@ -552,6 +559,15 @@ namespace KerbalAlarmClock
 			//KACResources.SetStyles();
 
 		}
+
+        internal Vector2 guiScale = Vector2.one;
+
+        public void OnUIScaleChange()
+        {
+            guiScale.x = settings.UIScaleOverride ? settings.UIScaleValue : GameSettings.UI_SCALE;
+            guiScale.y = settings.UIScaleOverride ? settings.UIScaleValue : GameSettings.UI_SCALE;
+        }
+        
 		//This is what we do every frame when the object is being drawn 
 		//We dont get here unless we are in the postdraw queue
 		public void DrawGUI()
@@ -569,8 +585,13 @@ namespace KerbalAlarmClock
 			if (WindowVisibleByActiveScene)
 			{
 				DrawWindowsPre();
-				DrawWindows();
-				DrawWindowsPost();
+
+                // Set the scale for this run at stuff
+                GUIUtility.ScaleAroundPivot(guiScale, Vector2.zero);
+                DrawWindows();
+                GUIUtility.ScaleAroundPivot(Vector2.one, Vector2.zero);
+
+                DrawWindowsPost();
 
 			}
 
@@ -945,7 +966,7 @@ namespace KerbalAlarmClock
 								InputLockManager.SetControlLock(ControlTypes.ALL_SHIP_CONTROLS, "KACControlLock");
 								break;
 							case GameScenes.TRACKSTATION:
-								InputLockManager.SetControlLock(ControlTypes.TRACKINGSTATION_ALL, "KACControlLock");
+								InputLockManager.SetControlLock(ControlTypes.TRACKINGSTATION_ALL | ControlTypes.MAP_UI, "KACControlLock");
 								break;
 							default:
 								break;
@@ -1845,11 +1866,12 @@ namespace KerbalAlarmClock
 
 			// Delete the do nothing/delete alarms - One loop to find the ones to delete - cant delete inside the foreach or it breaks the iterator
 			List<KACAlarm> ToDelete = new List<KACAlarm>();
-			//foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.ActionDeleteWhenDone)))
-			foreach (KACAlarm tmpAlarm in alarms.Where(a => a.Actions.Warp == AlarmActions.WarpEnum.DoNothing && a.Actions.DeleteWhenDone ))
-			{
-				if (tmpAlarm.Triggered && tmpAlarm.Actioned)
-					ToDelete.Add(tmpAlarm);
+            //foreach (KACAlarm tmpAlarm in alarms.Where(a => (a.AlarmActionConvert == KACAlarm.AlarmActionEnum.DoNothingDeleteWhenPassed) || (a.ActionDeleteWhenDone)))
+            //foreach (KACAlarm tmpAlarm in alarms.Where(a => a.Actions.Warp == AlarmActions.WarpEnum.DoNothing && a.Actions.DeleteWhenDone))
+            foreach (KACAlarm tmpAlarm in alarms.Where(a => (!a.ShowMessage || a.Actions.Warp == AlarmActions.WarpEnum.DoNothing) && a.Actions.DeleteWhenDone))
+            {
+                if (tmpAlarm.Triggered && tmpAlarm.Actioned)
+    				ToDelete.Add(tmpAlarm);
 			}
 			foreach (KACAlarm a in ToDelete)
 			{
@@ -1977,49 +1999,49 @@ namespace KerbalAlarmClock
 
 
 #if DEBUG
-	//This will kick us into the save called default and set the first vessel active
-	[KSPAddon(KSPAddon.Startup.MainMenu, false)]
-	public class Debug_AutoLoadPersistentSaveOnStartup : MonoBehaviour
-	{
-		//use this variable for first run to avoid the issue with when this is true and multiple addons use it
-		public static bool first = true;
-		public void Start()
-		{
-			//only do it on the first entry to the menu
-			if (first)
-			{
-				first = false;
-				HighLogic.SaveFolder = "default";
-//				HighLogic.SaveFolder = "Career";
-				Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
+//	//This will kick us into the save called default and set the first vessel active
+//	[KSPAddon(KSPAddon.Startup.MainMenu, false)]
+//	public class Debug_AutoLoadPersistentSaveOnStartup : MonoBehaviour
+//	{
+//		//use this variable for first run to avoid the issue with when this is true and multiple addons use it
+//		public static bool first = true;
+//		public void Start()
+//		{
+//			//only do it on the first entry to the menu
+//			if (first)
+//			{
+//				first = false;
+//				HighLogic.SaveFolder = "default";
+////				HighLogic.SaveFolder = "Career";
+//				Game game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
 
-				if (game != null && game.flightState != null && game.compatible)
-				{
-					//straight to spacecenter
-					HighLogic.CurrentGame = game;
-					//HighLogic.LoadScene(GameScenes.SPACECENTER);
-					HighLogic.LoadScene(GameScenes.TRACKSTATION);
-					return;
+//				if (game != null && game.flightState != null && game.compatible)
+//				{
+//					//straight to spacecenter
+//					HighLogic.CurrentGame = game;
+//					//HighLogic.LoadScene(GameScenes.SPACECENTER);
+//					HighLogic.LoadScene(GameScenes.TRACKSTATION);
+//					return;
 
-					Int32 FirstVessel;
-					Boolean blnFoundVessel = false;
-					for (FirstVessel = 0; FirstVessel < game.flightState.protoVessels.Count; FirstVessel++)
-					{
-						if (game.flightState.protoVessels[FirstVessel].vesselType != VesselType.SpaceObject &&
-							game.flightState.protoVessels[FirstVessel].vesselType != VesselType.Unknown)
-						{
-							blnFoundVessel = true;
-							break;
-						}
-					}
-					if (!blnFoundVessel)
-						FirstVessel = 0;
-					FlightDriver.StartAndFocusVessel(game, FirstVessel);
-				}
+//					Int32 FirstVessel;
+//					Boolean blnFoundVessel = false;
+//					for (FirstVessel = 0; FirstVessel < game.flightState.protoVessels.Count; FirstVessel++)
+//					{
+//						if (game.flightState.protoVessels[FirstVessel].vesselType != VesselType.SpaceObject &&
+//							game.flightState.protoVessels[FirstVessel].vesselType != VesselType.Unknown)
+//						{
+//							blnFoundVessel = true;
+//							break;
+//						}
+//					}
+//					if (!blnFoundVessel)
+//						FirstVessel = 0;
+//					FlightDriver.StartAndFocusVessel(game, FirstVessel);
+//				}
 
-				//CheatOptions.InfiniteFuel = true;
-			}
-		}
-	}
+//				//CheatOptions.InfiniteFuel = true;
+//			}
+//		}
+//	}
 #endif
 }

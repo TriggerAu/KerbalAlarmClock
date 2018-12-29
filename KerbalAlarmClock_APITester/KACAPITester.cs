@@ -68,10 +68,17 @@ namespace KerbalAlarmClock_APITester
                 //option to create a new alarm
                 if (GUILayout.Button("Create One"))
                 {
-                    String aID = KACWrapper.KAC.CreateAlarm(KACWrapper.KACAPI.AlarmTypeEnum.TransferModelled, "Test",Planetarium.GetUniversalTime()+900);
-                    
-                    KACWrapper.KAC.Alarms.First(z=>z.ID==aID).Notes = "FRED FLINTSTONE";
+                    String aID = KACWrapper.KAC.CreateAlarm(KACWrapper.KACAPI.AlarmTypeEnum.TransferModelled, "Test", Planetarium.GetUniversalTime() + 900);
 
+                    KACWrapper.KAC.Alarms.First(z => z.ID == aID).Notes = "FRED FLINTSTONE";
+
+                }
+                if (GUILayout.Button("Create Two"))
+                {
+                    String aID = KACWrapper.KAC.CreateAlarm(KACWrapper.KACAPI.AlarmTypeEnum.TransferModelled, "Test", Planetarium.GetUniversalTime() + 900);
+
+                    KACWrapper.KAC.Alarms.First(z => z.ID == aID).Notes = "FRED FLINTSTONE";
+                    KACWrapper.KAC.Alarms.First(z => z.ID == aID).AlarmMargin = 300;
                 }
 
                 GUILayout.BeginHorizontal();

@@ -128,7 +128,7 @@ namespace KerbalAlarmClock
         internal static KACAlarm LoadFromString2(String AlarmDetails)
         {
             String[] vars = AlarmDetails.Split("|".ToCharArray(), StringSplitOptions.None);
-            String SaveName = HighLogic.CurrentGame.Title;
+            //String SaveName = HighLogic.CurrentGame.Title;    //Commented because usage removed
             String VesselID = vars[0];
             String Name = vars[1];
             String Notes = vars[2];
@@ -216,7 +216,7 @@ namespace KerbalAlarmClock
 			    MonoBehaviourExtended.LogFormatted("{0}:{1}",i,vars[i]);
 			}
 
-            String SaveName = HighLogic.CurrentGame.Title;
+            //String SaveName = HighLogic.CurrentGame.Title;    //Commented because usage removed
             String VesselID = vars[0];
             String Name = KACUtils.DecodeVarStrings(vars[1]);
             String Notes = KACUtils.DecodeVarStrings(vars[2]);

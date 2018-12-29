@@ -65,6 +65,8 @@ namespace KerbalAlarmClock
 
                     double dblOrbitTestClosest = Double.MaxValue;
                     double dblOrbitTestClosestUT = 0;
+                    if (KACWorkerGameState.CurrentVessel.orbit.eccentricity > 1)
+                        intOrbits = 1;
                     for (int intOrbitToTest = 1; intOrbitToTest <= intOrbits; intOrbitToTest++)
                     {
                         dblOrbitTestClosestUT = KACUtils.timeOfClosestApproach(KACWorkerGameState.CurrentVessel.orbit,

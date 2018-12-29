@@ -511,7 +511,7 @@ namespace KerbalAlarmClock
             {
                 MainWindowPos.height += intMainWindowEarthTimeHeight;
             }
-            MainWindowPos = MainWindowPos.ClampToScreen(new RectOffset(0,0,-25,0));
+            MainWindowPos = MainWindowPos.ClampToScreen(new RectOffset(0,0,-25,0), settings.UIScaleOverride ? settings.UIScaleValue : GameSettings.UI_SCALE);
 
             //Now show the window
             WindowPosByActiveScene = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + settings.Version,KACResources.styleWindow);
@@ -923,7 +923,8 @@ namespace KerbalAlarmClock
         }
 
         Boolean resizingWidth = false, resizingHeight = false, resizingBoth = false;
-        Boolean cursorWidth = false, cursorHeight = false, cursorBoth = false;
+        Boolean cursorWidth = false;
+        //Boolean cursorHeight = false, cursorBoth = false; //Commented because usage removed
         internal Rect dragHandleWidth, dragHandleHeight, dragHandleBoth;
         internal Vector2 mousePosition;
 
@@ -953,7 +954,11 @@ namespace KerbalAlarmClock
                 //if in width dragrect
                 if (dragHandleWidth.Contains(mousePosition))
                 {
-                    SetCustomCursor(ref cursorWidth, KACResources.curResizeWidth);
+                    //Bypass for 1.4.1 as this kills the game cursor on linux
+                    if (Application.platform != RuntimePlatform.LinuxPlayer)
+                    {
+                        SetCustomCursor(ref cursorWidth, KACResources.curResizeWidth);
+                    }
 
                     //watch for mousedown
                     if (Event.current.type == EventType.mouseDown && Event.current.button == 0)
@@ -964,7 +969,12 @@ namespace KerbalAlarmClock
                 }
                 else
                 {
-                    ClearCustomCursor(ref cursorWidth);
+
+                    //Bypass for 1.4.1 as this kills the game cursor on linux
+                    if (Application.platform != RuntimePlatform.LinuxPlayer)
+                    {
+                        ClearCustomCursor(ref cursorWidth);
+                    }
                 }
             }
 
@@ -1017,7 +1027,8 @@ namespace KerbalAlarmClock
 
                 //reset the cursor
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-                cursorWidth = cursorHeight = cursorBoth = false;
+                cursorWidth = false;
+                //cursorHeight = cursorBoth = false;    //Commented because usage removed
             }
 
 

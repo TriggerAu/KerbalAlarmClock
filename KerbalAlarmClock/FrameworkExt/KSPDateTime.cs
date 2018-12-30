@@ -274,7 +274,7 @@ namespace KSPPluginFramework
                         if (KSPDateStructure.UseStockDateFormatters)
                         {
 
-                            return KSPUtil.dateTimeFormatter.PrintDateCompact(UT, true, true);
+                            return KSPUtil.dateTimeFormatter.PrintDateNew(UT, true);
                         }
                         return ToString("Year y, Da\\y d, HH:mm:ss");
                     }

@@ -98,7 +98,25 @@ namespace KerbalAlarmClock
 
         internal static Double UTToRateDown(int FromIndex, int ToIndex)
         {
-            return WarpRateTransitionPeriods.First(w => w.Index == FromIndex).UTTo1Times - WarpRateTransitionPeriods.First(w => w.Index == ToIndex).UTTo1Times;
+            //return WarpRateTransitionPeriods.First(w => w.Index == FromIndex).UTTo1Times - WarpRateTransitionPeriods.First(w => w.Index == ToIndex).UTTo1Times;
+
+            // 0 GC Usage version below
+            double returnValue = 0;
+            for (int i = 0, iRates = WarpRateTransitionPeriods.Count; i < iRates; i++)
+            {
+                if (WarpRateTransitionPeriods[i].Index == FromIndex)
+                {
+                    returnValue = WarpRateTransitionPeriods[i].UTTo1Times;
+                }
+            }
+            for (int i = 0, iRates = WarpRateTransitionPeriods.Count; i < iRates; i++)
+            {
+                if (WarpRateTransitionPeriods[i].Index == ToIndex)
+                {
+                    returnValue -= WarpRateTransitionPeriods[i].UTTo1Times;
+                }
+            }
+            return returnValue;
         }
         internal static Double UTToRateDownOne
         {

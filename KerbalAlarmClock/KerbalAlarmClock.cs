@@ -543,8 +543,9 @@ namespace KerbalAlarmClock
 
 		private void UpdateContractDetails()
 		{
-			//lstContracts = Contracts.ContractSystem.Instance.Contracts.Where(c => c.DateNext() > 0).OrderBy(c => c.DateNext()).ToList();
+            //lstContracts = Contracts.ContractSystem.Instance.Contracts.Where(c => c.DateNext() > 0).OrderBy(c => c.DateNext()).ToList();
 
+            // 0 GC Usage version below
             if (lstContracts == null)
                 lstContracts = new List<Contract>();
             lstContracts.Clear();

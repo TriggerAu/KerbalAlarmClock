@@ -98,19 +98,24 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if exist "$(ProjectDir)..\..\_Scripts\PostBuildScript.ps1" goto RUNPOSTBUILDPS
+    <POST_BUILD_PS_SCRIPT>..\..\_Scripts\PostBuildScript.ps1</POST_BUILD_PS_SCRIPT>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>echo $(POST_BUILD_PS_SCRIPT)
+
+if exist "$(ProjectDir)$(POST_BUILD_PS_SCRIPT)" goto RUNPOSTBUILDPS
 echo "No PostBuildPS to run. Stopping here"
 exit 0
 
 :RUNPOSTBUILDPS
 echo.
 echo "Running PS Script"
-echo powershell -nologo -file "$(ProjectDir)..\..\_Scripts\PostBuildScript.ps1" -projectName $(ProjectName) -targetPath $(TargetPath) -configurationName $(ConfigurationName)
+echo powershell -nologo -file "$(ProjectDir)$(POST_BUILD_PS_SCRIPT)" -projectName $(ProjectName) -targetPath $(TargetPath) -configurationName $(ConfigurationName)
 echo.
-powershell -nologo -file "$(ProjectDir)..\..\_Scripts\PostBuildScript.ps1" -projectName $(ProjectName) -targetPath $(TargetPath) -configurationName $(ConfigurationName)
+powershell -nologo -file "$(ProjectDir)$(POST_BUILD_PS_SCRIPT)" -projectName $(ProjectName) -targetPath $(TargetPath) -configurationName $(ConfigurationName)
 exit 0
 
-</PostBuildEvent>
+	</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

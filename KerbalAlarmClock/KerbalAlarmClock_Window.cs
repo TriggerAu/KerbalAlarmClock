@@ -1315,7 +1315,8 @@ namespace KerbalAlarmClock
             //String strLabelText = "";
             //strLabelText = String.Format("{0} ({1})", tmpAlarm.Name,tmpAlarm.Remaining.ToStringStandard(settings.TimeSpanFormat,3));
 
-            String strLabelText = tmpAlarm.Name + " (" + tmpAlarm.Remaining.ToStringStandard(settings.TimeSpanFormat, 3) + ")";
+            String strLabelText = tmpAlarm.Name + " (" + tmpAlarm.RemainingTimeSpanString3 + ")";
+            //String strLabelText = tmpAlarm.Name + " (" + tmpAlarm.Remaining.ToStringStandard(settings.TimeSpanFormat, 3) + ")";
             //strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, tmpAlarm.Remaining.ToStringStandard(settings.TimeSpanFormat, 3));
 
             GUIStyle styleLabel = new GUIStyle( KACResources.styleAlarmText);

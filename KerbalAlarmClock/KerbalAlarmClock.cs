@@ -1710,11 +1710,12 @@ namespace KerbalAlarmClock
 					if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(settings.WarpTransitions_ShowIndicatorSecs) < DateTime.Now)
 						tmpAlarm.WarpInfluence = false;
 
-				//Update Remaining interval for each alarm
-				if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
-					tmpAlarm.Remaining.UT = tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT;
-				else
-					tmpAlarm.Remaining.UT = (EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds;
+                //Update Remaining interval for each alarm
+                if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
+                    //tmpAlarm.Remaining.UT = tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT;
+                    tmpAlarm.UpdateRemaining(tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT);
+                else
+                    tmpAlarm.UpdateRemaining((EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds);
 				
 				//set triggered for passed alarms so the OnGUI part can draw the window later
 				//if ((KACWorkerGameState.CurrentTime.UT >= tmpAlarm.AlarmTime.UT) && (tmpAlarm.Enabled) && (!tmpAlarm.Triggered))

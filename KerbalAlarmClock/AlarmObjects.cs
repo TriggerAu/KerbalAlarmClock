@@ -145,7 +145,7 @@ namespace KerbalAlarmClock
         }
 
 
-                #region "Constructors"
+        #region "Constructors"
         public KACAlarm()
         {
             ID = Guid.NewGuid().ToString("N");
@@ -153,7 +153,23 @@ namespace KerbalAlarmClock
         public KACAlarm(double UT) : this ()
         {
             AlarmTime.UT = UT;
-            Remaining.UT = AlarmTime.UT - Planetarium.GetUniversalTime();
+            _lastRemainingUTStringUpdate = double.MaxValue; //force the remaining string update;
+            UpdateRemaining(AlarmTime.UT - Planetarium.GetUniversalTime());
+        }
+
+        private double _lastRemainingUTStringUpdate;
+        private string _remainingTimeStamp3;
+        public string RemainingTimeSpanString3 { get { return _remainingTimeStamp3; } }
+        internal void UpdateRemaining(double remaining)
+        {
+            Remaining.UT = remaining;
+
+            //Do we need to update strings?
+            if (Math.Floor(remaining) != _lastRemainingUTStringUpdate)
+            {
+                _remainingTimeStamp3 = Remaining.ToStringStandard(KerbalAlarmClock.settings.TimeSpanFormat, 3);
+                _lastRemainingUTStringUpdate = Math.Floor(remaining);
+            }
         }
 
         public KACAlarm(String NewName, double UT, AlarmTypeEnum atype, AlarmActions aAction)

@@ -4,7 +4,7 @@
   <!-- Configuration Defaults; can be overridden in the .user file -->
   <PropertyGroup>
     <KSP_DIR>..\..\_Versions\KSP_win_PluginTest</KSP_DIR>
-    <PDB2MDB_TOOL>..\..\pdb2mdb.exe</PDB2MDB_TOOL>
+    <POST_BUILD_PS_SCRIPT>..\..\_Scripts\PostBuildScript.ps1</POST_BUILD_PS_SCRIPT>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -103,85 +103,21 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>rem Set the Variables we need
-if exist "$(PDB2MDB_TOOL)" (
-	echo Converting debug symbols...
-	"$(PDB2MDB_TOOL)" "$(TargetPath)"
-) else (
-	echo Couldn't find PDB2MDB tool "$(PDB2MDB_TOOL)"..
-)
+    <PostBuildEvent>
 
-echo Finding KSP
+if exist "$(ProjectDir)$(POST_BUILD_PS_SCRIPT)" goto RUNPOSTBUILDPS
+echo "No PostBuildPS to run. Stopping here"
+exit 0
 
-rem if exist "R:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
-rem 	set GAMEPATH="R:\~Games\KSP_Win_PlugInTest_Minimal"
-rem ) else if exist "D:\Programming\KSP\_Versions\KSP_win_PluginTest_Minimal\KSP.exe" (
-rem 	set GAMEPATH="D:\Programming\KSP\_Versions\KSP_Win_PlugInTest_Minimal"
-rem ) else if exist "C:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
-rem 	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest_Minimal
-rem ) else if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP.exe" (
+:RUNPOSTBUILDPS
+echo.
+echo "Running PS Script"
+echo powershell -nologo -file "$(ProjectDir)$(POST_BUILD_PS_SCRIPT)" -projectName $(ProjectName) -targetPath $(TargetPath) -configurationName $(ConfigurationName)
+echo.
+powershell -nologo -file "$(ProjectDir)$(POST_BUILD_PS_SCRIPT)" -projectName $(ProjectName) -targetPath $(TargetPath) -configurationName $(ConfigurationName)
+exit 0
 
-if exist "$(KSP_DIR)\KSP_x64.exe" (
-	set GAMEPATH="$(KSP_DIR)"
-) else if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP_x64.exe" (
-	set GAMEPATH="D:\Programming\KSP\_Versions\KSP_win_PluginTest"
-) else if exist "C:\~Games\KSP_Win_PlugInTest\KSP_x64.exe" (
-	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest"
-) else (
-	echo "Cant find KSP"
-	rem Let's not fail the build if we can't auto-start the game...
-	exit 0
-)
-
-echo Gamepath: %25GAMEPATH%25
-echo ConfigName: $(ConfigurationName)
-set DestPath="%25GAMEPATH%25\GameData\TriggerTech\KerbalAlarmClock"
-set Binary="%25GAMEPATH%25\KSP_x64.exe"
-set DbgBinary="%25GAMEPATH%25\KSP_x64_Dbg.exe"
-
-if not $(ConfigurationName)==Debug goto DEBUGREBUILDCONFIG
-:DEBUGCONFIG
-rem Copy DLL and run KSP
-copy "$(TargetPath)" "%25DestPath%25"
-if exist "$(TargetPath).mdb" (
-	copy "$(TargetPath).mdb" "%25DestPath%25"
-)
-rem and then run the game
-if exist "$(ProjectDir)..\..\StartX.exe" goto STARTX
-if exist "%25DbgBinary%25" goto START_KSP_DBG
-echo Running Directly
-"%25Binary%25"
-goto END
-
-:STARTX
-echo STARTX running
-"$(ProjectDir)..\..\StartX.exe" "%25Binary%25"
-goto END
-
-:START_KSP_DBG
-echo START_KSP_DBG running
-"%25DbgBinary%25"
-goto END
-
-:DEBUGREBUILDCONFIG
-if not $(ConfigurationName)==DebugAndRebuild goto END
-rem This one will empty the dest folder and copy all the source files
-
-rem Delete the folder and recreate it
-rmdir /s /q "%25DestPath%25"
-mkdir "%25DestPath%25"
-
-rem Nowcopy all the files from the pluginfiles source
-xcopy "%25SourcePath%25\*.*" "%25DestPath%25" /SE
-rem and copy the new dll
-copy "$(TargetPath)" "%25DestPath%25"
-
-rem and then run the game
-"%25Binary%25"
-
-goto END
-
-:END</PostBuildEvent>
+	</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

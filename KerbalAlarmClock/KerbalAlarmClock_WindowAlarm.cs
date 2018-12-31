@@ -189,40 +189,63 @@ namespace KerbalAlarmClock
 		//VesselOrCrewStuff
 		private static Boolean CheckVesselOrCrewForJump(String ID, KACAlarm.AlarmTypeEnum aType)
 		{
-			if (aType == KACAlarm.AlarmTypeEnum.Crew && StoredCrewExists(ID))
-			{
-				return true;
-			}
-			else if (StoredVesselExists(ID))
-			{
-				if (settings.AllowJumpToAsteroid)
-					return true;
-				else if (StoredVessel(ID).vesselType != VesselType.SpaceObject)
-					return true;
-				else
-					return false;
-			}
-			else 
-				return false;
+            if (aType == KACAlarm.AlarmTypeEnum.Crew && StoredCrewExists(ID))
+            {
+                return true;
+            }
+            else
+            {
+                Vessel v = StoredVessel(ID);
 
+                if (v != null)
+                {
+                    if (v.vesselType != VesselType.SpaceObject && v.DiscoveryInfo.Level != DiscoveryLevels.Owned)
+                        return false;
+                    else if (settings.AllowJumpToAsteroid)
+                        return true;
+                    else if (StoredVessel(ID).vesselType != VesselType.SpaceObject)
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
 		}
 
 
 		//Stuff to do with stored VesselIDs
 		private static void DrawStoredVesselIDMissing(String VesselID)
 		{
-			if (VesselID!=null && VesselID != "" && !StoredVesselExists(VesselID))
+			if (!StoredVesselExists(VesselID))
 			{
 				GUILayout.Label("Stored VesselID no longer exists",KACResources.styleLabelWarning);
 			}
 		}
 		internal static Boolean StoredVesselExists(String VesselID)
 		{
-			return (VesselID != null) && (VesselID != "") && (FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID) != null);
+            return StoredVessel(VesselID) != null;
+			//return (VesselID != null) && (VesselID != "") && (FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID) != null);
 		}
-		internal static Vessel StoredVessel(String VesselID)
-		{
-			return FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID);
+
+        internal static Vessel StoredVessel(String VesselID)
+        {
+            if (VesselID == null || VesselID == "")
+            {
+                return null;
+            }
+
+            try
+            {
+                Guid g = new Guid(VesselID);
+                return FlightGlobals.FindVessel(g);
+            }
+            catch { }
+
+            return null;
+			//return FlightGlobals.Vessels.FirstOrDefault(v => v.id.ToString() == VesselID);
 		}
 
 		//Stuff to do with Stored Kerbal Crew

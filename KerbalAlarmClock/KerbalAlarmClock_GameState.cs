@@ -48,12 +48,7 @@ namespace KerbalAlarmClock
         {
             get
             {
-                try { return PauseMenu.isOpen; }
-                catch (Exception)
-                {
-                    //if we cant read it it cant be open.
-                    return false;
-                }
+                return (PauseMenu.exists && PauseMenu.isOpen);
             }
         }
 
@@ -216,7 +211,7 @@ namespace KerbalAlarmClock
                 }
                 else if (KACWorkerGameState.CurrentGUIScene == GameScenes.TRACKSTATION)
                 {
-                    SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
+                    //SpaceTracking st = (SpaceTracking)KACSpaceCenter.FindObjectOfType(typeof(SpaceTracking));
                     PlanetariumCamera c = PlanetariumCamera.fetch;
                     if (c.target != null && c.target.type == MapObject.ObjectType.Vessel)
                     {

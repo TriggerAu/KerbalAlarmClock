@@ -17,28 +17,49 @@ namespace KerbalAlarmClock
         /// </summary>
         internal static List<WarpTransition> WarpRateTransitionPeriods = new List<WarpTransition>();
 
-        internal static String WarpRateHash = "";
+        internal static float[] warpRates;
         internal static Boolean CheckForTransitionChanges()
         {
             if (TimeWarp.fetch == null)
             {
                 return false;
             }
-            //check to see if the warp rates are still the same
-            String NewHash = "";
 
-            for (int i = 0; i < TimeWarp.fetch.warpRates.Length; i++) {
-                NewHash += TimeWarp.fetch.warpRates[i].ToString() + "|";
+            float[] currentRates = TimeWarp.fetch.warpRates;
+
+            //check to see if the warp rates are still the same
+            bool ratesChanged = false;
+            if (warpRates == null)
+            {
+                ratesChanged = true;
             }
-            
-            //if not then work out the time to change rates values
-            if (NewHash == WarpRateHash) {
-                return false;
-            } else {
-                WarpRateHash = NewHash;
+            else if (warpRates.Length != currentRates.Length)
+            {
+                ratesChanged = true;
+            }
+            else
+            { 
+                for (int i = 0; i < currentRates.Length; i++)
+                {
+                    if(warpRates[i] != currentRates[i])
+                    {
+                        ratesChanged = true;
+                        break;
+                    }
+                }
+            }
+            if (ratesChanged)
+            {
+                //if not then work out the time to change rates values
+                warpRates = new float[currentRates.Length];
+                for (int i = 0; i < currentRates.Length; i++)
+                {
+                    warpRates[i] = currentRates[i];
+                }
                 CalcWarpRateTransitions();
-                return true;
             }
+
+            return ratesChanged;
         }
 
         internal static void CalcWarpRateTransitions()
@@ -77,7 +98,25 @@ namespace KerbalAlarmClock
 
         internal static Double UTToRateDown(int FromIndex, int ToIndex)
         {
-            return WarpRateTransitionPeriods.First(w => w.Index == FromIndex).UTTo1Times - WarpRateTransitionPeriods.First(w => w.Index == ToIndex).UTTo1Times;
+            //return WarpRateTransitionPeriods.First(w => w.Index == FromIndex).UTTo1Times - WarpRateTransitionPeriods.First(w => w.Index == ToIndex).UTTo1Times;
+
+            // 0 GC Usage version below
+            double returnValue = 0;
+            for (int i = 0, iRates = WarpRateTransitionPeriods.Count; i < iRates; i++)
+            {
+                if (WarpRateTransitionPeriods[i].Index == FromIndex)
+                {
+                    returnValue = WarpRateTransitionPeriods[i].UTTo1Times;
+                }
+            }
+            for (int i = 0, iRates = WarpRateTransitionPeriods.Count; i < iRates; i++)
+            {
+                if (WarpRateTransitionPeriods[i].Index == ToIndex)
+                {
+                    returnValue -= WarpRateTransitionPeriods[i].UTTo1Times;
+                }
+            }
+            return returnValue;
         }
         internal static Double UTToRateDownOne
         {

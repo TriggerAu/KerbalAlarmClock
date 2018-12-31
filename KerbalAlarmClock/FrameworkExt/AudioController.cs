@@ -13,13 +13,13 @@ namespace KerbalAlarmClock
     {
         //Parent Objects
         internal KerbalAlarmClock mbKAC;
-        private Settings settings;
-        
+        //private Settings settings;  //Commented because usage removed
+
         AudioSource audiosourceAlarm;
 
         internal void Init()
         {
-            settings = KerbalAlarmClock.settings;
+            //settings = KerbalAlarmClock.settings;  //Commented cause usage removed
 
             //if (Resources.clipAlarms.ContainsKey(settings.AlarmsAlertSound))
             //    mbARP.clipAlarmsAlert = Resources.clipAlarms[settings.AlarmsAlertSound];

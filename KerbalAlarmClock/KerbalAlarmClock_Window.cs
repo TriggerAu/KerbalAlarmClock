@@ -511,7 +511,7 @@ namespace KerbalAlarmClock
             {
                 MainWindowPos.height += intMainWindowEarthTimeHeight;
             }
-            MainWindowPos = MainWindowPos.ClampToScreen(new RectOffset(0,0,-25,0));
+            MainWindowPos = MainWindowPos.ClampToScreen(new RectOffset(0,0,-25,0), settings.UIScaleOverride ? settings.UIScaleValue : GameSettings.UI_SCALE);
 
             //Now show the window
             WindowPosByActiveScene = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + settings.Version,KACResources.styleWindow);
@@ -923,7 +923,8 @@ namespace KerbalAlarmClock
         }
 
         Boolean resizingWidth = false, resizingHeight = false, resizingBoth = false;
-        Boolean cursorWidth = false, cursorHeight = false, cursorBoth = false;
+        Boolean cursorWidth = false;
+        //Boolean cursorHeight = false, cursorBoth = false; //Commented because usage removed
         internal Rect dragHandleWidth, dragHandleHeight, dragHandleBoth;
         internal Vector2 mousePosition;
 
@@ -1026,7 +1027,8 @@ namespace KerbalAlarmClock
 
                 //reset the cursor
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-                cursorWidth = cursorHeight = cursorBoth = false;
+                cursorWidth = false;
+                //cursorHeight = cursorBoth = false;    //Commented because usage removed
             }
 
 
@@ -1095,6 +1097,9 @@ namespace KerbalAlarmClock
             }
         }
 
+
+        private KACAlarm alarmList_tmpAlarm;
+        private List<KACAlarm> alarmList_AlarmsToRemove;
         //Display Full alarm list 
         //internal static Rect rectScrollview;
         internal Vector2 scrollPosition = Vector2.zero;
@@ -1106,14 +1111,37 @@ namespace KerbalAlarmClock
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, styleTemp);
 
             //What alarms are we gonna show
-            alarmsDisplayed = alarms.OrderBy(a => a.AlarmTime.UT).ThenBy(a => a.ID.ToString()).ToList();
-            if (blnFilterToVessel)
+
+            //alarmsDisplayed = alarms.OrderBy(a => a.AlarmTime.UT).ThenBy(a => a.ID.ToString()).ToList();
+            //if (blnFilterToVessel)
+            //{
+            //    if (KACWorkerGameState.CurrentVessel != null)
+            //        alarmsDisplayed = alarmsDisplayed.Where(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()).ToList();
+            //    else
+            //        alarmsDisplayed = new List<KACAlarm>();
+            //}
+
+            // 0 GC Usage version below
+            if (alarmsDisplayed == null)
+                alarmsDisplayed = new List<KACAlarm>();
+            alarmsDisplayed.Clear();
+
+            for (int i = 0,iAlarmCount=alarms.Count; i < iAlarmCount; i++)
             {
-                if (KACWorkerGameState.CurrentVessel != null)
-                    alarmsDisplayed = alarmsDisplayed.Where(a => a.VesselID == KACWorkerGameState.CurrentVessel.id.ToString()).ToList();
+                if (!blnFilterToVessel)
+                {
+                    alarmsDisplayed.Add(alarms[i]);
+                }
                 else
-                    alarmsDisplayed = new List<KACAlarm>();
+                {
+                    if (KACWorkerGameState.CurrentVessel != null && alarms[i].VesselID == KACWorkerGameState.CurrentVessel.id.ToString())
+                    {
+                        alarmsDisplayed.Add(alarms[i]);
+                    }
+                }
             }
+            alarmsDisplayed.Sort(delegate (KACAlarm a, KACAlarm b) { return a.AlarmTimeUT.CompareTo(b.AlarmTimeUT);});
+
 
             if (alarms.Count == 0)
             {
@@ -1129,31 +1157,36 @@ namespace KerbalAlarmClock
             else 
             {
                 GUILayout.Space(4);
-                List<KACAlarm> AlarmsToRemove = new List<KACAlarm>();
+                if(alarmList_AlarmsToRemove==null)
+                    alarmList_AlarmsToRemove = new List<KACAlarm>();
+                alarmList_AlarmsToRemove.Clear();
 
-                foreach (KACAlarm tmpAlarm in alarmsDisplayed)
+                for (int i = 0,iAlarmsCount = alarmsDisplayed.Count; i < iAlarmsCount; i++)
                 {
+                    alarmList_tmpAlarm = alarmsDisplayed[i];
+
                     //Draw a line for each alarm, returns true is person clicked delete
-                    if (DrawAlarmLine(tmpAlarm))
+                    if (DrawAlarmLine(alarmList_tmpAlarm))
                     {
                         if (!settings.ConfirmAlarmDeletes)
-                            AlarmsToRemove.Add(tmpAlarm);
+                            alarmList_AlarmsToRemove.Add(alarmList_tmpAlarm);
                         else
                         {
                             ResetPanes();
-                            winConfirmAlarmDelete.AlarmToConfirm = tmpAlarm;
+                            winConfirmAlarmDelete.AlarmToConfirm = alarmList_tmpAlarm;
                             winConfirmAlarmDelete.Visible = true;
                         }
                     }
                 }
 
-                if (AlarmsToRemove.Count > 0)
+                if (alarmList_AlarmsToRemove.Count > 0)
                 {
-                    foreach (KACAlarm tmpAlarm in AlarmsToRemove)
+                    for (int i = alarmList_AlarmsToRemove.Count; i-- > 0;)
                     {
-                        alarms.Remove(tmpAlarm);
+                        alarms.Remove(alarmList_AlarmsToRemove[i]);
                         //settings.SaveAlarms();
                     }
+
                     //is the game paused, yet we deleted any active pause alarms??
                     if (alarms.FirstOrDefault(a => (a.AlarmWindowID != 0 && a.PauseGame == true)) == null)
                     {
@@ -1279,8 +1312,12 @@ namespace KerbalAlarmClock
 
             //float width1 = fOutMin1;
 
-            String strLabelText = "";
-            strLabelText = String.Format("{0} ({1})", tmpAlarm.Name,tmpAlarm.Remaining.ToStringStandard(settings.TimeSpanFormat,3));
+            //String strLabelText = "";
+            //strLabelText = String.Format("{0} ({1})", tmpAlarm.Name,tmpAlarm.Remaining.ToStringStandard(settings.TimeSpanFormat,3));
+
+            String strLabelText = tmpAlarm.Name + " (" + tmpAlarm.RemainingTimeSpanString3 + ")";
+            //String strLabelText = tmpAlarm.Name + " (" + tmpAlarm.Remaining.ToStringStandard(settings.TimeSpanFormat, 3) + ")";
+            //strLabelText = String.Format("{0} ({1})", tmpAlarm.Name, tmpAlarm.Remaining.ToStringStandard(settings.TimeSpanFormat, 3));
 
             GUIStyle styleLabel = new GUIStyle( KACResources.styleAlarmText);
             if ((!tmpAlarm.Enabled || tmpAlarm.Actioned))
@@ -1513,7 +1550,7 @@ namespace KerbalAlarmClock
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Selected Vessel:", KACResources.styleAddHeading);
                 String strVesselName = "No Selected Vessel";
-                if (KACWorkerGameState.CurrentVessel != null) strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
+                if (KACWorkerGameState.CurrentVessel != null) strVesselName = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName);
                 GUILayout.Label(strVesselName, KACResources.styleLabelWarning);
                 GUILayout.EndHorizontal();
             }

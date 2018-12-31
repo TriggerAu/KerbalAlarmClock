@@ -28,7 +28,7 @@ namespace KSPPluginFramework
             {
                 if (CalType != CalendarTypeEnum.Earth)
                 {
-                    return (Int32)UT / KSPDateStructure.SecondsPerYear;
+                    return (Int32)(UT / KSPDateStructure.SecondsPerYear);
                 }
                 else
                 {
@@ -46,9 +46,9 @@ namespace KSPPluginFramework
         public Int32 Days {
             get {
                 if (CalType != CalendarTypeEnum.Earth) {
-                    return (Int32)UT / KSPDateStructure.SecondsPerDay % KSPDateStructure.DaysPerYear;
+                    return (Int32)(UT / KSPDateStructure.SecondsPerDay % KSPDateStructure.DaysPerYear);
                 } else {
-                    return (Int32)UT / KSPDateStructure.SecondsPerDay;
+                    return (Int32)(UT / KSPDateStructure.SecondsPerDay);
                 } 
             }
         }
@@ -56,7 +56,7 @@ namespace KSPPluginFramework
         /// <summary>Gets the hours component of the time interval represented by the current KSPPluginFramework.KSPTimeSpan structure.</summary> 
         /// <returns>The hour component of the current KSPPluginFramework.KSPTimeSpan structure. The return value ranges between +/- <see cref="KSPDateStructure.HoursPerDay"/></returns>
         public int Hours {
-            get { return (Int32)UT / KSPDateStructure.SecondsPerHour % KSPDateStructure.HoursPerDay; }
+            get { return (Int32)(UT / KSPDateStructure.SecondsPerHour % KSPDateStructure.HoursPerDay); }
         }
 
         /// <summary>Gets the minutes component of the time interval represented by the current KSPPluginFramework.KSPTimeSpan structure.</summary> 
@@ -171,26 +171,38 @@ namespace KSPPluginFramework
         /// <returns>A string that represents the value of this instance.</returns>
         public String ToStringStandard(TimeSpanStringFormatsEnum TimeSpanFormat, Int32 Precision = 6)
         {
+            double absUT = Math.Abs(UT);
+
             switch (TimeSpanFormat)
             {
                 case TimeSpanStringFormatsEnum.TimeAsUT:
-                    String strReturn = "";
-                    if (UT < 0) strReturn += "+ ";
-                    strReturn += String.Format("{0:N0}s", Math.Abs(UT));
-                    return strReturn;
+                    return (UT < 0 ? "+ " : "") + string.Format("{0:N0}s", absUT);
                 case TimeSpanStringFormatsEnum.KSPFormat:
                     return ToString(Precision);
                 case TimeSpanStringFormatsEnum.DateTimeFormat:
                     return ToDateTimeString(Precision);
                 case TimeSpanStringFormatsEnum.IntervalLong:
+                    if (KSPDateStructure.UseStockDateFormatters)
+                    {
+                        return (UT < 0 ? "+ " : "") + KSPUtil.dateTimeFormatter.PrintDateDelta(absUT, false, false, false) + ", " + KSPUtil.dateTimeFormatter.PrintTimeStampCompact(absUT, false, false);
+                    }
                     return ToString((UT < 0?"+ ":"") + "y Year\\s, d Da\\y\\s, hh:mm:ss");
                 case TimeSpanStringFormatsEnum.IntervalLongTrimYears:
+                    if (KSPDateStructure.UseStockDateFormatters)
+                    {
+                        return (UT < 0 ? "+ " : "") + KSPUtil.dateTimeFormatter.PrintDateDelta(absUT, false, false, false) + ", " + KSPUtil.dateTimeFormatter.PrintTimeStampCompact(absUT, false, false);
+                    }
                     return ToString((UT < 0 ? "+ " : "") + "y Year\\s, d Da\\y\\s, hh:mm:ss").Replace("0 Years, ", "");
                 case TimeSpanStringFormatsEnum.DateTimeFormatLong:
+                    if (KSPDateStructure.UseStockDateFormatters)
+                    {
+                        return (UT < 0 ? "+ " : "") + KSPUtil.dateTimeFormatter.PrintDateDeltaCompact(absUT, true, true, true);
+                    }
+
                     String strFormat = "";
                     if (Years > 0) strFormat += "y\\y";
-                    if (Days > 0) strFormat += (strFormat.EndsWith("y") ? ", ":"") + "d\\d";
-                    if (strFormat!="") strFormat += " ";
+                    if (Days > 0) strFormat += (strFormat.EndsWith("y") ? ", " : "") + "d\\d";
+                    if (strFormat != "") strFormat += " ";
                     strFormat += "hh:mm:ss";
 
                     if (UT < 0) strFormat = "+ " + strFormat;
@@ -213,14 +225,21 @@ namespace KSPPluginFramework
         /// <returns>A string that represents the value of this instance.</returns>
         public String ToString(Int32 Precision)
         {
+            if (KSPDateStructure.UseStockDateFormatters)
+            {
+                return (UT < 0 ? "+ " : "") + KSPUtil.dateTimeFormatter.PrintTime(Math.Abs(UT), Precision, false);
+            }
+
             Int32 Displayed = 0;
             String format = "";
 
             if (UT < 0) format += "+";
 
 
-            if (CalType != CalendarTypeEnum.Earth) {
-                if ((Years != 0) && Displayed < Precision) {
+            if (CalType != CalendarTypeEnum.Earth)
+            {
+                if ((Years != 0) && Displayed < Precision)
+                {
                     format = "y\\y,";
                     Displayed++;
                 }
@@ -233,18 +252,19 @@ namespace KSPPluginFramework
             }
             if ((Hours != 0 || format.EndsWith(",")) && Displayed < Precision)
             {
-                format += (format==""?"":" ") + "h\\h,";
+                format += (format == "" ? "" : " ") + "h\\h,";
                 Displayed++;
 
             }
             if ((Minutes != 0 || format.EndsWith(",")) && Displayed < Precision)
             {
-                format += (format==""?"":" ") + "m\\m,";
+                format += (format == "" ? "" : " ") + "m\\m,";
                 Displayed++;
 
             }
-            if (Displayed<Precision) {
-                format += (format==""?"":" ") + "s\\s,";
+            if (Displayed < Precision)
+            {
+                format += (format == "" ? "" : " ") + "s\\s,";
                 Displayed++;
 
             }
@@ -259,6 +279,36 @@ namespace KSPPluginFramework
         /// <returns>A string that represents the value of this instance.</returns>
         public String ToDateTimeString(Int32 Precision)
         {
+            if (KSPDateStructure.UseStockDateFormatters)
+            {
+                string returnValue = "";
+                double UTAbs = Math.Abs(UT);
+                if (UTAbs > KSPDateStructure.SecondsPerDay)
+                {
+                    returnValue = KSPUtil.dateTimeFormatter.PrintDateDeltaCompact(UTAbs, false, false, false) + ", ";
+                }
+                returnValue += KSPUtil.dateTimeFormatter.PrintTimeStampCompact(UTAbs, false, false);
+
+                int precCounter = 0,returnLength = returnValue.Length;
+                for (int i = 0; i < returnLength; i++)
+                {
+                    if (returnValue[i] == ',' || returnValue[i] == ':')
+                        precCounter++;
+                    if (precCounter > (Precision - 1))
+                    {
+                        returnLength = i;
+                        break;
+                    }
+                }
+
+                if(returnLength < returnValue.Length)
+                {
+                    returnValue = returnValue.Substring(0, returnLength);
+                }
+                
+                return (UT < 0 ? "+ " : "") + returnValue;
+            }
+
             Int32 Displayed = 0;
             String format = "";
 

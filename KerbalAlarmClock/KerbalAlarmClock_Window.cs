@@ -1550,7 +1550,7 @@ namespace KerbalAlarmClock
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Selected Vessel:", KACResources.styleAddHeading);
                 String strVesselName = "No Selected Vessel";
-                if (KACWorkerGameState.CurrentVessel != null) strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
+                if (KACWorkerGameState.CurrentVessel != null) strVesselName = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName);
                 GUILayout.Label(strVesselName, KACResources.styleLabelWarning);
                 GUILayout.EndHorizontal();
             }

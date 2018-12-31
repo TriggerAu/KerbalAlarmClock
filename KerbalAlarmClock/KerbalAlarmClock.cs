@@ -1085,8 +1085,8 @@ namespace KerbalAlarmClock
 				if (KACWorkerGameState.ChangedVessel)
 				{
 					String strVesselName = "No Vessel";
-					if (KACWorkerGameState.LastVessel!=null) strVesselName=KACWorkerGameState.LastVessel.vesselName;
-					LogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
+					if (KACWorkerGameState.LastVessel!=null) strVesselName = KSP.Localization.Localizer.Format(KACWorkerGameState.LastVessel.vesselName);
+					LogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName));
 				}
 
                 // Do we need to clear any highlighted science labs?
@@ -1298,8 +1298,8 @@ namespace KerbalAlarmClock
 				//strOldAlarmMessageSOI = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
 				//                "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
 				//                "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
-				strSOIAlarmName = KACWorkerGameState.CurrentVessel.vesselName;// + "-Leaving " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName;
-				strSOIAlarmNotes = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
+				strSOIAlarmName = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName);// + "-Leaving " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName;
+				strSOIAlarmNotes = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + " - Nearing SOI Change\r\n" +
 								"     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
 								"     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
 			}
@@ -1530,8 +1530,8 @@ namespace KerbalAlarmClock
 				
 				List<ManeuverNode> manNodesToStore = KACWorkerGameState.ManeuverNodesFuture;
 
-				String strManNodeAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-				String strManNodeAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Maneuver Node";
+				String strManNodeAlarmName = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName);
+				String strManNodeAlarmNotes = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing Maneuver Node";
 
 				//Are we updating an alarm
 				if (tmpAlarm != null)

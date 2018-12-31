@@ -40,14 +40,14 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\_Versions\KSP_win_PluginTest\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\_Versions\KSP_win_PluginTest\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\_Versions\KSP_win_PluginTest\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\_Versions\KSP_win_PluginTest\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -98,68 +98,19 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>rem Set the Variables we need
-echo Finding KSP
+    <PostBuildEvent>if exist "$(ProjectDir)..\..\_Scripts\PostBuildScript.ps1" goto RUNPOSTBUILDPS
+echo "No PostBuildPS to run. Stopping here"
+exit 0
 
-rem if exist "R:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
-rem 	set GAMEPATH="R:\~Games\KSP_Win_PlugInTest_Minimal"
-rem ) else if exist "D:\Programming\KSP\_Versions\KSP_win_PluginTest_Minimal\KSP.exe" (
-rem 	set GAMEPATH="D:\Programming\KSP\_Versions\KSP_Win_PlugInTest_Minimal"
-rem ) else if exist "C:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
-rem 	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest_Minimal
-rem ) else if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP.exe" (
+:RUNPOSTBUILDPS
+echo.
+echo "Running PS Script"
+echo powershell -nologo -file "$(ProjectDir)..\..\_Scripts\PostBuildScript.ps1" -projectName $(ProjectName) -targetPath $(TargetPath) -configurationName $(ConfigurationName)
+echo.
+powershell -nologo -file "$(ProjectDir)..\..\_Scripts\PostBuildScript.ps1" -projectName $(ProjectName) -targetPath $(TargetPath) -configurationName $(ConfigurationName)
+exit 0
 
-if exist "D:\Programming\KSP\_Versions\KSP_Win_PlugInTest\KSP.exe" (
-	set GAMEPATH="D:\Programming\KSP\_Versions\KSP_win_PluginTest"
-) else if exist "C:\~Games\KSP_Win_PlugInTest\KSP.exe" (
-	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest"
-)else (
-	echo "Cant find KSP"
-	exit 1
-)
-
-echo Gamepath: %25GAMEPATH%25
-echo ConfigName: $(ConfigurationName)
-set DestPath="%25GAMEPATH%25\GameData\TriggerTech\KerbalAlarmClock"
-set Binary="%25GAMEPATH%25\KSP.exe"
-
-if not $(ConfigurationName)==Debug goto DEBUGREBUILDCONFIG
-:DEBUGCONFIG
-rem Copy DLL and run KSP
-copy "$(TargetPath)" "%25DestPath%25"
-rem and then run the game
-if exist "$(ProjectDir)..\..\StartX.exe" goto STARTX
-echo Running Directly
-"%25Binary%25"
-goto END
-
-:STARTX
-echo STARTX running
-"$(ProjectDir)..\..\StartX.exe" "%25Binary%25"
-goto END
-"%25Binary%25"
-
-goto END
-
-:DEBUGREBUILDCONFIG
-if not $(ConfigurationName)==DebugAndRebuild goto END
-rem This one will empty the dest folder and copy all the source files
-
-rem Delete the folder and recreate it
-rmdir /s /q "%25DestPath%25"
-mkdir "%25DestPath%25"
-
-rem Nowcopy all the files from the pluginfiles source
-xcopy "%25SourcePath%25\*.*" "%25DestPath%25" /SE
-rem and copy the new dll
-copy "$(TargetPath)" "%25DestPath%25"
-
-rem and then run the game
-"%25Binary%25"
-
-goto END
-
-:END</PostBuildEvent>
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

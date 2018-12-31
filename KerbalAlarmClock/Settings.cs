@@ -296,6 +296,7 @@ namespace KerbalAlarmClock
 
         [Persistent] internal CalendarTypeEnum SelectedCalendar = CalendarTypeEnum.KSPStock;
         [Persistent] internal String EarthEpoch = "1951-01-01";
+        [Persistent] internal bool UseStockDateFormatters = true;
 
         [Persistent] internal Boolean ShowCalendarToggle = false;
         internal Boolean RSSActive = false;

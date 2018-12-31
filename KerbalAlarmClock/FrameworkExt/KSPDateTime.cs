@@ -21,7 +21,7 @@ namespace KSPPluginFramework
 			get { if (CalType == CalendarTypeEnum.Earth) 
 				return _EarthDateTime.Year;
 			else
-				return KSPDateStructure.EpochYear + (Int32)UT / KSPDateStructure.SecondsPerYear; 
+				return KSPDateStructure.EpochYear + (Int32)(UT / KSPDateStructure.SecondsPerYear); 
 			}
 		}
 
@@ -31,7 +31,7 @@ namespace KSPPluginFramework
 			get { if (CalType == CalendarTypeEnum.Earth) 
 				return _EarthDateTime.DayOfYear;
 			else
-				return KSPDateStructure.EpochDayOfYear + (Int32)UT / KSPDateStructure.SecondsPerDay % KSPDateStructure.DaysPerYear; 
+				return KSPDateStructure.EpochDayOfYear + (Int32)(UT / KSPDateStructure.SecondsPerDay % KSPDateStructure.DaysPerYear); 
 			}
 		}
 
@@ -184,7 +184,7 @@ namespace KSPPluginFramework
 		{
 			//Test for entering values outside the norm - eg 25 hours, day 600
 
-			UT = new KSPTimeSpan((year - KSPDateStructure.EpochYear) * KSPDateStructure.DaysPerYear  +
+			UT = new KSPTimeSpan((Int32)((year - KSPDateStructure.EpochYear) * KSPDateStructure.DaysPerYear)  +
 								(day - KSPDateStructure.EpochDayOfYear),
 								hour,
 								minute,
@@ -247,39 +247,54 @@ namespace KSPPluginFramework
 			AM,PM,OddHoursPerDay
 		}
 
-		/// <summary>Generates some standard Templated versions of output</summary>
-		/// <param name="DateFormat">Enum of some common formats</param>
-		/// <returns>A string that represents the value of this instance.</returns>
-		public String ToStringStandard(DateStringFormatsEnum DateFormat){
-			switch (DateFormat)
-			{
-				case DateStringFormatsEnum.TimeAsUT:
-					String strReturn = "";
-					if (UT < 0) strReturn += "+ ";
-					strReturn += String.Format("{0:N0}s", Math.Abs(UT));
-					return strReturn;
-				case DateStringFormatsEnum.KSPFormat:
-					return ToString();
-				case DateStringFormatsEnum.KSPFormatWithSecs:
-					return ToString("Year y, Da\\y d - H\\h, m\\m, s\\s");
-				case DateStringFormatsEnum.DateTimeFormat:
-                    if (KSPDateStructure.CalendarType==CalendarTypeEnum.Earth)
+        /// <summary>Generates some standard Templated versions of output</summary>
+        /// <param name="DateFormat">Enum of some common formats</param>
+        /// <returns>A string that represents the value of this instance.</returns>
+        public String ToStringStandard(DateStringFormatsEnum DateFormat)
+        {
+            switch (DateFormat)
+            {
+                case DateStringFormatsEnum.TimeAsUT:
+                    return (UT < 0 ? "+ " : "") + String.Format("{0:N0}s", Math.Abs(UT));
+                case DateStringFormatsEnum.KSPFormat:
+                    return ToString();
+                case DateStringFormatsEnum.KSPFormatWithSecs:
+                    if (KSPDateStructure.UseStockDateFormatters)
+                    {
+                        return KSPUtil.dateTimeFormatter.PrintDate(UT, true, true);
+                    }
+                    return ToString("Year y, Da\\y d - H\\h, m\\m, s\\s");
+                case DateStringFormatsEnum.DateTimeFormat:
+                    if (KSPDateStructure.CalendarType == CalendarTypeEnum.Earth)
+                    {
                         return ToString("d MMM yyyy, HH:mm:ss");
+                    }
                     else
-					    return ToString("Year y, Da\\y d, HH:mm:ss");
-				default:
-					return ToString();
-			}
-		}
+                    {
+                        if (KSPDateStructure.UseStockDateFormatters)
+                        {
 
-		/// <summary>Returns the string representation of the value of this instance.</summary> 
-		/// <returns>A string that represents the value of this instance.</returns>
-		public override String ToString()
+                            return KSPUtil.dateTimeFormatter.PrintDateNew(UT, true);
+                        }
+                        return ToString("Year y, Da\\y d, HH:mm:ss");
+                    }
+                default:
+                    return ToString();
+            }
+        }
+
+        /// <summary>Returns the string representation of the value of this instance.</summary> 
+        /// <returns>A string that represents the value of this instance.</returns>
+        public override String ToString()
 		{
 			if (CalType ==CalendarTypeEnum.Earth) {
 				return ToString(System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern + " " + System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern);
 			} else {
-				return ToString("Year y, Da\\y d - H\\h, m\\m", null);
+                if (KSPDateStructure.UseStockDateFormatters)
+                {
+                    return KSPUtil.dateTimeFormatter.PrintDate(UT, true, false);
+                }
+                return ToString("Year y, Da\\y d - H\\h, m\\m", null);
 			}
 		}
 		/// <summary>Returns the string representation of the value of this instance.</summary> 

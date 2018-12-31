@@ -154,8 +154,10 @@ namespace KerbalAlarmClock
 				KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
 			}
 
-			//Set initial GameState
-			KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
+            KSPDateStructure.UseStockDateFormatters = settings.UseStockDateFormatters;
+
+            //Set initial GameState
+            KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
 
 			//Load Hohmann modelling data - if in flight mode
 			//if ((KACWorkerGameState.LastGUIScene == GameScenes.FLIGHT) && settings.XferModelLoadData)
@@ -541,8 +543,21 @@ namespace KerbalAlarmClock
 
 		private void UpdateContractDetails()
 		{
-			lstContracts = Contracts.ContractSystem.Instance.Contracts.Where(c => c.DateNext() > 0).OrderBy(c => c.DateNext()).ToList();
+            //lstContracts = Contracts.ContractSystem.Instance.Contracts.Where(c => c.DateNext() > 0).OrderBy(c => c.DateNext()).ToList();
 
+            // 0 GC Usage version below
+            if (lstContracts == null)
+                lstContracts = new List<Contract>();
+            lstContracts.Clear();
+
+            for (int i = 0,iContracts = ContractSystem.Instance.Contracts.Count; i < iContracts; i++)
+            {
+                if(ContractSystem.Instance.Contracts[i].DateNext() > 0)
+                {
+                    lstContracts.Add(ContractSystem.Instance.Contracts[i]);
+                }
+            }
+            lstContracts.Sort(delegate (Contract a, Contract b) { return a.DateNext().CompareTo(b.DateNext()); });
 		}
 
 		internal override void OnGUIOnceOnly()
@@ -1668,13 +1683,25 @@ namespace KerbalAlarmClock
 			}
 		}
 
-		private void ParseAlarmsAndAffectWarpAndPause(double SecondsTillNextUpdate)
+        private KACAlarmList alarmsToAdd;
+
+        private void ParseAlarmsAndAffectWarpAndPause(double SecondsTillNextUpdate)
 		{
-			KACAlarmList alarmsToAdd = new KACAlarmList();
+            if(alarmsToAdd== null)
+            {
+                alarmsToAdd = new KACAlarmList();
+            }
+            else
+            {
+                alarmsToAdd.Clear();
+            }
+			
 			KACAlarm alarmAddTemp;
 
-			foreach (KACAlarm tmpAlarm in alarms)
-			{
+            for (int i = 0,iAlarms = alarms.Count; i < iAlarms; i++)
+            {
+                KACAlarm tmpAlarm = alarms[i];
+
 				//reset each alarms WarpInfluence flag
 				if (KACWorkerGameState.CurrentWarpInfluenceStartTime == null)
 					tmpAlarm.WarpInfluence = false;
@@ -1683,11 +1710,12 @@ namespace KerbalAlarmClock
 					if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(settings.WarpTransitions_ShowIndicatorSecs) < DateTime.Now)
 						tmpAlarm.WarpInfluence = false;
 
-				//Update Remaining interval for each alarm
-				if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
-					tmpAlarm.Remaining.UT = tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT;
-				else
-					tmpAlarm.Remaining.UT = (EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds;
+                //Update Remaining interval for each alarm
+                if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
+                    //tmpAlarm.Remaining.UT = tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT;
+                    tmpAlarm.UpdateRemaining(tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT);
+                else
+                    tmpAlarm.UpdateRemaining((EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds);
 				
 				//set triggered for passed alarms so the OnGUI part can draw the window later
 				//if ((KACWorkerGameState.CurrentTime.UT >= tmpAlarm.AlarmTime.UT) && (tmpAlarm.Enabled) && (!tmpAlarm.Triggered))

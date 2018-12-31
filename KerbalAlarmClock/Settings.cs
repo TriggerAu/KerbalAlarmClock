@@ -427,7 +427,7 @@ namespace KerbalAlarmClock
 
                     if (blnDoCheck)
                     {
-                        parent.StartCoroutine(crVersionCheck());
+                        parent.StartCoroutine(CRVersionCheck());
                     }
                 }
                 else
@@ -444,7 +444,7 @@ namespace KerbalAlarmClock
         }
 
         internal Boolean VersionCheckRunning = false;
-        private System.Collections.IEnumerator crVersionCheck()
+        private System.Collections.IEnumerator CRVersionCheck()
         {
             WWW wwwVersionCheck;
 
@@ -460,7 +460,7 @@ namespace KerbalAlarmClock
             yield return wwwVersionCheck;
             if (wwwVersionCheck.error == null)
             {
-                crVersionCheck_Completed(wwwVersionCheck);
+                CRVersionCheck_Completed(wwwVersionCheck);
             }
             else
             {
@@ -469,7 +469,7 @@ namespace KerbalAlarmClock
             VersionCheckRunning = false;
         }
 
-        void crVersionCheck_Completed(WWW wwwVersionCheck)
+        void CRVersionCheck_Completed(WWW wwwVersionCheck)
         {
             try
             {

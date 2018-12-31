@@ -58,7 +58,7 @@ namespace KerbalAlarmClock
 
             //set default strings
             if (KACWorkerGameState.CurrentVessel != null)
-                strAlarmName = KACWorkerGameState.CurrentVessel.vesselName + "";
+                strAlarmName = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName);
             else
                 strAlarmName = "No Vessel";
             strAlarmNotes = "";
@@ -152,7 +152,7 @@ namespace KerbalAlarmClock
             }
 
             //set strings, etc here for type changes
-            strAlarmName = (KACWorkerGameState.CurrentVessel != null) ? KACWorkerGameState.CurrentVessel.vesselName : "Alarm";
+            strAlarmName = (KACWorkerGameState.CurrentVessel != null) ? KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) : "Alarm";
             strAlarmNotes = "";
             if (KACWorkerGameState.CurrentVessel != null)
             {
@@ -166,7 +166,7 @@ namespace KerbalAlarmClock
                         break;
                     case KACAlarm.AlarmTypeEnum.SOIChange:
                         if (KACWorkerGameState.SOIPointExists)
-                            strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing SOI Change\r\n" +
+                            strAlarmNotes = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing SOI Change\r\n" +
                                             "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
                                             "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
                         break;
@@ -175,25 +175,25 @@ namespace KerbalAlarmClock
                         BuildTransferStrings();
                         break;
                     case KACAlarm.AlarmTypeEnum.Apoapsis:
-                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Apoapsis";
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing Apoapsis";
                         break;
                     case KACAlarm.AlarmTypeEnum.Periapsis:
-                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Periapsis";
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing Periapsis";
                         break;
                     case KACAlarm.AlarmTypeEnum.AscendingNode:
-                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Ascending Node";
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing Ascending Node";
                         break;
                     case KACAlarm.AlarmTypeEnum.DescendingNode:
-                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Descending Node";
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing Descending Node";
                         break;
                     case KACAlarm.AlarmTypeEnum.LaunchRendevous:
-                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Launch Rendevous";
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing Launch Rendevous";
                         break;
                     case KACAlarm.AlarmTypeEnum.Closest:
-                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Closest Approach";
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing Closest Approach";
                         break;
                     case KACAlarm.AlarmTypeEnum.Distance:
-                        strAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Target Distance";
+                        strAlarmNotes = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing Target Distance";
                         break;
                     case KACAlarm.AlarmTypeEnum.Crew:
                         BuildCrewStrings();
@@ -231,7 +231,7 @@ namespace KerbalAlarmClock
             
             String strWorking = "";
             if (blnAlarmAttachToVessel)
-                strWorking = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Celestial Transfer:";
+                strWorking = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing Celestial Transfer:";
             else
                 strWorking = "Nearing Celestial Transfer:";
 
@@ -258,14 +258,14 @@ namespace KerbalAlarmClock
         {
             String strWorking = "";
             if (blnAlarmAttachToVessel && KACWorkerGameState.CurrentVessel != null)
-                strWorking = "Time to pay attention to:\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nRaw Time Alarm";
+                strWorking = "Time to pay attention to:\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nRaw Time Alarm";
             else
                 strWorking = "Raw Time Alarm";
             strAlarmNotes = strWorking;
 
             strWorking = "";
             if (blnAlarmAttachToVessel && KACWorkerGameState.CurrentVessel != null)
-                strWorking = KACWorkerGameState.CurrentVessel.vesselName;
+                strWorking = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName);
             else
                 strWorking = "Raw Time Alarm";
             strAlarmName = strWorking;
@@ -282,7 +282,7 @@ namespace KerbalAlarmClock
                 strAlarmName = "Crew member alarm";
                 strAlarmNotes = "No Kerbals present in this vessel";
             } else {
-                strAlarmName = pCM[intSelectedCrew].name;
+                strAlarmName = pCM[intSelectedCrew].displayName;
                 strAlarmNotes = string.Format("Alarm for {0}\r\nNot tied to any vessel - will follow the Kerbal", pCM[intSelectedCrew].name);
             }
         }
@@ -324,7 +324,7 @@ namespace KerbalAlarmClock
 
         private void BuildScienceLabStrings()
         {
-            string strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
+            string strVesselName = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName);
             if (intSelectedScienceLab >= 0)
             {
                 strAlarmName = strVesselName + " - Science Lab " + (intSelectedScienceLab + 1);
@@ -1933,7 +1933,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             GUILayout.Label("Vessel:", KACResources.styleAddHeading);
             String strVesselName = "Not Attached to Vessel";
-            if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselName = KACWorkerGameState.CurrentVessel.vesselName;
+            if (KACWorkerGameState.CurrentVessel != null && blnAlarmAttachToVessel) strVesselName = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName);
             GUILayout.TextField(strVesselName, KACResources.styleAddFieldGreen);
             GUILayout.Label("Alarm:", KACResources.styleAddHeading);
             strAlarmName = GUILayout.TextField(strAlarmName, KACResources.styleAddField, GUILayout.MaxWidth(184)).Replace("|", "");

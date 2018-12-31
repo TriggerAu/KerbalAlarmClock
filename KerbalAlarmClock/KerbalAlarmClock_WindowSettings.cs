@@ -942,7 +942,7 @@ namespace KerbalAlarmClock
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Check Version Now", KACResources.styleButton))
             {
-                settings.VersionCheck(true);
+                settings.VersionCheck(this, true);
                 //Hide the flag as we already have the window open;
                 settings.VersionAttentionFlag = false;
             }

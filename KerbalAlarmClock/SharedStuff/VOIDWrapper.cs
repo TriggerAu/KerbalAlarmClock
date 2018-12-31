@@ -91,10 +91,12 @@ namespace KAC_VOIDWrapper
             private FieldInfo BurnTimeProp, HalfBurnTimeProp;
             private FieldInfo TotalDVProp, CurrManeuverDeltaVProp;
             //, HasDeltaVProp;
-            
+
+            //private Object actualVOID;  //Commented because usage removed
+
             internal VOIDAPI(Object VOID)
             {
-                actualVOID = VOID;
+                //actualVOID = VOID;  //Commented because usage removed
 
                 BurnTimeProp = VOID_DataType.GetField("currentNodeBurnDuration", BindingFlags.Public | BindingFlags.Static);
                 LogFormatted("currentNodeBurnDuration Success: " + (BurnTimeProp != null).ToString());
@@ -113,9 +115,6 @@ namespace KAC_VOIDWrapper
                 //HasDeltaVProp = VOID_DataType.GetProperty("HasDeltaV", BindingFlags.Public | BindingFlags.Static);
                 //LogFormatted("Success: " + (HasDeltaVProp != null).ToString());
             }
-
-            private Object actualVOID;
-
 
             public Double BurnTime
             {

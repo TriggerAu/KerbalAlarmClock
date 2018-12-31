@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- File: KerbalAlarmClock.csproj.user.template
+-
+- Copy this file to "KerbalAlarmClock.csproj.user" and edit according to your
+- development environment.
+-
+- Do NOT edit KerbalAlarmClock.csproj which is configured to the upstream authors'
+- environment.
+-
+-->
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <KSP_DIR>S:\KSP\KSP_Dev\</KSP_DIR>
+    <POST_BUILD_PS_SCRIPT>S:\KSP\scripts\PostBuild.ps1</POST_BUILD_PS_SCRIPT>
+  </PropertyGroup>
+</Project>

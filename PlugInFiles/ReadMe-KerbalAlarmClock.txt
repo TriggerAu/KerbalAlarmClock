@@ -32,6 +32,22 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.10.0.0	-	KSP Version: 1.6.0
+- Recompiled for 1.6.0 (Issue #199, #199)
+- Fix for hyperbolic orbits (Issue #210) - Thanks Taniwha
+- Fix for version check issues (Issue #208) - Thanks MWerle
+- Removed some compiler warnings and deprecated calls
+- Change the way UI Hiding works (Issue #206)
+- Fix perf issue in TS (Issue #207)
+- Add UI scaling to the app (Issue #204)
+- Add MapUI lock in TS for click through - as much aas can do with current locks (Issue #192)
+- Add prevention of jumping to unowned vessels in career (Issue #154)
+- Change the datetime formatting stuff so its Kronometer compatible (Issue #202, Issue #194, Issue #157) - Thanks Aelfhe1m 
+- Fix for vessel name locazlization
+- Updated some of the common UI calls to reduce GC Churn
+- Updated WarpRate checking to rewmove GC Churn
+- Removed some Triger specific stuff from the build scripts (Issue #196) - Thanks MWerle
+
 Version 3.9.1.0		-	KSP Version: 1.4.1
 - Removed custom cursors for users running Linux as this kills the game cursor for them (Issue #200)
 

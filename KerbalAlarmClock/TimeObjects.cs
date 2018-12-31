@@ -418,18 +418,34 @@ namespace KerbalAlarmClock
         {
             get 
             {
-                //ZeroString(Years), 
-                Double result = new KSPTimeSpan(
-                    ZeroString(Days), 
-                    ZeroString(Hours), 
-                    ZeroString(Minutes), 
-                    ZeroString(Seconds)
-                    ).UT;
+                if (KSPDateStructure.CalendarType == CalendarTypeEnum.Earth)
+                {
 
-                if (Convert.ToInt32(ZeroString(Years)) != 0) { 
-                    result += Convert.ToInt32(ZeroString(Years))*KSPDateStructure.SecondsPerYear;
-                }
+                    //ZeroString(Years), 
+                    Double result = new KSPTimeSpan(
+                        ZeroString(Days),
+                        ZeroString(Hours),
+                        ZeroString(Minutes),
+                        ZeroString(Seconds)
+                        ).UT;
+
+                    if (Convert.ToInt32(ZeroString(Years)) != 0)
+                    {
+                        result += Convert.ToInt32(ZeroString(Years)) * KSPDateStructure.SecondsPerYear;
+                    }
                     return result;
+                }
+                else
+                {
+                    IDateTimeFormatter tf = KSPUtil.dateTimeFormatter;
+                    Double result = tf.Year * Convert.ToInt32(ZeroString(Years))
+                        + tf.Day * Convert.ToInt32(ZeroString(Days))
+                        + tf.Hour * Convert.ToInt32(ZeroString(Hours))
+                        + tf.Minute * Convert.ToInt32(ZeroString(Minutes))
+                        + Convert.ToDouble(ZeroString(Seconds));
+                    return result;
+                }
+            
             }
         }
         private String ZeroString(String strInput)

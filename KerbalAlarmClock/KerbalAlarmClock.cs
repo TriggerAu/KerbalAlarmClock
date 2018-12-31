@@ -154,8 +154,10 @@ namespace KerbalAlarmClock
 				KSPDateStructure.SetEarthCalendar(settings.EarthEpoch);
 			}
 
-			//Set initial GameState
-			KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
+            KSPDateStructure.UseStockDateFormatters = settings.UseStockDateFormatters;
+
+            //Set initial GameState
+            KACWorkerGameState.LastGUIScene = HighLogic.LoadedScene;
 
 			//Load Hohmann modelling data - if in flight mode
 			//if ((KACWorkerGameState.LastGUIScene == GameScenes.FLIGHT) && settings.XferModelLoadData)
@@ -190,9 +192,20 @@ namespace KerbalAlarmClock
             GameEvents.onGUIRnDComplexDespawn.Add(LeaveKSCFacility);
 
             // Need this one to handle the hideUI cancelling via pause menu
-            GameEvents.onGameUnpause.Add(OnUnpause);
+            GameEvents.onShowUI.Add(OnShowUI);
+            GameEvents.onHideUI.Add(OnHideUI);
 
-			blnFilterToVessel = false;
+            GameEvents.onUIScaleChange.Add(OnUIScaleChange);
+            if (settings.UIScaleOverride)
+            {
+                guiScale = new Vector2(settings.UIScaleValue, settings.UIScaleValue);
+            }
+            else
+            {
+                guiScale = new Vector2(GameSettings.UI_SCALE, GameSettings.UI_SCALE);
+            }
+
+            blnFilterToVessel = false;
 			if (HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
 				HighLogic.LoadedScene == GameScenes.FLIGHT)
 				blnShowFilterToVessel = true;
@@ -294,10 +307,12 @@ namespace KerbalAlarmClock
             GameEvents.onGUIRnDComplexDespawn.Remove(LeaveKSCFacility);
 
             // Need this one to handle the hideUI cancelling via pause menu
-            GameEvents.onGameUnpause.Remove(OnUnpause);
+            GameEvents.onShowUI.Remove(OnShowUI);
+            GameEvents.onHideUI.Remove(OnHideUI);
 
+            GameEvents.onUIScaleChange.Remove(OnUIScaleChange);
 
-			Destroy(PhaseAngle);
+            Destroy(PhaseAngle);
 			Destroy(EjectAngle);
 
 			DestroyDropDowns();
@@ -335,11 +350,11 @@ namespace KerbalAlarmClock
 
 			HandleKeyStrokes();
 
-			//Work out if we should be in the gui queue
-			ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
-
-			//Fix the issues with Flight SCene Stuff
-			if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+            //Work out if we should be in the gui queue
+            ShouldBeInPostDrawQueue = settings.DrawScenes.Contains(HighLogic.LoadedScene);
+            
+            //Fix the issues with Flight SCene Stuff
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT)
 			{
 				//If time goes backwards assume a reload/restart/ if vessel changes and readd to rendering queue
 				CheckForFlightChanges();
@@ -351,15 +366,8 @@ namespace KerbalAlarmClock
 			KACWorkerGameState.SetLastGUIStatesToCurrent();
 		}
 
-		internal Boolean blnFlightUIVisible = true;
-
 		private void HandleKeyStrokes()
 		{
-			if (GameSettings.TOGGLE_UI.GetKeyDown() && HighLogic.LoadedScene == GameScenes.FLIGHT)
-			{
-				blnFlightUIVisible = !blnFlightUIVisible;
-			}
-
 			//Look for key inputs to change settings
 			if (!settings.F11KeystrokeDisabled)
 			{
@@ -442,15 +450,20 @@ namespace KerbalAlarmClock
 				//                IsInPostDrawQueue = false;
 			}
 		}
-		#endregion
+        #endregion
 
-		private void OnUnpause()
-		{
-			LogFormatted_DebugOnly("OnUnpause");
-			GUIVisible = true;
-		}
+        private void OnShowUI()
+        {
+            LogFormatted_DebugOnly("OnShowUI");
+            GUIVisible = true;
+        }
+        private void OnHideUI()
+        {
+            LogFormatted_DebugOnly("OnHideUI");
+            GUIVisible = false;
+        }
 
-		private Boolean GUIVisible = true;
+        private Boolean GUIVisible = true;
         private Boolean inAdminFacility = false;
 
 		//public void OnGUI()
@@ -471,7 +484,7 @@ namespace KerbalAlarmClock
 
 					//if we are adding the renderer and we are in flight then do the daily version check if required
 					if (HighLogic.LoadedScene == GameScenes.FLIGHT && settings.DailyVersionCheck)
-						settings.VersionCheck(false);
+						settings.VersionCheck(this, false);
 
 				}
 				else
@@ -481,16 +494,12 @@ namespace KerbalAlarmClock
 				}
 			}
 
-			Boolean isPauseMenuOpen = false;
-			try {
-				isPauseMenuOpen = PauseMenu.isOpen;
-			} catch{}
-
-			if (GUIVisible && blnFlightUIVisible && !inAdminFacility && !(HighLogic.LoadedScene == GameScenes.FLIGHT && isPauseMenuOpen && settings.HideOnPause))
-				{
-					DrawGUI();
+			if (GUIVisible && !inAdminFacility && !(HighLogic.LoadedScene == GameScenes.FLIGHT && KACWorkerGameState.PauseMenuOpen && settings.HideOnPause))
+			{
+				DrawGUI();
 			}
-			OnGUIMouseEvents();
+
+            OnGUIMouseEvents();
 		}
 
 		private Int32 WarpRateWorkerCounter = 0;
@@ -534,8 +543,21 @@ namespace KerbalAlarmClock
 
 		private void UpdateContractDetails()
 		{
-			lstContracts = Contracts.ContractSystem.Instance.Contracts.Where(c => c.DateNext() > 0).OrderBy(c => c.DateNext()).ToList();
+            //lstContracts = Contracts.ContractSystem.Instance.Contracts.Where(c => c.DateNext() > 0).OrderBy(c => c.DateNext()).ToList();
 
+            // 0 GC Usage version below
+            if (lstContracts == null)
+                lstContracts = new List<Contract>();
+            lstContracts.Clear();
+
+            for (int i = 0,iContracts = ContractSystem.Instance.Contracts.Count; i < iContracts; i++)
+            {
+                if(ContractSystem.Instance.Contracts[i].DateNext() > 0)
+                {
+                    lstContracts.Add(ContractSystem.Instance.Contracts[i]);
+                }
+            }
+            lstContracts.Sort(delegate (Contract a, Contract b) { return a.DateNext().CompareTo(b.DateNext()); });
 		}
 
 		internal override void OnGUIOnceOnly()
@@ -552,6 +574,15 @@ namespace KerbalAlarmClock
 			//KACResources.SetStyles();
 
 		}
+
+        internal Vector2 guiScale = Vector2.one;
+
+        public void OnUIScaleChange()
+        {
+            guiScale.x = settings.UIScaleOverride ? settings.UIScaleValue : GameSettings.UI_SCALE;
+            guiScale.y = settings.UIScaleOverride ? settings.UIScaleValue : GameSettings.UI_SCALE;
+        }
+        
 		//This is what we do every frame when the object is being drawn 
 		//We dont get here unless we are in the postdraw queue
 		public void DrawGUI()
@@ -569,8 +600,13 @@ namespace KerbalAlarmClock
 			if (WindowVisibleByActiveScene)
 			{
 				DrawWindowsPre();
-				DrawWindows();
-				DrawWindowsPost();
+
+                // Set the scale for this run at stuff
+                GUIUtility.ScaleAroundPivot(guiScale, Vector2.zero);
+                DrawWindows();
+                GUIUtility.ScaleAroundPivot(Vector2.one, Vector2.zero);
+
+                DrawWindowsPost();
 
 			}
 
@@ -945,7 +981,7 @@ namespace KerbalAlarmClock
 								InputLockManager.SetControlLock(ControlTypes.ALL_SHIP_CONTROLS, "KACControlLock");
 								break;
 							case GameScenes.TRACKSTATION:
-								InputLockManager.SetControlLock(ControlTypes.TRACKINGSTATION_ALL, "KACControlLock");
+								InputLockManager.SetControlLock(ControlTypes.TRACKINGSTATION_ALL | ControlTypes.MAP_UI, "KACControlLock");
 								break;
 							default:
 								break;
@@ -1049,8 +1085,8 @@ namespace KerbalAlarmClock
 				if (KACWorkerGameState.ChangedVessel)
 				{
 					String strVesselName = "No Vessel";
-					if (KACWorkerGameState.LastVessel!=null) strVesselName=KACWorkerGameState.LastVessel.vesselName;
-					LogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KACWorkerGameState.CurrentVessel.vesselName);
+					if (KACWorkerGameState.LastVessel!=null) strVesselName = KSP.Localization.Localizer.Format(KACWorkerGameState.LastVessel.vesselName);
+					LogFormatted("Vessel Change from '{0}' to '{1}'", strVesselName, KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName));
 				}
 
                 // Do we need to clear any highlighted science labs?
@@ -1262,8 +1298,8 @@ namespace KerbalAlarmClock
 				//strOldAlarmMessageSOI = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
 				//                "     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
 				//                "     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
-				strSOIAlarmName = KACWorkerGameState.CurrentVessel.vesselName;// + "-Leaving " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName;
-				strSOIAlarmNotes = KACWorkerGameState.CurrentVessel.vesselName + " - Nearing SOI Change\r\n" +
+				strSOIAlarmName = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName);// + "-Leaving " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName;
+				strSOIAlarmNotes = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + " - Nearing SOI Change\r\n" +
 								"     Old SOI: " + KACWorkerGameState.CurrentVessel.orbit.referenceBody.bodyName + "\r\n" +
 								"     New SOI: " + KACWorkerGameState.CurrentVessel.orbit.nextPatch.referenceBody.bodyName;
 			}
@@ -1494,8 +1530,8 @@ namespace KerbalAlarmClock
 				
 				List<ManeuverNode> manNodesToStore = KACWorkerGameState.ManeuverNodesFuture;
 
-				String strManNodeAlarmName = KACWorkerGameState.CurrentVessel.vesselName;
-				String strManNodeAlarmNotes = "Time to pay attention to\r\n    " + KACWorkerGameState.CurrentVessel.vesselName + "\r\nNearing Maneuver Node";
+				String strManNodeAlarmName = KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName);
+				String strManNodeAlarmNotes = "Time to pay attention to\r\n    " + KSP.Localization.Localizer.Format(KACWorkerGameState.CurrentVessel.vesselName) + "\r\nNearing Maneuver Node";
 
 				//Are we updating an alarm
 				if (tmpAlarm != null)
@@ -1647,13 +1683,25 @@ namespace KerbalAlarmClock
 			}
 		}
 
-		private void ParseAlarmsAndAffectWarpAndPause(double SecondsTillNextUpdate)
+        private KACAlarmList alarmsToAdd;
+
+        private void ParseAlarmsAndAffectWarpAndPause(double SecondsTillNextUpdate)
 		{
-			KACAlarmList alarmsToAdd = new KACAlarmList();
+            if(alarmsToAdd== null)
+            {
+                alarmsToAdd = new KACAlarmList();
+            }
+            else
+            {
+                alarmsToAdd.Clear();
+            }
+			
 			KACAlarm alarmAddTemp;
 
-			foreach (KACAlarm tmpAlarm in alarms)
-			{
+            for (int i = 0,iAlarms = alarms.Count; i < iAlarms; i++)
+            {
+                KACAlarm tmpAlarm = alarms[i];
+
 				//reset each alarms WarpInfluence flag
 				if (KACWorkerGameState.CurrentWarpInfluenceStartTime == null)
 					tmpAlarm.WarpInfluence = false;
@@ -1662,11 +1710,12 @@ namespace KerbalAlarmClock
 					if (KACWorkerGameState.CurrentWarpInfluenceStartTime.AddSeconds(settings.WarpTransitions_ShowIndicatorSecs) < DateTime.Now)
 						tmpAlarm.WarpInfluence = false;
 
-				//Update Remaining interval for each alarm
-				if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
-					tmpAlarm.Remaining.UT = tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT;
-				else
-					tmpAlarm.Remaining.UT = (EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds;
+                //Update Remaining interval for each alarm
+                if (tmpAlarm.TypeOfAlarm != KACAlarm.AlarmTypeEnum.EarthTime)
+                    //tmpAlarm.Remaining.UT = tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT;
+                    tmpAlarm.UpdateRemaining(tmpAlarm.AlarmTime.UT - KACWorkerGameState.CurrentTime.UT);
+                else
+                    tmpAlarm.UpdateRemaining((EarthTimeDecode(tmpAlarm.AlarmTime.UT) - DateTime.Now).TotalSeconds);
 				
 				//set triggered for passed alarms so the OnGUI part can draw the window later
 				//if ((KACWorkerGameState.CurrentTime.UT >= tmpAlarm.AlarmTime.UT) && (tmpAlarm.Enabled) && (!tmpAlarm.Triggered))

@@ -34,8 +34,28 @@ namespace KSPPluginFramework
         /// <param name="ScreenBorder">A Border to the screen bounds that the Rect will be clamped inside (can be negative)</param>
         public static Rect ClampToScreen(this Rect r, RectOffset ScreenBorder)
         {
-            r.x = Mathf.Clamp(r.x, ScreenBorder.left, Screen.width - r.width - ScreenBorder.right);
-            r.y = Mathf.Clamp(r.y, ScreenBorder.top, Screen.height - r.height - ScreenBorder.bottom);
+            return r.ClampToScreen(ScreenBorder, 1f);
+        }
+
+        /// <summary>
+        /// Ensure that the Rect remains within the screen bounds
+        /// </summary>
+        /// <param name="ScreenBorder">A Border to the screen bounds that the Rect will be clamped inside (can be negative)</param>
+        /// <param name="scale">the UIScale to calc at</param>
+        public static Rect ClampToScreen(this Rect r, RectOffset ScreenBorder, float scale)
+        {
+            r.x = Mathf.Clamp(r.x * scale, ScreenBorder.left * scale, Screen.width - r.width * scale - ScreenBorder.right * scale) / scale;
+            r.y = Mathf.Clamp(r.y * scale, ScreenBorder.top * scale, Screen.height - r.height * scale - ScreenBorder.bottom * scale) / scale;
+
+            if (r.x < 0)
+            {
+                r.x = 0;
+            }
+
+            if (r.y < 0)
+            {
+                r.y = 0;
+            }
             return r;
         }
 

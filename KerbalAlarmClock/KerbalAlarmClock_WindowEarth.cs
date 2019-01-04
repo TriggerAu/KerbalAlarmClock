@@ -24,7 +24,7 @@ namespace KerbalAlarmClock
 			strAlarmEarthHour = DateTime.Now.AddHours(2).Hour.ToString();
 			strAlarmEarthMin = DateTime.Now.Minute.ToString();
 
-			AddAction = KACAlarm.AlarmActionEnum.PauseGame;
+			//AddAction = KACAlarm.AlarmActionEnum.PauseGame;
             AddActions = new AlarmActions(AlarmActions.WarpEnum.PauseGame, AlarmActions.MessageEnum.Yes, false, false);
             ///AddActionPlaySound = ??
 		}

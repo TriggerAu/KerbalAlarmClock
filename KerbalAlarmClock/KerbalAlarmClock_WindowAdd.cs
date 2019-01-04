@@ -18,7 +18,7 @@ namespace KerbalAlarmClock
     public partial class KerbalAlarmClock
     {
         private KACAlarm.AlarmTypeEnum AddType = KACAlarm.AlarmTypeEnum.Raw;
-        private KACAlarm.AlarmActionEnum AddAction = KACAlarm.AlarmActionEnum.MessageOnly;
+        //private KACAlarm.AlarmActionEnum AddAction = KACAlarm.AlarmActionEnum.MessageOnly;
         private AlarmActions AddActions = new AlarmActions() { Warp = AlarmActions.WarpEnum.KillWarp, Message = AlarmActions.MessageEnum.Yes, PlaySound = false, DeleteWhenDone = false };
 
         private KACTimeStringArray timeRaw = new KACTimeStringArray(600, KACTimeStringArray.TimeEntryPrecisionEnum.Hours);
@@ -109,7 +109,7 @@ namespace KerbalAlarmClock
 
         }
 
-        List<KACAlarm.AlarmTypeEnum> AlarmsThatBuildStrings = new List<KACAlarm.AlarmTypeEnum>() {
+        /*List<KACAlarm.AlarmTypeEnum> AlarmsThatBuildStrings = new List<KACAlarm.AlarmTypeEnum>() {
             KACAlarm.AlarmTypeEnum.Raw,
             KACAlarm.AlarmTypeEnum.Transfer,
             KACAlarm.AlarmTypeEnum.TransferModelled,
@@ -117,7 +117,7 @@ namespace KerbalAlarmClock
             KACAlarm.AlarmTypeEnum.Contract,
             KACAlarm.AlarmTypeEnum.ContractAuto,
             KACAlarm.AlarmTypeEnum.ScienceLab
-        };
+        };*/
 
         private String strAlarmEventName = "Alarm";
         internal void AddTypeChanged()
@@ -243,7 +243,7 @@ namespace KerbalAlarmClock
             if (XferTargetBodies != null && TargetIndex < XferTargetBodies.Count)
                 strWorking = XferTargetBodies[TargetIndex].Origin.bodyName + "->" + XferTargetBodies[TargetIndex].Target.bodyName;
             else
-                strWorking = strWorking = "Nearing Celestial Transfer";
+                strWorking = "Nearing Celestial Transfer";
             ret.AlarmName = strWorking;
             
             strAlarmNotes = ret.AlarmNotes;
@@ -337,7 +337,7 @@ namespace KerbalAlarmClock
         }
 
         //String[] strAddTypes = new String[] { "Raw", "Maneuver","SOI","Transfer" };
-        private String[] strAddTypes = new String[] { "R", "M", "A", "P", "A", "D", "S", "X" };
+        //private String[] strAddTypes = new String[] { "R", "M", "A", "P", "A", "D", "S", "X" };
 
         private GUIContent[] guiTypes = new GUIContent[]
             {
@@ -357,10 +357,10 @@ namespace KerbalAlarmClock
                 new GUIContent(KACResources.btnScienceLab,"Science Lab")
             };
 
-        private GUIContent[] guiTypesView = new GUIContent[]
+        /*private GUIContent[] guiTypesView = new GUIContent[]
             {
                 new GUIContent(KACResources.btnRaw,"Raw Time Alarm")
-            };
+            };*/
 
         private GUIContent[] guiTypesSpaceCenter = new GUIContent[]
             {
@@ -400,12 +400,12 @@ namespace KerbalAlarmClock
                 KACAlarm.AlarmTypeEnum.ContractAuto
             };
 
-        private KACAlarm.AlarmTypeEnum[] TypesWithNoEvent = new KACAlarm.AlarmTypeEnum[] 
+        /*private KACAlarm.AlarmTypeEnum[] TypesWithNoEvent = new KACAlarm.AlarmTypeEnum[]
             { 
                 KACAlarm.AlarmTypeEnum.Raw, 
                 KACAlarm.AlarmTypeEnum.Transfer, 
                 KACAlarm.AlarmTypeEnum.TransferModelled 
-            };
+            };*/
 
         private int intHeight_AddWindowCommon;
         private int intHeight_AddWindowRepeat;

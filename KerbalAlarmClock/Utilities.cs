@@ -380,7 +380,7 @@ namespace KerbalAlarmClock
         //    return blnReturn;
         //}
 
-        //#region "AN/DN Code - predominantly the functions from the Kerbal Engineer Redux by cybutek under Creative commons BY-NC-SA - http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_GB"
+        //#region "AN/DN Code - predominantly the functions from the Kerbal Engineer Redux by cybutek under Creative commons BY-NC-SA - https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_GB"
         //public static Boolean CalcTimeToANorDN(Vector3d position, Orbit origin, Orbit target, ANDNNodeType typeOfNode, out Double timeToNode)
         //{
         //    timeToNode = 0d;

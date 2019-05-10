@@ -10,7 +10,6 @@ using KSPPluginFramework;
 
 using ClickThroughFix;
 
-
 namespace KerbalAlarmClock
 {
     public partial class KerbalAlarmClock

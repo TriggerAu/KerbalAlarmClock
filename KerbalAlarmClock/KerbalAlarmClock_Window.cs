@@ -8,6 +8,8 @@ using UnityEngine;
 using KSP;
 using KSPPluginFramework;
 
+using ClickThroughFix;
+
 namespace KerbalAlarmClock
 {
     public partial class KerbalAlarmClock
@@ -471,7 +473,7 @@ namespace KerbalAlarmClock
 #if DEBUG
             if (_ShowDebugPane)
             {
-                _WindowDebugRect = GUILayout.Window(_WindowDebugID, _WindowDebugRect, FillDebugWindow, "Debug");
+                _WindowDebugRect = ClickThruBlocker.GUILayoutWindow(_WindowDebugID, _WindowDebugRect, FillDebugWindow, "Debug");
             }
 #endif
             //set initial values for rect from old ones - ignore old width
@@ -514,10 +516,10 @@ namespace KerbalAlarmClock
             MainWindowPos = MainWindowPos.ClampToScreen(new RectOffset(0,0,-25,0), settings.UIScaleOverride ? settings.UIScaleValue : GameSettings.UI_SCALE);
 
             //Now show the window
-            WindowPosByActiveScene = GUILayout.Window(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + settings.Version,KACResources.styleWindow);
+            WindowPosByActiveScene = ClickThruBlocker.GUILayoutWindow(_WindowMainID, MainWindowPos, FillWindow, "Kerbal Alarm Clock - " + settings.Version,KACResources.styleWindow);
 
             if (winAlarmImport.Visible)
-                winAlarmImport.windowRect = GUILayout.Window(winAlarmImport.windowID, winAlarmImport.windowRect, winAlarmImport.FillWindow, "Import v2 Alarm File", KACResources.styleWindow);
+                winAlarmImport.windowRect = ClickThruBlocker.GUILayoutWindow(winAlarmImport.windowID, winAlarmImport.windowRect, winAlarmImport.FillWindow, "Import v2 Alarm File", KACResources.styleWindow);
 
             if (winConfirmAlarmDelete.Visible){
                 //winConfirmAlarmDelete.windowRect = new Rect(MainWindowPos.x + MainWindowPos.width,MainWindowPos.y,300,140);
@@ -526,14 +528,14 @@ namespace KerbalAlarmClock
 
                 bool showDelOnLeft = WindowPosByActiveScene.x + WindowPosByActiveScene.width > Screen.width - 300;
                 winConfirmAlarmDelete.windowRect = GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, 300, 140, ref showDelOnLeft, settings.WindowChildPosBelow);
-                GUILayout.Window(winConfirmAlarmDelete.windowID,
+                ClickThruBlocker.GUILayoutWindow(winConfirmAlarmDelete.windowID,
                     winConfirmAlarmDelete.windowRect,
                     winConfirmAlarmDelete.FillWindow, "Confirm Alarm Delete", KACResources.styleWindow);
             }
             //Do we have anything to show in the right pane
             if (_ShowSettings)
             {
-                _WindowSettingsRect = GUILayout.Window(_WindowSettingsID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intSettingsPaneWindowWidth, intSettingsHeight, ref _ShowShowSettingsOnLeft, settings.WindowChildPosBelow), FillSettingsWindow, "Settings and Globals", KACResources.styleWindow);
+                _WindowSettingsRect = ClickThruBlocker.GUILayoutWindow(_WindowSettingsID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intSettingsPaneWindowWidth, intSettingsHeight, ref _ShowShowSettingsOnLeft, settings.WindowChildPosBelow), FillSettingsWindow, "Settings and Globals", KACResources.styleWindow);
             }
             else if (_ShowAddPane)
             {
@@ -576,35 +578,35 @@ namespace KerbalAlarmClock
                     AddWindowHeight = Mathf.Clamp(AddWindowHeight, 0, Screen.height);
                 }
 
-                _WindowAddRect = GUILayout.Window(_WindowAddID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intAddPaneWindowWidth, AddWindowHeight, ref _ShowAddPaneOnLeft, settings.WindowChildPosBelow), FillAddWindow, "Add New Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
+                _WindowAddRect = ClickThruBlocker.GUILayoutWindow(_WindowAddID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intAddPaneWindowWidth, AddWindowHeight, ref _ShowAddPaneOnLeft, settings.WindowChildPosBelow), FillAddWindow, "Add New Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
 
                 if (_ShowAddMessages)
                 {
-                    _WindowAddMessagesRect = GUILayout.Window(_WindowAddMessagesID, new Rect(_WindowAddRect.x + _WindowAddRect.width, _WindowAddRect.y, 200, AddWindowHeight), FillAddMessagesWindow, "");
+                    _WindowAddMessagesRect = ClickThruBlocker.GUILayoutWindow(_WindowAddMessagesID, new Rect(_WindowAddRect.x + _WindowAddRect.width, _WindowAddRect.y, 200, AddWindowHeight), FillAddMessagesWindow, "");
                 }
             }
             else if (_ShowEarthAlarm)
             {
                 float _WindowEarthTop = WindowPosByActiveScene.y + WindowPosByActiveScene.height - EarthWindowHeight;
                 if (EarthWindowHeight > MainWindowPos.height) _WindowEarthTop = WindowPosByActiveScene.y;
-                _WindowEarthAlarmRect = GUILayout.Window(_WindowEarthAlarmID, GetChildWindowRect(WindowPosByActiveScene, _WindowEarthTop, intAddPaneWindowWidth, EarthWindowHeight, ref _ShowEarthAlarmOnLeft,settings.WindowChildPosBelow), FillEarthAlarmWindow, "Add Earth Time Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
+                _WindowEarthAlarmRect = ClickThruBlocker.GUILayoutWindow(_WindowEarthAlarmID, GetChildWindowRect(WindowPosByActiveScene, _WindowEarthTop, intAddPaneWindowWidth, EarthWindowHeight, ref _ShowEarthAlarmOnLeft,settings.WindowChildPosBelow), FillEarthAlarmWindow, "Add Earth Time Alarm", KACResources.styleWindow);                //switch (AddInterfaceType)
                 if (_ShowAddMessages)
                 {
-                    _WindowAddMessagesRect = GUILayout.Window(_WindowAddMessagesID, new Rect(_WindowEarthAlarmRect.x + _WindowEarthAlarmRect.width, _WindowEarthAlarmRect.y, 200, EarthWindowHeight), FillAddMessagesWindow, "");
+                    _WindowAddMessagesRect = ClickThruBlocker.GUILayoutWindow(_WindowAddMessagesID, new Rect(_WindowEarthAlarmRect.x + _WindowEarthAlarmRect.width, _WindowEarthAlarmRect.y, 200, EarthWindowHeight), FillAddMessagesWindow, "");
                 }
             }
             else if (_ShowEditPane)
             {
-                _WindowEditRect = GUILayout.Window(_WindowEditID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intPaneWindowWidth, intAlarmEditHeight,ref _ShowEditPaneOnLeft,settings.WindowChildPosBelow), FillEditWindow, "Editing Alarm", KACResources.styleWindow);
+                _WindowEditRect = ClickThruBlocker.GUILayoutWindow(_WindowEditID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, intPaneWindowWidth, intAlarmEditHeight,ref _ShowEditPaneOnLeft,settings.WindowChildPosBelow), FillEditWindow, "Editing Alarm", KACResources.styleWindow);
             }
             else if (_ShowQuickAdd)
             {
-                _WindowQuickAddRect = GUILayout.Window(_WindowQuickAddID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, 300, QuickWindowHeight, ref _ShowQuickAddOnLeft,settings.WindowChildPosBelow), FillQuickWindow, "Quick Add", KACResources.styleWindow);
+                _WindowQuickAddRect = ClickThruBlocker.GUILayoutWindow(_WindowQuickAddID, GetChildWindowRect(WindowPosByActiveScene, WindowPosByActiveScene.y, 300, QuickWindowHeight, ref _ShowQuickAddOnLeft,settings.WindowChildPosBelow), FillQuickWindow, "Quick Add", KACResources.styleWindow);
             }
 
             if (_ShowBackupFailedMessage)
             {
-                _WindowBackupFailedRect = GUILayout.Window(_WindowBackupFailedID, _WindowBackupFailedRect, FillBackupFailedWindow, "Save Backup Failed", KACResources.styleWindow);
+                _WindowBackupFailedRect = ClickThruBlocker.GUILayoutWindow(_WindowBackupFailedID, _WindowBackupFailedRect, FillBackupFailedWindow, "Save Backup Failed", KACResources.styleWindow);
                 if (DateTime.Now.Subtract(_ShowBackupFailedMessageAt).Seconds > _ShowBackupFailedMessageForSecs)
                     ResetBackupFailedWindow();
             }

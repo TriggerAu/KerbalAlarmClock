@@ -599,15 +599,10 @@ namespace KerbalAlarmClock
 			//If the mainwindow is visible And no pause menu then draw it
 			if (WindowVisibleByActiveScene)
 			{
+				GUIUtility.ScaleAroundPivot(guiScale, Vector2.zero);
 				DrawWindowsPre();
-
-                // Set the scale for this run at stuff
-                GUIUtility.ScaleAroundPivot(guiScale, Vector2.zero);
-                DrawWindows();
-                GUIUtility.ScaleAroundPivot(Vector2.one, Vector2.zero);
-
-                DrawWindowsPost();
-
+				DrawWindows();
+				DrawWindowsPost();
 			}
 
 			if (settings.WarpToEnabled)

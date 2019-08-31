@@ -105,7 +105,7 @@ namespace KerbalAlarmClock
 		}
 
 		//Awake Event - when the DLL is loaded
-		internal override void Awake()
+		internal override void OnAwake()
 		{
 			LogFormatted("Awakening the KerbalAlarmClock-{0}", MonoName);
 

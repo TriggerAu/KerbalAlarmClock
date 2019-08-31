@@ -730,13 +730,12 @@ namespace KACToolbarWrapper {
             Type type = null;
             AssemblyLoader.loadedAssemblies.TypeOperation(t =>
             {
-                if (t.FullName == name)
+                if(t.FullName == name)
                     type = t;
             }
             );
 
-            if (type != null)
-            {
+            if(type != null) {
                 return type;
             }
             return null;

@@ -4,8 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-using KerbalAlarmClock;
-
 namespace KSPPluginFramework
 {
 

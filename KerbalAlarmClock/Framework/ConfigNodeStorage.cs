@@ -1,7 +1,7 @@
 ﻿/* Part of KSPPluginFramework
 Version 1.2
 
-Forum Thread:https://forum.kerbalspaceprogram.com/topic/60381-ksp-plugin-framework-plugin-examples-and-structure-v11-apr-6/
+Forum Thread:https://forum.kerbalspaceprogram.com/topic/60381-ksp-plugin-framework-plugin-examples-and-structure/
 Author: TriggerAu, 2014
 License: The MIT License (MIT)
 */

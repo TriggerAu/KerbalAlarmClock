@@ -209,7 +209,7 @@ namespace KerbalAlarmClock
                 if (settings.ButtonStyleChosen == Settings.ButtonStyleEnum.Toolbar)
                 {
                     if (GUILayout.Button(new GUIContent("Not Installed. Click for Toolbar Info", "Click to open your browser and find out more about the Common Toolbar"), KACResources.styleContent))
-                        Application.OpenURL("https://forum.kerbalspaceprogram.com/topic/161857-15-toolbar-continued-common-api-for-draggableresizable-buttons-toolbar/");
+                        Application.OpenURL("https://forum.kerbalspaceprogram.com/topic/161857-toolbar-continued-common-api-for-draggableresizable-buttons-toolbar/");
                     //intBlizzyToolbarMissingHeight = 18;
                 }
             }
@@ -1000,7 +1000,7 @@ namespace KerbalAlarmClock
             if (GUILayout.Button("Click Here", KACResources.styleContent))
                 Application.OpenURL("https://github.com/TriggerAu/KerbalAlarmClock/");
             if (GUILayout.Button("Click Here", KACResources.styleContent))
-                Application.OpenURL("https://forum.kerbalspaceprogram.com/topic/22809-16x-kerbal-alarm-clock-v31000-dec-31/");
+                Application.OpenURL("https://forum.kerbalspaceprogram.com/topic/22809-kerbal-alarm-clock/");
 
             GUILayout.EndVertical();
 

@@ -1876,7 +1876,7 @@ namespace KerbalAlarmClock
 						}
 
 						LogFormatted("Actioning Alarm");
-						LogFormatted("{0}",tmpAlarm.Actions);
+						LogFormatted_DebugOnly("{0}",tmpAlarm.Actions);
 					}
 
 			}

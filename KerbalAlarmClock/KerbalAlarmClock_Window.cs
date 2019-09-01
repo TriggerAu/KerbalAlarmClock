@@ -1654,7 +1654,7 @@ namespace KerbalAlarmClock
             if (Old != New)
             {
                 Old = New;
-                LogFormatted("Toggle Changed:" + New.ToString());
+                LogFormatted_DebugOnly("Toggle Changed:" + New.ToString());
                 return true;
             }
             return false;
@@ -1797,7 +1797,7 @@ namespace KerbalAlarmClock
             {
                 //if its clicked then toggle the boolean
                 blnVar = !blnVar;
-                LogFormatted("Toggle Changed:" + blnVar);
+                LogFormatted_DebugOnly("Toggle Changed:" + blnVar);
             }
 
             GUILayout.EndHorizontal();
@@ -2142,7 +2142,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             if (InitialChoice != Selected)
-                LogFormatted(String.Format("Button List Changed:{0} to {1}", InitialChoice, Selected));
+                LogFormatted_DebugOnly(String.Format("Button List Changed:{0} to {1}", InitialChoice, Selected));
 
 
             return !(InitialChoice == Selected);

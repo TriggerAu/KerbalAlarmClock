@@ -1,7 +1,7 @@
 ﻿/* Part of KSPPluginFramework
 Version 1.2
 
-Forum Thread:http://forum.kerbalspaceprogram.com/threads/66503-KSP-Plugin-Framework
+Forum Thread:https://forum.kerbalspaceprogram.com/topic/60381-ksp-plugin-framework-plugin-examples-and-structure/
 Author: TriggerAu, 2014
 License: The MIT License (MIT)
 */
@@ -256,14 +256,14 @@ namespace KSPPluginFramework
         #endregion
 
         #region Standard Monobehaviour definitions-for overriding
-        //See this for info on order of execuction
-        //  http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html
+        //See this for info on order of execution
+        //  https://docs.unity3d.com/Manual/ExecutionOrder.html
 
         /// <summary>
         /// Unity Help: Awake is called when the script instance is being loaded.
         ///
         /// Trigger: Override this for initialization Code - this is before the Start Event
-        ///          See this for info on order of execuction: http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html
+        ///          See this for info on order of execution: https://docs.unity3d.com/Manual/ExecutionOrder.html
         /// </summary>
         private void Awake()
         {
@@ -287,7 +287,7 @@ namespace KSPPluginFramework
         /// Unity: Start is called on the frame when a script is enabled just before any of the Update methods is called the first time.
         ///
         /// Trigger: This is the last thing that happens before the scene starts doing stuff
-        ///          See this for info on order of execuction: http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html
+        ///          See this for info on order of execution: https://docs.unity3d.com/Manual/ExecutionOrder.html
         /// </summary>
         internal virtual void Start()
         {
@@ -298,7 +298,7 @@ namespace KSPPluginFramework
         /// Unity: This function is called every fixed framerate frame, if the MonoBehaviour is enabled.
         ///
         /// Trigger: This Update is called at a fixed rate and usually where you do all your physics stuff for consistent results
-        ///          See this for info on order of execuction: http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html
+        ///          See this for info on order of execution: https://docs.unity3d.com/Manual/ExecutionOrder.html
         /// </summary>
         internal virtual void FixedUpdate()
         { }
@@ -307,7 +307,7 @@ namespace KSPPluginFramework
         /// Unity: LateUpdate is called every frame, if the MonoBehaviour is enabled.
         ///
         /// Trigger: This Update is called just before the rendering, and where you can adjust any graphical values/positions based on what has been updated in the physics, etc
-        ///          See this for info on order of execuction: http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html
+        ///          See this for info on order of execution: https://docs.unity3d.com/Manual/ExecutionOrder.html
         /// </summary>
         internal virtual void LateUpdate()
         { }
@@ -321,7 +321,7 @@ namespace KSPPluginFramework
         /// 
         ///          NOTE: The class must be attached to a camera object to have this get called -  obj = MapView.MapCamera.gameObject.AddComponent<MBExtended>();
         /// 
-        ///          See this for info on order of execuction: http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html
+        ///          See this for info on order of execution: https://docs.unity3d.com/Manual/ExecutionOrder.html
         /// </summary>
         internal virtual void OnPreCull()
         { }
@@ -330,7 +330,7 @@ namespace KSPPluginFramework
         /// Unity: Update is called every frame, if the MonoBehaviour is enabled.
         ///
         /// Trigger: This is usually where you stick all your control inputs, keyboard handling, etc
-        ///          See this for info on order of execuction: http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html
+        ///          See this for info on order of execution: https://docs.unity3d.com/Manual/ExecutionOrder.html
         /// </summary>
         internal virtual void Update()
         { }
@@ -339,7 +339,7 @@ namespace KSPPluginFramework
         /// Unity Help: This function is called when the MonoBehaviour will be destroyed..
         ///
         /// Trigger: Override this for destruction and cleanup code
-        ///          See this for info on order of execuction: http://docs.unity3d.com/Documentation/Manual/ExecutionOrder.html
+        ///          See this for info on order of execution: https://docs.unity3d.com/Manual/ExecutionOrder.html
         /// </summary>
         internal virtual void OnDestroy()
         {

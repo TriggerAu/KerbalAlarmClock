@@ -1,7 +1,7 @@
 ﻿/* Part of KSPPluginFramework
 Version 1.2
 
-Forum Thread:http://forum.kerbalspaceprogram.com/threads/66503-KSP-Plugin-Framework
+Forum Thread:https://forum.kerbalspaceprogram.com/topic/60381-ksp-plugin-framework-plugin-examples-and-structure/
 Author: TriggerAu, 2014
 License: The MIT License (MIT)
 */
@@ -67,7 +67,7 @@ namespace KSPPluginFramework
         //}
 
         //TODO: Look at using this
-        //  http://answers.unity3d.com/questions/445444/add-component-in-one-line-with-parameters.html
+        //  https://answers.unity3d.com/questions/445444/add-component-in-one-line-with-parameters.html
 
         //internal static MonoBehaviourWindow CreateComponent(GameObject AttachTo)
         //{

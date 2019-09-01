@@ -29,7 +29,7 @@ LICENSE
 This work is licensed under an MIT license as outlined at the OSI site. Visit the documentation site for more details and Attribution
 
 ATTRIBUTION-SOUNDS
-Included Sounds are from freesfx.co.uk (http://www.freesfx.co.uk). EULA can be found here: http://www.freesfx.co.uk/info/eula/
+Included Sounds are from freesfx.co.uk (https://www.freesfx.co.uk). EULA can be found here: https://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
 Version 3.10.0.0	-	KSP Version: 1.6.0
@@ -261,7 +261,7 @@ Version 3.0.1.0		-	KSP Version: 0.25.0
 - Restructure plugin folders
 - Added Alarm Import Tool for v2 Alarms
 - Added Flags
-- New documentation site - http://triggerau.github.io/KerbalAlarmClock/
+- New documentation site - https://triggerau.github.io/KerbalAlarmClock/
 - New versioncheck location on Github
 
 Version 2.7.9.0		-	KSP Version: 0.25.0
@@ -441,7 +441,7 @@ Version 1.3.3.0		-	KSP Version: 0.19.1
 - Tweaked Orbital Transfer lists
 
 Version 1.3.2.0		-	KSP Version: 0.18.4
-- Added Transfer Alarms - Alarms that can be set based on Hohmann transfers and formulas by Kosmo-Not used in Olex's calculator - http://kerbalspaceprogram.com/forum/showthread.php/16511-Interplanetary-How-To-Guide
+- Added Transfer Alarms - Alarms that can be set based on Hohmann transfers and formulas by Kosmo-Not used in Olex's calculator - https://forum.kerbalspaceprogram.com/topic/16413-tutorial-interplanetary-how-to-guide/
 - Added tooltips for more contextual info
 - Tweaked GUI to move interface flags and sizes
 - A number of general bugfixes

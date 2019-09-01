@@ -32,6 +32,12 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (https://www.freesfx.co.uk). EULA can be found here: https://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.11.0.0	-	KSP Version: 1.7.3
+- Recompiled for 1.7.3 (Issue #225)
+- Dont report missing vessel if there isnt one (Issue #222)  - Thanks ReeseGlidden
+- Fix Drop-dows and scaling (Issue #228) - Thanks Kerbas-Ad-Astra
+- update some urls/uris (Issue #229) - thanks zatricky and neilser
+
 Version 3.10.0.0	-	KSP Version: 1.6.0
 - Recompiled for 1.6.0 (Issue #199, #199)
 - Fix for hyperbolic orbits (Issue #210) - Thanks Taniwha

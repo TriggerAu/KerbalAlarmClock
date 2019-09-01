@@ -192,7 +192,7 @@ function UpdateVersionCheckGHPagesAndPublish() {
 
 #Get newest version
 $Version =""
-$VersionRead =  (Get-ChildItem $UploadDir -Filter "v*.*.*.*"|sort -Descending)[0].name.replace("v","")
+$VersionRead =  (Get-ChildItem $UploadDir -Filter "v*.*.*.*"|sort LastWriteTime -Descending)[0].name.replace("v","")
 if ($VersionRead -ne $null) {
 	$Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
 	$ChoiceRtn = $host.ui.PromptForChoice("Version v$($VersionRead) detected","Is this the version you wish to build?",$Choices,0)

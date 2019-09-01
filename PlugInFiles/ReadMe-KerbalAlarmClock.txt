@@ -4,9 +4,9 @@ How to stop Jeb from flying past his destination at Warp speed.
 
 By Trigger Au
 
-Forum Thread for latest: http://forum.kerbalspaceprogram.com/showthread.php/24786-Kerbal-Alarm-Clock
-Documentation Site: http://triggerau.github.io/KerbalAlarmClock/
-Install Instructions: http://triggerau.github.io/KerbalAlarmClock/install.html
+Forum Thread for latest: https://forum.kerbalspaceprogram.com/topic/22809-kerbal-alarm-clock/
+Documentation Site: https://triggerau.github.io/KerbalAlarmClock/
+Install Instructions: https://triggerau.github.io/KerbalAlarmClock/install.html
 
 INSTALLATION
 ******************* NOTE  ******************* NOTE ******************* NOTE *******************

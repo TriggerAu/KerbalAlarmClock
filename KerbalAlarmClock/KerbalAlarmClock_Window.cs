@@ -961,7 +961,7 @@ namespace KerbalAlarmClock
                     }
 
                     //watch for mousedown
-                    if (Event.current.type == EventType.mouseDown && Event.current.button == 0)
+                    if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
                     {
                         LogFormatted_DebugOnly("Resize Width Start");
                         resizingWidth = true;
@@ -1020,7 +1020,7 @@ namespace KerbalAlarmClock
         private void OnGUIMouseEvents()
         {
             //kill the resize bools if mouse up
-            if ((resizingWidth || resizingHeight || resizingBoth) && Event.current.type == EventType.mouseUp && Event.current.button == 0)
+            if ((resizingWidth || resizingHeight || resizingBoth) && Event.current.type == EventType.MouseUp && Event.current.button == 0)
             {
                 LogFormatted_DebugOnly("Resize Stop");
                 resizingWidth = resizingHeight = resizingBoth = false;

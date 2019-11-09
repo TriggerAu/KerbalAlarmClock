@@ -550,7 +550,7 @@ namespace KerbalAlarmClock
                 if (blnReturn) ListVisible = !ListVisible;
 
                 //get the drawn button rectangle
-                if (Event.current.type == EventType.repaint)
+                if (Event.current.type == EventType.Repaint)
                 {
                     rectButton = GUILayoutUtility.GetLastRect();
                 }
@@ -679,7 +679,7 @@ namespace KerbalAlarmClock
 
             internal Boolean CloseOnOutsideClick()
             {
-                if (ListVisible && Event.current.type == EventType.mouseDown && !rectListBox.Contains(Event.current.mousePosition))
+                if (ListVisible && Event.current.type == EventType.MouseDown && !rectListBox.Contains(Event.current.mousePosition))
                 {
                     ListVisible = false;
                     return true;

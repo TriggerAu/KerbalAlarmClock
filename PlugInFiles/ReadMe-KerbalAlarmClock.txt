@@ -32,6 +32,9 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (https://www.freesfx.co.uk). EULA can be found here: https://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.12.0.0	-	KSP Version: 1.8.1
+- Recompiled for 1.8.1 (Issue #234)
+
 Version 3.11.0.0	-	KSP Version: 1.7.3
 - Recompiled for 1.7.3 (Issue #225)
 - Dont report missing vessel if there isnt one (Issue #222)  - Thanks ReeseGlidden

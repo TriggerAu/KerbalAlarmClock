@@ -192,7 +192,7 @@ function UpdateVersionCheckGHPagesAndPublish() {
 
 #Get newest version
 $Version =""
-$VersionRead =  (Get-ChildItem $UploadDir -Filter "v*.*.*.*"|sort -Descending)[0].name.replace("v","")
+$VersionRead =  (Get-ChildItem $UploadDir -Filter "v*.*.*.*"|sort LastWriteTime -Descending)[0].name.replace("v","")
 if ($VersionRead -ne $null) {
 	$Choices= [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No")
 	$ChoiceRtn = $host.ui.PromptForChoice("Version v$($VersionRead) detected","Is this the version you wish to build?",$Choices,0)
@@ -279,7 +279,7 @@ if($ChoiceRtn -eq 0)
 	$reldescr = $reldescr.Replace("`r`n","\r\n")
 	$reldescr = $reldescr.Replace("`"","\`"")
 	
-    $ForumHeader = "[B][SIZE=4][COLOR=`"#FF0000`"]v$($Version) Now Available [/COLOR][/SIZE][/B]- [SIZE=3][B][URL=`"https://github.com/TriggerAu/$($GitHubName)/releases/tag/v$($Version)`"]Download from GitHub[/URL][/B] [/SIZE] or [SIZE=3][B][URL=`"http://kerbal.curseforge.com/ksp-mods/$($CurseName)/files`"]Download from Curse*[/URL][/B][/SIZE] or [SIZE=3][B][URL=`"https://kerbalstuff.com/mod/$($KerbalStuffModID)`"]Download from Kerbal Stuff[/URL][/B] [/SIZE]  [COLOR=`"#A9A9A9`"]* Once it's approved[/COLOR]"
+    $ForumHeader = "[B][SIZE=4][COLOR=`"#FF0000`"]v$($Version) Now Available [/COLOR][/SIZE][/B]- [SIZE=3][B][URL=`"https://github.com/TriggerAu/$($GitHubName)/releases/tag/v$($Version)`"]Download from GitHub[/URL][/B] [/SIZE] or [SIZE=3][B][URL=`"https://kerbal.curseforge.com/ksp-mods/$($CurseName)/files`"]Download from Curse*[/URL][/B][/SIZE] or [SIZE=3][B][URL=`"https://kerbalstuff.com/mod/$($KerbalStuffModID)`"]Download from Kerbal Stuff[/URL][/B] [/SIZE]  [COLOR=`"#A9A9A9`"]* Once it's approved[/COLOR]"
 
     $ForumList = "[LIST]`r`n" + $reldescr + "`r`n[/LIST]"
     $ForumList = $ForumList.Replace("\r\n","`r`n").Replace("`r`n* ","`r`n[*]")

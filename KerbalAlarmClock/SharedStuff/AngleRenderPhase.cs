@@ -98,9 +98,9 @@ namespace KerbalAlarmClock
         private GUIStyle styleLabelEnd;
         private GUIStyle styleLabelTarget;
 
-        internal override void Awake()
+        internal override void OnAwake()
         {
-            base.Awake();
+            base.OnAwake();
 
             objLineStart = new GameObject("LineStart");
             objLineEnd = new GameObject("LineEnd");

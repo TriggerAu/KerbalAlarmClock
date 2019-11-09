@@ -105,7 +105,7 @@ namespace KerbalAlarmClock
 		}
 
 		//Awake Event - when the DLL is loaded
-		internal override void Awake()
+		internal override void OnAwake()
 		{
 			LogFormatted("Awakening the KerbalAlarmClock-{0}", MonoName);
 
@@ -599,15 +599,10 @@ namespace KerbalAlarmClock
 			//If the mainwindow is visible And no pause menu then draw it
 			if (WindowVisibleByActiveScene)
 			{
+				GUIUtility.ScaleAroundPivot(guiScale, Vector2.zero);
 				DrawWindowsPre();
-
-                // Set the scale for this run at stuff
-                GUIUtility.ScaleAroundPivot(guiScale, Vector2.zero);
-                DrawWindows();
-                GUIUtility.ScaleAroundPivot(Vector2.one, Vector2.zero);
-
-                DrawWindowsPost();
-
+				DrawWindows();
+				DrawWindowsPost();
 			}
 
 			if (settings.WarpToEnabled)
@@ -619,7 +614,7 @@ namespace KerbalAlarmClock
 			ControlInputLocks();
 
 			//Now do the stuff to close the quick alarms window if you click off it
-			if (_ShowQuickAdd && Event.current.type == EventType.mouseDown && !_WindowQuickAddRect.Contains(Event.current.mousePosition) && !WindowPosByActiveScene.Contains(Event.current.mousePosition))
+			if (_ShowQuickAdd && Event.current.type == EventType.MouseDown && !_WindowQuickAddRect.Contains(Event.current.mousePosition) && !WindowPosByActiveScene.Contains(Event.current.mousePosition))
 				_ShowQuickAdd = false;
 
 			//If Game is paused then update Earth Alarms for list drawing
@@ -1881,7 +1876,7 @@ namespace KerbalAlarmClock
 						}
 
 						LogFormatted("Actioning Alarm");
-						LogFormatted("{0}",tmpAlarm.Actions);
+						LogFormatted_DebugOnly("{0}",tmpAlarm.Actions);
 					}
 
 			}

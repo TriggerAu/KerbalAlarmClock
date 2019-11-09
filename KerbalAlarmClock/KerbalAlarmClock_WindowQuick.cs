@@ -81,7 +81,7 @@ namespace KerbalAlarmClock
                 }
                 _ShowQuickAdd = false;
             }
-            if (Event.current.type == EventType.repaint)
+            if (Event.current.type == EventType.Repaint)
                 item.ButtonRect = GUILayoutUtility.GetLastRect();
             GUI.Box(new Rect(item.ButtonRect.x + 8, item.ButtonRect.y + 3, 18, 14), item.Icon, new GUIStyle());
 

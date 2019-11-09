@@ -219,7 +219,7 @@ namespace KerbalAlarmClock
 		//Stuff to do with stored VesselIDs
 		private static void DrawStoredVesselIDMissing(String VesselID)
 		{
-			if (!StoredVesselExists(VesselID))
+			if (!(VesselID == null || VesselID == "") && !StoredVesselExists(VesselID))
 			{
 				GUILayout.Label("Stored VesselID no longer exists",KACResources.styleLabelWarning);
 			}

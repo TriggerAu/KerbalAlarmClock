@@ -386,8 +386,10 @@ namespace KACWrapper
                     AlarmTypeField = KACAlarmType.GetField("TypeOfAlarm");
                     AlarmTimeProperty = KACAlarmType.GetProperty("AlarmTimeUT");
                     AlarmMarginField = KACAlarmType.GetField("AlarmMarginSecs");
-                    AlarmActionField = KACAlarmType.GetField("AlarmAction");
                     RemainingField = KACAlarmType.GetField("Remaining");
+
+                    AlarmActionField = KACAlarmType.GetField("AlarmAction");
+                    ActionActionProperty = KACAlarmType.GetProperty("AlarmActionConvert");
 
                     XferOriginBodyNameField = KACAlarmType.GetField("XferOriginBodyName");
                     //LogFormatted("XFEROrigin:{0}", XferOriginBodyNameField == null);
@@ -498,11 +500,22 @@ namespace KACWrapper
                 /// <summary>
                 /// What should the Alarm Clock do when the alarm fires
                 /// </summary>
+                //public AlarmActionEnum AlarmAction
+                //{
+                //    get { return (AlarmActionEnum)AlarmActionField.GetValue(actualAlarm); }
+                //    set { AlarmActionField.SetValue(actualAlarm, (Int32)value); }
+                //}
+                /// <summary>
+                /// What should the Alarm Clock do when the alarm fires
+                /// </summary>
                 public AlarmActionEnum AlarmAction
                 {
-                    get { return (AlarmActionEnum)AlarmActionField.GetValue(actualAlarm); }
-                    set { AlarmActionField.SetValue(actualAlarm, (Int32)value); }
+                    get { return (AlarmActionEnum)ActionActionProperty.GetValue(actualAlarm); }
+                    set { ActionActionProperty.SetValue(actualAlarm, (Int32)value); }
                 }
+                private PropertyInfo ActionActionProperty;
+
+
 
                 private FieldInfo RemainingField;
                 /// <summary>
@@ -573,7 +586,7 @@ namespace KACWrapper
                 [Description("Message Only-No Affect on warp")]     MessageOnly,
                 [Description("Kill Warp Only-No Message")]          KillWarpOnly,
                 [Description("Kill Warp and Message")]              KillWarp,
-                [Description("Pause Game and Message")]             PauseGame,
+                [Description("Pause Game and Message")]             PauseGame
             }
 
             public enum TimeEntryPrecisionEnum

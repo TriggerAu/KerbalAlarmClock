@@ -1008,7 +1008,12 @@ namespace KerbalAlarmClock
 
 		private Boolean MouseOverWindow(Rect WindowRect, Boolean WindowVisible)
 		{
-			return WindowVisible && WindowRect.Contains(Event.current.mousePosition);
+			// Use Input instead of Event.current because Event.current.mousePosition
+			// gets inverted for key presses, but Input is stable (though always
+			// inverted).
+			Vector2 mousePos = Input.mousePosition;
+			mousePos.y = Screen.height - mousePos.y;
+			return WindowVisible && WindowRect.Contains(mousePos);
 		}
 
 #if DEBUG

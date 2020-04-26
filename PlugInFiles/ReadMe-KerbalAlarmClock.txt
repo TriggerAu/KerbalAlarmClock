@@ -32,6 +32,12 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (https://www.freesfx.co.uk). EULA can be found here: https://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.13.0.0	-	KSP Version: 1.9.1
+- Recompiled for 1.9.1
+- Fix for input locking chekcing issue on Linux - thanks Taniwha
+- Fix for AN/DN timing (Issue #239) - Thanks Doxen
+- Update API Wrapper for actions (Issue #233)
+
 Version 3.12.0.0	-	KSP Version: 1.8.1
 - Recompiled for 1.8.1 (Issue #234)
 

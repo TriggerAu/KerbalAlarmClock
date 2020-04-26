@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using UnityEngine;
 using KSP;
 
 namespace KerbalAlarmClock
@@ -121,7 +122,7 @@ namespace KerbalAlarmClock
         //The returned value is always between 0 and 360.
         internal static double AscendingNodeTrueAnomaly(this Orbit a, Orbit b)
         {
-            Vector3d vectorToAN = Vector3d.Cross(a.SwappedOrbitNormal(), b.SwappedOrbitNormal());
+            Vector3d vectorToAN = Vector3d.Cross(b.GetOrbitNormal(), a.GetOrbitNormal());
             return a.TrueAnomalyFromVector(vectorToAN);
         }
 
@@ -130,7 +131,8 @@ namespace KerbalAlarmClock
         //The returned value is always between 0 and 360.
         internal static double DescendingNodeTrueAnomaly(this Orbit a, Orbit b)
         {
-            return MuUtils.ClampDegrees360(a.AscendingNodeTrueAnomaly(b) + 180);
+            Vector3d vectorToDN = Vector3d.Cross(a.GetOrbitNormal(), b.GetOrbitNormal());
+            return a.TrueAnomalyFromVector(vectorToDN);
         }
 
         //Gives the true anomaly at which o crosses the equator going northwards, if o is east-moving,
@@ -196,23 +198,7 @@ namespace KerbalAlarmClock
         //The returned value is always between 0 and 360.
         internal static double TrueAnomalyFromVector(this Orbit o, Vector3d vec)
         {
-            Vector3d projected = Vector3d.Exclude(o.SwappedOrbitNormal(), vec);
-            Vector3d vectorToPe = SwapYZ(o.eccVec);
-            double angleFromPe = Math.Abs(Vector3d.Angle(vectorToPe, projected));
-
-            //If the vector points to the infalling part of the orbit then we need to do 360 minus the
-            //angle from Pe to get the true anomaly. Test this by taking the the cross product of the
-            //orbit normal and vector to the periapsis. This gives a vector that points to center of the 
-            //outgoing side of the orbit. If vectorToAN is more than 90 degrees from this vector, it occurs
-            //during the infalling part of the orbit.
-            if (Math.Abs(Vector3d.Angle(projected, Vector3d.Cross(o.SwappedOrbitNormal(), vectorToPe))) < 90)
-            {
-                return angleFromPe;
-            }
-            else
-            {
-                return 360 - angleFromPe;
-            }
+            return o.GetTrueAnomalyOfZupVector(vec) * Mathf.Rad2Deg;
         }
 
         //Originally by Zool, revised by The_Duck

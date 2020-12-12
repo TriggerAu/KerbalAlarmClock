@@ -209,7 +209,7 @@ namespace KerbalAlarmClock
                 if (settings.ButtonStyleChosen == Settings.ButtonStyleEnum.Toolbar)
                 {
                     if (GUILayout.Button(new GUIContent("Not Installed. Click for Toolbar Info", "Click to open your browser and find out more about the Common Toolbar"), KACResources.styleContent))
-                        Application.OpenURL("http://forum.kerbalspaceprogram.com/threads/60863");
+                        Application.OpenURL("https://forum.kerbalspaceprogram.com/topic/161857-toolbar-continued-common-api-for-draggableresizable-buttons-toolbar/");
                     //intBlizzyToolbarMissingHeight = 18;
                 }
             }
@@ -789,7 +789,7 @@ namespace KerbalAlarmClock
             //    GUILayout.Label("Get the Common Toolbar:", KACResources.styleAddHeading);
             //    GUILayout.FlexibleSpace();
             //    if (GUILayout.Button("Click here", KACResources.styleContent))
-            //        Application.OpenURL("http://forum.kerbalspaceprogram.com/threads/60863");
+            //        Application.OpenURL("https://forum.kerbalspaceprogram.com/topic/161857-15-toolbar-continued-common-api-for-draggableresizable-buttons-toolbar/");
             //    GUILayout.EndHorizontal();
             //}
             //GUILayout.EndVertical();
@@ -996,11 +996,11 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             //GUILayout.Label("Trigger Au",KACResources.styleContent);
             if (GUILayout.Button("Click Here", KACResources.styleContent))
-                Application.OpenURL("http://triggerau.github.io/KerbalAlarmClock/");
+                Application.OpenURL("https://triggerau.github.io/KerbalAlarmClock/");
             if (GUILayout.Button("Click Here", KACResources.styleContent))
-                Application.OpenURL("http://github.com/TriggerAu/KerbalAlarmClock/");
+                Application.OpenURL("https://github.com/TriggerAu/KerbalAlarmClock/");
             if (GUILayout.Button("Click Here", KACResources.styleContent))
-                Application.OpenURL("http://forum.kerbalspaceprogram.com/showthread.php/24786-Kerbal-Alarm-Clock");
+                Application.OpenURL("https://forum.kerbalspaceprogram.com/topic/22809-kerbal-alarm-clock/");
 
             GUILayout.EndVertical();
 
@@ -1025,7 +1025,7 @@ namespace KerbalAlarmClock
             GUILayout.BeginVertical();
             //GUILayout.Label("Trigger Au",KACResources.styleContent);
             if (GUILayout.Button("Import Instructions", KACResources.styleContent))
-                Application.OpenURL("http://triggerau.github.io/KerbalAlarmClock/install.html#AlarmImport");
+                Application.OpenURL("https://triggerau.github.io/KerbalAlarmClock/install.html#AlarmImport");
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

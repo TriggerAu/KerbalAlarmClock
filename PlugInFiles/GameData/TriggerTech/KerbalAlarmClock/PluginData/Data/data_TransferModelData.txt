@@ -2,5 +2,5 @@
 
 Times and Phase angles for the first 101 years for All Hohmann transfers
 Calculated using the KSP Mission Control toolkit - http://forum.kerbalspaceprogram.com/showthread.php/40063-WIP-Mission-control-for-KSP-guide-for-basics-of-celestial-mechanics
-Link may no longer be valid since forum hiccup, alternate link is - http://www.reddit.com/r/KerbalSpaceProgram/comments/1bb9q0/calculated_interplanetary_transfer_phase_angles/
+Link is no longer valid since forum hiccup, alternate link is - https://www.reddit.com/r/KerbalSpaceProgram/comments/1bb9q0/calculated_interplanetary_transfer_phase_angles/
 Angles are valid for Kerbal Space Program 0.19.1

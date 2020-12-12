@@ -961,7 +961,7 @@ namespace KerbalAlarmClock
                     }
 
                     //watch for mousedown
-                    if (Event.current.type == EventType.mouseDown && Event.current.button == 0)
+                    if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
                     {
                         LogFormatted_DebugOnly("Resize Width Start");
                         resizingWidth = true;
@@ -1020,7 +1020,7 @@ namespace KerbalAlarmClock
         private void OnGUIMouseEvents()
         {
             //kill the resize bools if mouse up
-            if ((resizingWidth || resizingHeight || resizingBoth) && Event.current.type == EventType.mouseUp && Event.current.button == 0)
+            if ((resizingWidth || resizingHeight || resizingBoth) && Event.current.type == EventType.MouseUp && Event.current.button == 0)
             {
                 LogFormatted_DebugOnly("Resize Stop");
                 resizingWidth = resizingHeight = resizingBoth = false;
@@ -1654,7 +1654,7 @@ namespace KerbalAlarmClock
             if (Old != New)
             {
                 Old = New;
-                LogFormatted("Toggle Changed:" + New.ToString());
+                LogFormatted_DebugOnly("Toggle Changed:" + New.ToString());
                 return true;
             }
             return false;
@@ -1797,7 +1797,7 @@ namespace KerbalAlarmClock
             {
                 //if its clicked then toggle the boolean
                 blnVar = !blnVar;
-                LogFormatted("Toggle Changed:" + blnVar);
+                LogFormatted_DebugOnly("Toggle Changed:" + blnVar);
             }
 
             GUILayout.EndHorizontal();
@@ -2142,7 +2142,7 @@ namespace KerbalAlarmClock
             GUILayout.EndHorizontal();
 
             if (InitialChoice != Selected)
-                LogFormatted(String.Format("Button List Changed:{0} to {1}", InitialChoice, Selected));
+                LogFormatted_DebugOnly(String.Format("Button List Changed:{0} to {1}", InitialChoice, Selected));
 
 
             return !(InitialChoice == Selected);

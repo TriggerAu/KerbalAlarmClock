@@ -347,7 +347,7 @@ namespace KerbalAlarmClock
         }
 
         #region Version Checks
-        private String VersionCheckURL = "http://triggerau.github.io/KerbalAlarmClock/versioncheck.txt";
+        private String VersionCheckURL = "https://triggerau.github.io/KerbalAlarmClock/versioncheck.txt";
         //Could use this one to see usage, but need to be very aware of data connectivity if its ever used "http://bit.ly/KACVersion";
 
         private String ConvertVersionCheckDateToString(DateTime Date)
@@ -518,7 +518,7 @@ namespace KerbalAlarmClock
 
         //        MonoBehaviourExtended.LogFormatted("Reading version from Web");
         //        //Page content FormatException is |LATESTVERSION|1.2.0.0|LATESTVERSION|
-        //        //WWW www = new WWW("http://kerbalalarmclock.codeplex.com/wikipage?title=LatestVersion");
+        //        //WWW www = new WWW("https://archive.codeplex.com/?p=kerbalalarmclock");
         //        WWW www = new WWW("https://sites.google.com/site/kerbalalarmclock/latestversion");
         //        while (!www.isDone) { }
 

@@ -83,11 +83,20 @@ namespace KerbalAlarmClock_APITester
 
                 GUILayout.BeginHorizontal();
                 UT = GUILayout.TextField(UT);
-                if (GUILayout.Button("Create One"))
+                if (GUILayout.Button("ChangeTime"))
                 {
                     KACWrapper.KAC.Alarms.First().AlarmTime = Convert.ToDouble(UT);
                 }
                 GUILayout.EndHorizontal();
+
+                if (GUILayout.Button("Create DoNothing"))
+                {
+                    String aID = KACWrapper.KAC.CreateAlarm(KACWrapper.KACAPI.AlarmTypeEnum.TransferModelled, "Test", Planetarium.GetUniversalTime() + 900);
+
+                    KACWrapper.KAC.Alarms.First(z => z.ID == aID).Notes = "FRED FLINTSTONE";
+                    KACWrapper.KAC.Alarms.First(z => z.ID == aID).AlarmMargin = 600;
+                    KACWrapper.KAC.Alarms.First(z => z.ID == aID).AlarmAction = KACWrapper.KACAPI.AlarmActionEnum.DoNothing;
+                }
             }
         }
         String UT="";

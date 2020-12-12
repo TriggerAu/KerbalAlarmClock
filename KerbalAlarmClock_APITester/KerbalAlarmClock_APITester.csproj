@@ -59,8 +59,8 @@
   <PropertyGroup>
     <PostBuildEvent>rem Set the Variables we need
 echo Finding KSP
-if exist "D:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
-	set GAMEPATH="D:\~Games\KSP_Win_PlugInTest_Minimal"
+if exist "C:\Data\Programming\KSP\_Versions\KSP_win_PluginTest\KSP_x64.exe" (
+	set GAMEPATH="C:\Data\Programming\KSP\_Versions\KSP_win_PluginTest"
 ) else if exist "C:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
 	set GAMEPATH="C:\~Games\KSP_Win_PlugInTest_Minimal
 ) else if exist "D:\~Games\KSP_Win_PlugInTest\KSP.exe" (
@@ -75,7 +75,7 @@ if exist "D:\~Games\KSP_Win_PlugInTest_Minimal\KSP.exe" (
 echo Gamepath: %25GAMEPATH%25
 echo ConfigName: $(ConfigurationName)
 set DestPath="%25GAMEPATH%25\GameData\TriggerTech"
-set Binary="%25GAMEPATH%25\KSP.exe"
+set Binary="%25GAMEPATH%25\KSP_x64.exe"
 
 if not $(ConfigurationName)==Debug goto DEBUGREBUILDCONFIG
 :DEBUGCONFIG

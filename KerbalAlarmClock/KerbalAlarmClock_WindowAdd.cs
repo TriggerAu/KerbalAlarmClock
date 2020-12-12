@@ -1539,7 +1539,7 @@ namespace KerbalAlarmClock
                 GUILayout.Label("RSS detected - it is recommended that you use the Transfer Window Planner Plugin to plan transfers", KACResources.styleAddXferName);
                 GUILayout.Space(-8);
                 if (GUILayout.Button("Click here to open the TWP forum thread", KACResources.styleContent))
-                    Application.OpenURL("http://forum.kerbalspaceprogram.com/threads/93115");
+                    Application.OpenURL("https://forum.kerbalspaceprogram.com/topic/84005-transfer-window-planner/");
                 intAddXferHeight += 58;
             }
 

@@ -9,9 +9,6 @@ Documentation Site: https://triggerau.github.io/KerbalAlarmClock/
 Install Instructions: https://triggerau.github.io/KerbalAlarmClock/install.html
 
 INSTALLATION
-******************* NOTE  ******************* NOTE ******************* NOTE *******************
-IF YOU WANT TO MAINTAIN YOUR SETTINGS DO NOT COPY THE CONFIG.XML FILE OVER
-******************* NOTE  ******************* NOTE ******************* NOTE *******************
 
 Installing the plugin involves copying the plugin files into the correct location in the KSP aplication folder
 1. Extract the Zip file you have downloaded to a temporary Location

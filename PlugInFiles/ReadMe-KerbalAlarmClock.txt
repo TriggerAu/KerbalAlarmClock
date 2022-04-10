@@ -29,6 +29,9 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (https://www.freesfx.co.uk). EULA can be found here: https://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.14.0.0	-	KSP Version: 1.12.3
+- Recompiled for 1.12.x
+
 Version 3.13.0.0	-	KSP Version: 1.9.1
 - Recompiled for 1.9.1
 - Fix for input locking chekcing issue on Linux - thanks Taniwha

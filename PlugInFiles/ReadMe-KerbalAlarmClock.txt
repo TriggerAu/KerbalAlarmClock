@@ -9,9 +9,6 @@ Documentation Site: https://triggerau.github.io/KerbalAlarmClock/
 Install Instructions: https://triggerau.github.io/KerbalAlarmClock/install.html
 
 INSTALLATION
-******************* NOTE  ******************* NOTE ******************* NOTE *******************
-IF YOU WANT TO MAINTAIN YOUR SETTINGS DO NOT COPY THE CONFIG.XML FILE OVER
-******************* NOTE  ******************* NOTE ******************* NOTE *******************
 
 Installing the plugin involves copying the plugin files into the correct location in the KSP aplication folder
 1. Extract the Zip file you have downloaded to a temporary Location
@@ -32,6 +29,9 @@ ATTRIBUTION-SOUNDS
 Included Sounds are from freesfx.co.uk (https://www.freesfx.co.uk). EULA can be found here: https://www.freesfx.co.uk/info/eula/
 
 VERSION HISTORY
+Version 3.14.0.0	-	KSP Version: 1.12.3
+- Recompiled for 1.12.x
+
 Version 3.13.0.0	-	KSP Version: 1.9.1
 - Recompiled for 1.9.1
 - Fix for input locking chekcing issue on Linux - thanks Taniwha

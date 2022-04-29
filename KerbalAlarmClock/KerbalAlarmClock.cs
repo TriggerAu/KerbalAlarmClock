@@ -596,6 +596,13 @@ namespace KerbalAlarmClock
 			if (IconShowByActiveScene)
 				TriggeredAlarms();
 
+			// Draw WarpTo buttons before the GUI Window to avoid rescaling positions 
+			// with ScaleAroundPivot
+			if (settings.WarpToEnabled)
+			{
+				DrawNodeButtons();
+			}
+
 			//If the mainwindow is visible And no pause menu then draw it
 			if (WindowVisibleByActiveScene)
 			{
@@ -603,11 +610,6 @@ namespace KerbalAlarmClock
 				DrawWindowsPre();
 				DrawWindows();
 				DrawWindowsPost();
-			}
-
-			if (settings.WarpToEnabled)
-			{
-				DrawNodeButtons();
 			}
 
 			//Do the stuff to lock inputs of people have that turned on

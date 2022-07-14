@@ -123,7 +123,7 @@ namespace KerbalAlarmClock
         internal static double AscendingNodeTrueAnomaly(this Orbit a, Orbit b)
         {
             Vector3d vectorToAN = Vector3d.Cross(b.GetOrbitNormal(), a.GetOrbitNormal());
-            return a.TrueAnomalyFromVector(vectorToAN);
+            return a.GetTrueAnomalyOfZupVector(vectorToAN);
         }
 
         //Gives the true anomaly (in a's orbit) at which a crosses its descending node 
@@ -132,7 +132,7 @@ namespace KerbalAlarmClock
         internal static double DescendingNodeTrueAnomaly(this Orbit a, Orbit b)
         {
             Vector3d vectorToDN = Vector3d.Cross(a.GetOrbitNormal(), b.GetOrbitNormal());
-            return a.TrueAnomalyFromVector(vectorToDN);
+            return a.GetTrueAnomalyOfZupVector(vectorToDN);
         }
 
         //Gives the true anomaly at which o crosses the equator going northwards, if o is east-moving,
@@ -140,8 +140,8 @@ namespace KerbalAlarmClock
         //The returned value is always between 0 and 360.
         internal static double AscendingNodeEquatorialTrueAnomaly(this Orbit o)
         {
-            Vector3d vectorToAN = Vector3d.Cross(o.referenceBody.transform.up, o.SwappedOrbitNormal());
-            return o.TrueAnomalyFromVector(vectorToAN);
+            Vector3d vectorToAN = Vector3d.Cross(Vector3d.forward, o.GetOrbitNormal());
+            return o.GetTrueAnomalyOfZupVector(vectorToAN);
         }
 
         //Gives the true anomaly at which o crosses the equator going southwards, if o is east-moving,
@@ -149,7 +149,8 @@ namespace KerbalAlarmClock
         //The returned value is always between 0 and 360.
         internal static double DescendingNodeEquatorialTrueAnomaly(this Orbit o)
         {
-            return MuUtils.ClampDegrees360(o.AscendingNodeEquatorialTrueAnomaly() + 180);
+            Vector3d vectorToAN = Vector3d.Cross(o.GetOrbitNormal(), Vector3d.forward);
+            return o.GetTrueAnomalyOfZupVector(vectorToAN);
         }
 
         //For hyperbolic orbits, the true anomaly only takes on values in the range
@@ -196,9 +197,9 @@ namespace KerbalAlarmClock
         //The vector is projected into the orbital plane and then the true anomaly is
         //computed as the angle this vector makes with the vector pointing to the periapsis.
         //The returned value is always between 0 and 360.
-        internal static double TrueAnomalyFromVector(this Orbit o, Vector3d vec)
+        internal static double GetTrueAnomalyFromVector(this Orbit o, Vector3d vec)
         {
-            return o.GetTrueAnomalyOfZupVector(vec) * Mathf.Rad2Deg;
+            return o.GetTrueAnomalyOfZupVector(vec);
         }
 
         //Originally by Zool, revised by The_Duck

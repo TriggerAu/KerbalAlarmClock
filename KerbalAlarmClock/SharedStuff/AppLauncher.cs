@@ -48,7 +48,7 @@ namespace KerbalAlarmClock
         {
             ApplicationLauncherButton retButton = null;
 
-            ApplicationLauncherButton[] lstButtons = KerbalAlarmClock.FindObjectsOfType<ApplicationLauncherButton>();
+            //ApplicationLauncherButton[] lstButtons = KerbalAlarmClock.FindObjectsOfType<ApplicationLauncherButton>();
             //LogFormatted("AppLauncher: Creating Button-BEFORE", lstButtons.Length);
             try
             {
@@ -74,7 +74,7 @@ namespace KerbalAlarmClock
                 MonoBehaviourExtended.LogFormatted("AppLauncher: Failed to set up App Launcher Button\r\n{0}", ex.Message);
                 retButton = null;
             }
-            lstButtons = KerbalAlarmClock.FindObjectsOfType<ApplicationLauncherButton>();
+            //lstButtons = KerbalAlarmClock.FindObjectsOfType<ApplicationLauncherButton>();
             //LogFormatted("AppLauncher: Creating Button-AFTER", lstButtons.Length);
 
             return retButton;
